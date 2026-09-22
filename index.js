@@ -84,7 +84,7 @@ const tools = [{
     },
     {
       name: "request_human_handoff",
-      description: "Triggers an alert to Shashank to take over the chat. Use this if the user is angry, suicidal, or asks complex spiritual questions.",
+      description: "Triggers an alert to Shashank to take over the chat. Use this if the user asks to talk to the owner, gets extremely angry, suicidal, or asks complex spiritual questions.",
       parameters: {
         type: "OBJECT",
         properties: {
@@ -124,8 +124,8 @@ YOUR PSYCHOLOGICAL SALES FRAMEWORK (CRITICAL):
 6. EXPERT RECOMMENDATION: Once you fully understand their pain, confidently suggest the SINGLE most appropriate service from the list below as a personalized solution.
 7. OBJECTION HANDLING & 5% DISCOUNT: If a NEW user strongly objects to the price and is about to leave, use "Feel, Felt, Found". You are authorized to negotiate and offer a 5% discount (using the 'discount_percentage' parameter in the booking tool) to close the sale. ONLY for new users, ONLY if they object.
 8. CONVERSATIONAL DETAIL GATHERING: When they are ready to book, NEVER ask for their Name, DOB, Time, and Place all at once like a robot form. Ask for them one by one, naturally, in a conversational flow.
-9. HUMAN HANDOFF: If the user gets extremely angry, suicidal, or asks highly complex spiritual questions that an AI shouldn't answer, call the 'request_human_handoff' tool to alert Shashank to take over.
-10. BOOKING FLOW: Once you have organically collected ALL 4 pieces of information (Name, DOB, Time of Birth, Place of Birth) AND they have chosen a specific service, you MUST call the 'create_booking_payment' tool to generate their payment link. You MUST accurately summarize their problem in the 'customer_pain_points_summary' parameter.
+9. HUMAN HANDOFF: If the user says they want to talk to the owner, gets extremely angry, suicidal, or asks highly complex spiritual questions, call the 'request_human_handoff' tool to escalate the issue.
+10. BOOKING FLOW: Once you have organically collected ALL 4 pieces of information (Name, DOB, Time, Place) AND they have chosen a specific service, you MUST call the 'create_booking_payment' tool to generate their payment link. You MUST accurately summarize their problem in the 'customer_pain_points_summary' parameter.
 
 ${servicesContext}`
   });
@@ -386,9 +386,9 @@ app.post('/webhook', async (req, res) => {
         
         if (call.name === "request_human_handoff") {
           await upsertUser(from, dbUser.is_customer, true); // Pause AI
-          await sendTextMessage(from, "I completely understand. I am going to have Shashank personally look at this and reply to you here shortly.");
+          await sendTextMessage(from, "I completely understand. I am escalating this to our core team. Shashank Agrawal or our senior sales team will personally contact you on this number within 24 hours.");
           if (ADMIN_PHONE_NUMBER) {
-             await sendTextMessage(ADMIN_PHONE_NUMBER, `🚨 *HUMAN HANDOFF REQUIRED* 🚨\n\nClient Phone: +${from}\nReason: ${call.args.reason}\n\n*The AI has paused itself for this user. Please take over the chat manually via the WhatsApp app.*`);
+             await sendTextMessage(ADMIN_PHONE_NUMBER, `🚨 *ESCALATION REQUIRED* 🚨\n\nClient Phone: +${from}\nReason: ${call.args.reason}\n\n*The AI has paused itself for this user. Please take over the chat manually via the WhatsApp app within 24 hours.*`);
           }
           await chat.sendMessage([{ functionResponse: { name: "request_human_handoff", response: { status: "paused" } } }]);
           return;
