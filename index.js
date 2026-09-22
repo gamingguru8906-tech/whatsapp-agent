@@ -142,7 +142,7 @@ PHASE 5: THE TRANSACTION
 ESCALATION:
 - If they aggressively demand to speak to the owner, get extremely angry, or are suicidal, call the 'request_human_handoff' tool immediately to freeze the AI and alert the team.
 
-${servicesContext}`;
+${servicesContext}`
   });
 }
 
