@@ -455,7 +455,18 @@ app.post('/webhook', async (req, res) => {
       if (mediaData) messageParts.push(mediaData);
       
       console.log(`🤖 Sending to Gemini AI...`);
-      const result = await chat.sendMessage(messageParts);
+      let result;
+      try {
+        result = await chat.sendMessage(messageParts);
+      } catch (aiErr) {
+        if (aiErr.message.includes('503')) {
+          console.log(`⚠️ 503 Service Unavailable, retrying in 2 seconds...`);
+          await new Promise(r => setTimeout(r, 2000));
+          result = await chat.sendMessage(messageParts);
+        } else {
+          throw aiErr;
+        }
+      }
       console.log(`✅ Gemini responded successfully.`);
       
       // Handle Function Calls
