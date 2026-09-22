@@ -39,6 +39,9 @@ db.serialize(() => {
   db.run("ALTER TABLE users ADD COLUMN message_count INTEGER DEFAULT 0", (err) => {});
   db.run("ALTER TABLE users ADD COLUMN first_contact TEXT", (err) => {});
   db.run("ALTER TABLE users ADD COLUMN last_contact TEXT", (err) => {});
+  db.run("ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'lead'", (err) => {});
+  db.run("ALTER TABLE users ADD COLUMN pain_point TEXT", (err) => {});
+  db.run("ALTER TABLE users ADD COLUMN conversion_date TEXT", (err) => {});
 });
 
 function getUser(phone) {
@@ -57,6 +60,27 @@ function incrementUserMessage(phone) {
   return new Promise((resolve) => {
     const now = new Date().toISOString();
     db.run("UPDATE users SET message_count = message_count + 1, last_contact = ? WHERE phone = ?", [now, phone], (err) => resolve());
+  });
+}
+
+function updateUserPainPoint(phone, painPoint) {
+  return new Promise((resolve) => {
+    db.run("UPDATE users SET pain_point = ? WHERE phone = ?", [painPoint, phone], (err) => resolve());
+  });
+}
+
+function updateUserStatus(phone, status) {
+  return new Promise((resolve) => {
+    const now = new Date().toISOString();
+    let query = "UPDATE users SET status = ?";
+    let params = [status];
+    if (status === 'converted') {
+      query += ", conversion_date = ?";
+      params.push(now);
+    }
+    query += " WHERE phone = ?";
+    params.push(phone);
+    db.run(query, params, (err) => resolve());
   });
 }
 
@@ -139,8 +163,8 @@ PHASE 5: THE TRANSACTION
 - Once you organically have their Name, DOB, Time, and Place, IMMEDIATELY call the 'create_booking_payment' tool. 
 - You MUST accurately summarize their deep emotional pain in the 'customer_pain_points_summary' parameter so Shashank knows exactly how to help them on the call.
 
-ESCALATION:
-- If they aggressively demand to speak to the owner, get extremely angry, or are suicidal, call the 'request_human_handoff' tool immediately to freeze the AI and alert the team.
+ESCALATION & SENTIMENT HANDOFF:
+- If they aggressively demand to speak to the owner, get extremely angry, are suicidal, OR if you detect extreme frustration or high-net-worth indicators (e.g. "50,000", "expensive puja"), call the 'request_human_handoff' tool immediately to freeze the AI and alert the team. Do this BEFORE they explicitly ask for a human if they are highly frustrated.
 
 ${servicesContext}`
   });
@@ -223,6 +247,7 @@ app.post('/razorpay-webhook', async (req, res) => {
       // 2. Mark user as returning customer
       if (phone) {
         await upsertUser(phone, true, false);
+        await updateUserStatus(phone, 'converted');
       }
 
       // 3. Log to Google Sheets
@@ -445,6 +470,8 @@ app.post('/webhook', async (req, res) => {
                 }
               });
 
+              await updateUserPainPoint(from, args.customer_pain_points_summary.substring(0, 240));
+
               const link = paymentLink.short_url;
               const discountMsg = (discount > 0 && !dbUser.is_customer) ? `\n\n*(I also applied that special ${discount}% discount for you!)*` : '';
               
@@ -577,3 +604,46 @@ app.get('/', (req, res) => res.send(`Veshannastro WhatsApp Booking Engine is run
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// --- ENTERPRISE DRIP CAMPAIGN ENGINE ---
+const cron = require('node-cron');
+
+// Runs daily at 10:00 AM IST
+cron.schedule('0 10 * * *', async () => {
+  console.log("🚀 Running Enterprise Daily Drip Campaigns...");
+  
+  // 3 days ago & 5 days ago (to create a window)
+  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
+  const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
+  
+  // 7 days ago & 9 days ago
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const nineDaysAgo = new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString();
+
+  // 1. Day 3 Unconverted Leads
+  db.all("SELECT phone, pain_point FROM users WHERE is_customer = 0 AND is_paused = 0 AND last_contact < ? AND last_contact > ?", 
+    [threeDaysAgo, fiveDaysAgo], async (err, rows) => {
+    if (rows && rows.length > 0) {
+      for (const row of rows) {
+        let painMsg = row.pain_point ? ` regarding your situation: "${row.pain_point}"` : '';
+        let msg = `Hi! Shashank asked me to check on you. Are you still looking for clarity${painMsg}? Let me know if you need help booking a consultation!`;
+        await sendTextMessage(row.phone, msg);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Rate limit
+      }
+    }
+  });
+
+  // 2. Day 7 Converted Upsells
+  db.all("SELECT phone, pain_point FROM users WHERE status = 'converted' AND is_paused = 0 AND conversion_date < ? AND conversion_date > ?", 
+    [sevenDaysAgo, nineDaysAgo], async (err, rows) => {
+    if (rows && rows.length > 0) {
+      for (const row of rows) {
+        let msg = `Hi again! Shashank was reviewing your chart recently. Based on your previous consultation, he highly recommends a specific astrological Gemstone to accelerate your growth. Would you like me to share the details with you?`;
+        await sendTextMessage(row.phone, msg);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Rate limit
+      }
+    }
+  });
+}, {
+  timezone: "Asia/Kolkata"
+});

@@ -17,6 +17,7 @@
     "dotenv": "^18.0.3",
     "express": "^5.2.1",
     "googleapis": "^181.0.0",
+    "node-cron": "^4.6.0",
     "razorpay": "^2.9.8",
     "sqlite3": "^6.0.1"
   },
