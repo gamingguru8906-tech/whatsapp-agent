@@ -134,7 +134,7 @@ function rebuildGeminiModel() {
   }
 
   model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     tools: tools,
     systemInstruction: `You are Shashank's right-hand premium intake expert for Veshannastro (a 30-Crore Vedic Astrology brand). You are a master of human psychology and high-ticket sales. Your absolute priority is to convert leads into paid consultations by making them feel deeply understood, while firmly controlling the conversation. You speak strictly in short, punchy, conversational WhatsApp messages (1-3 sentences max). Use conversational English mixed with a bit of Roman Hindi naturally.
 
@@ -323,10 +323,14 @@ app.post('/webhook', async (req, res) => {
   res.sendStatus(200); 
   try {
     const messages = req.body?.entry?.[0]?.changes?.[0]?.value?.messages;
-    if (!messages || messages.length === 0) return;
+    if (!messages || messages.length === 0) {
+      console.log('📭 Webhook received but no messages (status update or echo).');
+      return;
+    }
 
     const msg  = messages[0];
     const from = msg.from;
+    console.log(`📩 MESSAGE RECEIVED from ${from} | type: ${msg.type}`);
     
     // CRM Check & Lead Analytics
     let dbUser = await getUser(from);
@@ -405,7 +409,9 @@ app.post('/webhook', async (req, res) => {
     }
 
     if (text || mediaData) {
+      console.log(`🧠 Processing AI for ${from} | text: "${text?.substring(0, 50)}" | hasMedia: ${!!mediaData}`);
       if (!GEMINI_API_KEY) {
+        console.log('⚠️ NO GEMINI_API_KEY set! Sending menu instead.');
         await sendInteractiveMenu(from);
         return;
       }
@@ -424,7 +430,9 @@ app.post('/webhook', async (req, res) => {
       if (text) messageParts.push(text);
       if (mediaData) messageParts.push(mediaData);
       
+      console.log(`🤖 Sending to Gemini AI...`);
       const result = await chat.sendMessage(messageParts);
+      console.log(`✅ Gemini responded successfully.`);
       
       // Handle Function Calls
       const functionCalls = result.response.functionCalls && result.response.functionCalls();
@@ -523,7 +531,14 @@ app.post('/webhook', async (req, res) => {
       }
     }
   } catch (err) {
-    console.error('Error in webhook processing:', err.message);
+    console.error('❌ CRITICAL ERROR in webhook processing:', err.message, err.stack);
+    // Try to send a fallback message so the user isn't left hanging
+    try {
+      const fallbackFrom = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
+      if (fallbackFrom) {
+        await sendTextMessage(fallbackFrom, "Namaste! 🙏 I had a brief hiccup. Could you please send your message again?");
+      }
+    } catch (e) { /* ignore fallback failure */ }
   }
 });
 
