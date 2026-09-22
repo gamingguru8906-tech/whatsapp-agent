@@ -34,15 +34,16 @@ function rebuildGeminiModel() {
 
   model = genAI.getGenerativeModel({ 
     model: 'gemini-1.5-flash',
-    systemInstruction: `You are a warm, friendly, and highly professional receptionist and booking assistant for Veshannastro, Shashank Agrawal's astrology service.
-Your ONLY job is to assist with inquiries about services, pricing, and booking appointments.
+    systemInstruction: `You are a warm, highly empathetic, and professional receptionist and booking assistant for Veshannastro, Shashank Agrawal's astrology service.
+Your primary goal is to drive high conversion rates (getting users to book consultations) by deeply understanding the user's emotions, adapting to their state of mind, and providing highly personalized, comforting responses.
+
 CRITICAL RULES:
-1. YOU MUST NEVER provide astrological readings, predictions, numerology calculations, or gemstone recommendations.
-2. YOU MUST NEVER suggest any astrological remedies, poojas, or spiritual advice.
-3. If a user asks for a prediction, reading, or remedy, politely explain that you are just the booking assistant and that they need to schedule a consultation with Shashank Agrawal for those answers.
-4. If a user asks about pricing, services, or shows interest in booking, you must reply EXACTLY with the phrase: [SEND_MENU]
-Do not include any other text if you output [SEND_MENU].
-5. DO NOT make up or hallucinate any services, prices, or information. ONLY use the live data provided below.
+1. EMOTIONAL INTELLIGENCE: Always analyze the emotion behind the user's message. If they are stressed, be comforting. If they are curious, be welcoming. Use a highly personalized framework for every message.
+2. NO ASTROLOGY ADVICE: YOU MUST NEVER provide astrological readings, predictions, numerology calculations, or gemstone recommendations.
+3. NO REMEDIES: YOU MUST NEVER suggest any astrological remedies, poojas, or spiritual advice.
+4. HIGH CONVERSION: If a user shares a problem, express deep empathy, then smoothly guide them to book a session with Shashank Agrawal as the solution to gain clarity.
+5. TRIGGERING THE MENU: Whenever it is appropriate to show them the services or pricing (e.g., after greeting them, or after comforting them and suggesting a reading), you must append the exact phrase [SEND_MENU] at the very end of your response. 
+6. DO NOT hallucinate or make up any services, prices, or information. ONLY use the live data provided below.
 
 --- LIVE VESHANNASTRO SERVICES DATA ---
 ${servicesContext}`
@@ -125,12 +126,6 @@ app.post('/webhook', async (req, res) => {
     }
 
     if (text) {
-      const lowerText = text.toLowerCase();
-      if (['hi','hello','hii','namaste','hey'].includes(lowerText)) {
-        await sendInteractiveMenu(from);
-        return;
-      }
-
       if (!GEMINI_API_KEY) {
         await sendInteractiveMenu(from);
         return;
@@ -140,7 +135,7 @@ app.post('/webhook', async (req, res) => {
         sessions[from] = model.startChat({
           history: [
             { role: "user", parts: [{ text: "Hello" }] },
-            { role: "model", parts: [{ text: "Namaste! 🙏 Welcome to Veshannastro. How can I guide you today?" }] }
+            { role: "model", parts: [{ text: "Namaste! 🙏 Welcome to Veshannastro. How can I guide you today? [SEND_MENU]" }] }
           ],
         });
       }
@@ -150,10 +145,14 @@ app.post('/webhook', async (req, res) => {
       const result = await chat.sendMessage(text);
       const responseText = result.response.text().trim();
 
+      const cleanText = responseText.replace(/\[SEND_MENU\]/g, '').trim();
+      
+      if (cleanText) {
+        await sendTextMessage(from, cleanText);
+      }
+
       if (responseText.includes('[SEND_MENU]')) {
         await sendInteractiveMenu(from);
-      } else {
-        await sendTextMessage(from, responseText);
       }
     }
   } catch (err) {
