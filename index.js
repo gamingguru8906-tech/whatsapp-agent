@@ -35,7 +35,10 @@ const pendingPayments = {}; // Holds timeouts for Abandoned Cart
 // CRM Memory Setup
 const db = new sqlite3.Database(path.join(__dirname, 'users.db'));
 db.serialize(() => {
-  db.run("CREATE TABLE IF NOT EXISTS users (phone TEXT PRIMARY KEY, is_customer BOOLEAN, is_paused BOOLEAN)");
+  db.run("CREATE TABLE IF NOT EXISTS users (phone TEXT PRIMARY KEY, is_customer BOOLEAN, is_paused BOOLEAN, message_count INTEGER DEFAULT 0, first_contact TEXT, last_contact TEXT)");
+  db.run("ALTER TABLE users ADD COLUMN message_count INTEGER DEFAULT 0", (err) => {});
+  db.run("ALTER TABLE users ADD COLUMN first_contact TEXT", (err) => {});
+  db.run("ALTER TABLE users ADD COLUMN last_contact TEXT", (err) => {});
 });
 
 function getUser(phone) {
@@ -45,8 +48,15 @@ function getUser(phone) {
 }
 function upsertUser(phone, is_customer, is_paused) {
   return new Promise((resolve) => {
-    db.run("INSERT INTO users (phone, is_customer, is_paused) VALUES (?, ?, ?) ON CONFLICT(phone) DO UPDATE SET is_customer=excluded.is_customer, is_paused=excluded.is_paused", 
-    [phone, is_customer, is_paused], (err) => resolve());
+    const now = new Date().toISOString();
+    db.run("INSERT INTO users (phone, is_customer, is_paused, message_count, first_contact, last_contact) VALUES (?, ?, ?, 1, ?, ?) ON CONFLICT(phone) DO UPDATE SET is_customer=excluded.is_customer, is_paused=excluded.is_paused, last_contact=excluded.last_contact", 
+    [phone, is_customer, is_paused, now, now], (err) => resolve());
+  });
+}
+function incrementUserMessage(phone) {
+  return new Promise((resolve) => {
+    const now = new Date().toISOString();
+    db.run("UPDATE users SET message_count = message_count + 1, last_contact = ? WHERE phone = ?", [now, phone], (err) => resolve());
   });
 }
 
@@ -66,9 +76,10 @@ const tools = [{
           pob: { type: "STRING", description: "Place of birth" },
           service_name: { type: "STRING", description: "Name of the service to book" },
           price: { type: "NUMBER", description: "The base price of the service in INR" },
-          discount_percentage: { type: "NUMBER", description: "Discount percentage to apply (0 to 5)" }
+          discount_percentage: { type: "NUMBER", description: "Discount percentage to apply (0 to 5)" },
+          customer_pain_points_summary: { type: "STRING", description: "A 2-3 sentence summary of the user's emotional state and core problem." }
         },
-        required: ["customer_name", "dob", "tob", "pob", "service_name", "price", "discount_percentage"]
+        required: ["customer_name", "dob", "tob", "pob", "service_name", "price", "discount_percentage", "customer_pain_points_summary"]
       }
     },
     {
@@ -114,7 +125,7 @@ YOUR PSYCHOLOGICAL SALES FRAMEWORK (CRITICAL):
 7. OBJECTION HANDLING & 5% DISCOUNT: If a NEW user strongly objects to the price and is about to leave, use "Feel, Felt, Found". You are authorized to negotiate and offer a 5% discount (using the 'discount_percentage' parameter in the booking tool) to close the sale. ONLY for new users, ONLY if they object.
 8. CONVERSATIONAL DETAIL GATHERING: When they are ready to book, NEVER ask for their Name, DOB, Time, and Place all at once like a robot form. Ask for them one by one, naturally, in a conversational flow.
 9. HUMAN HANDOFF: If the user gets extremely angry, suicidal, or asks highly complex spiritual questions that an AI shouldn't answer, call the 'request_human_handoff' tool to alert Shashank to take over.
-10. BOOKING FLOW: Once you have organically collected ALL 4 pieces of information (Name, DOB, Time of Birth, Place of Birth) AND they have chosen a specific service, you MUST call the 'create_booking_payment' tool to generate their payment link. 
+10. BOOKING FLOW: Once you have organically collected ALL 4 pieces of information (Name, DOB, Time of Birth, Place of Birth) AND they have chosen a specific service, you MUST call the 'create_booking_payment' tool to generate their payment link. You MUST accurately summarize their problem in the 'customer_pain_points_summary' parameter.
 
 ${servicesContext}`
   });
@@ -212,7 +223,8 @@ app.post('/razorpay-webhook', async (req, res) => {
           amountPaid: price,
           paymentStatus: "Paid",
           payment_id: event.payload?.payment?.entity?.id || pl.id,
-          source: "WhatsApp Direct Booking"
+          source: "WhatsApp Direct Booking",
+          query: notes.summary || ''
         }).catch(e => console.error("Sheets Logging Error:", e.message));
       }
 
@@ -276,11 +288,23 @@ app.post('/webhook', async (req, res) => {
     const msg  = messages[0];
     const from = msg.from;
     
-    // CRM Check
+    // CRM Check & Lead Analytics
     let dbUser = await getUser(from);
     if (!dbUser) {
       await upsertUser(from, false, false);
-      dbUser = { phone: from, is_customer: false, is_paused: false };
+      dbUser = { phone: from, is_customer: false, is_paused: false, message_count: 1 };
+    } else {
+      await incrementUserMessage(from);
+      dbUser.message_count = (dbUser.message_count || 0) + 1;
+    }
+
+    if (GOOGLE_APPS_SCRIPT_URL) {
+      axios.post(GOOGLE_APPS_SCRIPT_URL, { 
+        target: 'lead_update', 
+        phone: from, 
+        message_count: dbUser.message_count,
+        is_customer: dbUser.is_customer
+      }).catch(e => console.error("Sheet Lead Update Error", e.message));
     }
 
     // Ignore if Human Handoff activated
@@ -292,6 +316,9 @@ app.post('/webhook', async (req, res) => {
 
     if (msg.type === 'text') {
       text = msg.text.body;
+      if (GOOGLE_APPS_SCRIPT_URL) {
+        axios.post(GOOGLE_APPS_SCRIPT_URL, { target: 'chat', phone: from, sender: 'User', message: text }).catch(e => {});
+      }
     } else if (msg.type === 'audio') {
       const mediaId = msg.audio.id;
       const base64 = await downloadWhatsAppMedia(mediaId);
@@ -398,7 +425,8 @@ app.post('/webhook', async (req, res) => {
                   pob: args.pob,
                   service_name: args.service_name,
                   price: finalAmount,
-                  phone: from
+                  phone: from,
+                  summary: args.customer_pain_points_summary.substring(0, 240)
                 }
               });
 
@@ -436,6 +464,9 @@ app.post('/webhook', async (req, res) => {
       const cleanText = responseText.replace(/\[SEND_MENU\]/g, '').trim();
       if (cleanText) {
         await sendTextMessage(from, cleanText);
+        if (GOOGLE_APPS_SCRIPT_URL) {
+          axios.post(GOOGLE_APPS_SCRIPT_URL, { target: 'chat', phone: from, sender: 'AI', message: cleanText }).catch(e => {});
+        }
       }
       if (responseText.includes('[SEND_MENU]')) {
         await sendInteractiveMenu(from);
