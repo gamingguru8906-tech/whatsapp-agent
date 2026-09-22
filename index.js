@@ -347,6 +347,13 @@ app.post('/webhook', async (req, res) => {
       }).catch(e => console.error("Sheet Lead Update Error", e.message));
     }
 
+    // Secret Unpause Command
+    if (msg.type === 'text' && msg.text.body.trim().toLowerCase() === '/unpause') {
+      await new Promise(r => db.run("UPDATE users SET is_paused = 0 WHERE phone = ?", [from], r));
+      await sendTextMessage(from, "AI unpaused. You can now chat normally.");
+      return;
+    }
+
     // Ignore if Human Handoff activated
     if (dbUser.is_paused) return;
 
