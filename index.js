@@ -193,6 +193,10 @@ IMPORTANT:
 - Don't give actual astrological predictions or remedies — that's Shashank's job
 - Don't be perfect. Be real. Be warm. Be the kind of person someone trusts within 5 minutes of chatting
 
+TESTIMONIALS & REFERRALS:
+- After you've solved their problem or had a good session, casually ask for a testimonial: "btw it means a lot to us when people share their experience... if you have a minute, could you send a short video or even a quick text about how you're feeling now? it helps others find us 😊"
+- Always refer to Veshannastro as "us" or "we", not just "Shashank". (e.g. "we were talking about this", "it helps us", "our priority").
+
 ${servicesContext}`
   });
 }
@@ -383,12 +387,55 @@ app.post('/webhook', async (req, res) => {
       }).catch(e => console.error("Sheet Lead Update Error", e.message));
     }
 
-    // Secret Unpause Command
-    if (msg.type === 'text' && msg.text.body.trim().toLowerCase() === '/unpause') {
-      if (pool) await pool.query('UPDATE users SET is_paused = false WHERE phone = $1', [from]);
-      await sendTextMessage(from, "AI unpaused. You can now chat normally.");
-      return;
+    // Admin Commands
+    if (msg.type === 'text' && msg.text.body.trim().startsWith('/')) {
+      const command = msg.text.body.trim();
+      const lowerCmd = command.toLowerCase();
+      
+      if (lowerCmd === '/unpause') {
+        if (pool) await pool.query('UPDATE users SET is_paused = false WHERE phone = $1', [from]);
+        await sendTextMessage(from, "AI unpaused. You can now chat normally.");
+        return;
+      }
+
+      if (lowerCmd === '/stats') {
+        if (!pool) return await sendTextMessage(from, "Database not connected.");
+        const stats = await pool.query(`
+          SELECT 
+            COUNT(*) as total_leads,
+            SUM(CASE WHEN is_customer = true THEN 1 ELSE 0 END) as total_customers,
+            SUM(CASE WHEN status = 'converted' THEN 1 ELSE 0 END) as total_converted
+          FROM users
+        `);
+        const { total_leads, total_customers, total_converted } = stats.rows[0];
+        await sendTextMessage(from, `📊 *Veshannastro Stats*\nTotal Leads: ${total_leads || 0}\nPaid Customers: ${total_customers || 0}\nConverted by AI: ${total_converted || 0}`);
+        return;
+      }
+
+      if (lowerCmd.startsWith('/broadcast ')) {
+        if (!pool) return await sendTextMessage(from, "Database not connected.");
+        const broadcastMsg = command.substring(11).trim();
+        await sendTextMessage(from, `Starting broadcast to all leads...\nMessage:\n"${broadcastMsg}"\n\nThis will run in the background.`);
+        
+        // Background task
+        (async () => {
+          try {
+            const users = await pool.query("SELECT phone FROM users WHERE is_customer = false AND is_paused = false");
+            for (const user of users.rows) {
+              await sendTextMessage(user.phone, broadcastMsg);
+              await new Promise(r => setTimeout(r, 1500)); // Rate limit
+            }
+            await sendTextMessage(from, `✅ Broadcast completed to ${users.rows.length} leads.`);
+          } catch (e) {
+            await sendTextMessage(from, `❌ Broadcast failed: ${e.message}`);
+          }
+        })();
+        return;
+      }
     }
+
+    // Mark message as read (simulates human reading)
+    await markAsRead(msg.id);
 
     // Ignore if Human Handoff activated
     if (dbUser.is_paused) return;
@@ -474,8 +521,17 @@ app.post('/webhook', async (req, res) => {
 
       const chat = sessions[from];
       const messageParts = [];
-      if (text) messageParts.push(text);
-      if (mediaData) messageParts.push(mediaData);
+      
+      // Smart Timing & Memory Context
+      const currentTimeIST = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+      const lastContactStr = dbUser.last_contact ? new Date(dbUser.last_contact).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : "First time";
+      const memoryContext = `\n\n[SYSTEM CONTEXT (DO NOT MENTION TO USER): Current Time in India is ${currentTimeIST}. User's last contact was: ${lastContactStr}. User's known pain point: ${dbUser.pain_point || 'None yet'}. You are a representative of Veshannastro ("us/we"). Keep time of day in mind when greeting.]`;
+      
+      if (text) messageParts.push(text + memoryContext);
+      if (mediaData) {
+        messageParts.push(mediaData);
+        if (!text) messageParts.push(memoryContext); // Add context if no text was pushed
+      }
       
       console.log(`🤖 Sending to Gemini AI...`);
       let result;
@@ -681,6 +737,19 @@ async function sendTextMessage(to, text) {
     );
   } catch (err) {
     console.error("Failed to send text message", err.response?.data || err.message);
+  }
+}
+
+async function markAsRead(messageId) {
+  if (!WA_TOKEN) return;
+  try {
+    await axios.post(
+      `https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`,
+      { messaging_product: 'whatsapp', status: 'read', message_id: messageId },
+      { headers: { Authorization: `Bearer ${WA_TOKEN}`, 'Content-Type': 'application/json' } }
+    );
+  } catch (err) {
+    console.error("Failed to mark as read", err.response?.data || err.message);
   }
 }
 
