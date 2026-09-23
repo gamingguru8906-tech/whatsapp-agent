@@ -782,6 +782,7 @@ app.post('/webhook', async (req, res) => {
              await sendTextMessage(ADMIN_PHONE_NUMBER, `🚨 *ESCALATION REQUIRED* 🚨\n\nClient Phone: +${from}\nReason: ${args.reason}\n\n*The AI has paused itself for this user. Please take over the chat manually via the WhatsApp app within 24 hours.*`);
           }
           sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "paused_by_human_handoff" } } }] });
+          sessions[from].push({ role: "model", parts: [{ text: "Understood. Handoff completed." }] });
           return;
         }
 
@@ -857,10 +858,12 @@ app.post('/webhook', async (req, res) => {
               }, 2 * 60 * 60 * 1000); // 2 hours
 
               sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "link_generated_and_sent", is_payment_complete: false, system_note: "The system has sent the payment link to the user. DO NOT say the payment is complete. Wait for the user to pay." } } }] });
+              sessions[from].push({ role: "model", parts: [{ text: "I have successfully generated and sent the payment link to the user. I am now waiting for their confirmation." }] });
             } catch (e) {
               console.error("Razorpay Error:", e);
               await sendTextMessage(from, "Sorry, there was an error generating the secure payment link. Please try again later.");
               sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
+              sessions[from].push({ role: "model", parts: [{ text: "Understood, there was an error." }] });
             }
           }
           return; 
