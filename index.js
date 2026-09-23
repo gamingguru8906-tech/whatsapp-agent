@@ -14,7 +14,7 @@ dns.lookup = function(hostname, options, callback) {
 const express = require('express');
 const axios = require('axios');
 const vm = require('vm');
-const { Groq, toFile } = require('groq-sdk');
+const { GoogleGenerativeAI, SchemaType } = require('@google/generative-ai');
 const Razorpay = require('razorpay');
 const { google } = require('googleapis');
 const { Pool } = require('pg');
@@ -112,47 +112,43 @@ async function updateUserStatus(phone, status) {
   }
 }
 
-const groq = new Groq({ apiKey: GROQ_API_KEY || 'dummy' });
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || 'dummy');
 
-const tools = [
-  {
-    type: "function",
-    function: {
+const tools = [{
+  functionDeclarations: [
+    {
       name: "create_booking_payment",
       description: "Generates a payment link to book a specific service.",
       parameters: {
-        type: "object",
+        type: SchemaType.OBJECT,
         properties: {
-          customer_name: { type: "string", description: "Full name" },
-          email: { type: "string", description: "Email address for calendar invite and receipt" },
-          gender: { type: "string", description: "Gender of the customer" },
-          dob: { type: "string", description: "Date of birth" },
-          tob: { type: "string", description: "Time of birth" },
-          pob: { type: "string", description: "Place of birth" },
-          service_name: { type: "string", description: "Name of the service to book" },
-          price: { type: "number", description: "The base price of the service in INR" },
-          discount_percentage: { type: "number", description: "Discount percentage to apply (0 to 5)" },
-          customer_pain_points_summary: { type: "string", description: "A 2-3 sentence summary of the user's emotional state and core problem." }
+          customer_name: { type: SchemaType.STRING, description: "Full name" },
+          email: { type: SchemaType.STRING, description: "Email address for calendar invite and receipt" },
+          gender: { type: SchemaType.STRING, description: "Gender of the customer" },
+          dob: { type: SchemaType.STRING, description: "Date of birth" },
+          tob: { type: SchemaType.STRING, description: "Time of birth" },
+          pob: { type: SchemaType.STRING, description: "Place of birth" },
+          service_name: { type: SchemaType.STRING, description: "Name of the service to book" },
+          price: { type: SchemaType.NUMBER, description: "The base price of the service in INR" },
+          discount_percentage: { type: SchemaType.NUMBER, description: "Discount percentage to apply (0 to 5)" },
+          customer_pain_points_summary: { type: SchemaType.STRING, description: "A 2-3 sentence summary of the user's emotional state and core problem." }
         },
         required: ["customer_name", "email", "gender", "dob", "tob", "pob", "service_name", "price", "discount_percentage", "customer_pain_points_summary"]
       }
-    }
-  },
-  {
-    type: "function",
-    function: {
+    },
+    {
       name: "request_human_handoff",
       description: "Triggers an alert to Shashank to take over the chat. Use this if the user asks to talk to the owner, gets extremely angry, suicidal, or asks complex spiritual questions.",
       parameters: {
-        type: "object",
+        type: SchemaType.OBJECT,
         properties: {
-          reason: { type: "string", description: "Reason for handoff" }
+          reason: { type: SchemaType.STRING, description: "Reason for handoff" }
         },
         required: ["reason"]
       }
     }
-  }
-];
+  ]
+}];
 
 function refreshSystemPrompt() {
   let servicesContext = "No live services loaded yet.";
@@ -553,26 +549,26 @@ app.post('/webhook', async (req, res) => {
       const mediaId = msg.audio.id;
       const mediaInfo = await downloadWhatsAppMedia(mediaId);
       if (mediaInfo) {
-        try {
-          console.log('🎙️ Transcribing audio with Groq Whisper...');
-          const file = await toFile(mediaInfo.buffer, 'audio.ogg');
-          const transcription = await groq.audio.transcriptions.create({
-            file: file,
-            model: "whisper-large-v3-turbo",
-          });
-          text = "(User sent an audio message. Respond naturally based on what they said): " + transcription.text;
-          console.log(`✅ Transcription: ${transcription.text}`);
-        } catch (err) {
-          console.error("Audio Transcription failed:", err.message);
-          text = "(User sent an audio message but I couldn't transcribe it.)";
-        }
+        const mime = msg.audio.mime_type || 'audio/ogg';
+        mediaData = {
+          inlineData: {
+            data: mediaInfo.buffer.toString("base64"),
+            mimeType: mime
+          }
+        };
+        text = "(User sent an audio message. Respond to their voice directly.)";
       }
     } else if (msg.type === 'image') {
       const mediaId = msg.image.id;
       const mediaInfo = await downloadWhatsAppMedia(mediaId);
       if (mediaInfo) {
         const mime = msg.image.mime_type || 'image/jpeg';
-        mediaData = `data:${mime};base64,${mediaInfo.buffer.toString('base64')}`;
+        mediaData = {
+          inlineData: {
+            data: mediaInfo.buffer.toString("base64"),
+            mimeType: mime
+          }
+        };
         text = msg.image.caption || "Look at this photo and describe/react to it naturally.";
       }
     } else if (msg.type === 'video') {
@@ -606,53 +602,49 @@ app.post('/webhook', async (req, res) => {
 
     if (text || mediaData) {
       console.log(`🧠 Processing AI for ${from} | text: "${text?.substring(0, 50)}" | hasMedia: ${!!mediaData}`);
-      if (!GROQ_API_KEY) {
-        console.log('⚠️ NO GROQ_API_KEY set! Sending menu instead.');
+      if (!GEMINI_API_KEY) {
+        console.log('⚠️ NO GEMINI_API_KEY set! Sending menu instead.');
         await sendInteractiveMenu(from);
         return;
       }
 
       if (!sessions[from]) {
         sessions[from] = [
-          { role: "system", content: systemPromptCache },
-          { role: "user", content: "Hello" },
-          { role: "assistant", content: dbUser.is_customer ? "Welcome back! It's so wonderful to hear from you again. How have things been since your last session?" : "Namaste! 🙏 Welcome to Veshannastro. How is your day going today?" }
+          { role: "user", parts: [{ text: "Hello" }] },
+          { role: "model", parts: [{ text: dbUser.is_customer ? "Welcome back! It's so wonderful to hear from you again. How have things been since your last session?" : "Namaste! 🙏 Welcome to Veshannastro. How is your day going today?" }] }
         ];
       }
-
-      // Update system prompt with fresh services
-      sessions[from][0].content = systemPromptCache;
 
       // Smart Timing & Memory Context
       const currentTimeIST = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
       const lastContactStr = dbUser.last_contact ? new Date(dbUser.last_contact).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : "First time";
       const memoryContext = `\n\n[SYSTEM CONTEXT (DO NOT MENTION TO USER): Current Time in India is ${currentTimeIST}. User's last contact was: ${lastContactStr}. User's known pain point: ${dbUser.pain_point || 'None yet'}. You are a representative of Veshannastro ("us/we"). Keep time of day in mind when greeting.]`;
       
-      const userMessage = { role: "user", content: [] };
+      const userParts = [];
       if (text) {
-        userMessage.content.push({ type: "text", text: text + memoryContext });
+        userParts.push({ text: text + memoryContext });
       } else {
-        userMessage.content.push({ type: "text", text: memoryContext });
+        userParts.push({ text: memoryContext });
       }
 
       if (mediaData) {
-        userMessage.content.push({ type: "image_url", image_url: { url: mediaData } });
+        userParts.push(mediaData);
       }
 
-      sessions[from].push(userMessage);
+      sessions[from].push({ role: "user", parts: userParts });
       
-      console.log(`🤖 Sending to Groq AI...`);
+      console.log(`🤖 Sending to Gemini AI...`);
       let result;
       const maxRetries = 5;
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          result = await groq.chat.completions.create({
-            model: mediaData ? "qwen/qwen3.8-27b" : "openai/gpt-oss-120b",
-            messages: sessions[from],
-            tools: tools,
-            tool_choice: "auto",
-            temperature: 0.7,
-            max_tokens: 500
+          const model = genAI.getGenerativeModel({ 
+            model: "gemini-1.5-flash",
+            systemInstruction: systemPromptCache,
+            tools: tools
+          });
+          result = await model.generateContent({
+            contents: sessions[from]
           });
           break;
         } catch (aiErr) {
@@ -666,16 +658,16 @@ app.post('/webhook', async (req, res) => {
           }
         }
       }
-      console.log(`✅ Groq responded successfully.`);
+      console.log(`✅ Gemini responded successfully.`);
       
-      const responseMessage = result.choices[0].message;
+      const responseMessage = result.response.candidates[0].content;
       sessions[from].push(responseMessage); // Add assistant response to history
       
       // Handle Function Calls
-      const toolCalls = responseMessage.tool_calls;
-      if (toolCalls && toolCalls.length > 0) {
-        const call = toolCalls[0].function;
-        const args = JSON.parse(call.arguments);
+      const functionCalls = result.response.functionCalls();
+      if (functionCalls && functionCalls.length > 0) {
+        const call = functionCalls[0];
+        const args = call.args;
         
         if (call.name === "request_human_handoff") {
           await upsertUser(from, dbUser.is_customer, true); // Pause AI
@@ -683,7 +675,7 @@ app.post('/webhook', async (req, res) => {
           if (ADMIN_PHONE_NUMBER) {
              await sendTextMessage(ADMIN_PHONE_NUMBER, `🚨 *ESCALATION REQUIRED* 🚨\n\nClient Phone: +${from}\nReason: ${args.reason}\n\n*The AI has paused itself for this user. Please take over the chat manually via the WhatsApp app within 24 hours.*`);
           }
-          sessions[from].push({ role: "tool", tool_call_id: toolCalls[0].id, name: call.name, content: JSON.stringify({ status: "paused" }) });
+          sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "paused" } } }] });
           return;
         }
 
@@ -750,11 +742,11 @@ app.post('/webhook', async (req, res) => {
                 }
               }, 2 * 60 * 60 * 1000); // 2 hours
 
-              sessions[from].push({ role: "tool", tool_call_id: toolCalls[0].id, name: call.name, content: JSON.stringify({ status: "success", payment_link: link }) });
+              sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "success", payment_link: link } } }] });
             } catch (e) {
               console.error("Razorpay Error:", e);
               await sendTextMessage(from, "Sorry, there was an error generating the secure payment link. Please try again later.");
-              sessions[from].push({ role: "tool", tool_call_id: toolCalls[0].id, name: call.name, content: JSON.stringify({ status: "error", error: e.message }) });
+              sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
             }
           }
           return; 
@@ -762,8 +754,8 @@ app.post('/webhook', async (req, res) => {
       }
 
       // Handle Normal Text Response
-      if (responseMessage.content) {
-        const responseText = responseMessage.content.trim();
+      const responseText = result.response.text();
+      if (responseText) {
         const cleanText = responseText.replace(/\[SEND_MENU\]/g, '').trim();
         if (cleanText) {
           await sendTextMessage(from, cleanText);
