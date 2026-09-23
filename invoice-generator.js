@@ -6,6 +6,8 @@ const PDFDocument = require('pdfkit');
  * @param {Object} data 
  * @param {string} data.invoiceNumber
  * @param {string} data.customerName
+ * @param {string} data.email
+ * @param {string} data.phone
  * @param {string} data.serviceName
  * @param {number} data.amountPaid
  * @param {string} data.date
@@ -56,6 +58,15 @@ function generateInvoice(data) {
       // Customer Details (Right aligned under Logo)
       doc.fontSize(10).fillColor(secondaryColor).text('Billed To', 400, 240);
       doc.fontSize(12).fillColor(primaryColor).text(data.customerName, 400, 255);
+      
+      let customerY = 270;
+      if (data.phone) {
+        doc.fontSize(10).fillColor(secondaryColor).text(data.phone, 400, customerY);
+        customerY += 15;
+      }
+      if (data.email) {
+        doc.fontSize(10).fillColor(secondaryColor).text(data.email, 400, customerY);
+      }
 
       // Table Header Background
       doc.roundedRect(50, 310, 495, 30, 5).fill(tableHeaderBg);
