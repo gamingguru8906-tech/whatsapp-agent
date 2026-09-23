@@ -4,7 +4,9 @@ const vm = require('vm');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Razorpay = require('razorpay');
 const { google } = require('googleapis');
-const { Pool } = require('@neondatabase/serverless');
+const { Pool, neonConfig } = require('@neondatabase/serverless');
+const ws = require('ws');
+neonConfig.webSocketConstructor = ws; // Required for Node.js environments
 const path = require('path');
 
 const app = express();

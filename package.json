@@ -19,7 +19,8 @@
     "googleapis": "^181.0.0",
     "node-cron": "^4.6.0",
     "pg": "^8.16.0",
-    "razorpay": "^2.9.8"
+    "razorpay": "^2.9.8",
+    "ws": "^8.21.3"
   },
   "engines": {
     "node": "20.x"
