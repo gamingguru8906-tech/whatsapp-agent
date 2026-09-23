@@ -46,6 +46,15 @@ let liveData = [];
 let systemPromptCache = "";
 const sessions = {};
 const pendingPayments = {}; // Holds timeouts for Abandoned Cart
+const processedMessageIds = new Map(); // msgId -> timestamp to prevent duplicate processing
+
+// Clean up processedMessageIds every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, time] of processedMessageIds.entries()) {
+    if (now - time > 10 * 60 * 1000) processedMessageIds.delete(id);
+  }
+}, 5 * 60 * 1000);
 
 
 
@@ -492,6 +501,16 @@ app.post('/webhook', async (req, res) => {
 
     const msg  = messages[0];
     const from = msg.from;
+
+    // Deduplicate incoming messages from Meta retries
+    if (msg.id) {
+      if (processedMessageIds.has(msg.id)) {
+        console.log(`🔁 Duplicate message ${msg.id} ignored.`);
+        return;
+      }
+      processedMessageIds.set(msg.id, Date.now());
+    }
+
     console.log(`📩 MESSAGE RECEIVED from ${from} | type: ${msg.type}`);
     
     // CRM Check & Lead Analytics
@@ -662,36 +681,87 @@ app.post('/webhook', async (req, res) => {
       }
 
       sessions[from].push({ role: "user", parts: userParts });
-      
-      console.log(`🤖 Sending to Gemini AI...`);
-      let result;
-      const maxRetries = 5;
-      for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-          const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-pro-latest",
-            systemInstruction: systemPromptCache,
-            tools: tools,
-            generationConfig: {
-              temperature: 0.5 // Lower temperature to keep her highly grounded, focused, and realistic.
+
+      // Prune session history to prevent RAM exhaustion and context bloat on Render
+      if (sessions[from].length > 22) {
+        const welcome = sessions[from].slice(0, 2);
+        const recent = sessions[from].slice(-18);
+        sessions[from] = [...welcome, ...recent];
+      }
+
+      // Sanitize old media payloads in earlier history so RAM stays low
+      for (let i = 0; i < sessions[from].length - 2; i++) {
+        const turn = sessions[from][i];
+        if (turn.parts && Array.isArray(turn.parts)) {
+          for (let p = 0; p < turn.parts.length; p++) {
+            if (turn.parts[p]?.inlineData) {
+              turn.parts[p] = { text: "[Prior image/audio reviewed]" };
             }
-          });
-          result = await model.generateContent({
-            contents: sessions[from]
-          });
-          break;
-        } catch (aiErr) {
-          const isRetryable = aiErr.message?.includes('503') || aiErr.message?.includes('429') || aiErr.message?.includes('overloaded') || aiErr.status === 429;
-          if (isRetryable && attempt < maxRetries) {
-            const delay = attempt * 3000; // 3s, 6s, 9s, 12s
-            console.log(`⚠️ Attempt ${attempt} failed (${aiErr.message?.substring(0, 80)}), retrying in ${delay/1000}s...`);
-            await new Promise(r => setTimeout(r, delay));
-          } else {
-            throw aiErr;
           }
         }
       }
-      console.log(`✅ Gemini responded successfully.`);
+
+      // Prioritized candidate models for high resilience:
+      // 1. Configured custom model (via GEMINI_MODEL env var) or gemini-1.5-pro-latest
+      // 2. gemini-1.5-pro
+      // 3. gemini-1.5-flash-latest
+      // 4. gemini-2.0-flash
+      const candidateModels = [
+        process.env.GEMINI_MODEL || "gemini-1.5-pro-latest",
+        "gemini-1.5-pro",
+        "gemini-1.5-flash-latest",
+        "gemini-2.0-flash"
+      ];
+      const uniqueModels = [...new Set(candidateModels)];
+
+      let result;
+      let lastAiError = null;
+
+      for (const modelName of uniqueModels) {
+        let modelSucceeded = false;
+        const maxRetries = 2;
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            console.log(`🤖 Invoking Gemini model: ${modelName} (attempt ${attempt})...`);
+            const model = genAI.getGenerativeModel({ 
+              model: modelName,
+              systemInstruction: systemPromptCache,
+              tools: tools,
+              generationConfig: {
+                temperature: 0.5 // Grounded, focused, realistic tone
+              }
+            });
+            result = await model.generateContent({
+              contents: sessions[from]
+            });
+            modelSucceeded = true;
+            console.log(`✅ Gemini (${modelName}) responded successfully.`);
+            break;
+          } catch (aiErr) {
+            lastAiError = aiErr;
+            const is404 = aiErr.message?.includes('404') || aiErr.status === 404;
+            const isRetryable = aiErr.message?.includes('503') || aiErr.message?.includes('429') || aiErr.message?.includes('overloaded') || aiErr.status === 429;
+            
+            if (is404) {
+              console.log(`⚠️ Model ${modelName} returned 404 (Not Found). Falling back to next candidate model...`);
+              break; // Skip directly to next model
+            }
+            if (isRetryable && attempt < maxRetries) {
+              const delay = attempt * 2000;
+              console.log(`⚠️ Model ${modelName} attempt ${attempt} failed (${aiErr.message?.substring(0, 80)}), retrying in ${delay/1000}s...`);
+              await new Promise(r => setTimeout(r, delay));
+            } else {
+              console.log(`⚠️ Model ${modelName} failed (${aiErr.message?.substring(0, 80)}). Trying next candidate model...`);
+              break;
+            }
+          }
+        }
+        if (modelSucceeded) break;
+      }
+
+      if (!result) {
+        throw new Error(`All candidate Gemini models failed. Last error: ${lastAiError?.message || 'Unknown'}`);
+      }
       
       const responseMessage = result.response.candidates[0].content;
       sessions[from].push(responseMessage); // Add assistant response to history
@@ -717,10 +787,20 @@ app.post('/webhook', async (req, res) => {
             await sendTextMessage(from, "Sorry, the direct payment system is currently being configured. Please book via our website: https://veshannastro.co.in");
           } else {
             let baseAmount = parseFloat(args.price.toString().replace(/[^0-9.]/g, ''));
+            if (isNaN(baseAmount) || baseAmount <= 0) baseAmount = 1100;
             let discount = args.discount_percentage || 0;
             if (discount > 5) discount = 5; // Enforce max 5%
             
-            let finalAmount = 1; // HARDCODED FOR TESTING
+            let calculatedAmount = baseAmount;
+            if (discount > 0 && !dbUser.is_customer) {
+              calculatedAmount = Math.round(baseAmount * (1 - (discount / 100)));
+            }
+
+            // Testing vs Live toggle:
+            // LIVE_PAYMENTS="true" env var will charge the real calculated price.
+            // Otherwise, defaults to ₹1 for safe end-to-end testing with friends.
+            const isLive = process.env.LIVE_PAYMENTS === 'true';
+            let finalAmount = isLive ? calculatedAmount : 1;
 
             const amountPaise = Math.round(finalAmount * 100);
 
@@ -730,21 +810,21 @@ app.post('/webhook', async (req, res) => {
                 currency: "INR",
                 accept_partial: false,
                 expire_by: Math.floor(Date.now() / 1000) + (12 * 60 * 60), // Expires in 12 hours
-                description: args.service_name.substring(0, 2048),
+                description: String(args.service_name || 'Astrology Consultation').substring(0, 2048),
                 reference_id: `wa_booking_${Date.now()}`,
                 notify: { sms: false, email: false },
                 notes: {
-                  customer_name: args.customer_name,
-                  email: args.email,
-                  gender: args.gender,
-                  dob: args.dob,
-                  tob: args.tob,
-                  pob: args.pob,
-                  service_name: args.service_name,
-                  price: finalAmount,
-                  phone: from,
-                  summary: args.customer_pain_points_summary.substring(0, 240),
-                  time_slot: args.preferred_time_slot || "Not specified"
+                  customer_name: String(args.customer_name || 'Seeker').substring(0, 40),
+                  email: String(args.email || '').substring(0, 60),
+                  gender: String(args.gender || '').substring(0, 20),
+                  dob: String(args.dob || '').substring(0, 30),
+                  tob: String(args.tob || '').substring(0, 30),
+                  pob: String(args.pob || '').substring(0, 50),
+                  service_name: String(args.service_name || 'Astrology Consultation').substring(0, 100),
+                  price: String(finalAmount),
+                  phone: String(from),
+                  summary: String(args.customer_pain_points_summary || '').substring(0, 240),
+                  time_slot: String(args.preferred_time_slot || "Not specified").substring(0, 80)
                 }
               });
 
@@ -801,11 +881,11 @@ app.post('/webhook', async (req, res) => {
     }
   } catch (err) {
     console.error('❌ CRITICAL ERROR in webhook processing:', err.message, err.stack);
-    // Try to send a fallback message so the user isn't left hanging
+    // Graceful, warm customer fallback (NEVER leak technical stack traces)
     try {
       const fallbackFrom = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
       if (fallbackFrom) {
-        await sendTextMessage(fallbackFrom, "Namaste! 🙏 I had a brief hiccup. Error: " + err.message);
+        await sendTextMessage(fallbackFrom, "Namaste! 🙏 I am currently reviewing your chart details with Shri Shashank ji. Please give me just a few moments, or feel free to type 'menu' to view our consultations.");
       }
     } catch (e) { /* ignore fallback failure */ }
   }
