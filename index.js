@@ -19,6 +19,8 @@ const Razorpay = require('razorpay');
 const { google } = require('googleapis');
 const { Pool } = require('pg');
 const path = require('path');
+const FormData = require('form-data');
+const { generateInvoice } = require('./invoice-generator');
 
 const app = express();
 app.use(express.json());
@@ -257,6 +259,48 @@ async function downloadWhatsAppMedia(mediaId) {
   }
 }
 
+// Helper to upload media to WhatsApp
+async function uploadWhatsAppMedia(buffer, filename, mimeType) {
+  try {
+    const formData = new FormData();
+    formData.append('file', buffer, { filename, contentType: mimeType });
+    formData.append('type', mimeType);
+    formData.append('messaging_product', 'whatsapp');
+
+    const res = await axios.post(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/media`, formData, {
+      headers: {
+        Authorization: `Bearer ${WA_TOKEN}`,
+        ...formData.getHeaders()
+      }
+    });
+    return res.data.id; // Returns the media ID
+  } catch (e) {
+    console.error("Media upload error:", e.response?.data || e.message);
+    return null;
+  }
+}
+
+// Send Document to WhatsApp
+async function sendWhatsAppDocument(to, mediaId, filename, caption = "") {
+  try {
+    await axios.post(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: to,
+      type: "document",
+      document: {
+        id: mediaId,
+        caption: caption,
+        filename: filename
+      }
+    }, {
+      headers: { Authorization: `Bearer ${WA_TOKEN}` }
+    });
+  } catch(e) {
+    console.error("WhatsApp Document Send Error:", e.response?.data || e.message);
+  }
+}
+
 app.get('/webhook', (req, res) => {
   const mode      = req.query['hub.mode'];
   const token     = req.query['hub.verify_token'];
@@ -362,10 +406,27 @@ app.post('/razorpay-webhook', async (req, res) => {
         }).catch(e => console.error("Sheets/Email Logging Error:", e.message));
       }
 
-      // 5. Send WhatsApp Confirmation
+      // 5. Generate PDF Invoice and Send WhatsApp Confirmation
       if (phone) {
         const msg = `🎉 *Payment Successful!* 🎉\n\nThank you, ${customerName}. We have received your payment of ₹${price} for the *${serviceName}*.\n\nYour consultation details have been safely logged into our system. We have tentatively reserved a slot for you, and Shashank Agrawal will contact you shortly to confirm the exact time that works best for you.\n\nHere is your Google Meet link for the session:\n👉 ${meetLink}\n\n🙏 Om Namah Shivaya!`;
         await sendTextMessage(phone, msg);
+
+        try {
+          const invoiceBuffer = await generateInvoice({
+            invoiceNumber: pl.id.replace('plink_', '').toUpperCase(),
+            customerName: customerName,
+            serviceName: serviceName,
+            amountPaid: price,
+            date: new Date().toLocaleDateString('en-IN')
+          });
+
+          const mediaId = await uploadWhatsAppMedia(invoiceBuffer, `Invoice_${customerName}.pdf`, 'application/pdf');
+          if (mediaId) {
+            await sendWhatsAppDocument(phone, mediaId, `Invoice_${customerName}.pdf`, "Here is your official invoice for the consultation.");
+          }
+        } catch (invoiceErr) {
+          console.error("Invoice Generation/Sending Error:", invoiceErr.message);
+        }
 
         // 6. Referral Ask (after 30 seconds so it feels natural)
         setTimeout(async () => {
