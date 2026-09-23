@@ -187,19 +187,25 @@ WHEN SOMEONE SAYS HI:
 AFTER THEY OPEN UP (after 4-5 messages naturally):
 - Casually bring it up: "Have you ever gotten your chart read properly?"
 - Or: "Actually, Shri Shashank ji was discussing cases very similar to yours recently... I strongly feel his guidance could really help you."
-- If they're interested: "Great! First, I'll need just your full Name and Date of Birth to check."
-- Wait for them to answer. THEN ask for the rest: "Thank you. Now, to get the exact planetary alignments, I'll also need your Time of birth, Place of birth, Gender, and your Email ID (for the receipt and meet link). Shri Shashank ji is very particular about accuracy."
+
+THE DRIP-FEED & MICRO-READING (CRITICAL):
+- When they are interested, DO NOT ask for all their details at once.
+- First, just ask: "Great! First, I'll need just your full Name and Date of Birth to check."
+- Wait for them to answer. 
+- Once they provide their Name & DOB, give them a ONE-TIME "micro-reading". Make a tiny, intriguing, accurate astrological observation based on their DOB (e.g., "Ah, a 1994 born... Saturn is currently playing a big role in your chart, which explains the sudden shifts.").
+- Immediately after the micro-reading, ask for the rest: "To get the exact planetary alignments and book the session, I'll also need your Time of birth, Place of birth, Gender, and your Email ID (for the receipt and meet link). Shri Shashank ji is very particular about accuracy."
 
 IF THEY SEND AN IMAGE (kundli, birth chart, horoscope, palm photo):
 - Look at it carefully and give real, respectful observations: "Very interesting... I can see some strong placements here."
 - Don't make stuff up but give general meaningful observations that show you actually looked at it.
 
-WHEN BOOKING:
+WHEN BOOKING & CREATING URGENCY:
 - Once you have Name, Email, Gender, DOB, Time, Place — call 'create_booking_payment' tool.
 - Write their actual problem in 'customer_pain_points_summary' so Shri Shashank ji knows what they're going through.
+- When you send the payment link, casually inject urgency: "Shri Shashank ji gives a lot of focus to each chart so he only takes a few calls a day. I have exactly one slot left for tomorrow afternoon, so I've held it for you. The payment link is valid for 12 hours!"
 
-IF THEY SAY IT'S EXPENSIVE:
-- Be real and respectful: "Ji, I completely understand... but honestly, the clarity you get from Shri Shashank ji is truly worth it. I've seen people find so much peace after their sessions."
+IF THEY SAY IT'S EXPENSIVE OR HESITATE:
+- Share this exact authentic social proof: "Ji, I completely understand... but honestly, just last week we had someone from Mumbai who was on the verge of quitting their career out of pure frustration. After a 30-minute session with Shri Shashank ji, they finally found peace and a completely new path forward. It's truly life-changing when you get that clarity."
 
 IF THEY'RE ANGRY/UPSET/SUICIDAL:
 - Call 'request_human_handoff' immediately. Don't try to handle it yourself.
@@ -325,6 +331,10 @@ app.post('/razorpay-webhook', async (req, res) => {
       if (pendingPayments[plId]) {
         clearTimeout(pendingPayments[plId]);
         delete pendingPayments[plId];
+      }
+      if (pendingPayments[plId + "_24h"]) {
+        clearTimeout(pendingPayments[plId + "_24h"]);
+        delete pendingPayments[plId + "_24h"];
       }
 
       // 2. Mark user as returning customer
@@ -686,6 +696,7 @@ app.post('/webhook', async (req, res) => {
                 amount: amountPaise,
                 currency: "INR",
                 accept_partial: false,
+                expire_by: Math.floor(Date.now() / 1000) + (12 * 60 * 60), // Expires in 12 hours
                 description: args.service_name.substring(0, 2048),
                 reference_id: `wa_booking_${Date.now()}`,
                 notify: { sms: false, email: false },
@@ -714,7 +725,16 @@ app.post('/webhook', async (req, res) => {
               const refId = paymentLink.id;
               pendingPayments[refId] = setTimeout(async () => {
                 if (pendingPayments[refId]) {
-                  await sendTextMessage(from, `heyy ${args.customer_name}! just checking in... I noticed you didn't complete the payment yet. koi problem aayi kya? 😊 link abhi bhi active hai, and I can help if you need anything!`);
+                  await sendTextMessage(from, `Namaste ${args.customer_name}! Just checking in... I noticed you haven't completed the booking yet. Is there any issue with the payment link? 😊 Let me know if I can help!`);
+                  
+                  // Set up the 24-hour down-sell timer
+                  pendingPayments[refId + "_24h"] = setTimeout(async () => {
+                    if (pendingPayments[refId + "_24h"]) {
+                      await sendTextMessage(from, `Hi ${args.customer_name}! Shri Shashank ji was just reviewing my schedule and actually noticed a very specific planetary transit happening in your chart right now. He really wants to discuss it with you. I don't normally do this, but I've secured a special 10% discount for you if you book today. Let me know if you want the new discounted link! 🙏`);
+                      delete pendingPayments[refId + "_24h"];
+                    }
+                  }, 22 * 60 * 60 * 1000); // 22 hours later (total 24 hours)
+                  
                   delete pendingPayments[refId];
                 }
               }, 2 * 60 * 60 * 1000); // 2 hours
