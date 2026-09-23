@@ -717,16 +717,16 @@ app.post('/webhook', async (req, res) => {
         }
       }
 
-      // Prioritized candidate models for 100% 24/7 resilience:
-      // Includes production-proven GA models (gemini-1.5-flash) so 404 is impossible.
+      // Prioritized candidate models: gemini-3.8-flash is primary #1 as requested,
+      // with seamless fallbacks so the server never crashes.
       const candidateModels = [
-        process.env.GEMINI_MODEL,
-        "gemini-1.5-flash",
-        "gemini-2.5-flash",
-        "gemini-1.5-pro",
-        "gemini-2.0-flash",
+        process.env.GEMINI_MODEL || "gemini-3.8-flash",
         "gemini-3.8-flash",
-        "gemini-3.6-flash"
+        "gemini-3.6-flash",
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-1.5-flash",
+        "gemini-1.5-pro"
       ].filter(Boolean);
       const uniqueModels = [...new Set(candidateModels)];
 
