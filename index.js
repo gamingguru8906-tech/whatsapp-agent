@@ -122,6 +122,8 @@ const tools = [
         type: "object",
         properties: {
           customer_name: { type: "string", description: "Full name" },
+          email: { type: "string", description: "Email address for calendar invite and receipt" },
+          gender: { type: "string", description: "Gender of the customer" },
           dob: { type: "string", description: "Date of birth" },
           tob: { type: "string", description: "Time of birth" },
           pob: { type: "string", description: "Place of birth" },
@@ -130,7 +132,7 @@ const tools = [
           discount_percentage: { type: "number", description: "Discount percentage to apply (0 to 5)" },
           customer_pain_points_summary: { type: "string", description: "A 2-3 sentence summary of the user's emotional state and core problem." }
         },
-        required: ["customer_name", "dob", "tob", "pob", "service_name", "price", "discount_percentage", "customer_pain_points_summary"]
+        required: ["customer_name", "email", "gender", "dob", "tob", "pob", "service_name", "price", "discount_percentage", "customer_pain_points_summary"]
       }
     }
   },
@@ -183,14 +185,14 @@ WHEN SOMEONE SAYS HI:
 AFTER THEY OPEN UP (after 4-5 messages naturally):
 - Casually bring it up: "btw have you ever gotten your chart read? like properly?"
 - Or: "you know what, Shashank was literally talking about cases like yours yesterday... I feel like he could really help"
-- If they're interested: "nice! okay so I'll need a few things — your DOB, birth time and birth place. Shashank is very particular about accuracy haha"
+- If they're interested: "nice! okay so I'll need a few things to get started — your full Name, Email ID, Gender, DOB, birth time and birth place. Shashank is very particular about accuracy haha"
 
 IF THEY SEND AN IMAGE (kundli, birth chart, horoscope, palm photo):
 - Look at it carefully and give real observations: "oh interesting... I can see some strong placements here"
 - Don't make stuff up but give general meaningful observations that show you actually looked at it
 
 WHEN BOOKING:
-- Once you have Name, DOB, Time, Place — call 'create_booking_payment' tool
+- Once you have Name, Email, Gender, DOB, Time, Place — call 'create_booking_payment' tool
 - Write their actual problem in 'customer_pain_points_summary' so Shashank knows what they're going through
 
 IF THEY SAY IT'S EXPENSIVE:
@@ -292,23 +294,7 @@ app.post('/razorpay-webhook', async (req, res) => {
         await updateUserStatus(phone, 'converted');
       }
 
-      // 3. Log to Google Sheets
-      if (GOOGLE_APPS_SCRIPT_URL) {
-        await axios.post(GOOGLE_APPS_SCRIPT_URL, {
-          target: "booking",
-          name: customerName,
-          phone: phone,
-          dob: notes.dob || '',
-          birthTime: notes.tob || '',
-          birthPlace: notes.pob || '',
-          service: serviceName,
-          amountPaid: price,
-          paymentStatus: "Paid",
-          payment_id: event.payload?.payment?.entity?.id || pl.id,
-          source: "WhatsApp Direct Booking",
-          query: notes.summary || ''
-        }).catch(e => console.error("Sheets Logging Error:", e.message));
-      }
+      // 3. (Moved to after Calendar generation)
 
       // 4. Add to Google Calendar
       let meetLink = "We will share the video link shortly.";
@@ -348,6 +334,32 @@ app.post('/razorpay-webhook', async (req, res) => {
         } catch (e) {
           console.error("Calendar Error:", e.message);
         }
+      }
+
+      // 4. Log to Google Sheets & Trigger Automated Email
+      if (GOOGLE_APPS_SCRIPT_URL) {
+        const eventTime = new Date();
+        eventTime.setDate(eventTime.getDate() + 1);
+        eventTime.setHours(11, 0, 0, 0);
+
+        await axios.post(GOOGLE_APPS_SCRIPT_URL, {
+          target: "booking",
+          name: customerName,
+          email: notes.email || '',
+          gender: notes.gender || '',
+          phone: phone,
+          dob: notes.dob || '',
+          birthTime: notes.tob || '',
+          birthPlace: notes.pob || '',
+          service: serviceName,
+          amountPaid: price,
+          paymentStatus: "Paid",
+          payment_id: event.payload?.payment?.entity?.id || pl.id,
+          source: "WhatsApp Direct Booking",
+          query: notes.summary || '',
+          meetLink: meetLink,
+          eventTime: eventTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' })
+        }).catch(e => console.error("Sheets/Email Logging Error:", e.message));
       }
 
       // 5. Send WhatsApp Confirmation
@@ -623,6 +635,8 @@ app.post('/webhook', async (req, res) => {
                 notify: { sms: false, email: false },
                 notes: {
                   customer_name: args.customer_name,
+                  email: args.email,
+                  gender: args.gender,
                   dob: args.dob,
                   tob: args.tob,
                   pob: args.pob,
