@@ -131,9 +131,10 @@ const tools = [{
           service_name: { type: SchemaType.STRING, description: "Name of the service to book" },
           price: { type: SchemaType.NUMBER, description: "The base price of the service in INR" },
           discount_percentage: { type: SchemaType.NUMBER, description: "Discount percentage to apply (0 to 5)" },
-          customer_pain_points_summary: { type: SchemaType.STRING, description: "A 2-3 sentence summary of the user's emotional state and core problem." }
+          customer_pain_points_summary: { type: SchemaType.STRING, description: "A 2-3 sentence summary of the user's emotional state and core problem." },
+          preferred_time_slot: { type: SchemaType.STRING, description: "The specific date and time slot agreed upon with the customer (e.g. 'Tomorrow at 2 PM')" }
         },
-        required: ["customer_name", "email", "gender", "dob", "tob", "pob", "service_name", "price", "discount_percentage", "customer_pain_points_summary"]
+        required: ["customer_name", "email", "gender", "dob", "tob", "pob", "service_name", "price", "discount_percentage", "customer_pain_points_summary", "preferred_time_slot"]
       }
     },
     {
@@ -200,10 +201,16 @@ IF THEY SEND AN IMAGE (kundli, birth chart, horoscope, palm photo):
 - Look at it carefully and give real, respectful observations: "Very interesting... I can see some strong placements here."
 - Don't make stuff up but give general meaningful observations that show you actually looked at it.
 
+NEGOTIATE THE TIME SLOT (CRITICAL FOR TRUST):
+- NEVER generate a payment link until you have explicitly agreed on a time slot.
+- After they give you all their details, say: "Thank you! I have checked Shri Shashank ji's schedule. He has a slot available tomorrow at [suggest a reasonable time, e.g. 2 PM or 5 PM]. Does that time work for you, or do you prefer another time?"
+- YOU MUST WAIT FOR THEIR CONFIRMATION.
+- If they ask for a different time, check and agree on it. ONLY proceed to payment once the time slot is confirmed by them.
+
 WHEN BOOKING & CREATING URGENCY:
-- Once you have Name, Email, Gender, DOB, Time, Place — call 'create_booking_payment' tool.
+- Once you have Name, Email, Gender, DOB, Time, Place AND you have agreed on a preferred time slot — call 'create_booking_payment' tool.
 - Write their actual problem in 'customer_pain_points_summary' so Shri Shashank ji knows what they're going through.
-- When you send the payment link, casually inject urgency: "Shri Shashank ji gives a lot of focus to each chart so he only takes a few calls a day. I have exactly one slot left for tomorrow afternoon, so I've held it for you. The payment link is valid for 12 hours!"
+- When you send the payment link, casually inject urgency: "I have securely held the ${preferred_time_slot} slot for you. The payment link is valid for 12 hours!"
 
 IF THEY SAY IT'S EXPENSIVE OR HESITATE (THE TAKEAWAY):
 - Use the "Takeaway" (Reverse Psychology) mixed with social proof, warmly but firmly: "Ji, that is completely okay. Shri Shashank ji’s consultations are really only for people who are deeply ready to face the truth and follow the remedies to change their path. If you feel this isn't the right time for you, I completely understand. But honestly, just last week we had someone from Mumbai who was on the verge of quitting their career out of pure frustration. After a 30-minute session with him, they finally found peace and a completely new path forward. Let me know if you change your mind later. 🙏"
@@ -369,7 +376,7 @@ app.post('/razorpay-webhook', async (req, res) => {
             conferenceDataVersion: 1,
             requestBody: {
               summary: `${serviceName} - ${customerName}`,
-              description: `WhatsApp Booking\nName: ${customerName}\nDOB: ${notes.dob}\nTime: ${notes.tob}\nPlace: ${notes.pob}\nPhone: ${phone}`,
+              description: `WhatsApp Booking\nName: ${customerName}\nDOB: ${notes.dob}\nTime: ${notes.tob}\nPlace: ${notes.pob}\nPhone: ${phone}\nAgreed Slot: ${notes.time_slot || 'N/A'}`,
               start: { dateTime: tomorrow.toISOString() },
               end: { dateTime: new Date(tomorrow.getTime() + 60*60*1000).toISOString() },
               conferenceData: {
@@ -408,13 +415,14 @@ app.post('/razorpay-webhook', async (req, res) => {
           source: "WhatsApp Direct Booking",
           query: notes.summary || '',
           meetLink: meetLink,
-          eventTime: eventTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' })
+          eventTime: notes.time_slot || eventTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' })
         }).catch(e => console.error("Sheets/Email Logging Error:", e.message));
       }
 
       // 5. Generate PDF Invoice and Send WhatsApp Confirmation
       if (phone) {
-        const msg = `🎉 *Payment Successful!* 🎉\n\nThank you, ${customerName}. We have received your payment of ₹${price} for the *${serviceName}*.\n\nYour consultation details have been safely logged into our system. We have tentatively reserved a slot for you, and Shashank Agrawal will contact you shortly to confirm the exact time that works best for you.\n\nHere is your Google Meet link for the session:\n👉 ${meetLink}\n\n🙏 Om Namah Shivaya!`;
+        const agreedSlotMsg = notes.time_slot && notes.time_slot !== "Not specified" ? `\n\nYour session is locked in for: *${notes.time_slot}*.` : `\n\nWe have tentatively reserved a slot for you, and Shashank Agrawal will contact you shortly to confirm the exact time that works best for you.`;
+        const msg = `🎉 *Payment Successful!* 🎉\n\nThank you, ${customerName}. We have received your payment of ₹${price} for the *${serviceName}*.\n\nYour consultation details have been safely logged into our system.${agreedSlotMsg}\n\nHere is your Google Meet link for the session:\n👉 ${meetLink}\n\n🙏 Om Namah Shivaya!`;
         await sendTextMessage(phone, msg);
 
         try {
@@ -713,7 +721,8 @@ app.post('/webhook', async (req, res) => {
                   service_name: args.service_name,
                   price: finalAmount,
                   phone: from,
-                  summary: args.customer_pain_points_summary.substring(0, 240)
+                  summary: args.customer_pain_points_summary.substring(0, 240),
+                  time_slot: args.preferred_time_slot || "Not specified"
                 }
               });
 
