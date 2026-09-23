@@ -669,7 +669,7 @@ app.post('/webhook', async (req, res) => {
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           const model = genAI.getGenerativeModel({ 
-            model: "gemini-2.0-flash-exp",
+            model: "gemini-1.5-pro-latest",
             systemInstruction: systemPromptCache,
             tools: tools,
             generationConfig: {
