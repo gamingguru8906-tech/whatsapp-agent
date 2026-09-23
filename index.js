@@ -546,16 +546,16 @@ app.post('/webhook', async (req, res) => {
       
       console.log(`🤖 Sending to Gemini AI...`);
       let result;
-      const maxRetries = 3;
+      const maxRetries = 5;
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           result = await chat.sendMessage(messageParts);
           break;
         } catch (aiErr) {
-          const isRetryable = aiErr.message.includes('503') || aiErr.message.includes('429') || aiErr.message.includes('overloaded');
+          const isRetryable = aiErr.message?.includes('503') || aiErr.message?.includes('429') || aiErr.message?.includes('overloaded');
           if (isRetryable && attempt < maxRetries) {
-            const delay = attempt * 2000; // 2s, 4s, 6s
-            console.log(`⚠️ Attempt ${attempt} failed (${aiErr.message.substring(0, 80)}), retrying in ${delay/1000}s...`);
+            const delay = attempt * 3000; // 3s, 6s, 9s, 12s
+            console.log(`⚠️ Attempt ${attempt} failed (${aiErr.message?.substring(0, 80)}), retrying in ${delay/1000}s...`);
             await new Promise(r => setTimeout(r, delay));
           } else {
             throw aiErr;
