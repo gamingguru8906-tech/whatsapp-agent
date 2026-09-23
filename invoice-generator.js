@@ -36,8 +36,7 @@ function generateInvoice(data) {
       doc.fontSize(12).fillColor(secondaryColor).text(`#${data.invoiceNumber}`, 50, 140);
       
       // "Logo" representation in top right
-      doc.roundedRect(480, 105, 50, 50, 10).fill(accentColor);
-      doc.fillColor('white').fontSize(36).text('V', 492, 115, { bold: true });
+      doc.fillColor(primaryColor).fontSize(16).text('VESHANNASTRO', 380, 115, { bold: true, align: 'right' });
 
       // Balance Due (Paid)
       doc.fontSize(10).fillColor(primaryColor).text('Balance Due', 50, 180);
