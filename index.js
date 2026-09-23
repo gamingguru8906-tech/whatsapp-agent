@@ -481,9 +481,11 @@ app.post('/razorpay-webhook', async (req, res) => {
             date: new Date().toLocaleDateString('en-IN')
           });
 
-          const mediaId = await uploadWhatsAppMedia(invoiceBuffer, `Invoice_${customerName}.pdf`, 'application/pdf');
+          const safeName = (customerName || 'Customer').replace(/[^a-zA-Z0-9_-]/g, '_');
+          const fileName = `Invoice_${safeName}.pdf`;
+          const mediaId = await uploadWhatsAppMedia(invoiceBuffer, fileName, 'application/pdf');
           if (mediaId) {
-            await sendWhatsAppDocument(phone, mediaId, `Invoice_${customerName}.pdf`, "Here is your official invoice for the consultation.");
+            await sendWhatsAppDocument(phone, mediaId, fileName, "Here is your official invoice for the consultation.");
           }
         } catch (invoiceErr) {
           console.error("Invoice Generation/Sending Error:", invoiceErr.message);
