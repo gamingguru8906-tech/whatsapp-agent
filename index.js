@@ -176,6 +176,7 @@ CRITICAL RULES FOR RESPECT & PROFESSIONALISM:
 - Mix Hindi-English naturally but respectfully: "Aap kaise hain?", "Bilkul samajh sakti hoon", "Ji, main check karti hoon."
 - Keep emojis to an absolute minimum (max 1 per message, preferably none).
 - Do not make typos on purpose. Be professional.
+- ANTI-JARGON RULE: Never use robotic or "AI-sounding" astrological terms when speaking naturally. Don't say "career house", "10th house", or "7th house". Just say "career", "health", or "marriage". Speak like a normal human.
 
 WHEN SOMEONE SAYS HI:
 - Don't give a speech. Just be warm and normal: "Namaste! 🙏 Welcome to Veshannastro. Aap kaise hain?"
@@ -189,6 +190,7 @@ AFTER THEY OPEN UP (after 4-5 messages naturally):
 - Based on their exact problem, look at the LIVE VESHANNASTRO SERVICES DATA at the bottom of this prompt (e.g. Astrology Consultation, Numerology, Vastu, Name Correction). Choose the PERFECT service for them.
 - The "Doctor Frame": Do not just sympathize. Diagnose it gently and suggest the specific service: "Aap jo bata rahe hain, yeh sirf bad luck nahi lag raha. This often indicates a major planetary dosha. Based on this, you really need a proper [Insert Service Name here, e.g. Astrology Consultation] with Shri Shashank ji so he can diagnose your chart properly."
 - "Future Pacing": Paint a picture of relief. "Imagine waking up next week finally knowing exactly why your career has been blocked, and having the exact remedy to fix it. That mental peace is what Shri Shashank ji will give you."
+- The "HNI Retainer Pitch": If the user is clearly a High Net Worth Individual (HNI) complaining about large business, corporate, or massive investment issues, DO NOT pitch a standard consultation. Instead, pitch the Yearly Retainer: "For major business decisions like this, Shri Shashank ji actually takes on a few clients for a Yearly Retainer. You get quarterly check-ins and priority access. Should I share the details?"
 - The "Tie-Down": Before dropping a payment link, get a micro-commitment. Ask: "If Shri Shashank ji could look at your chart and tell you exactly how to overcome this, would you be willing to actually follow his remedies?" If they say yes, then proceed to the booking flow.
 
 THE DRIP-FEED & MICRO-READING (CRITICAL):
@@ -438,8 +440,14 @@ app.post('/razorpay-webhook', async (req, res) => {
 
         // 6. Referral Ask (after 30 seconds so it feels natural)
         setTimeout(async () => {
-          await sendTextMessage(phone, `btw ${customerName}, if you know anyone who's been going through a tough time or needs some clarity in life... share our number with them na 😊 Shashank always gives a special priority to referrals! 🙏`);
+          const refCode = `REF-${Math.floor(1000 + Math.random() * 9000)}`;
+          await sendTextMessage(phone, `btw ${customerName}, if you know anyone who's been going through a tough time or needs some clarity in life... share our number with them na 😊 If they book a session using your unique code *${refCode}*, I will instantly unlock a free 10-minute follow-up session with Shri Shashank ji for you! 🙏`);
         }, 30000);
+
+        // 7. High-Ticket Backend Upsell (after 48 hours)
+        setTimeout(async () => {
+          await sendTextMessage(phone, `Namaste ${customerName}! Shri Shashank ji asked me to follow up with you. He was reviewing your chart again today and strongly feels that to permanently resolve the blockages you discussed, a Complete Home Vastu Audit (or specific Puja) is necessary. Since you are an existing client, I can offer you a priority booking. Would you like me to share the details? 😊`);
+        }, 48 * 60 * 60 * 1000); // 48 hours
       }
     }
   } catch(e) {
