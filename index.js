@@ -404,7 +404,7 @@ app.post('/webhook', async (req, res) => {
             mimeType: msg.image.mime_type || 'image/jpeg'
           }
         };
-        text = msg.image.caption || "(User sent an image. If it is a kundli, birth chart, horoscope, or palm photo, analyze it carefully and provide meaningful spiritual observations. If it is something else, acknowledge it warmly.)";
+        text = msg.image.caption || "(User sent a photo. Just look at what's in it — a person, food, pet, document, kundli, whatever — and respond casually like a real person would. Like if it's a cat say 'aww kitna cute hai 😍' or if it's food say 'yumm! ye kya bana rahe ho?'. Just be natural about it.)";
       }
     } else if (msg.type === 'video') {
       await sendTextMessage(from, "heyy thanks for sending the video! 😊 unfortunately I can't watch videos here — agar koi specific frame ya screenshot hai toh photo bhej do, I'll definitely look at it!");
