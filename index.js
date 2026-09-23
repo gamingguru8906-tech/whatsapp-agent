@@ -595,8 +595,8 @@ app.post('/webhook', async (req, res) => {
 
     if (text || mediaData) {
       console.log(`🧠 Processing AI for ${from} | text: "${text?.substring(0, 50)}" | hasMedia: ${!!mediaData}`);
-      if (!GEMINI_API_KEY) {
-        console.log('⚠️ NO GEMINI_API_KEY set! Sending menu instead.');
+      if (!GROQ_API_KEY) {
+        console.log('⚠️ NO GROQ_API_KEY set! Sending menu instead.');
         await sendInteractiveMenu(from);
         return;
       }
