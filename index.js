@@ -636,7 +636,7 @@ app.post('/webhook', async (req, res) => {
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           result = await groq.chat.completions.create({
-            model: mediaData ? "llama-3.2-90b-vision-preview" : "llama-3.3-70b-versatile",
+            model: mediaData ? "qwen-3.8-27b" : "gpt-oss-120b",
             messages: sessions[from],
             tools: tools,
             tool_choice: "auto",
