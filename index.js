@@ -33,17 +33,15 @@ const sessions = {};
 const pendingPayments = {}; // Holds timeouts for Abandoned Cart
 
 const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first'); // Force IPv4 globally for Render free tier
+
 // CRM Memory Setup — Persistent Cloud PostgreSQL (Neon)
 const DATABASE_URL = process.env.DATABASE_URL;
 let pool;
 if (DATABASE_URL) {
   pool = new Pool({
     connectionString: DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-    // Force IPv4 — Render free tier doesn't support IPv6 outbound
-    lookup: (hostname, options, callback) => {
-      dns.lookup(hostname, { family: 4 }, callback);
-    }
+    ssl: { rejectUnauthorized: false }
   });
   pool.query(`
     CREATE TABLE IF NOT EXISTS users (
