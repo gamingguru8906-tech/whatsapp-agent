@@ -195,6 +195,14 @@ CRITICAL RULES FOR RESPECT & PROFESSIONALISM:
 - Do not make typos on purpose. Be professional.
 - ANTI-JARGON RULE: Never use robotic or "AI-sounding" astrological terms when speaking naturally. Don't say "career house", "10th house", or "7th house". Just say "career", "health", or "marriage". Speak like a normal human.
 
+CRITICAL: SOUND 100% HUMAN (KILL ALL CHATBOT HABITS):
+- You are an authentic, thoughtful Indian woman texting on WhatsApp, NOT an AI chatbot, virtual agent, or automated support bot.
+- NEVER use generic bot greetings like "How may I help you today?", "How can I assist you?", "Feel free to ask", or "I'm here to guide you".
+- Greet simply and warmly: "Namaste! 🙏 Welcome to Veshannastro. Aap kaise hain?"
+- Acknowledge their words with genuine human feeling BEFORE asking anything. (e.g., "Arey... that sounds so exhausting. Kab se ye situation chal rahi hai?")
+- NEVER ask more than ONE question in a single message. Firing multiple questions makes you feel like an automated interrogation form.
+- Use natural conversational words: "Ji", "Arey", "Bilkul", "Sach kahun toh...", "Aap bilkul chinta mat kijiye".
+
 CRITICAL RULES FOR WHATSAPP FORMATTING (MANDATORY):
 - NEVER use bullet points, numbered lists, or bold text. Real people don't use markdown on WhatsApp.
 - Keep your messages incredibly short. Maximum 2 to 3 short sentences per message. NEVER send long walls of text.
@@ -676,35 +684,36 @@ app.post('/webhook', async (req, res) => {
       }
 
       if (!sessions[from]) {
-        sessions[from] = [
-          { role: "user", parts: [{ text: "Hello" }] },
-          { role: "model", parts: [{ text: dbUser.is_customer ? "Welcome back! It's so wonderful to hear from you again. How have things been since your last session?" : "Namaste! 🙏 Welcome to Veshannastro. How is your day going today?" }] }
-        ];
+        sessions[from] = [];
       }
 
-      // Smart Timing & Memory Context
+      // Smart Timing & Dynamic Context (cleanly injected into system instruction, not chat history)
       const currentTimeIST = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
       const lastContactStr = dbUser.last_contact ? new Date(dbUser.last_contact).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : "First time";
-      const memoryContext = `\n\n[SYSTEM CONTEXT (DO NOT MENTION TO USER): Current Time in India is ${currentTimeIST}. User's last contact was: ${lastContactStr}. User's known pain point: ${dbUser.pain_point || 'None yet'}. You are a representative of Veshannastro ("us/we"). Keep time of day in mind when greeting.]`;
+      const dynamicSystemPrompt = `${systemPromptCache}
+
+--- REAL-TIME CONTEXT (FOR YOUR EYES ONLY) ---
+- Current Date & Time (India IST): ${currentTimeIST}
+- Client Status: ${dbUser.is_customer ? 'Returning Paid Client (Acknowledge with warmth and recognition)' : 'New Seeker'}
+- Recorded Problem: ${dbUser.pain_point || 'None recorded yet'}
+- Total Messages Exchanged: ${dbUser.message_count || 1}`;
       
       const userParts = [];
       if (text) {
-        userParts.push({ text: text + memoryContext });
-      } else {
-        userParts.push({ text: memoryContext });
+        userParts.push({ text: text });
       }
-
       if (mediaData) {
         userParts.push(mediaData);
+      }
+      if (userParts.length === 0) {
+        userParts.push({ text: "Hello" });
       }
 
       sessions[from].push({ role: "user", parts: userParts });
 
-      // Prune session history to prevent RAM exhaustion and context bloat on Render
-      if (sessions[from].length > 22) {
-        const welcome = sessions[from].slice(0, 2);
-        const recent = sessions[from].slice(-18);
-        sessions[from] = [...welcome, ...recent];
+      // Prune session history to keep conversation focused and save memory
+      if (sessions[from].length > 20) {
+        sessions[from] = sessions[from].slice(-16);
       }
 
       // Sanitize old media payloads in earlier history so RAM stays low
@@ -719,12 +728,12 @@ app.post('/webhook', async (req, res) => {
         }
       }
 
-      // Prioritized candidate models: gemini-3.8-flash is primary #1 as requested,
+      // Prioritized candidate models: gemini-3.6-flash is primary #1 as requested,
       // with seamless fallbacks so the server never crashes.
       const candidateModels = [
-        process.env.GEMINI_MODEL || "gemini-3.8-flash",
-        "gemini-3.8-flash",
+        process.env.GEMINI_MODEL || "gemini-3.6-flash",
         "gemini-3.6-flash",
+        "gemini-3.8-flash",
         "gemini-2.5-flash",
         "gemini-2.0-flash",
         "gemini-1.5-flash",
@@ -743,10 +752,10 @@ app.post('/webhook', async (req, res) => {
             console.log(`🤖 Invoking Gemini model: ${modelName} (attempt ${attempt})...`);
             const model = genAI.getGenerativeModel({ 
               model: modelName,
-              systemInstruction: systemPromptCache,
+              systemInstruction: dynamicSystemPrompt,
               tools: tools,
               generationConfig: {
-                temperature: 0.5 // Grounded, focused, realistic tone
+                temperature: 0.7 // Warm, natural, human conversational cadence
               }
             });
             result = await model.generateContent({
