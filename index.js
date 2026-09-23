@@ -665,7 +665,7 @@ app.post('/webhook', async (req, res) => {
     try {
       const fallbackFrom = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
       if (fallbackFrom) {
-        await sendTextMessage(fallbackFrom, "Namaste! 🙏 I had a brief hiccup. Could you please send your message again?");
+        await sendTextMessage(fallbackFrom, "Namaste! 🙏 I had a brief hiccup. Error: " + err.message);
       }
     } catch (e) { /* ignore fallback failure */ }
   }
