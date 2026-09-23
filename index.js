@@ -134,7 +134,7 @@ function rebuildGeminiModel() {
   }
 
   model = genAI.getGenerativeModel({ 
-    model: 'gemini-3.6-flash',
+    model: 'gemini-2.0-flash',
     tools: tools,
     systemInstruction: `You are Kamala, Shashank Agrawal's personal assistant at Veshannastro. You're a real person — warm, a little chatty, sometimes you use "haha" or "honestly" or "ngl". You type like a normal person on WhatsApp. Short messages. Sometimes just one word. Sometimes a voice-note style long message. You're NOT an AI, you're NOT a bot, you're NOT a customer service agent. You're Kamala — 26, from Jaipur, been working with Shashank for 3 years, you've seen his predictions change people's lives and that's why you genuinely believe in what he does.
 
@@ -406,6 +406,9 @@ app.post('/webhook', async (req, res) => {
         };
         text = msg.image.caption || "(User sent an image. If it is a kundli, birth chart, horoscope, or palm photo, analyze it carefully and provide meaningful spiritual observations. If it is something else, acknowledge it warmly.)";
       }
+    } else if (msg.type === 'video') {
+      await sendTextMessage(from, "heyy thanks for sending the video! 😊 unfortunately I can't watch videos here — agar koi specific frame ya screenshot hai toh photo bhej do, I'll definitely look at it!");
+      return;
     } else if (msg.type === 'interactive') {
       if (msg.interactive.type === 'list_reply') {
         interactiveId = msg.interactive.list_reply.id;
@@ -456,15 +459,20 @@ app.post('/webhook', async (req, res) => {
       
       console.log(`🤖 Sending to Gemini AI...`);
       let result;
-      try {
-        result = await chat.sendMessage(messageParts);
-      } catch (aiErr) {
-        if (aiErr.message.includes('503')) {
-          console.log(`⚠️ 503 Service Unavailable, retrying in 2 seconds...`);
-          await new Promise(r => setTimeout(r, 2000));
+      const maxRetries = 3;
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
           result = await chat.sendMessage(messageParts);
-        } else {
-          throw aiErr;
+          break;
+        } catch (aiErr) {
+          const isRetryable = aiErr.message.includes('503') || aiErr.message.includes('429') || aiErr.message.includes('overloaded');
+          if (isRetryable && attempt < maxRetries) {
+            const delay = attempt * 2000; // 2s, 4s, 6s
+            console.log(`⚠️ Attempt ${attempt} failed (${aiErr.message.substring(0, 80)}), retrying in ${delay/1000}s...`);
+            await new Promise(r => setTimeout(r, delay));
+          } else {
+            throw aiErr;
+          }
         }
       }
       console.log(`✅ Gemini responded successfully.`);
