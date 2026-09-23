@@ -4,7 +4,7 @@ const vm = require('vm');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Razorpay = require('razorpay');
 const { google } = require('googleapis');
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
 const path = require('path');
 
 const app = express();
@@ -32,56 +32,63 @@ let model = null;
 const sessions = {};
 const pendingPayments = {}; // Holds timeouts for Abandoned Cart
 
-// CRM Memory Setup
-const db = new sqlite3.Database(path.join(__dirname, 'users.db'));
-db.serialize(() => {
-  db.run("CREATE TABLE IF NOT EXISTS users (phone TEXT PRIMARY KEY, is_customer BOOLEAN, is_paused BOOLEAN, message_count INTEGER DEFAULT 0, first_contact TEXT, last_contact TEXT)");
-  db.run("ALTER TABLE users ADD COLUMN message_count INTEGER DEFAULT 0", (err) => {});
-  db.run("ALTER TABLE users ADD COLUMN first_contact TEXT", (err) => {});
-  db.run("ALTER TABLE users ADD COLUMN last_contact TEXT", (err) => {});
-  db.run("ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'lead'", (err) => {});
-  db.run("ALTER TABLE users ADD COLUMN pain_point TEXT", (err) => {});
-  db.run("ALTER TABLE users ADD COLUMN conversion_date TEXT", (err) => {});
-});
-
-function getUser(phone) {
-  return new Promise((resolve) => {
-    db.get("SELECT * FROM users WHERE phone = ?", [phone], (err, row) => resolve(row));
-  });
-}
-function upsertUser(phone, is_customer, is_paused) {
-  return new Promise((resolve) => {
-    const now = new Date().toISOString();
-    db.run("INSERT INTO users (phone, is_customer, is_paused, message_count, first_contact, last_contact) VALUES (?, ?, ?, 1, ?, ?) ON CONFLICT(phone) DO UPDATE SET is_customer=excluded.is_customer, is_paused=excluded.is_paused, last_contact=excluded.last_contact", 
-    [phone, is_customer, is_paused, now, now], (err) => resolve());
-  });
-}
-function incrementUserMessage(phone) {
-  return new Promise((resolve) => {
-    const now = new Date().toISOString();
-    db.run("UPDATE users SET message_count = message_count + 1, last_contact = ? WHERE phone = ?", [now, phone], (err) => resolve());
-  });
+// CRM Memory Setup — Persistent Cloud PostgreSQL (Neon)
+const DATABASE_URL = process.env.DATABASE_URL;
+let pool;
+if (DATABASE_URL) {
+  pool = new Pool({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false } });
+  pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      phone TEXT PRIMARY KEY,
+      is_customer BOOLEAN DEFAULT false,
+      is_paused BOOLEAN DEFAULT false,
+      message_count INTEGER DEFAULT 0,
+      first_contact TIMESTAMPTZ DEFAULT NOW(),
+      last_contact TIMESTAMPTZ DEFAULT NOW(),
+      status TEXT DEFAULT 'lead',
+      pain_point TEXT,
+      conversion_date TIMESTAMPTZ
+    )
+  `).then(() => console.log('✅ PostgreSQL connected & table ready.'))
+    .catch(e => console.error('❌ PostgreSQL setup error:', e.message));
+} else {
+  console.warn('⚠️ No DATABASE_URL set — running without persistent CRM. Set DATABASE_URL env var for Neon PostgreSQL.');
 }
 
-function updateUserPainPoint(phone, painPoint) {
-  return new Promise((resolve) => {
-    db.run("UPDATE users SET pain_point = ? WHERE phone = ?", [painPoint, phone], (err) => resolve());
-  });
+async function getUser(phone) {
+  if (!pool) return null;
+  const res = await pool.query('SELECT * FROM users WHERE phone = $1', [phone]);
+  return res.rows[0] || null;
+}
+async function upsertUser(phone, is_customer, is_paused) {
+  if (!pool) return;
+  const now = new Date().toISOString();
+  await pool.query(`
+    INSERT INTO users (phone, is_customer, is_paused, message_count, first_contact, last_contact)
+    VALUES ($1, $2, $3, 1, $4, $4)
+    ON CONFLICT (phone) DO UPDATE SET
+      is_customer = $2, is_paused = $3, last_contact = $4
+  `, [phone, is_customer, is_paused, now]);
+}
+async function incrementUserMessage(phone) {
+  if (!pool) return;
+  const now = new Date().toISOString();
+  await pool.query('UPDATE users SET message_count = message_count + 1, last_contact = $1 WHERE phone = $2', [now, phone]);
 }
 
-function updateUserStatus(phone, status) {
-  return new Promise((resolve) => {
-    const now = new Date().toISOString();
-    let query = "UPDATE users SET status = ?";
-    let params = [status];
-    if (status === 'converted') {
-      query += ", conversion_date = ?";
-      params.push(now);
-    }
-    query += " WHERE phone = ?";
-    params.push(phone);
-    db.run(query, params, (err) => resolve());
-  });
+async function updateUserPainPoint(phone, painPoint) {
+  if (!pool) return;
+  await pool.query('UPDATE users SET pain_point = $1 WHERE phone = $2', [painPoint, phone]);
+}
+
+async function updateUserStatus(phone, status) {
+  if (!pool) return;
+  const now = new Date().toISOString();
+  if (status === 'converted') {
+    await pool.query('UPDATE users SET status = $1, conversion_date = $2 WHERE phone = $3', [status, now, phone]);
+  } else {
+    await pool.query('UPDATE users SET status = $1 WHERE phone = $2', [status, phone]);
+  }
 }
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || 'dummy');
@@ -324,6 +331,11 @@ app.post('/razorpay-webhook', async (req, res) => {
       if (phone) {
         const msg = `🎉 *Payment Successful!* 🎉\n\nThank you, ${customerName}. We have received your payment of ₹${price} for the *${serviceName}*.\n\nYour consultation details have been safely logged into our system. We have tentatively reserved a slot for you, and Shashank Agrawal will contact you shortly to confirm the exact time that works best for you.\n\nHere is your Google Meet link for the session:\n👉 ${meetLink}\n\n🙏 Om Namah Shivaya!`;
         await sendTextMessage(phone, msg);
+
+        // 6. Referral Ask (after 30 seconds so it feels natural)
+        setTimeout(async () => {
+          await sendTextMessage(phone, `btw ${customerName}, if you know anyone who's been going through a tough time or needs some clarity in life... share our number with them na 😊 Shashank always gives a special priority to referrals! 🙏`);
+        }, 30000);
       }
     }
   } catch(e) {
@@ -365,7 +377,7 @@ app.post('/webhook', async (req, res) => {
 
     // Secret Unpause Command
     if (msg.type === 'text' && msg.text.body.trim().toLowerCase() === '/unpause') {
-      await new Promise(r => db.run("UPDATE users SET is_paused = 0 WHERE phone = ?", [from], r));
+      if (pool) await pool.query('UPDATE users SET is_paused = false WHERE phone = $1', [from]);
       await sendTextMessage(from, "AI unpaused. You can now chat normally.");
       return;
     }
@@ -538,9 +550,8 @@ app.post('/webhook', async (req, res) => {
               // 2-Hour Abandoned Cart Timer
               const refId = paymentLink.id;
               pendingPayments[refId] = setTimeout(async () => {
-                if (pendingPayments[refId]) { // if not cleared by webhook
-                  let followUpMsg = "Hi! I noticed you were interested in booking a consultation but didn't get a chance to complete it. I know how important getting clarity is, so I've been authorized to offer you a special 5% discount if you book today. Let me know if you'd like me to apply it for you!";
-                  await sendTextMessage(from, followUpMsg);
+                if (pendingPayments[refId]) {
+                  await sendTextMessage(from, `heyy ${args.customer_name}! just checking in... I noticed you didn't complete the payment yet. koi problem aayi kya? 😊 link abhi bhi active hai, and I can help if you need anything!`);
                   delete pendingPayments[refId];
                 }
               }, 2 * 60 * 60 * 1000); // 2 hours
@@ -667,6 +678,32 @@ async function sendTextMessage(to, text) {
 
 app.get('/', (req, res) => res.send(`Veshannastro WhatsApp Booking Engine is running 🚀 (Live Sync Mode: ${liveData.length} categories loaded)`));
 
+// Health Check Endpoint for Uptime Monitoring
+app.get('/health', async (req, res) => {
+  const health = {
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    services: {
+      gemini: !!model,
+      razorpay: !!razorpayClient,
+      database: false,
+      liveData: liveData.length
+    }
+  };
+  try {
+    if (pool) {
+      await pool.query('SELECT 1');
+      health.services.database = true;
+    }
+    res.json(health);
+  } catch (e) {
+    health.status = 'degraded';
+    health.error = e.message;
+    res.status(503).json(health);
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
@@ -675,40 +712,61 @@ const cron = require('node-cron');
 
 // Runs daily at 10:00 AM IST
 cron.schedule('0 10 * * *', async () => {
-  console.log("🚀 Running Enterprise Daily Drip Campaigns...");
-  
-  // 3 days ago & 5 days ago (to create a window)
-  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
-  const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
-  
-  // 7 days ago & 9 days ago
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const nineDaysAgo = new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString();
+  if (!pool) return;
+  console.log("🚀 Running Daily Drip Campaigns...");
 
-  // 1. Day 3 Unconverted Leads
-  db.all("SELECT phone, pain_point FROM users WHERE is_customer = 0 AND is_paused = 0 AND last_contact < ? AND last_contact > ?", 
-    [threeDaysAgo, fiveDaysAgo], async (err, rows) => {
-    if (rows && rows.length > 0) {
-      for (const row of rows) {
-        let painMsg = row.pain_point ? ` regarding your situation: "${row.pain_point}"` : '';
-        let msg = `Hi! Shashank asked me to check on you. Are you still looking for clarity${painMsg}? Let me know if you need help booking a consultation!`;
-        await sendTextMessage(row.phone, msg);
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Rate limit
-      }
+  try {
+    // 1. 24-Hour Ghost Follow-Up (messaged yesterday, didn't convert)
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+    
+    const ghosted = await pool.query(
+      `SELECT phone, pain_point FROM users WHERE is_customer = false AND is_paused = false AND status = 'lead' AND last_contact < $1 AND last_contact > $2 AND message_count >= 3`,
+      [oneDayAgo, twoDaysAgo]
+    );
+    for (const row of ghosted.rows) {
+      let msg = row.pain_point 
+        ? `heyy, was just thinking about you... hope things are getting better with the ${row.pain_point.substring(0, 60)} situation 🙏 let me know if you want to talk about it`
+        : `heyy! how are you doing? was thinking about you... let me know if you need anything 😊`;
+      await sendTextMessage(row.phone, msg);
+      await new Promise(r => setTimeout(r, 2000));
     }
-  });
+    if (ghosted.rows.length > 0) console.log(`📩 Sent ${ghosted.rows.length} ghost follow-ups`);
 
-  // 2. Day 7 Converted Upsells
-  db.all("SELECT phone, pain_point FROM users WHERE status = 'converted' AND is_paused = 0 AND conversion_date < ? AND conversion_date > ?", 
-    [sevenDaysAgo, nineDaysAgo], async (err, rows) => {
-    if (rows && rows.length > 0) {
-      for (const row of rows) {
-        let msg = `Hi again! Shashank was reviewing your chart recently. Based on your previous consultation, he highly recommends a specific astrological Gemstone to accelerate your growth. Would you like me to share the details with you?`;
-        await sendTextMessage(row.phone, msg);
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Rate limit
-      }
+    // 2. Day 3 Unconverted Lead Nudge
+    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
+    const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
+    
+    const leads = await pool.query(
+      `SELECT phone, pain_point FROM users WHERE is_customer = false AND is_paused = false AND last_contact < $1 AND last_contact > $2`,
+      [threeDaysAgo, fiveDaysAgo]
+    );
+    for (const row of leads.rows) {
+      let painMsg = row.pain_point ? ` I remember you were dealing with "${row.pain_point.substring(0, 60)}"...` : '';
+      let msg = `hey! just checking in 🙏${painMsg} Shashank had a cancellation this week and has a slot open if you want to grab it. no pressure at all, just thought I'd let you know 😊`;
+      await sendTextMessage(row.phone, msg);
+      await new Promise(r => setTimeout(r, 2000));
     }
-  });
+    if (leads.rows.length > 0) console.log(`📩 Sent ${leads.rows.length} day-3 lead nudges`);
+
+    // 3. Day 7 Post-Session Upsell + Referral
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const nineDaysAgo = new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString();
+    
+    const converted = await pool.query(
+      `SELECT phone, pain_point FROM users WHERE status = 'converted' AND is_paused = false AND conversion_date < $1 AND conversion_date > $2`,
+      [sevenDaysAgo, nineDaysAgo]
+    );
+    for (const row of converted.rows) {
+      let msg = `heyyy! how have things been since the session? 😊 btw Shashank mentioned that based on your chart, there's a specific gemstone that could really accelerate things for you. want me to share the details?\n\nalso if you know anyone who could use some guidance... share our number na, Shashank always gives referrals extra attention 🙏`;
+      await sendTextMessage(row.phone, msg);
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    if (converted.rows.length > 0) console.log(`📩 Sent ${converted.rows.length} day-7 upsells`);
+    
+  } catch (e) {
+    console.error('❌ Drip campaign error:', e.message);
+  }
 }, {
   timezone: "Asia/Kolkata"
 });
