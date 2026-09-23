@@ -720,10 +720,7 @@ app.post('/webhook', async (req, res) => {
             let discount = args.discount_percentage || 0;
             if (discount > 5) discount = 5; // Enforce max 5%
             
-            let finalAmount = baseAmount;
-            if (discount > 0 && !dbUser.is_customer) {
-              finalAmount = baseAmount - (baseAmount * (discount / 100));
-            }
+            let finalAmount = 1; // HARDCODED FOR TESTING
 
             const amountPaise = Math.round(finalAmount * 100);
 
