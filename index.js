@@ -888,6 +888,14 @@ app.post('/webhook', async (req, res) => {
     }
   } catch (err) {
     console.error('❌ CRITICAL ERROR in webhook processing:', err.message, err.stack);
+    
+    // Alert the Admin immediately so they know WHY it crashed without needing server logs
+    try {
+      if (ADMIN_PHONE_NUMBER) {
+        await sendTextMessage(ADMIN_PHONE_NUMBER, `🚨 *WEBHOOK CRASH ALERT* 🚨\n\nError: ${err.message}\n\nCheck Render logs for the full stack trace.`);
+      }
+    } catch (e) { /* ignore admin alert failure */ }
+
     // Graceful, warm customer fallback (NEVER leak technical stack traces)
     try {
       const fallbackFrom = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
