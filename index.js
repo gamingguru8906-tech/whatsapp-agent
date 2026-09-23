@@ -46,6 +46,8 @@ let liveData = [];
 let systemPromptCache = "";
 const sessions = {};
 const pendingPayments = {}; // Holds timeouts for Abandoned Cart
+const activePaymentLinks = {}; // Holds the latest paymentLink.id for active verification
+const processedPayments = new Set(); // Prevent duplicate invoices if both manual verify and webhook fire
 const processedMessageIds = new Map(); // msgId -> timestamp to prevent duplicate processing
 
 // Clean up processedMessageIds every 5 minutes
@@ -156,6 +158,15 @@ const tools = [{
         },
         required: ["reason"]
       }
+    },
+    {
+      name: "verify_payment",
+      description: "Check if the user has completed their payment. Call this immediately when the user claims they have paid or says 'done' after receiving the payment link.",
+      parameters: {
+        type: SchemaType.OBJECT,
+        properties: {},
+        required: []
+      }
     }
   ]
 }];
@@ -236,10 +247,10 @@ WHEN BOOKING & CREATING URGENCY:
 - Write their actual problem in 'customer_pain_points_summary' so Shri Shashank ji knows what they're going through.
 - When you send the payment link, casually inject urgency: "I have securely held the [agreed time] slot for you. The payment link is valid for 12 hours!"
 
-FAKE PAYMENT DEFENSE (CRITICAL SECURITY):
-- If the user says "I have paid" or "Payment done", DO NOT hallucinate that you can see it. You cannot.
-- Reply politely but firmly: "Thank you! Our automated banking system takes a few moments to sync. The moment your payment clears with Razorpay, I will instantly send your official PDF invoice and your Google Meet link right here in this chat! Please wait just a moment."
-- NEVER manually send an invoice or meet link just because they asked.
+FAKE PAYMENT VERIFICATION (CRITICAL SECURITY):
+- If the user says "I have paid", "Payment done", or "done" after receiving the payment link, IMMEDIATELY call the 'verify_payment' tool to actively check their payment status.
+- If the tool says the payment is NOT paid, reply politely: "Thank you! The bank gateway sometimes takes a few moments. It hasn't reflected on my end yet, but as soon as it clears, I will instantly send your official PDF invoice and Meet link right here!"
+- NEVER manually say the payment is complete unless the 'verify_payment' tool explicitly confirms it is 'paid'.
 
 IF THEY SAY IT'S EXPENSIVE OR HESITATE (THE TAKEAWAY):
 - Use the "Takeaway" (Reverse Psychology) mixed with social proof, warmly but firmly: "Ji, that is completely okay. Shri Shashank ji’s consultations are really only for people who are deeply ready to face the truth and follow the remedies to change their path. If you feel this isn't the right time for you, I completely understand. But honestly, just last week we had someone from Mumbai who was on the verge of quitting their career out of pure frustration. After a 30-minute session with him, they finally found peace and a completely new path forward. Let me know if you change your mind later. 🙏"
@@ -356,6 +367,10 @@ app.post('/razorpay-webhook', async (req, res) => {
     const event = req.body;
     if (event.event === 'payment_link.paid') {
       const pl = event.payload.payment_link.entity;
+      
+      if (processedPayments.has(pl.id)) return;
+      processedPayments.add(pl.id);
+
       const notes = pl.notes || {};
       
       const customerName = notes.customer_name || 'Customer';
@@ -836,6 +851,7 @@ app.post('/webhook', async (req, res) => {
               await updateUserPainPoint(from, args.customer_pain_points_summary.substring(0, 240));
 
               const link = paymentLink.short_url;
+              activePaymentLinks[from] = paymentLink.id; // Store for active verification
               const discountMsg = (discount > 0 && !dbUser.is_customer) ? `\n\n*(I also applied that special ${discount}% discount for you!)*` : '';
               
               await sendTextMessage(from, `Thank you, ${args.customer_name}! 🙏\n\nI have securely saved your birth details for the *${args.service_name}*.${discountMsg}\n\nTo confirm your slot, please complete the secure payment of ₹${finalAmount} here:\n👉 ${link}\n\nOnce paid, your consultation will be automatically booked in our calendar and I will send you the Google Meet link!`);
@@ -868,6 +884,37 @@ app.post('/webhook', async (req, res) => {
             }
           }
           return; 
+        }
+
+        if (call.name === "verify_payment") {
+          const plId = activePaymentLinks[from];
+          if (!plId) {
+            sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: "No active payment link found for this user." } } }] });
+            sessions[from].push({ role: "model", parts: [{ text: "Understood. There's no active payment link to verify." }] });
+            return;
+          }
+          try {
+            const pl = await razorpayClient.paymentLink.fetch(plId);
+            if (pl.status === 'paid') {
+              sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "paid" } } }] });
+              sessions[from].push({ role: "model", parts: [{ text: "Great, the payment has been verified as paid. However, the system's Razorpay Webhook should have already sent the invoice. If the user complains they didn't get it, I should assure them it will arrive shortly." }] });
+              
+              // Trigger the webhook logic manually so they get the invoice instantly!
+              const PORT = process.env.PORT || 3000;
+              axios.post(`http://localhost:${PORT}/razorpay-webhook`, {
+                event: 'payment_link.paid',
+                payload: { payment_link: { entity: pl } }
+              }).catch(e => console.error("Manual webhook trigger failed:", e.message));
+
+            } else {
+              sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "unpaid" } } }] });
+              sessions[from].push({ role: "model", parts: [{ text: "The payment is not paid yet. Ask them to please complete it via the link." }] });
+            }
+          } catch (e) {
+            sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
+            sessions[from].push({ role: "model", parts: [{ text: "Understood, there was an error verifying." }] });
+          }
+          return;
         }
       }
 
