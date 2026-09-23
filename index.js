@@ -639,7 +639,7 @@ app.post('/webhook', async (req, res) => {
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           const model = genAI.getGenerativeModel({ 
-            model: "gemini-3.6-flash",
+            model: "gemini-1.5-flash",
             systemInstruction: systemPromptCache,
             tools: tools
           });
