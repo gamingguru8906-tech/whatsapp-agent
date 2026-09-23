@@ -639,7 +639,7 @@ app.post('/webhook', async (req, res) => {
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash",
+            model: "gemini-3.6-flash",
             systemInstruction: systemPromptCache,
             tools: tools
           });
@@ -675,7 +675,7 @@ app.post('/webhook', async (req, res) => {
           if (ADMIN_PHONE_NUMBER) {
              await sendTextMessage(ADMIN_PHONE_NUMBER, `🚨 *ESCALATION REQUIRED* 🚨\n\nClient Phone: +${from}\nReason: ${args.reason}\n\n*The AI has paused itself for this user. Please take over the chat manually via the WhatsApp app within 24 hours.*`);
           }
-          sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "paused" } } }] });
+          sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "paused" } } }] });
           return;
         }
 
@@ -742,11 +742,11 @@ app.post('/webhook', async (req, res) => {
                 }
               }, 2 * 60 * 60 * 1000); // 2 hours
 
-              sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "success", payment_link: link } } }] });
+              sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "success", payment_link: link } } }] });
             } catch (e) {
               console.error("Razorpay Error:", e);
               await sendTextMessage(from, "Sorry, there was an error generating the secure payment link. Please try again later.");
-              sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
+              sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
             }
           }
           return; 
