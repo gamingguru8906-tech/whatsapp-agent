@@ -4,9 +4,7 @@ const vm = require('vm');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Razorpay = require('razorpay');
 const { google } = require('googleapis');
-const { Pool, neonConfig } = require('@neondatabase/serverless');
-const ws = require('ws');
-neonConfig.webSocketConstructor = ws; // Required for Node.js environments
+const { Pool } = require('pg');
 const path = require('path');
 
 const app = express();
@@ -43,7 +41,8 @@ let pool;
 if (DATABASE_URL) {
   pool = new Pool({
     connectionString: DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
+    family: 4 // Explicitly force node-postgres to use IPv4
   });
   pool.query(`
     CREATE TABLE IF NOT EXISTS users (
