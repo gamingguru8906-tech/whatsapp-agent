@@ -28,7 +28,7 @@ app.use(express.json());
 const VERIFY_TOKEN    = process.env.VERIFY_TOKEN    || 'veshannastro_webhook_2024';
 const WA_TOKEN        = process.env.WA_TOKEN;
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID || '1429954143524558';
-const GROQ_API_KEY    = process.env.GROQ_API_KEY;
+const GEMINI_API_KEY  = process.env.GEMINI_API_KEY;
 
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
