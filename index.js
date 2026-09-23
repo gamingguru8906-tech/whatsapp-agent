@@ -1,3 +1,16 @@
+const dns = require('dns');
+// Bulletproof IPv4 override for Render free tier
+const originalLookup = dns.lookup;
+dns.lookup = function(hostname, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = { family: 4 };
+  } else if (typeof options === 'object') {
+    options.family = 4;
+  }
+  return originalLookup(hostname, options, callback);
+};
+
 const express = require('express');
 const axios = require('axios');
 const vm = require('vm');
@@ -32,8 +45,7 @@ let model = null;
 const sessions = {};
 const pendingPayments = {}; // Holds timeouts for Abandoned Cart
 
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first'); // Force IPv4 globally for Render free tier
+
 
 // CRM Memory Setup — Persistent Cloud PostgreSQL (Neon)
 const DATABASE_URL = process.env.DATABASE_URL;
