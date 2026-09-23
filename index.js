@@ -708,16 +708,12 @@ app.post('/webhook', async (req, res) => {
         }
       }
 
-      // Prioritized candidate models for high resilience (updated for 2026 API deprecations):
-      // 1. Configured custom model (via GEMINI_MODEL env var)
-      // 2. gemini-3.8-flash (Latest recommended)
-      // 3. gemini-3.6-flash (Google API recommended fallback)
-      // 4. gemini-1.5-pro-latest (Legacy fallback)
+      // Prioritized candidate models for high resilience:
+      // We strictly use stable model names without '-latest' suffixes to avoid 404 errors.
       const candidateModels = [
-        process.env.GEMINI_MODEL || "gemini-3.8-flash",
-        "gemini-3.6-flash",
-        "gemini-1.5-pro-latest",
-        "gemini-1.5-flash-latest"
+        process.env.GEMINI_MODEL || "gemini-1.5-pro",
+        "gemini-1.5-flash",
+        "gemini-2.0-flash"
       ];
       const uniqueModels = [...new Set(candidateModels)];
 
