@@ -4,7 +4,7 @@ const vm = require('vm');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Razorpay = require('razorpay');
 const { google } = require('googleapis');
-const { Pool } = require('pg');
+const { Pool } = require('@neondatabase/serverless');
 const path = require('path');
 
 const app = express();
