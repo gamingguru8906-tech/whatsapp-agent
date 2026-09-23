@@ -543,6 +543,13 @@ app.post('/webhook', async (req, res) => {
         return;
       }
 
+      if (lowerCmd === '/reset') {
+        if (pool) await pool.query('DELETE FROM users WHERE phone = $1', [from]);
+        if (sessions[from]) delete sessions[from];
+        await sendTextMessage(from, "✅ Session and memory completely wiped. Send 'hi' to start fresh!");
+        return;
+      }
+
       if (lowerCmd === '/stats') {
         if (!pool) return await sendTextMessage(from, "Database not connected.");
         const stats = await pool.query(`
