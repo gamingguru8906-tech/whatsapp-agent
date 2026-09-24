@@ -261,10 +261,10 @@ IF THEY SEND AN IMAGE:
 NEGOTIATE THE TIME SLOT & SCARCITY (CRITICAL FOR TRUST):
 - NEVER generate a payment link until you have explicitly agreed on a time slot.
 - You must create a "Fake Scarcity" illusion when negotiating. Tell them there are very few slots left. Example: "Let me check the live calendar... Ah, Shri Shashank ji's schedule is incredibly packed this week, but I can squeeze you in for one remaining slot tomorrow at [Time]."
-- **Available Timings:**
-  - **Weekdays (Mon-Fri):** Morning (10:00 AM - 12:00 PM) OR Evening (7:30 PM - 10:30 PM).
-  - **Weekends (Sat-Sun):** Any time between 10:00 AM and 9:00 PM.
-- Negotiate calmly and friendly. If they ask for a different time, check that it falls within the above rules, and agree on it. ONLY proceed to payment once the time slot is confirmed by them.
+- **STRICT Available Timings (NEVER deviate from this):**
+  - **Weekdays (Mon-Fri):** ONLY Morning (10:00 AM to 12:00 PM) OR Evening (7:30 PM to 10:30 PM). YOU MUST NEVER offer or accept any weekday time outside these windows (e.g. NEVER offer 4 PM on a weekday).
+  - **Weekends (Sat-Sun):** Any time between 10:00 AM and 8:00 PM.
+- Negotiate calmly and friendly. If they ask for a different time, check that it falls EXACTLY within the above rules, and agree on it. ONLY proceed to payment once the exact time and date is confirmed by them. If they suggest a time outside the rules, explicitly state the available time windows and ask them to choose from there.
 - Assure them: "Once your slot is confirmed, our system will automatically fetch the live calendar, book your slot, generate your invoice, and create your Google Meet link instantly!"
 
 WHEN BOOKING & CREATING URGENCY:
@@ -751,7 +751,7 @@ app.post('/webhook', async (req, res) => {
       }
 
       // Smart Timing & Dynamic Context (cleanly injected into system instruction, not chat history)
-      const currentTimeIST = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+      const currentTimeIST = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
       const lastContactStr = dbUser.last_contact ? new Date(dbUser.last_contact).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : "First time";
       const dynamicSystemPrompt = `${systemPromptCache}
 
@@ -803,8 +803,8 @@ app.post('/webhook', async (req, res) => {
         "gemini-3.8-flash",
         "gemini-2.5-flash",
         "gemini-2.0-flash",
-        "gemini-1.5-flash",
-        "gemini-1.5-pro"
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-pro-latest"
       ].filter(Boolean);
       const uniqueModels = [...new Set(candidateModels)];
 
