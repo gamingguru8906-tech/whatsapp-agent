@@ -798,13 +798,9 @@ app.post('/webhook', async (req, res) => {
       // Prioritized candidate models: gemini-3.6-flash is primary #1 as requested,
       // with seamless fallbacks so the server never crashes.
       const candidateModels = [
-        process.env.GEMINI_MODEL || "gemini-3.6-flash",
-        "gemini-3.6-flash",
+        process.env.GEMINI_MODEL || "gemini-3.8-flash",
         "gemini-3.8-flash",
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
-        "gemini-1.5-flash-latest",
-        "gemini-1.5-pro-latest"
+        "gemini-3.6-flash"
       ].filter(Boolean);
       const uniqueModels = [...new Set(candidateModels)];
 
@@ -981,7 +977,9 @@ app.post('/webhook', async (req, res) => {
             const pl = await razorpayClient.paymentLink.fetch(plId);
             if (pl.status === 'paid') {
               sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "paid" } } }] });
-              sessions[from].push({ role: "model", parts: [{ text: "Great, the payment has been verified as paid. However, the system's Razorpay Webhook should have already sent the invoice. If the user complains they didn't get it, I should assure them it will arrive shortly." }] });
+              const msg = "Great, the payment has been verified! Your automated PDF invoice and meeting link are on the way.";
+              sessions[from].push({ role: "model", parts: [{ text: msg }] });
+              await sendTextMessage(from, msg);
               
               // Trigger the webhook logic manually so they get the invoice instantly!
               const PORT = process.env.PORT || 3000;
@@ -998,11 +996,15 @@ app.post('/webhook', async (req, res) => {
 
             } else {
               sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "unpaid" } } }] });
-              sessions[from].push({ role: "model", parts: [{ text: "The payment is not paid yet. Ask them to please complete it via the link." }] });
+              const msg = "I just checked, but the payment hasn't reflected yet. Sometimes the bank gateways take a minute. Please complete it via the link, and I will instantly send your official PDF invoice!";
+              sessions[from].push({ role: "model", parts: [{ text: msg }] });
+              await sendTextMessage(from, msg);
             }
           } catch (e) {
             sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
-            sessions[from].push({ role: "model", parts: [{ text: "Understood, there was an error verifying." }] });
+            const msg = "I'm having trouble verifying the payment right now. Please wait a moment or try again.";
+            sessions[from].push({ role: "model", parts: [{ text: msg }] });
+            await sendTextMessage(from, msg);
           }
           return;
         }
