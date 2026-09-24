@@ -86,7 +86,12 @@ if (DATABASE_URL) {
       status TEXT DEFAULT 'lead',
       pain_point TEXT,
       conversion_date TIMESTAMPTZ
-    )
+    );
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS customer_id TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS name TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS dob TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS remedies_prescribed TEXT;
   `).then(() => console.log('✅ PostgreSQL connected & table ready.'))
     .catch(e => console.error('❌ PostgreSQL setup error:', e.message));
 } else {
@@ -267,6 +272,8 @@ WHEN BOOKING & CREATING URGENCY:
 - Write their actual problem in 'customer_pain_points_summary' so we know what they're going through.
 - When you send the payment link, casually inject urgency: "I have securely held the [agreed time] slot for you. The payment link is valid for 12 hours!"
 - Good Karma Discount: If the user asks for or says "YES" to the 'Good Karma' discount (sent via automated follow-up), calculate 10% off the standard price (e.g. 1100 becomes 990), and call 'create_booking_payment' again with the new price to generate a fresh discounted link.
+- Family Alignment Cross-Sell: If an existing customer asks for the 'Family Alignment' reading, calculate 10% off the standard price and call 'create_booking_payment' with the discounted price.
+- Astro-Concierge VIP: If they ask for the Astro-Concierge or VIP monthly subscription, pitch it at ₹1 (for testing right now), which allows 3 quick questions per month. Call 'create_booking_payment' with service_name: "Astro-Concierge VIP (1 Month)" and price: 1.
 
 FAKE PAYMENT VERIFICATION (CRITICAL SECURITY):
 - If the user says "I have paid", "Payment done", or "done" after receiving the payment link, IMMEDIATELY call the 'verify_payment' tool to actively check their payment status.
@@ -494,10 +501,24 @@ app.post('/razorpay-webhook', async (req, res) => {
           paymentStatus: "Paid",
           payment_id: event.payload?.payment?.entity?.id || pl.id,
           source: "WhatsApp Direct Booking",
+          sessionDate: `${eventTime.toISOString().split('T')[0]} ${notes.time_slot || ''}`,
           query: notes.summary || '',
           meetLink: meetLink,
-          eventTime: notes.time_slot || eventTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' })
-        }).catch(e => console.error("Sheets/Email Logging Error:", e.message));
+          eventTime: notes.time_slot || eventTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' }),
+          notes: ''
+        }).catch(e => console.error('Sheet Logging Error:', e.message));
+
+        await axios.post(GOOGLE_APPS_SCRIPT_URL, {
+          target: "customer_update",
+          customerId: notes.customer_id || '',
+          name: customerName,
+          phone: phone,
+          email: notes.email || '',
+          dob: notes.dob || '',
+          tob: notes.tob || '',
+          pob: notes.pob || '',
+          gender: notes.gender || ''
+        }).catch(e => console.error('Customer DB Sync Error:', e.message));
       }
 
       // 5. Generate PDF Invoice and Send WhatsApp Confirmation
@@ -725,6 +746,10 @@ app.post('/webhook', async (req, res) => {
 --- REAL-TIME CONTEXT (FOR YOUR EYES ONLY) ---
 - Current Date & Time (India IST): ${currentTimeIST}
 - Client Status: ${dbUser.is_customer ? 'Returning Paid Client (Acknowledge with warmth and recognition)' : 'New Seeker'}
+- Customer ID: ${dbUser.customer_id || 'Not assigned yet'}
+- Name: ${dbUser.name || 'Not provided yet'}
+- Date of Birth (DOB): ${dbUser.dob || 'Not provided yet'}
+- Remedies Prescribed: ${dbUser.remedies_prescribed || 'None'}
 - Recorded Problem: ${dbUser.pain_point || 'None recorded yet'}
 - Total Messages Exchanged: ${dbUser.message_count || 1}`;
       
@@ -847,10 +872,10 @@ app.post('/webhook', async (req, res) => {
             let baseAmount = parseFloat(args.price.toString().replace(/[^0-9.]/g, ''));
             if (isNaN(baseAmount) || baseAmount <= 0) baseAmount = 1100;
             let discount = args.discount_percentage || 0;
-            if (discount > 5) discount = 5; // Enforce max 5%
+            if (discount > 30) discount = 30; // Enforce max 30% for birthdays/upsells
             
             let calculatedAmount = baseAmount;
-            if (discount > 0 && !dbUser.is_customer) {
+            if (discount > 0) {
               calculatedAmount = Math.round(baseAmount * (1 - (discount / 100)));
             }
 
@@ -872,6 +897,7 @@ app.post('/webhook', async (req, res) => {
                 reference_id: `wa_booking_${Date.now()}`,
                 notify: { sms: false, email: false },
                 notes: {
+                  customer_id: String(dbUser.customer_id || `VA-${Date.now().toString().slice(-6)}`),
                   customer_name: String(args.customer_name || 'Seeker').substring(0, 40),
                   email: String(args.email || '').substring(0, 60),
                   gender: String(args.gender || '').substring(0, 20),
@@ -888,9 +914,17 @@ app.post('/webhook', async (req, res) => {
 
               await updateUserPainPoint(from, args.customer_pain_points_summary.substring(0, 240));
 
+              const generatedId = paymentLink.notes.customer_id;
+              if (pool) {
+                await pool.query(
+                  `UPDATE users SET name=$1, email=$2, dob=$3, customer_id=COALESCE(customer_id, $4) WHERE phone=$5`,
+                  [args.customer_name || '', args.email || '', args.dob || '', generatedId, from]
+                );
+              }
+
               const link = paymentLink.short_url;
               activePaymentLinks[from] = paymentLink.id; // Store for active verification
-              const discountMsg = (discount > 0 && !dbUser.is_customer) ? `\n\n*(I also applied that special ${discount}% discount for you!)*` : '';
+              const discountMsg = (discount > 0) ? `\n\n*(I also applied that special ${discount}% discount for you!)*` : '';
               
               await sendTextMessage(from, `Thank you, ${args.customer_name}! 🙏\n\nI have securely saved your birth details for the *${args.service_name}*.${discountMsg}\n\nTo confirm your slot, please complete the secure payment of ₹${finalAmount} here:\n👉 ${link}\n\nOnce paid, your consultation will be automatically booked in our calendar and I will send you the Google Meet link!`);
               
@@ -1173,7 +1207,21 @@ cron.schedule('0 10 * * *', async () => {
     }
     if (leads.rows.length > 0) console.log(`📩 Sent ${leads.rows.length} day-3 lead nudges`);
 
-    // 3. Day 7 Post-Session Guidance & Remedies
+    // 3. Day 2 Post-Consultation Referral
+    const twoDaysAgoConv = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
+    const fourDaysAgoConv = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString();
+    const recentConverted = await pool.query(
+      `SELECT phone FROM users WHERE status = 'converted' AND is_paused = false AND conversion_date < $1 AND conversion_date > $2`,
+      [twoDaysAgoConv, fourDaysAgoConv]
+    );
+    for (const row of recentConverted.rows) {
+      let msg = `Namaste! 🙏 I hope you enjoyed your consultation with Shri Shashank ji. If you found the guidance helpful, we would be deeply grateful if you shared your experience with friends or family. For any friend you refer who books a session, we will gift you a complimentary 15-minute follow-up session!`;
+      await sendTextMessage(row.phone, msg);
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    if (recentConverted.rows.length > 0) console.log(`📩 Sent ${recentConverted.rows.length} referral requests`);
+
+    // 4. Day 7 Family Chart Cross-Sell
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const nineDaysAgo = new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString();
     
@@ -1182,11 +1230,34 @@ cron.schedule('0 10 * * *', async () => {
       [sevenDaysAgo, nineDaysAgo]
     );
     for (const row of converted.rows) {
-      let msg = `Namaste! How have you been feeling since your consultation? 🙏 We were reviewing your chart notes again and noted a specific planetary remedy that could bring greater stability. Would you like me to share the details with you?`;
+      let msg = `Namaste! Hope the remedies from our consultation are bringing you peace. 🙏 Often, our career or marriage blocks are deeply tied to our spouse's or children's charts. We have a special 10% discount for existing clients to do a 'Family Alignment' reading. Would you like me to share the discounted link?`;
       await sendTextMessage(row.phone, msg);
       await new Promise(r => setTimeout(r, 2000));
     }
-    if (converted.rows.length > 0) console.log(`📩 Sent ${converted.rows.length} day-7 upsells`);
+    if (converted.rows.length > 0) console.log(`📩 Sent ${converted.rows.length} family cross-sells`);
+
+    // 4. Automated Birthday Upsell
+    const allCustomers = await pool.query(`SELECT phone, name, dob FROM users WHERE is_customer = true AND dob IS NOT NULL`);
+    const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const targetMonth = nextWeek.getMonth() + 1;
+    const targetDay = nextWeek.getDate();
+    
+    let bdayCount = 0;
+    for (const row of allCustomers.rows) {
+      // Basic DOB parsing assuming dd-mm-yyyy or similar format
+      const dobMatch = row.dob.match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+      if (dobMatch) {
+        const [, d, m] = dobMatch;
+        if (parseInt(m) === targetMonth && parseInt(d) === targetDay) {
+           let msg = `Namaste ${row.name || ''}! Your birthday is approaching next week! 🎂 A Solar Return (Varshphal) is the most critical time to plan your year. I have generated a special 30% discount for your Yearly Reading. Let me know if you want the link! 🙏`;
+           await sendTextMessage(row.phone, msg);
+           bdayCount++;
+           await new Promise(r => setTimeout(r, 2000));
+        }
+      }
+    }
+    if (bdayCount > 0) console.log(`📩 Sent ${bdayCount} birthday upsells`);
+    
     
   } catch (e) {
     console.error('❌ Drip campaign error:', e.message);
