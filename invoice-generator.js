@@ -29,8 +29,8 @@ function generateInvoice(data) {
       const accentColor = '#5e50a5'; // Zoho purple-ish accent
       const tableHeaderBg = '#2c303f'; // Dark header bg
 
-      // Header: SHRI SHASHANK JI
-      doc.fontSize(10).fillColor(secondaryColor).text('SHRI SHASHANK JI', 50, 50, { characterSpacing: 2 });
+      // Header: VESHANNASTRO
+      doc.fontSize(10).fillColor(secondaryColor).text('VESHANNASTRO', 50, 50, { characterSpacing: 2 });
       doc.fontSize(20).fillColor(primaryColor).text('Consultation Invoice', 50, 65).moveDown();
 
       // INVOICE text & Logo text
@@ -38,7 +38,7 @@ function generateInvoice(data) {
       doc.fontSize(12).fillColor(secondaryColor).text(`#${data.invoiceNumber}`, 50, 140);
       
       // "Logo" representation in top right
-      doc.fillColor(primaryColor).fontSize(16).font('Helvetica-Bold').text('SHRI SHASHANK JI', 380, 115, { align: 'right' }).font('Helvetica');
+      doc.fillColor(primaryColor).fontSize(16).font('Helvetica-Bold').text('VESHANNASTRO', 380, 115, { align: 'right' }).font('Helvetica');
 
       // Balance Due (Paid)
       doc.fontSize(10).fillColor(primaryColor).text('Balance Due', 50, 180);
@@ -107,7 +107,7 @@ function generateInvoice(data) {
       
       // Footer
       doc.fontSize(10).fillColor(secondaryColor).fillOpacity(1);
-      doc.text('Thank you for choosing Shri Shashank ji.', 50, 700, { align: 'center' });
+      doc.text('Thank you for choosing Veshannastro.', 50, 700, { align: 'center' });
 
       doc.end();
     } catch (e) {
