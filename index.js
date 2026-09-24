@@ -977,11 +977,12 @@ app.post('/webhook', async (req, res) => {
                 event: 'payment_link.paid',
                 payload: { payment_link: { entity: pl } }
               };
-              const headers = {};
+              const bodyString = JSON.stringify(payloadData);
+              const headers = { 'Content-Type': 'application/json' };
               if (RAZORPAY_WEBHOOK_SECRET) {
-                headers['x-razorpay-signature'] = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(JSON.stringify(payloadData)).digest('hex');
+                headers['x-razorpay-signature'] = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(bodyString).digest('hex');
               }
-              axios.post(`http://127.0.0.1:${PORT}/razorpay-webhook`, payloadData, { headers }).catch(e => console.error("Manual webhook trigger failed:", e.message));
+              axios.post(`http://127.0.0.1:${PORT}/razorpay-webhook`, bodyString, { headers }).catch(e => console.error("Manual webhook trigger failed:", e.message));
 
             } else {
               sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "unpaid" } } }] });
