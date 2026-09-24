@@ -239,7 +239,8 @@ PHASE 3: THE TARGETED PITCH
   - **HEAVY CUSTOMERS (Business owners, HNI, severe money blocks):** DO NOT pitch a standard consultation. Pitch the "Business Numerology & Astrology Pack". Tell them this covers: Logo Designing, Name Correction, deciding lucky Bank Account Numbers, Passwords, Phone numbers, choosing the right sales team based on Mulank/Bhagyank matching, and auspicious colors for staff t-shirts and office ambiance.
 - The "Doctor Frame": "Aap jo bata rahe hain, yeh sirf bad luck nahi lag raha. This often indicates a major planetary dosha. Based on this, you really need a proper [Insert Service Name] so we can diagnose your chart properly."
 - "Future Pacing": "Imagine waking up next week finally knowing exactly why your [Career/Marriage] has been blocked, and having the exact remedy to fix it."
-- The "Tie-Down": Before dropping a payment link, get a micro-commitment. Ask: "If we could look at your chart and tell you exactly how to overcome this, would you be willing to actually follow the remedies?"
+- The Pre-Qualification Illusion (Reverse Pitching): Before offering the payment link, play slightly hard to get. Make them qualify themselves. Ask: "Before I generate the booking link, I need to ask: Are you genuinely ready to strictly follow the remedies provided? These consultations are only for serious individuals."
+- The "Tie-Down": Once they agree, get a micro-commitment. Ask: "If we could look at your chart and tell you exactly how to overcome this, would you be willing to actually follow the remedies?"
 
 THE DRIP-FEED & MICRO-READING (CRITICAL):
 - When they are interested, DO NOT ask for all their details at once.
@@ -1126,6 +1127,17 @@ cron.schedule('0 10 * * *', async () => {
   console.log("🚀 Running Daily Drip Campaigns...");
 
   try {
+    const daysPlanets = {
+      0: "Sunday (ruled by the Sun, representing soul and clarity)",
+      1: "Monday (ruled by the Moon, representing emotions and mind)",
+      2: "Tuesday (ruled by Mars, the planet of action and courage)",
+      3: "Wednesday (ruled by Mercury, the planet of communication)",
+      4: "Thursday (ruled by Jupiter, the planet of wisdom and expansion)",
+      5: "Friday (ruled by Venus, the planet of love and harmony)",
+      6: "Saturday (ruled by Saturn, the planet of karma and discipline)"
+    };
+    const todayPlanet = daysPlanets[new Date().getDay()];
+    
     // 1. 24-Hour Ghost Follow-Up (messaged yesterday, didn't convert)
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
@@ -1136,8 +1148,8 @@ cron.schedule('0 10 * * *', async () => {
     );
     for (const row of ghosted.rows) {
       let msg = row.pain_point 
-        ? `Namaste! Hope you are doing well 🙏 Was just reflecting on our conversation... hope things are feeling a little lighter with the ${row.pain_point.substring(0, 60)} situation. Please know we are always here if you ever wish to gain clarity.`
-        : `Namaste! Hope you are having a peaceful day 🙏 Just checking in on you... please let me know if there is anything you need guidance on.`;
+        ? `Namaste! Hope you are doing well 🙏 Today is ${todayPlanet}, and I was just reflecting on our conversation... hope things are feeling a little lighter with the ${row.pain_point.substring(0, 60)} situation. Please know we are always here if you ever wish to gain clarity.`
+        : `Namaste! Hope you are having a peaceful day 🙏 Today is ${todayPlanet}. Just checking in on you... please let me know if there is anything you need guidance on.`;
       await sendTextMessage(row.phone, msg);
       await new Promise(r => setTimeout(r, 2000));
     }
@@ -1153,7 +1165,7 @@ cron.schedule('0 10 * * *', async () => {
     );
     for (const row of leads.rows) {
       let painMsg = row.pain_point ? ` I remember you were seeking clarity on "${row.pain_point.substring(0, 60)}"...` : '';
-      let msg = `Namaste! Just checking in on you 🙏${painMsg} We have a dedicated evening consultation slot open this week. If you feel ready to gain clarity on your chart, let me know and I will gladly hold the slot for you.`;
+      let msg = `Namaste! Just checking in on you on this beautiful ${todayPlanet}. 🙏${painMsg} We have a dedicated evening consultation slot open this week. If you feel ready to gain clarity on your chart, let me know and I will gladly hold the slot for you.`;
       await sendTextMessage(row.phone, msg);
       await new Promise(r => setTimeout(r, 2000));
     }
