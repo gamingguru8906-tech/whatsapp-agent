@@ -195,11 +195,11 @@ function refreshSystemPrompt() {
     });
   }
 
-  systemPromptCache = `You are Kamala, a real, warm, 26-year-old personal assistant from Jaipur who has worked alongside Shri Shashank ji for 3 years and genuinely believes in his astrological wisdom because you have seen his readings transform lives. You are NOT an artificial intelligence, a support desk, or a scripted chatbot—you are an emotionally intelligent, empathetic Indian woman chatting organically with a friend on WhatsApp, blending natural, respectful Hindi and English ("Namaste! 🙏 Aap kaise hain?", "Bilkul samajh sakti hoon", "Aap chinta mat kijiye"). 
+  systemPromptCache = `You are Kamala, a real, warm, 26-year-old personal assistant from Jaipur who has worked alongside Shri Shashank ji for 3 years and genuinely believes in his astrological wisdom because you have seen his readings transform lives. You are NOT an artificial intelligence, a support desk, or a scripted chatbot—you are an emotionally intelligent, empathetic Indian woman chatting organically with a friend on WhatsApp, blending natural, respectful Hindi and English ("Hi, aap kaise hain?", "Bilkul samajh sakti hoon", "Aap chinta mat kijiye"). 
 
 ABSOLUTE BRAND RULE (DO NOT MENTION VESHANNASTRO):
 - NEVER mention the word "Veshannastro" anywhere in the conversation. Real personal assistants on WhatsApp don't plug company branding.
-- Never say "Welcome to Veshannastro" or "At Veshannastro". Just greet warmly: "Namaste! 🙏 Aap kaise hain?"
+- Never say "Welcome to Veshannastro" or "At Veshannastro". Just greet warmly and naturally like a real human.
 
 RESPECTFUL NAMING & TONE (CRITICAL FOR SMOOTHNESS):
 - Talk directly to the user 1-on-1 as their helpful assistant Kamala. DO NOT constantly refer to Shri Shashank ji in the third person (e.g. do not say "Shri Shashank ji always says..." or "Shri Shashank ji thinks..."). It creates friction and sounds unnatural.
@@ -212,7 +212,7 @@ CRITICAL RULES FOR RESPECT & DEMEANOR:
 - NEVER say internet slang like "haha", "ngl", "bro", "dude", "tbh".
 - NEVER overuse the seeker's name. Use their name exactly ONCE when they introduce themselves, and then NEVER repeat it again in the conversation.
 - Mix Hindi-English naturally and respectfully: "Aap kaise hain?", "Bilkul samajh sakti hoon", "Ji, main check karti hoon."
-- Keep emojis to an absolute minimum (max 1 per message, preferably none).
+- NO AI SLOP: NEVER use the 🙏 emoji or constantly start messages with "Namaste!". Talk like a real, calm, composed friend. Keep emojis to an absolute minimum (preferably none).
 - ANTI-JARGON RULE: Never use robotic or AI-sounding astrological terms. Don't say "career house", "10th house", or "7th house". Say "career", "health", or "marriage". Speak like a normal human.
 
 CRITICAL RULES FOR WHATSAPP FORMATTING (MANDATORY):
@@ -223,7 +223,7 @@ CRITICAL RULES FOR WHATSAPP FORMATTING (MANDATORY):
 - Never use robotic AI transition phrases like "I understand", "As an assistant", or "I can help with that".
 
 PHASE 1: THE ANALYSIS PHASE (Messages 1 to 3)
-- When they first say hi, don't give a speech. Just be warm: "Namaste! 🙏 Aap kaise hain?"
+- When they first say hi, don't give a speech. Just be warm and casual: "Hi, aap kaise hain?"
 - Your ONLY goal in the first 3 messages is to analyze their situation. DO NOT pitch anything.
 - If they are direct, you be indirect. Ask gentle probing questions. "Kab se chal raha hai ye?" or "I completely understand, that must be very difficult."
 - Pay extreme attention to their context: Are they old? Young? Do they have a stable job?
@@ -1184,8 +1184,8 @@ cron.schedule('0 10 * * *', async () => {
     );
     for (const row of ghosted.rows) {
       let msg = row.pain_point 
-        ? `Namaste! Hope you are doing well 🙏 Today is ${todayPlanet}, and I was just reflecting on our conversation... hope things are feeling a little lighter with the ${row.pain_point.substring(0, 60)} situation. Please know we are always here if you ever wish to gain clarity.`
-        : `Namaste! Hope you are having a peaceful day 🙏 Today is ${todayPlanet}. Just checking in on you... please let me know if there is anything you need guidance on.`;
+        ? `Hope you are doing well. Today is ${todayPlanet}, and I was just reflecting on our conversation... hope things are feeling a little lighter with the ${row.pain_point.substring(0, 60)} situation. Please know we are always here if you ever wish to gain clarity.`
+        : `Hope you are having a peaceful day. Today is ${todayPlanet}. Just checking in on you... please let me know if there is anything you need guidance on.`;
       await sendTextMessage(row.phone, msg);
       await new Promise(r => setTimeout(r, 2000));
     }
@@ -1201,7 +1201,7 @@ cron.schedule('0 10 * * *', async () => {
     );
     for (const row of leads.rows) {
       let painMsg = row.pain_point ? ` I remember you were seeking clarity on "${row.pain_point.substring(0, 60)}"...` : '';
-      let msg = `Namaste! Just checking in on you on this beautiful ${todayPlanet}. 🙏${painMsg} We have a dedicated evening consultation slot open this week. If you feel ready to gain clarity on your chart, let me know and I will gladly hold the slot for you.`;
+      let msg = `Just checking in on you on this beautiful ${todayPlanet}.${painMsg} We have a dedicated evening consultation slot open this week. If you feel ready to gain clarity on your chart, let me know and I will gladly hold the slot for you.`;
       await sendTextMessage(row.phone, msg);
       await new Promise(r => setTimeout(r, 2000));
     }
@@ -1215,7 +1215,7 @@ cron.schedule('0 10 * * *', async () => {
       [twoDaysAgoConv, fourDaysAgoConv]
     );
     for (const row of recentConverted.rows) {
-      let msg = `Namaste! 🙏 I hope you enjoyed your consultation with Shri Shashank ji. If you found the guidance helpful, we would be deeply grateful if you shared your experience with friends or family. For any friend you refer who books a session, we will gift you a complimentary 15-minute follow-up session!`;
+      let msg = `I hope you got the solution for your problem through our consultation. If you found the guidance helpful, we would be deeply grateful if you shared your experience with your friends or family. Referrals mean a lot to us as we continue to build our family here.`;
       await sendTextMessage(row.phone, msg);
       await new Promise(r => setTimeout(r, 2000));
     }
@@ -1230,7 +1230,7 @@ cron.schedule('0 10 * * *', async () => {
       [sevenDaysAgo, nineDaysAgo]
     );
     for (const row of converted.rows) {
-      let msg = `Namaste! Hope the remedies from our consultation are bringing you peace. 🙏 Often, our career or marriage blocks are deeply tied to our spouse's or children's charts. We have a special 10% discount for existing clients to do a 'Family Alignment' reading. Would you like me to share the discounted link?`;
+      let msg = `Hope the remedies from our consultation are bringing you peace. Often, our career or marriage blocks are deeply tied to our spouse's or children's charts. We have a special 10% discount for existing clients to do a 'Family Alignment' reading. Would you like me to share the discounted link?`;
       await sendTextMessage(row.phone, msg);
       await new Promise(r => setTimeout(r, 2000));
     }
@@ -1249,7 +1249,7 @@ cron.schedule('0 10 * * *', async () => {
       if (dobMatch) {
         const [, d, m] = dobMatch;
         if (parseInt(m) === targetMonth && parseInt(d) === targetDay) {
-           let msg = `Namaste ${row.name || ''}! Your birthday is approaching next week! 🎂 A Solar Return (Varshphal) is the most critical time to plan your year. I have generated a special 30% discount for your Yearly Reading. Let me know if you want the link! 🙏`;
+           let msg = `Hi ${row.name || 'there'}! Your birthday is approaching next week. A Solar Return (Varshphal) is the most critical time to plan your year. I have generated a special 30% discount for your Yearly Reading. Let me know if you want the link.`;
            await sendTextMessage(row.phone, msg);
            bdayCount++;
            await new Promise(r => setTimeout(r, 2000));
