@@ -481,7 +481,27 @@ app.post('/razorpay-webhook', async (req, res) => {
         }
       }
 
-      // 4. Log to Google Sheets & Trigger Automated Email
+      // 4. Generate PDF Invoice
+      let invoiceBase64 = null;
+      let invoiceBuffer = null;
+      const safeName = (customerName || 'Customer').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const invoiceName = `Invoice_${safeName}.pdf`;
+      try {
+        invoiceBuffer = await generateInvoice({
+          invoiceNumber: pl.id.replace('plink_', '').toUpperCase(),
+          customerName: customerName,
+          email: notes.email || '',
+          phone: phone,
+          serviceName: serviceName,
+          amountPaid: price,
+          date: new Date().toLocaleDateString('en-IN')
+        });
+        invoiceBase64 = invoiceBuffer.toString('base64');
+      } catch (invoiceErr) {
+        console.error("Invoice Generation Error:", invoiceErr.message);
+      }
+
+      // 5. Log to Google Sheets & Trigger Automated Email
       if (GOOGLE_APPS_SCRIPT_URL) {
         const eventTime = new Date();
         eventTime.setDate(eventTime.getDate() + 1);
@@ -505,7 +525,9 @@ app.post('/razorpay-webhook', async (req, res) => {
           query: notes.summary || '',
           meetLink: meetLink,
           eventTime: notes.time_slot || eventTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' }),
-          notes: ''
+          notes: '',
+          invoiceBase64: invoiceBase64,
+          invoiceName: invoiceName
         }).catch(e => console.error('Sheet Logging Error:', e.message));
 
         await axios.post(GOOGLE_APPS_SCRIPT_URL, {
@@ -521,7 +543,7 @@ app.post('/razorpay-webhook', async (req, res) => {
         }).catch(e => console.error('Customer DB Sync Error:', e.message));
       }
 
-      // 5. Generate PDF Invoice and Send WhatsApp Confirmation
+      // 6. Send WhatsApp Confirmation
       if (phone) {
         const agreedSlotMsg = notes.time_slot && notes.time_slot !== "Not specified" ? `\n\nYour session is locked in for: *${notes.time_slot}*.` : `\n\nWe have tentatively reserved a slot for you, and we will confirm the exact time that works best for you.`;
         const emailStr = notes.email ? `\n\nA copy of your invoice and booking details has also been sent to your email: ${notes.email}` : '';
@@ -529,24 +551,14 @@ app.post('/razorpay-webhook', async (req, res) => {
         await sendTextMessage(phone, msg);
 
         try {
-          const invoiceBuffer = await generateInvoice({
-            invoiceNumber: pl.id.replace('plink_', '').toUpperCase(),
-            customerName: customerName,
-            email: notes.email || '',
-            phone: phone,
-            serviceName: serviceName,
-            amountPaid: price,
-            date: new Date().toLocaleDateString('en-IN')
-          });
-
-          const safeName = (customerName || 'Customer').replace(/[^a-zA-Z0-9_-]/g, '_');
-          const fileName = `Invoice_${safeName}.pdf`;
-          const mediaId = await uploadWhatsAppMedia(invoiceBuffer, fileName, 'application/pdf');
-          if (mediaId) {
-            await sendWhatsAppDocument(phone, mediaId, fileName, "Here is your official invoice for the consultation.");
+          if (invoiceBuffer) {
+            const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
+            if (mediaId) {
+              await sendWhatsAppDocument(phone, mediaId, invoiceName, "Here is your official invoice for the consultation.");
+            }
           }
         } catch (invoiceErr) {
-          console.error("Invoice Generation/Sending Error:", invoiceErr.message);
+          console.error("WhatsApp Invoice Sending Error:", invoiceErr.message);
         }
 
         // 7. High-Ticket Backend Upsell (after 48 hours)
