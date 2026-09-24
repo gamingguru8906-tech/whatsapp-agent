@@ -13,6 +13,7 @@ dns.lookup = function(hostname, options, callback) {
 
 const express = require('express');
 const axios = require('axios');
+const crypto = require('crypto');
 const vm = require('vm');
 const { GoogleGenerativeAI, SchemaType } = require('@google/generative-ai');
 const Razorpay = require('razorpay');
@@ -23,7 +24,11 @@ const FormData = require('form-data');
 const { generateInvoice } = require('./invoice-generator');
 
 const app = express();
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 
 const VERIFY_TOKEN    = process.env.VERIFY_TOKEN    || 'veshannastro_webhook_2024';
 const WA_TOKEN        = process.env.WA_TOKEN;
@@ -32,6 +37,7 @@ const GEMINI_API_KEY  = process.env.GEMINI_API_KEY;
 
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
 const GOOGLE_SERVICE_ACCOUNT_JSON = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
 const GOOGLE_CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || 'primary'; 
@@ -368,6 +374,21 @@ app.get('/webhook', (req, res) => {
 
 // Razorpay Webhook for Payment Confirmation
 app.post('/razorpay-webhook', async (req, res) => {
+  if (RAZORPAY_WEBHOOK_SECRET) {
+    const signature = req.headers['x-razorpay-signature'];
+    if (!signature) {
+      console.log('❌ No razorpay signature found');
+      return res.sendStatus(400);
+    }
+    const expectedSignature = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET)
+                                    .update(req.rawBody)
+                                    .digest('hex');
+    if (signature !== expectedSignature) {
+      console.log('❌ Invalid razorpay signature');
+      return res.sendStatus(400);
+    }
+  }
+
   res.sendStatus(200); 
   try {
     const event = req.body;
@@ -908,10 +929,15 @@ app.post('/webhook', async (req, res) => {
               
               // Trigger the webhook logic manually so they get the invoice instantly!
               const PORT = process.env.PORT || 3000;
-              axios.post(`http://127.0.0.1:${PORT}/razorpay-webhook`, {
+              const payloadData = {
                 event: 'payment_link.paid',
                 payload: { payment_link: { entity: pl } }
-              }).catch(e => console.error("Manual webhook trigger failed:", e.message));
+              };
+              const headers = {};
+              if (RAZORPAY_WEBHOOK_SECRET) {
+                headers['x-razorpay-signature'] = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(JSON.stringify(payloadData)).digest('hex');
+              }
+              axios.post(`http://127.0.0.1:${PORT}/razorpay-webhook`, payloadData, { headers }).catch(e => console.error("Manual webhook trigger failed:", e.message));
 
             } else {
               sessions[from].push({ role: "function", parts: [{ functionResponse: { name: call.name, response: { status: "unpaid" } } }] });
