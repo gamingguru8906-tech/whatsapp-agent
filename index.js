@@ -817,7 +817,13 @@ app.post('/webhook', async (req, res) => {
   const expected = `sha256=${crypto.createHmac('sha256', META_APP_SECRET).update(req.rawBody || Buffer.alloc(0)).digest('hex')}`;
   const receivedBuffer = Buffer.from(signature);
   const expectedBuffer = Buffer.from(expected);
-  if (receivedBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(receivedBuffer, expectedBuffer)) return res.sendStatus(401);
+  if (receivedBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(receivedBuffer, expectedBuffer)) {
+    console.error('🚨 Webhook Signature Verification Failed!');
+    console.error(`Received: ${signature}`);
+    console.error(`Expected: ${expected}`);
+    console.error(`Length: Recv=${receivedBuffer.length}, Exp=${expectedBuffer.length}`);
+    return res.sendStatus(401);
+  }
   res.sendStatus(200); 
   try {
     const messages = req.body?.entry?.[0]?.changes?.[0]?.value?.messages;
