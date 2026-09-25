@@ -3,8 +3,11 @@
 const crypto = require('crypto');
 
 function secretsMatch(expected, supplied) {
-  const expectedBytes = Buffer.from(String(expected || ''));
-  const suppliedBytes = Buffer.from(String(supplied || ''));
+  const exp = String(expected || '').trim();
+  const sup = String(supplied || '').trim();
+  if (!exp || !sup) return false;
+  const expectedBytes = Buffer.from(exp);
+  const suppliedBytes = Buffer.from(sup);
   return expectedBytes.length > 0
     && expectedBytes.length === suppliedBytes.length
     && crypto.timingSafeEqual(expectedBytes, suppliedBytes);

@@ -1677,7 +1677,12 @@ app.get('/payments/verify/health', (req, res) => res.json({
 }));
 
 app.post('/payments/verify', async (req, res) => {
-  if (!secretsMatch(GOOGLE_APPS_SCRIPT_SECRET, req.get('X-Google-Apps-Script-Secret'))) {
+  const suppliedSecret = req.get('X-Google-Apps-Script-Secret')
+    || req.get('x-google-apps-script-secret')
+    || req.headers['x-google-apps-script-secret']
+    || req.body?.apiSecret;
+  if (!secretsMatch(GOOGLE_APPS_SCRIPT_SECRET, suppliedSecret)) {
+    console.warn(`Payment verification 401: secret mismatch. Expected length: ${String(GOOGLE_APPS_SCRIPT_SECRET || '').trim().length}, Supplied length: ${String(suppliedSecret || '').trim().length}`);
     return res.status(401).json({ verified: false, error: 'Unauthorized.' });
   }
   if (!razorpayClient) return res.status(503).json({ verified: false, error: 'Payment verification is not configured.' });
