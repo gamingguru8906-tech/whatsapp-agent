@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node --test test-payment-verification.js test-invoice-generator.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,7 @@
     "node-cron": "^4.6.0",
     "pdfkit": "^0.20.2",
     "pg": "^8.23.0",
+    "qrcode": "^1.5.4",
     "razorpay": "^2.9.8"
   },
   "engines": {
