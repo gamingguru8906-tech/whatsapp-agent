@@ -465,7 +465,10 @@ async function reserveCalendarSlot(slot, details) {
       end: { dateTime: slot.end.toISOString(), timeZone: 'Asia/Kolkata' },
       // Do not send an actual Calendar invitation during the ₹1 gateway test.
       attendees: [],
-      conferenceData: { createRequest: { requestId: `wa-${crypto.randomUUID()}`, conferenceSolutionKey: { type: 'hangoutsMeet' } } }
+      // Let this calendar choose its configured conferencing solution. Hard-coding
+      // `hangoutsMeet` causes a 400 when that calendar/service-account context does
+      // not advertise that conference type, before a payment link can be created.
+      conferenceData: { createRequest: { requestId: `wa-${crypto.randomUUID()}` } }
     }
   });
   return { calendar, event: inserted.data, slot };
@@ -1376,7 +1379,15 @@ app.post('/webhook', async (req, res) => {
               if (calendarHold?.event?.id) {
                 await calendarHold.calendar.events.delete({ calendarId: GOOGLE_CALENDAR_ID, eventId: calendarHold.event.id }).catch(() => {});
               }
-              console.error("Razorpay Error:", e);
+              // Google API errors can contain the complete event request (including
+              // customer name, phone, service, and appointment time). Log only a
+              // short diagnostic summary, never the request/config object.
+              console.error('Payment-link workflow failed:', {
+                message: e.message || 'Unknown error',
+                code: e.code || null,
+                status: e.status || e.response?.status || null,
+                apiReason: e.response?.data?.error?.reason || null
+              });
               await sendTextMessage(from, "Sorry, there was an error generating the secure payment link. Please try again later.");
               sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
               sessions[from].push({ role: "model", parts: [{ text: "Understood, there was an error." }] });
