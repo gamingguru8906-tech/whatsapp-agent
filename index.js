@@ -730,11 +730,19 @@ app.post('/razorpay-webhook', async (req, res) => {
       // A Calendar event was created as a temporary hold before the payment link.
       // Upgrade that exact event only after Razorpay confirms the exact amount.
       if (!notes.calendar_event_id) throw new Error(`No appointment hold exists for paid link ${pl.id}; manual fulfillment is required.`);
+      const isGatewayTest = notes.gateway_test === 'true';
+      const eventSummary = isGatewayTest
+        ? `GATEWAY TEST ONLY — NOT A BOOKING — ${serviceName} — ${customerName}`
+        : `Veshannastro Consultation — ${serviceName} — ${customerName}`;
+      const eventDescription = isGatewayTest
+        ? `₹1 gateway validation only. This is not a confirmed consultation booking and does not pay the consultation fee.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nRequested appointment (test only): ${notes.time_slot || ''}`
+        : `Confirmed Veshannastro Consultation Booking.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nAppointment time: ${notes.time_slot || ''}\nQuery: ${notes.summary || ''}`;
+
       const finalizedCalendar = await postAppsScript({
         target: 'calendar_finalize',
         eventId: notes.calendar_event_id,
-        summary: `GATEWAY TEST ONLY — NOT A BOOKING — ${serviceName} — ${customerName}`,
-        description: `₹1 gateway validation only. This is not a confirmed consultation booking and does not pay the consultation fee.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nRequested appointment (test only): ${notes.time_slot || ''}`
+        summary: eventSummary,
+        description: eventDescription
       });
       const meetLink = finalizedCalendar.meetLink;
       if (!meetLink) throw new Error(`Calendar hold ${notes.calendar_event_id} has no Google Meet URL; manual fulfillment is required.`);
@@ -753,7 +761,7 @@ app.post('/razorpay-webhook', async (req, res) => {
           serviceName: serviceName,
           amountPaid: price,
           basePrice: Number(notes.list_price || price),
-          isGatewayTest: notes.gateway_test === 'true',
+          isGatewayTest: isGatewayTest,
           date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
           appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
           paymentId: payment?.id,
@@ -780,7 +788,7 @@ app.post('/razorpay-webhook', async (req, res) => {
           birthPlace: notes.pob || '',
           service: serviceName,
           amountPaid: price,
-          paymentStatus: notes.gateway_test === 'true' ? 'Gateway test paid - consultation not paid' : 'Paid',
+          paymentStatus: isGatewayTest ? 'Gateway test paid - consultation not paid' : 'Paid',
           payment_id: event.payload?.payment?.entity?.id || pl.id,
           payment_link_id: pl.id,
           source: "WhatsApp Direct Booking",
@@ -790,8 +798,10 @@ app.post('/razorpay-webhook', async (req, res) => {
           eventTime: bookedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' }),
           notes: '',
           invoiceBase64: invoiceBase64,
+          invoicePdfBase64: invoiceBase64,
           invoiceName: invoiceName,
-          isGatewayTest: notes.gateway_test === 'true',
+          invoicePdfName: invoiceName,
+          isGatewayTest: isGatewayTest,
           basePrice: Number(notes.list_price || price)
         });
 
