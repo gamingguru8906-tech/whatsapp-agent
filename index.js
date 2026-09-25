@@ -18,7 +18,6 @@ const crypto = require('crypto');
 const vm = require('vm');
 const { GoogleGenerativeAI, SchemaType } = require('@google/generative-ai');
 const Razorpay = require('razorpay');
-const { google } = require('googleapis');
 const { Pool } = require('pg');
 const path = require('path');
 const FormData = require('form-data');
@@ -47,8 +46,6 @@ const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
 const GOOGLE_APPS_SCRIPT_SECRET = process.env.GOOGLE_APPS_SCRIPT_SECRET;
-const GOOGLE_SERVICE_ACCOUNT_JSON = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
-const GOOGLE_CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || 'primary'; 
 const ADMIN_PHONE_NUMBER = process.env.ADMIN_PHONE_NUMBER; 
 
 const razorpayClient = (RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET) 
@@ -428,50 +425,24 @@ function validatePreferredSlot(value) {
   return { start, end: new Date(start.getTime() + 60 * 60 * 1000), local };
 }
 
-async function getCalendarClient() {
-  if (!GOOGLE_SERVICE_ACCOUNT_JSON) throw new Error('Calendar is not configured, so I cannot safely check or reserve a slot yet.');
-  const credentials = typeof GOOGLE_SERVICE_ACCOUNT_JSON === 'string'
-    ? JSON.parse(GOOGLE_SERVICE_ACCOUNT_JSON) : GOOGLE_SERVICE_ACCOUNT_JSON;
-  const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/calendar.events'] });
-  return google.calendar({ version: 'v3', auth });
-}
-
 async function reserveCalendarSlot(slot, details) {
-  const calendar = await getCalendarClient();
-  const dayStart = new Date(`${slot.local.year}-${slot.local.month}-${slot.local.day}T00:00:00+05:30`);
-  const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
-  const existing = await calendar.events.list({
-    calendarId: GOOGLE_CALENDAR_ID,
-    timeMin: dayStart.toISOString(), timeMax: dayEnd.toISOString(),
-    singleEvents: true, orderBy: 'startTime', maxResults: 250
+  const result = await postAppsScript({
+    target: 'calendar_hold',
+    startTime: slot.start.toISOString(),
+    endTime: slot.end.toISOString(),
+    customerName: details.customerName,
+    phone: details.phone,
+    serviceName: details.serviceName
   });
-  const events = (existing.data.items || []).filter(event => event.status !== 'cancelled');
-  const starts = slot.start.getTime(), ends = slot.end.getTime();
-  const overlap = events.some(event => {
-    const eventStart = new Date(event.start?.dateTime || event.start?.date).getTime();
-    const eventEnd = new Date(event.end?.dateTime || event.end?.date).getTime();
-    return Number.isFinite(eventStart) && Number.isFinite(eventEnd) && starts < eventEnd && ends > eventStart;
-  });
-  if (overlap) throw new Error('That time has just become unavailable. Please offer another time within the published appointment hours.');
-  const dailyBookings = events.filter(event => /WhatsApp Booking|Veshannastro Consultation|GATEWAY TEST ONLY/.test(event.summary || '')).length;
-  if (dailyBookings >= 3) throw new Error('The daily consultation limit has been reached for that date. Please offer another date.');
-  const inserted = await calendar.events.insert({
-    calendarId: GOOGLE_CALENDAR_ID,
-    conferenceDataVersion: 1,
-    requestBody: {
-      summary: `GATEWAY TEST ONLY — NOT A BOOKING — ${details.serviceName} — ${details.customerName}`,
-      description: `Temporary gateway validation only; this is not a confirmed consultation booking. Customer: ${details.customerName}\nWhatsApp: ${details.phone}\nService: ${details.serviceName}\nRequested appointment (test only): ${slot.start.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
-      start: { dateTime: slot.start.toISOString(), timeZone: 'Asia/Kolkata' },
-      end: { dateTime: slot.end.toISOString(), timeZone: 'Asia/Kolkata' },
-      // Do not send an actual Calendar invitation during the ₹1 gateway test.
-      attendees: [],
-      // Let this calendar choose its configured conferencing solution. Hard-coding
-      // `hangoutsMeet` causes a 400 when that calendar/service-account context does
-      // not advertise that conference type, before a payment link can be created.
-      conferenceData: { createRequest: { requestId: `wa-${crypto.randomUUID()}` } }
-    }
-  });
-  return { calendar, event: inserted.data, slot };
+  if (!result.eventId || !/^https:\/\/meet\.google\.com\/[A-Za-z0-9-]+(?:\?[A-Za-z0-9_=&%-]*)?$/.test(String(result.meetLink || ''))) {
+    if (result.eventId) await postAppsScript({ target: 'calendar_cancel', eventId: result.eventId }).catch(() => {});
+    throw new Error('Apps Script did not return a verified Google Meet link. No payment link was created.');
+  }
+  return {
+    event: { id: result.eventId, hangoutLink: result.meetLink, htmlLink: result.htmlLink || '' },
+    slot,
+    meetLink: result.meetLink
+  };
 }
 
 async function postAppsScript(payload) {
@@ -686,17 +657,13 @@ app.post('/razorpay-webhook', async (req, res) => {
       // A Calendar event was created as a temporary hold before the payment link.
       // Upgrade that exact event only after Razorpay confirms the exact amount.
       if (!notes.calendar_event_id) throw new Error(`No appointment hold exists for paid link ${pl.id}; manual fulfillment is required.`);
-      const calendar = await getCalendarClient();
-      const eventRes = await calendar.events.patch({
-        calendarId: GOOGLE_CALENDAR_ID,
+      const finalizedCalendar = await postAppsScript({
+        target: 'calendar_finalize',
         eventId: notes.calendar_event_id,
-        conferenceDataVersion: 1,
-        requestBody: {
-          summary: `GATEWAY TEST ONLY — NOT A BOOKING — ${serviceName} — ${customerName}`,
-          description: `₹1 gateway validation only. This is not a confirmed consultation booking and does not pay the consultation fee.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nRequested appointment (test only): ${notes.time_slot || ''}`
-        }
+        summary: `GATEWAY TEST ONLY — NOT A BOOKING — ${serviceName} — ${customerName}`,
+        description: `₹1 gateway validation only. This is not a confirmed consultation booking and does not pay the consultation fee.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nRequested appointment (test only): ${notes.time_slot || ''}`
       });
-      const meetLink = eventRes.data.hangoutLink || eventRes.data.conferenceData?.entryPoints?.find(point => point.entryPointType === 'video')?.uri;
+      const meetLink = finalizedCalendar.meetLink;
       if (!meetLink) throw new Error(`Calendar hold ${notes.calendar_event_id} has no Google Meet URL; manual fulfillment is required.`);
 
       // 4. Generate PDF Invoice
@@ -797,9 +764,8 @@ app.post('/razorpay-webhook', async (req, res) => {
       const pl = event.payload?.payment_link?.entity;
       const eventId = pl?.notes?.calendar_event_id;
       if (eventId) {
-        const calendar = await getCalendarClient();
-        await calendar.events.delete({ calendarId: GOOGLE_CALENDAR_ID, eventId }).catch(error => {
-          if (error.code !== 404) throw error;
+        await postAppsScript({ target: 'calendar_cancel', eventId }).catch(error => {
+          if (!/not found|already missing/i.test(error.message || '')) throw error;
         });
       }
       if (pl?.id && pool) await pool.query("UPDATE wa_payment_links SET status=$2,updated_at=NOW() WHERE payment_link_id=$1", [pl.id, pl.notes?.gateway_test === 'true' ? 'gateway_test_expired' : 'expired']);
@@ -1377,7 +1343,7 @@ app.post('/webhook', async (req, res) => {
                 }).catch(() => {});
               }
               if (calendarHold?.event?.id) {
-                await calendarHold.calendar.events.delete({ calendarId: GOOGLE_CALENDAR_ID, eventId: calendarHold.event.id }).catch(() => {});
+                await postAppsScript({ target: 'calendar_cancel', eventId: calendarHold.event.id }).catch(() => {});
               }
               // Google API errors can contain the complete event request (including
               // customer name, phone, service, and appointment time). Log only a
