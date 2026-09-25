@@ -60,6 +60,7 @@ const pendingPayments = {}; // Holds timeouts for Abandoned Cart
 const activePaymentLinks = {}; // Holds the latest paymentLink.id for active verification
 const processedPayments = new Set(); // Prevent duplicate invoices if both manual verify and webhook fire
 const processedMessageIds = new Map(); // msgId -> timestamp to prevent duplicate processing
+const pendingLeadSheetUpdates = new Map(); // Coalesce bursts of inbound messages into one CRM write per phone
 
 // Clean up processedMessageIds every 5 minutes
 setInterval(() => {
@@ -445,16 +446,88 @@ async function reserveCalendarSlot(slot, details) {
   };
 }
 
-async function postAppsScript(payload) {
+const IDEMPOTENT_APPS_SCRIPT_TARGETS = new Set(['calendar_finalize', 'booking', 'customer_update', 'lead_update']);
+
+function appsScriptFailure(target, error) {
+  const status = error?.response?.status;
+  const responseText = typeof error?.response?.data === 'string'
+    ? error.response.data
+    : error?.response?.data ? JSON.stringify(error.response.data) : '';
+  const safeResponse = responseText.replace(/\s+/g, ' ').slice(0, 350);
+  return new Error(`Apps Script target=${target || 'default'}${status ? ` HTTP ${status}` : ''}: ${safeResponse || error?.code || error?.message || 'request failed'}`);
+}
+
+async function postAppsScript(payload, options = {}) {
   if (!GOOGLE_APPS_SCRIPT_URL) throw new Error('Google Apps Script is not configured; payment fulfillment cannot complete email and Sheets logging.');
   if (!GOOGLE_APPS_SCRIPT_SECRET) throw new Error('Google Apps Script authentication is not configured; payment and customer records cannot be safely logged.');
-  const response = await axios.post(GOOGLE_APPS_SCRIPT_URL, {
-    ...payload, sourceSystem: 'whatsapp', apiSecret: GOOGLE_APPS_SCRIPT_SECRET
-  }, { timeout: 20000 });
-  if (!response.data || response.data.ok !== true) {
-    throw new Error(`Google Apps Script rejected ${payload.target || 'request'}: ${response.data?.error || 'no successful response'}`);
+  const target = String(payload.target || 'default');
+  const timeout = Number(options.timeoutMs) || (target === 'lead_update' ? 15000 : 45000);
+  const maxAttempts = Number.isInteger(options.maxAttempts)
+    ? Math.max(1, options.maxAttempts)
+    : IDEMPOTENT_APPS_SCRIPT_TARGETS.has(target) ? 2 : 1;
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await axios.post(GOOGLE_APPS_SCRIPT_URL.trim(), {
+        ...payload, sourceSystem: 'whatsapp', apiSecret: GOOGLE_APPS_SCRIPT_SECRET
+      }, { timeout });
+      if (!response.data || response.data.ok !== true) {
+        const details = response.data?.error || 'no successful response';
+        const retryableBusy = /temporarily busy|retryable/i.test(String(details));
+        if (attempt < maxAttempts && retryableBusy) {
+          await new Promise(resolve => setTimeout(resolve, 800 * attempt));
+          continue;
+        }
+        throw new Error(`Apps Script target=${target} rejected request: ${details}`);
+      }
+      return response.data;
+    } catch (error) {
+      const isAppsScriptResponseError = error?.message?.startsWith('Apps Script target=');
+      lastError = isAppsScriptResponseError ? error : appsScriptFailure(target, error);
+      const status = error?.response?.status;
+      const transient = isAppsScriptResponseError
+        ? /temporarily busy|retryable/i.test(error.message)
+        : !status || status === 404 || status === 429 || status >= 500
+          || ['ECONNABORTED', 'ETIMEDOUT', 'ECONNRESET', 'EAI_AGAIN'].includes(error?.code);
+      if (attempt >= maxAttempts || !transient) throw lastError;
+      console.warn(`Apps Script target=${target} attempt ${attempt}/${maxAttempts} failed${status ? ` HTTP ${status}` : ` (${error.code || 'network'})`}; retrying once.`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
   }
-  return response.data;
+  throw lastError || new Error(`Apps Script target=${target} failed without a response.`);
+}
+
+function queueLeadSheetUpdate(data) {
+  const phone = String(data.phone || '');
+  if (!phone) return;
+  let entry = pendingLeadSheetUpdates.get(phone);
+  if (!entry) {
+    entry = { latest: null, timer: null, inFlight: false };
+    pendingLeadSheetUpdates.set(phone, entry);
+  }
+  entry.latest = data;
+  if (entry.timer) clearTimeout(entry.timer);
+  if (!entry.inFlight) scheduleLeadSheetUpdate_(phone, entry, 750);
+}
+
+function scheduleLeadSheetUpdate_(phone, entry, delayMs) {
+  if (entry.timer) clearTimeout(entry.timer);
+  entry.timer = setTimeout(async () => {
+    entry.timer = null;
+    if (entry.inFlight) return;
+    const snapshot = entry.latest;
+    entry.inFlight = true;
+    try {
+      await postAppsScript(snapshot, { timeoutMs: 15000, maxAttempts: 2 });
+    } catch (error) {
+      console.error(`Sheet Lead Update Error target=lead_update: ${error.message}`);
+    } finally {
+      entry.inFlight = false;
+      if (entry.latest !== snapshot) scheduleLeadSheetUpdate_(phone, entry, 250);
+      else pendingLeadSheetUpdates.delete(phone);
+    }
+  }, delayMs);
 }
 
 async function findActivePaymentLinkId(phone) {
@@ -859,12 +932,12 @@ app.post('/webhook', async (req, res) => {
     }
 
     if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
-      postAppsScript({
+      queueLeadSheetUpdate({
         target: 'lead_update', 
         phone: from, 
         message_count: dbUser.message_count,
         is_customer: dbUser.is_customer
-      }).catch(e => console.error("Sheet Lead Update Error", e.message));
+      });
     }
 
     // Admin Commands
