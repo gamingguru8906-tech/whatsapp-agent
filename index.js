@@ -816,6 +816,7 @@ app.post('/razorpay-webhook', async (req, res) => {
 app.post('/webhook', async (req, res) => {
   if (!META_APP_SECRET) return res.status(503).send('Meta App Secret is not configured');
   const signature = String(req.headers['x-hub-signature-256'] || '');
+  const rawBodyLen = req.rawBody ? req.rawBody.length : 0;
   const expected = `sha256=${crypto.createHmac('sha256', META_APP_SECRET).update(req.rawBody || Buffer.alloc(0)).digest('hex')}`;
   const receivedBuffer = Buffer.from(signature);
   const expectedBuffer = Buffer.from(expected);
@@ -823,7 +824,7 @@ app.post('/webhook', async (req, res) => {
     console.error('🚨 Webhook Signature Verification Failed!');
     console.error(`Received: ${signature}`);
     console.error(`Expected: ${expected}`);
-    console.error(`Length: Recv=${receivedBuffer.length}, Exp=${expectedBuffer.length}`);
+    console.error(`RawBody Length: ${rawBodyLen}`);
     return res.sendStatus(401);
   }
   res.sendStatus(200); 
