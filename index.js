@@ -536,12 +536,51 @@ function scheduleLeadSheetUpdate_(phone, entry, delayMs) {
   }, delayMs);
 }
 
-async function findActivePaymentLinkId(phone) {
+// Resolve a Razorpay link the customer pasted (rzp.io short URL or plink_ id).
+// Only links whose notes.phone is this customer are accepted.
+async function paymentLinkIdFromMessage(phone, text) {
+  const raw = String(text || '');
+  let linkId = (raw.match(/\bplink_[A-Za-z0-9]+\b/) || [])[0] || null;
+  if (!linkId) {
+    const shortUrl = (raw.match(/https?:\/\/rzp\.io\/[A-Za-z0-9/_-]+/i) || [])[0];
+    if (shortUrl) {
+      try {
+        const r = await axios.get(shortUrl, { maxRedirects: 0, timeout: 8000, validateStatus: s => s >= 200 && s < 400 });
+        linkId = (String(r.headers?.location || '').match(/plink_[A-Za-z0-9]+/) || [])[0] || null;
+      } catch (e) {
+        console.warn('Could not resolve Razorpay short link:', e.message);
+      }
+    }
+  }
+  if (!linkId || !razorpayClient?.paymentLink?.fetch) return null;
+  try {
+    const pl = await razorpayClient.paymentLink.fetch(linkId);
+    return String(pl?.notes?.phone || '') === String(phone) ? linkId : null;
+  } catch (e) {
+    console.warn('Could not fetch pasted payment link:', e.message);
+    return null;
+  }
+}
+
+async function findActivePaymentLinkId(phone, inboundText = '') {
+  const fromMessage = await paymentLinkIdFromMessage(phone, inboundText);
+  if (fromMessage) return fromMessage;
   if (activePaymentLinks[phone]) return activePaymentLinks[phone];
   if (!pool) return null;
-  const stored = await pool.query("SELECT payment_link_id FROM wa_payment_links WHERE phone=$1 AND status IN ('request_created','gateway_test_created') ORDER BY created_at DESC LIMIT 1", [phone]);
+  // Razorpay is the source of truth for "paid", so consider the latest link that
+  // has not been fulfilled yet, whatever interim status it carries.
+  const stored = await pool.query(`SELECT l.payment_link_id FROM wa_payment_links l
+    LEFT JOIN wa_payment_fulfillments f ON f.payment_link_id = l.payment_link_id
+    WHERE l.phone=$1 AND l.status NOT IN ('paid','gateway_test_paid')
+      AND COALESCE(f.status,'') <> 'fulfilled'
+      AND l.created_at > NOW() - INTERVAL '7 days'
+    ORDER BY l.created_at DESC LIMIT 1`, [phone]);
   const paymentLinkId = stored.rows[0]?.payment_link_id || null;
   if (paymentLinkId) activePaymentLinks[phone] = paymentLinkId;
+  else {
+    const recent = await pool.query('SELECT payment_link_id,status,created_at FROM wa_payment_links WHERE phone=$1 ORDER BY created_at DESC LIMIT 3', [phone]).catch(() => ({ rows: [] }));
+    console.warn(`No unfulfilled payment link for ${phone}. Recent links: ${JSON.stringify(recent.rows)}`);
+  }
   return paymentLinkId;
 }
 
@@ -1031,14 +1070,16 @@ app.post('/webhook', async (req, res) => {
     // Ignore if Human Handoff activated
     if (dbUser.is_paused) return;
 
-    const paymentClaim = isPaymentClaim(inboundText, /payment link|gateway test/i.test(latestAssistantText));
+    const paymentClaim = isPaymentClaim(inboundText, /payment link|gateway test/i.test(latestAssistantText))
+      || /rzp\.io\/|\bplink_[A-Za-z0-9]+/i.test(inboundText);
     if (paymentClaim) {
       if (!sessions[from]) sessions[from] = [];
       sessions[from].push({ role: 'user', parts: [{ text: inboundText }] });
-      const paymentLinkId = await findActivePaymentLinkId(from);
+      const paymentLinkId = await findActivePaymentLinkId(from, inboundText);
       if (!paymentLinkId) {
         const reply = "I can't see an active payment link for this conversation yet, so I can't verify a payment. Please share the payment link you used, and I'll check it for you.";
         await sendTextMessage(from, reply);
+        if (ADMIN_PHONE_NUMBER) await sendTextMessage(ADMIN_PHONE_NUMBER, `Payment check needs attention: +${from} says they paid but no unfulfilled payment link was found. Customer message: ${String(inboundText || '').slice(0, 200)}`);
         sessions[from].push({ role: 'model', parts: [{ text: reply }] });
       } else {
         try {
@@ -1469,10 +1510,13 @@ app.post('/webhook', async (req, res) => {
         }
 
         if (call.name === "verify_payment") {
-          const plId = await findActivePaymentLinkId(from);
+          const plId = await findActivePaymentLinkId(from, inboundText);
           if (!plId) {
             sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: "No active payment link found for this user." } } }] });
-            sessions[from].push({ role: "model", parts: [{ text: "Understood. There's no active payment link to verify." }] });
+            const msg = "Mujhe aapke number se juda koi pending payment link nahi mil raha. Maine team ko inform kar diya hai, woh Razorpay mein check karke aapse contact karenge.";
+            sessions[from].push({ role: "model", parts: [{ text: msg }] });
+            await sendTextMessage(from, msg);
+            if (ADMIN_PHONE_NUMBER) await sendTextMessage(ADMIN_PHONE_NUMBER, `Payment check needs attention: +${from} says they paid but no unfulfilled payment link was found. Customer message: ${String(inboundText || '').slice(0, 200)}`);
             return;
           }
           try {
