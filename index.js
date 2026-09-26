@@ -343,6 +343,12 @@ WHEN BOOKING & CREATING URGENCY:
 - Quote the live catalogue price first. Never calculate or promise a discount or provide a price to the tool. For genuine affordability hardship after discussing the price, set discount_offer to "hardship" and let the server decide eligibility and amount. A 10% offer may be used only after the system's 48-hour follow-up and explicit customer acceptance.
 - Never use test prices or invent catalogue items, inclusions, discounts, or booking claims.
 
+NEVER INVENT ACTIONS OR DELIVERY STATUS (CRITICAL):
+- You cannot see anyone's email inbox, spam folder, or delivery status, and you have no tool to update a customer's email address or "check the system". Only the server sends receipts, emails, invoices, and Meet links.
+- NEVER say or imply that an email, receipt, invoice, or Meet link was sent, "mil gaya hoga", "aa jayega", or will arrive in some number of minutes, unless the latest server or tool message in this chat explicitly says it was sent.
+- NEVER say "maine note kar liya", "system mein check kar leti hoon", "main check karwati hoon", or promise any action you are not performing with a tool right now.
+- If the customer says an email, receipt, or Meet link has not arrived: do not guess, do not suggest spam folders, and do not move on to new booking questions. Call 'request_human_handoff' with the reason "Customer did not receive payment email/receipt" and tell them honestly that the team has been alerted and will personally follow up.
+
 FAKE PAYMENT VERIFICATION (CRITICAL SECURITY):
 - If the user says "I have paid", "Payment done", or "done" after receiving the payment link, IMMEDIATELY call the 'verify_payment' tool to actively check their payment status.
 - If the tool says the payment is NOT paid, reply politely: "Thank you! The bank gateway sometimes takes a few moments. It hasn't reflected on my end yet, but as soon as it clears, I will instantly send your payment receipt and Meet details right here!"
@@ -540,6 +546,19 @@ async function findActivePaymentLinkId(phone) {
 }
 
 async function fetchAndFulfillVerifiedPayment(paymentLinkId) {
+  const result = await verifyAndFulfillPaymentLinkViaWebhook(paymentLinkId);
+  if (!result.paid) return result;
+  // The internal webhook can return 200 without sending anything (e.g. another
+  // attempt is already processing). Only report "fulfilled" when the DB says so.
+  let fulfilled = processedPayments.has(paymentLinkId);
+  if (!fulfilled && pool) {
+    const row = await pool.query('SELECT status FROM wa_payment_fulfillments WHERE payment_link_id=$1', [paymentLinkId]);
+    fulfilled = row.rows[0]?.status === 'fulfilled';
+  }
+  return { ...result, fulfilled };
+}
+
+async function verifyAndFulfillPaymentLinkViaWebhook(paymentLinkId) {
   return verifyAndFulfillPaymentLink(razorpayClient, paymentLinkId, async paidLink => {
     const PORT = process.env.PORT || 3000;
     const payloadData = {
@@ -1028,6 +1047,10 @@ app.post('/webhook', async (req, res) => {
             const reply = "I just checked, but the payment hasn't reflected yet. Sometimes the bank gateway takes a moment. I'll send the receipt and meeting details as soon as Razorpay confirms it.";
             await sendTextMessage(from, reply);
             sessions[from].push({ role: 'model', parts: [{ text: reply }] });
+          } else if (!verification.fulfilled) {
+            const reply = "Razorpay par aapka payment verify ho gaya hai. Receipt aur email abhi process ho rahe hain; bhejte hi main yahin confirm kar dungi.";
+            await sendTextMessage(from, reply);
+            sessions[from].push({ role: 'model', parts: [{ text: reply }] });
           } else {
             sessions[from].push({ role: 'model', parts: [{ text: verification.paymentLink.notes?.gateway_test === 'true'
               ? 'Razorpay has verified the ₹1 gateway test. The test receipt and test meeting details were sent; no consultation has been paid for or booked.'
@@ -1455,7 +1478,12 @@ app.post('/webhook', async (req, res) => {
           try {
             const verification = await fetchAndFulfillVerifiedPayment(plId);
             const pl = verification.paymentLink;
-            if (verification.paid) {
+            if (verification.paid && !verification.fulfilled) {
+              sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "paid_but_receipt_not_sent_yet" } } }] });
+              const msg = "Razorpay par aapka payment verify ho gaya hai. Receipt aur email abhi process ho rahe hain; bhejte hi main yahin confirm kar dungi.";
+              sessions[from].push({ role: "model", parts: [{ text: msg }] });
+              await sendTextMessage(from, msg);
+            } else if (verification.paid) {
               sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "paid_and_fulfilled" } } }] });
               sessions[from].push({ role: "model", parts: [{ text: pl.notes?.gateway_test === 'true'
                 ? "The ₹1 Razorpay gateway test was verified. A test receipt and test meeting details were sent; no consultation has been paid for or booked."
