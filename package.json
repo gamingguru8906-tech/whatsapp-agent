@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "node --test test-payment-verification.js test-invoice-generator.js"
+    "test": "node --test test-payment-verification.js test-invoice-generator.js test-voice-agent.js"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +23,8 @@
     "pdfkit": "^0.20.2",
     "pg": "^8.23.0",
     "qrcode": "^1.5.4",
-    "razorpay": "^2.9.8"
+    "razorpay": "^2.9.8",
+    "ws": "^8.22.0"
   },
   "engines": {
     "node": "20.x"
