@@ -23,6 +23,7 @@ const {
   buildCallPrompt,
   formatCallbackAlert,
   speakable,
+  resetTextReplies,
   attach
 } = require('./voice-agent');
 
@@ -319,6 +320,7 @@ test('a full call: audio both ways, barge-in, escalation, goodbye, owner summary
 });
 
 test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the words, Sarvam says them', async () => {
+  resetTextReplies(true);
   assert.equal(speakable('Welcome to **Veshannastro**!'), 'Welcome to   वी shan Astro  !');
   assert.equal(speakable('Hey, welcome to Vishan Astro!'), 'Hey, welcome to वी shan Astro!');
   const live = fakeLive();
@@ -396,6 +398,75 @@ test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the w
     await waitFor(() => received.filter(m => m.event === 'media').length > before);
     exotel.close();
     await waitFor(() => owner.length >= 1); // let the call wrap up before the test ends
+  } finally {
+    server.close();
+  }
+});
+
+test('if Gemini fails on text replies after connecting, the call switches to its audio transcript instead of dropping', async () => {
+  resetTextReplies();
+  const live = fakeLive();
+  const voices = [];
+  const openTts = () => {
+    const tts = new EventEmitter();
+    tts.texts = []; tts.send = t => tts.texts.push(t); tts.flush = () => {}; tts.close = () => {};
+    voices.push(tts);
+    return tts;
+  };
+  const owner = [];
+  const { server, url } = await startServer({ openLive: live.open, openTts, sarvamApiKey: 'sk', notifyOwner: async t => { owner.push(t); return true; } });
+  try {
+    const exotel = await connect(`${url}/voice/exotel?token=secret`);
+    exotel.send(startMessage());
+    await waitFor(() => live.sessions.length === 1 && live.sessions[0].sent.length >= 1);
+    assert.deepEqual(live.sessions[0].setup.generationConfig.responseModalities, ['TEXT']);
+    live.sessions[0].emit('close', 1007, 'The requested combination of response modalities (TEXT) is not supported by the model.');
+    await waitFor(() => live.sessions.length === 2 && live.sessions[1].sent.length >= 1);
+    const second = live.sessions[1];
+    assert.deepEqual(second.setup.generationConfig.responseModalities, ['AUDIO']);
+    assert.deepEqual(second.setup.outputAudioTranscription, {});
+    assert.match(second.sent[0].realtimeInput.text, /already been played/);
+    // The call is still up: Gemini's audio transcript goes to the Indian voice.
+    second.emit('message', { serverContent: { outputTranscription: { text: 'Aapka naam jaan sakti hoon?' } } });
+    await waitFor(() => voices.at(-1).texts.includes('Aapka naam jaan sakti hoon?'));
+    assert.equal(owner.length, 0);
+    exotel.close();
+    await waitFor(() => owner.length >= 1);
+    assert.doesNotMatch(owner[0], /connection dropped/);
+  } finally {
+    resetTextReplies(false);
+    server.close();
+  }
+});
+
+test('by default (text replies off) the Indian voice speaks Gemini\'s audio transcript, sentence by sentence', async () => {
+  resetTextReplies(false);
+  const live = fakeLive();
+  const voices = [];
+  const openTts = () => {
+    const tts = new EventEmitter();
+    tts.texts = []; tts.flushes = 0; tts.send = t => tts.texts.push(t); tts.flush = () => { tts.flushes++; }; tts.close = () => {};
+    voices.push(tts);
+    return tts;
+  };
+  const { server, url } = await startServer({ openLive: live.open, openTts, sarvamApiKey: 'sk', notifyOwner: async () => true });
+  try {
+    const exotel = await connect(`${url}/voice/exotel?token=secret`);
+    const received = [];
+    exotel.on('message', d => received.push(JSON.parse(d.toString())));
+    exotel.send(startMessage());
+    await waitFor(() => live.sessions.length === 1 && live.sessions[0].sent.length >= 1);
+    const gemini = live.sessions[0];
+    assert.deepEqual(gemini.setup.generationConfig.responseModalities, ['AUDIO']);
+    assert.deepEqual(gemini.setup.outputAudioTranscription, {});
+    const voice = voices.at(-1);
+    const halfSecond = pcmToBuffer(sine(12000, 24000)).toString('base64');
+    gemini.emit('message', { serverContent: { outputTranscription: { text: 'Main Kamala bol rahi hoon. ' }, modelTurn: { parts: [{ inlineData: { mimeType: 'audio/pcm;rate=24000', data: halfSecond } }] } } });
+    await waitFor(() => voice.texts.includes('Main Kamala bol rahi hoon. '));
+    assert.ok(voice.flushes >= 2, 'greeting flush + sentence flush');
+    await new Promise(r => setTimeout(r, 50));
+    assert.equal(received.filter(m => m.event === 'media').length, 0, "Gemini's own voice is not played");
+    exotel.close();
   } finally {
     server.close();
   }
