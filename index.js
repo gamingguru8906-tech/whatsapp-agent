@@ -2130,6 +2130,7 @@ const appsScriptReady = Boolean(GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SEC
 const phoneAgent = voiceAgent.attach(server, {
   apiKey: GEMINI_API_KEY,
   token: process.env.VOICE_STREAM_TOKEN,
+  exotelAccountSid: process.env.EXOTEL_ACCOUNT_SID || 'veshannastro1',
   maxConcurrentCalls: process.env.VOICE_MAX_CONCURRENT_CALLS,
   maxCallMinutes: process.env.VOICE_MAX_CALL_MINUTES,
   businessWhatsApp: process.env.BUSINESS_WHATSAPP_NUMBER,
