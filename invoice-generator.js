@@ -94,11 +94,12 @@ function generateInvoice(data) {
       // Invoice date, service slot, customer information.
       const rows = [
         ['Receipt Date', safeText(data.date)],
+        ['Customer ID', safeText(data.customerId, 'Allotted on confirmation')],
         ['Consultation', safeText(data.serviceName)],
         ['Requested Slot', safeText(data.appointmentDate, 'Not yet provided')]
       ];
       rows.forEach((row, index) => {
-        const y = 289 + index * 31;
+        const y = 287 + index * 24;
         doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate).text(row[0], left, y, { width: 105 });
         doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate).text(':', 151, y);
         doc.font('Helvetica').fontSize(11).fillColor(COLORS.navy).text(row[1], 168, y, { width: 255, ellipsis: true });
