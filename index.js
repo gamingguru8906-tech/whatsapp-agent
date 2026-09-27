@@ -2048,8 +2048,8 @@ async function deliverAfterCall(phone, message) {
     ? await sendWhatsAppDocument(phone, message.mediaId, message.filename, message.body)
     : await sendTextMessage(phone, message.body))) {
     delivery = 'sent';
-  } else if (message.template && process.env.WA_CALL_PAYMENT_TEMPLATE
-    && await sendWhatsAppTemplate(phone, process.env.WA_CALL_PAYMENT_TEMPLATE, message.template, { id: message.mediaId, filename: message.filename })) {
+  } else if (message.template && message.templateName
+    && await sendWhatsAppTemplate(phone, message.templateName, message.template, message.mediaId ? { id: message.mediaId, filename: message.filename } : null)) {
     delivery = 'sent_template';
   }
   if (delivery) {
@@ -2106,6 +2106,7 @@ async function createCallBooking({ callerPhone, whatsappPhone, args }) {
     deliver: ({ mediaId, invoiceName, caption, link, customerName, serviceName, appointmentDate }) => deliverAfterCall(phone, {
       mediaId, filename: invoiceName, body: caption,
       template: [customerName, serviceName, appointmentDate, link],
+      templateName: process.env.WA_CALL_PAYMENT_TEMPLATE || 'call_payment_link',
       expiresAt: new Date(Date.now() + 11.5 * 60 * 60 * 1000) // the payment link expires after 12 hours
     })
   });
@@ -2118,7 +2119,13 @@ async function sendCallServiceLink({ phone, serviceName }) {
   const service = findPublishedService(serviceName);
   const url = service.link ? `https://veshannastro.co.in/${String(service.link).replace('https://veshannastro.co.in/', '')}` : 'https://veshannastro.co.in/';
   const body = `Jaise call pe baat hui, yeh raha ${service.t} ka link (${service.p}): ${url}\n\nKoi bhi question ho toh yahin message kar dijiye.`;
-  const delivery = await deliverAfterCall(normalizeWhatsAppNumber(phone), { body });
+  const to = normalizeWhatsAppNumber(phone);
+  const name = String((await getUser(to).catch(() => null))?.name || '').trim().split(/\s+/)[0] || 'ji';
+  const delivery = await deliverAfterCall(to, {
+    body,
+    template: [name, service.t, url],
+    templateName: process.env.WA_CALL_LINK_TEMPLATE || 'call_service_link'
+  });
   return { status: delivery === 'awaiting_hi' ? 'awaiting_hi' : 'sent', serviceName: service.t };
 }
 
