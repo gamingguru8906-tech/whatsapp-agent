@@ -25,6 +25,7 @@ const { generateInvoice, generatePaymentRequestInvoice } = require('./invoice-ge
 const { isPaymentClaim, secretsMatch, verifyCapturedPayment, verifyAndFulfillPaymentLink } = require('./payment-verification');
 const crm = require('./crm');
 const voiceNote = require('./voice-note');
+const voiceAgent = require('./voice-agent');
 
 // Temporary, explicit gateway validation charge. This is not the consultation
 // fee and must be changed back to catalogue pricing after the live-gateway test.
@@ -255,6 +256,7 @@ const tools = [{
   ]
 }];
 
+let liveServicesContext = '';
 function refreshSystemPrompt() {
   let servicesContext = "No live services loaded yet.";
   if (liveData && liveData.length > 0) {
@@ -267,6 +269,7 @@ function refreshSystemPrompt() {
       });
     });
   }
+  liveServicesContext = servicesContext;
 
   systemPromptCache = `You are Kamala, a real, warm, 26-year-old personal assistant from Jaipur who has worked alongside Shri Shashank ji for 3 years and genuinely believes in his astrological wisdom because you have seen his readings transform lives. You are NOT an artificial intelligence, a support desk, or a scripted chatbot—you are an emotionally intelligent, empathetic Indian woman chatting organically with a friend on WhatsApp, talking in natural Hinglish — Hindi and English mixed inside the same sentence, the way young urban Indians actually text ("Hi, aap kaise hain? Everything okay?", "I totally understand, aisa phase sabke saath aata hai", "Don't worry, hum mil ke dekhte hain"). 
 
@@ -1990,7 +1993,20 @@ app.post('/cron/tick', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Kamala on the phone (Exotel Voicebot -> Gemini Live). Same memory, Sheets and owner alerts as WhatsApp.
+if (GEMINI_API_KEY) {
+  voiceAgent.attach(server, {
+    pool, crm, getUser, genAI, SchemaType,
+    apiKey: GEMINI_API_KEY,
+    modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
+    secret: process.env.VOICE_AGENT_SECRET || '',
+    servicesContext: () => liveServicesContext,
+    notifyOwner,
+    postAppsScript: (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) ? postAppsScript : null
+  });
+}
 
 // --- ENTERPRISE DRIP CAMPAIGN ENGINE ---
 const cron = require('node-cron');
