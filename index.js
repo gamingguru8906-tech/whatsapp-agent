@@ -24,6 +24,7 @@ const FormData = require('form-data');
 const { generateInvoice, generatePaymentRequestInvoice } = require('./invoice-generator');
 const { isPaymentClaim, secretsMatch, verifyCapturedPayment, verifyAndFulfillPaymentLink } = require('./payment-verification');
 const crm = require('./crm');
+const voiceNote = require('./voice-note');
 
 // Temporary, explicit gateway validation charge. This is not the consultation
 // fee and must be changed back to catalogue pricing after the live-gateway test.
@@ -272,6 +273,14 @@ function refreshSystemPrompt() {
 ABSOLUTE BRAND RULE (DO NOT MENTION VESHANNASTRO):
 - NEVER mention the word "Veshannastro" anywhere in the conversation. Real personal assistants on WhatsApp don't plug company branding.
 - Never say "Welcome to Veshannastro" or "At Veshannastro". Just greet warmly and naturally like a real human.
+
+HOPE, NEVER PROMISES (VERY IMPORTANT FOR TRUST):
+- Your vibe is always hopeful, like a friend who truly believes things can get better. Natural lines like: "Arre, ye phase hai, nikal jayega", "Honestly, iska raasta hota hai", "Mujhe na aapke liye accha feel ho raha hai", "Clarity milegi aapko, dekhna".
+- Give hope, never guarantees. Never say "100% ho jayega", "pakka shaadi hogi", "job guaranteed". Say things like "kaafi clarity milegi", "sahi direction mil jayega", "logon ko isse kaafi help mili hai".
+
+SMALL HEALING TOUCHES:
+- Sometimes (about once every 3-4 messages, never forced) add one tiny caring touch that fits their mood: "Pehle ek glass paani pee lijiye, thoda saans lijiye", "Aaj raat ek diya jala dena, mann halka lagega", "Sone se pehle 11 baar Om Namah Shivaya bol ke dekhiye".
+- Just one short line, never a lecture, and never as a replacement for the consultation.
 
 RESPECTFUL NAMING & TONE (CRITICAL FOR SMOOTHNESS):
 - Talk directly to the user 1-on-1 as their helpful assistant Kamala. DO NOT constantly refer to Shri Shashank ji in the third person (e.g. do not say "Shri Shashank ji always says..." or "Shri Shashank ji thinks..."). It creates friction and sounds unnatural.
@@ -919,6 +928,13 @@ app.post('/razorpay-webhook', async (req, res) => {
           ? `Razorpay has verified the ₹${price.toFixed(2)} gateway test payment. This is only a payment-system test; it does not pay for or confirm your ${serviceName} consultation.${agreedSlotMsg}\n\nCustomer ID: ${customerId}\nTest Google Meet link: ${meetLink}\n\nYour clearly labelled test receipt is attached. I will also remind you here 30 minutes before the slot.`
           : `Payment verified. Thank you, ${customerName}. We received ₹${price.toFixed(2)} for ${serviceName}.${agreedSlotMsg}\n\nYour booking is confirmed for ${slotText}.\nCustomer ID: ${customerId}\nGoogle Meet: ${meetLink}\n\nYour payment receipt is attached. I will remind you here 30 minutes before your consultation.`;
         if (!(await sendCustomerText(phone, msg))) throw new Error(`WhatsApp payment confirmation text failed for ${pl.id}`);
+        // Personal thank-you voice note from Kamala (best effort; never blocks fulfillment).
+        if (GEMINI_API_KEY) voiceNote.sendThankYouVoiceNote({
+          genAI, modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', apiKey: GEMINI_API_KEY,
+          uploadMedia: uploadWhatsAppMedia, token: WA_TOKEN, phoneNumberId: PHONE_NUMBER_ID, normalize: normalizeWhatsAppNumber
+        }, { phone, name: customerName, service: serviceName, when: slotText, concern: notes.summary || '', isTest: isGatewayTest })
+          .then(script => { console.log(`🎙️ Voice note sent to ${phone}`); crm.saveTurn(pool, phone, 'model', `[Voice note] ${script}`).catch(() => {}); })
+          .catch(e => console.error('Voice note failed:', e.message));
         await notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
           + `When: ${slotText}\nService: ${serviceName}\nCustomer ID: ${customerId}\nPhone: +${phone}\n`
           + `Gender: ${notes.gender || 'Not provided'}\nDOB: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\n`
