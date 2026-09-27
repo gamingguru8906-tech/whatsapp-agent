@@ -1017,8 +1017,13 @@ function refuseUpgrade(socket, status, text) {
 
 /** Accepts Exotel's Voicebot WebSocket on /voice/exotel and runs one CallSession per call. */
 function attach(server, deps) {
-  const enabled = Boolean(deps.apiKey && deps.token);
-  if (!enabled) console.warn('⚠️ Phone Kamala is off: set GEMINI_API_KEY and VOICE_STREAM_TOKEN to answer calls.');
+  // Two ways to make sure only your Exotel account can open a call stream:
+  //  - VOICE_STREAM_TOKEN set: the URL must carry ?token=<same value>;
+  //  - otherwise EXOTEL_ACCOUNT_SID: the call's "start" message must come from that Exotel account.
+  const accountSid = String(deps.exotelAccountSid || '').trim();
+  const enabled = Boolean(deps.apiKey && (deps.token || accountSid));
+  if (!enabled) console.warn('⚠️ Phone Kamala is off: set GEMINI_API_KEY and VOICE_STREAM_TOKEN (or EXOTEL_ACCOUNT_SID) to answer calls.');
+  else console.log(`📞 Phone Kamala ready on ${STREAM_PATH} (${deps.token ? 'token' : `Exotel account ${accountSid}`} check).`);
   const maxCalls = Math.max(1, Number(deps.maxConcurrentCalls) || 10);
   const active = new Set();
   const wss = new WebSocketServer({ noServer: true, maxPayload: 1024 * 1024 });
@@ -1027,7 +1032,7 @@ function attach(server, deps) {
     const url = new URL(req.url || '/', 'http://localhost');
     if (url.pathname !== STREAM_PATH) return refuseUpgrade(socket, 404, 'Not Found');
     if (!enabled) return refuseUpgrade(socket, 503, 'Service Unavailable');
-    if (!tokensMatch(deps.token, url.searchParams.get('token'))) {
+    if (deps.token && !tokensMatch(deps.token, url.searchParams.get('token'))) {
       console.warn('Voice stream refused: wrong or missing token.');
       return refuseUpgrade(socket, 401, 'Unauthorized');
     }
@@ -1038,9 +1043,23 @@ function attach(server, deps) {
     wss.handleUpgrade(req, socket, head, ws => {
       const session = new CallSession(ws, deps);
       active.add(session);
+      let verified = Boolean(deps.token);
+      const startTimer = setTimeout(() => { if (!verified) ws.close(); }, 15000);
+      if (startTimer.unref) startTimer.unref();
       ws.on('message', data => {
         let msg;
         try { msg = JSON.parse(data.toString()); } catch (_) { return; }
+        if (!verified) {
+          if (msg?.event !== 'start') return; // nothing is processed before a verified start
+          const from = String(msg.start?.account_sid || '').trim();
+          if (!accountSid || from.toLowerCase() !== accountSid.toLowerCase()) {
+            console.warn(`Voice stream refused: start from Exotel account "${from}".`);
+            ws.close();
+            return;
+          }
+          verified = true;
+          clearTimeout(startTimer);
+        }
         session.onExotel(msg);
       });
       ws.on('error', e => console.error('Exotel stream error:', e.message));
