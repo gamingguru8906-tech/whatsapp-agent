@@ -42,9 +42,10 @@ const ROBOT_ANSWER = 'Aap Veshannastro ke automated query advisor se baat kar ra
 const ESCALATION_LINE = "Shashank ji abhi ek consultation mein busy hain. I've escalated your query to our senior team, aur 24 hours ke andar aapko call back aa jayega.";
 const OPENING_CUE = '[System note, not the caller: the call has just connected. Speak first now, starting with the opening line exactly as instructed.]';
 const OPENING_CUE_AFTER_GREETING = '[System note, not the caller: the opening line has already been played to the caller. Do not repeat it. Say your first words now, as instructed under OPENING.]';
-// Replies in text (spoken by Sarvam) start much sooner than waiting for Gemini's own audio transcript.
-// If a Live model refuses text replies, calls fall back to its audio transcript for the rest of the day.
-let liveTextReplies = true;
+// Text replies (spoken by Sarvam) would start sooner than Gemini's audio transcript, but the current Live
+// model rejects them ("response modalities (TEXT) not supported"), so they are off unless VOICE_TEXT_REPLIES=1.
+// If a model refuses them, calls fall back to its audio transcript until the server restarts.
+let liveTextReplies = process.env.VOICE_TEXT_REPLIES === '1';
 // Caller turn detection: reply after a short pause instead of waiting for a long silence.
 const TURN_DETECTION = {
   automaticActivityDetection: {
@@ -744,15 +745,32 @@ class CallSession {
       this.connectLive();
       return;
     }
+    // Accepted text replies at setup but failed before saying anything: the model cannot reply in text.
+    // Switch this and later calls to its audio transcript and carry on, instead of dropping the caller.
+    if (this.everReady && this.textMode && !this.ending && (!this.liveSpoke || code === 1007 || /modalit/i.test(reason))) {
+      console.warn(`Gemini Live ${LIVE_MODELS[this.modelIndex]} failed on text replies (${code} ${reason}); switching to its audio transcript.`);
+      liveTextReplies = false;
+      this.resumeHandle = null;
+      this.needsCue = true;
+      this.connectLive();
+      return;
+    }
     if (!this.everReady && this.modelIndex < LIVE_MODELS.length - 1) {
       console.warn(`Gemini Live ${LIVE_MODELS[this.modelIndex]} closed before setup (${code} ${reason}); trying ${LIVE_MODELS[this.modelIndex + 1]}.`);
       this.modelIndex++;
       this.connectLive();
       return;
     }
-    if (this.everReady && this.resumeHandle && this.reconnects < 3 && !this.ending) {
+    if (this.everReady && this.reconnects < 3 && !this.ending) {
       this.reconnects++;
-      console.log(`Gemini Live resuming ${this.callSid} (${code} ${reason})`);
+      console.log(`Gemini Live ${this.resumeHandle ? 'resuming' : 'reconnecting'} ${this.callSid} (${code} ${reason})`);
+      if (!this.resumeHandle) {
+        // A fresh session does not remember this call: give it what was said so far.
+        const sofar = this.turns.map(t => `${t.role === 'user' ? 'Caller' : 'Kamala'}: ${t.text}`).join('\n').slice(-4000);
+        if (sofar) this.prompt += `\n\n--- THIS CALL SO FAR (the line dropped for a second; continue naturally) ---\n${sofar}`;
+        this.needsCue = !this.liveSpoke;
+        this.reconnectCue = Boolean(this.liveSpoke);
+      }
       this.connectLive();
       return;
     }
@@ -765,10 +783,14 @@ class CallSession {
     if (live !== this.live || this.finished) return;
     if (msg.setupComplete) {
       this.liveReady = true;
-      if (!this.everReady) {
+      if (!this.everReady || this.needsCue) {
         this.everReady = true;
-        console.log(`🎙️ ${this.callSid} connected to ${LIVE_MODELS[this.modelIndex]}`);
+        this.needsCue = false;
+        console.log(`🎙️ ${this.callSid} connected to ${LIVE_MODELS[this.modelIndex]} (${this.textMode ? 'text' : 'audio'} replies)`);
         this.sendLive({ realtimeInput: { text: this.greetingPlayed ? OPENING_CUE_AFTER_GREETING : OPENING_CUE } });
+      } else if (this.reconnectCue) {
+        this.reconnectCue = false;
+        this.sendLive({ realtimeInput: { text: '[System note, not the caller: the line dropped for a second and is back. Say a short sorry in Hinglish and continue from where the conversation was.]' } });
       }
       return;
     }
@@ -779,6 +801,7 @@ class CallSession {
 
     const content = msg.serverContent;
     if (!content) return;
+    if (content.modelTurn || content.outputTranscription) this.liveSpoke = true;
     if (content.inputTranscription?.text) {
       if (this.modelText) this.commit('model');
       this.userText += content.inputTranscription.text;
@@ -1333,6 +1356,7 @@ module.exports = {
   CallSession,
   speakable,
   openSarvamTts,
+  resetTextReplies: (on = true) => { liveTextReplies = on; },
   migrate,
   attach
 };
