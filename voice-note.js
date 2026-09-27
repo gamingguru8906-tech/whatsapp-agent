@@ -20,9 +20,9 @@ function firstName(name) {
 function fallbackScript({ name, when, isTest }) {
   const n = firstName(name);
   if (isTest) {
-    return `Hii ${n}! Kamala bol rahi hoon. Aapka test payment mil gaya, sab sahi se ho gaya. Thank you itna time dene ke liye, bas aise hi saath bane rahiye. Take care!`;
+    return `Hii ${n}! Kamala here. Aapka test payment mil gaya, everything worked perfectly. Thank you so much for your time, bas aise hi connected rahiye. Take care!`;
   }
-  return `Hii ${n}! Kamala bol rahi hoon. Aapki booking confirm ho gayi hai, ${when} ko aapki baat hogi. Sach bataun, mujhe lagta hai isse aapko kaafi clarity milegi. Tab tak zyada tension mat lena, raat ko ek baar aankhein band karke do minute shaant baith jaana, mann halka lagega. Time pe join kar lena, okay? Milte hain!`;
+  return `Hii ${n}! Kamala here. Your booking is confirmed, ${when} ko aapki baat hogi. Honestly, I feel isse aapko kaafi clarity milegi. Tab tak zyada tension mat lena, raat ko bas two minutes aankhein band karke deep breaths lena, you'll feel much lighter. Time pe join kar lena, okay? See you soon!`;
 }
 
 /** Short, personal Hinglish script (about 15 seconds). Falls back to a template. */
@@ -33,7 +33,7 @@ async function writeScript(genAI, modelName, info) {
     const model = genAI.getGenerativeModel({ model: modelName, generationConfig: { temperature: 0.8 } });
     const res = await model.generateContent(`Write what Kamala says in a 12-15 second WhatsApp voice note to ${firstName(info.name)} right after they paid for their ${info.service} consultation on ${info.when}.
 Their concern: ${info.concern || 'not shared'}.
-Style: how a sweet, caring Indian girl actually talks on WhatsApp voice notes. Hindi and English mixed in the same sentence, casual and warm, short sentences, like talking to a friend. Use "aap".
+Style: how a sweet, caring Indian girl actually talks on WhatsApp voice notes. Hindi and English mixed inside every sentence, roughly half and half (e.g. "Your booking is confirmed, aur honestly mujhe lagta hai it's going to help you a lot"), casual and warm, short sentences, like talking to a friend. Hindi in Roman letters. Never fully Hindi, no heavy words like chinta or samay. Use "aap".
 Include: a happy thank-you, that the booking is done and when, one hopeful line (hope, never a promise or guarantee), and one tiny healing tip (a deep breath, a diya, a short mantra, some water and rest) that fits their concern.
 Do not mention money, AI, the company name, or read out any personal details. Do not use emojis or stage directions. Plain spoken words only, under 55 words.`);
     const text = String(res.response.text() || '').replace(/[*_#>\[\]()]/g, '').trim();
