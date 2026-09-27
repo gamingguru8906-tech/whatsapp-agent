@@ -23,6 +23,7 @@ const path = require('path');
 const FormData = require('form-data');
 const { generateInvoice, generatePaymentRequestInvoice } = require('./invoice-generator');
 const { isPaymentClaim, secretsMatch, verifyCapturedPayment, verifyAndFulfillPaymentLink } = require('./payment-verification');
+const crm = require('./crm');
 
 // Temporary, explicit gateway validation charge. This is not the consultation
 // fee and must be changed back to catalogue pricing after the live-gateway test.
@@ -161,7 +162,8 @@ if (DATABASE_URL) {
       accepted_at TIMESTAMPTZ,
       used_at TIMESTAMPTZ
     );
-  `).then(() => console.log('✅ PostgreSQL connected & table ready.'))
+  `).then(() => crm.migrate(pool))
+    .then(() => console.log('✅ PostgreSQL connected & table ready.'))
     .catch(e => console.error('❌ PostgreSQL setup error:', e.message));
 } else {
   console.warn('⚠️ No DATABASE_URL set — running without persistent CRM. Set DATABASE_URL env var for Neon PostgreSQL.');
@@ -452,7 +454,7 @@ async function reserveCalendarSlot(slot, details) {
   };
 }
 
-const IDEMPOTENT_APPS_SCRIPT_TARGETS = new Set(['calendar_finalize', 'booking', 'customer_update', 'lead_update']);
+const IDEMPOTENT_APPS_SCRIPT_TARGETS = new Set(['calendar_finalize', 'booking', 'customer_update', 'lead_update', 'allocate_customer_id', 'profile_upsert']);
 
 function appsScriptFailure(target, error) {
   const status = error?.response?.status;
@@ -805,6 +807,23 @@ app.post('/razorpay-webhook', async (req, res) => {
       const meetLink = finalizedCalendar.meetLink;
       if (!meetLink) throw new Error(`Calendar hold ${notes.calendar_event_id} has no Google Meet URL; manual fulfillment is required.`);
 
+      // Customer ID (VA/FY/MM-NNN): a new customer gets one at their first paid booking and keeps it for life.
+      // Apps Script owns the counter so WhatsApp and website bookings share one sequence.
+      let customerId = crm.isNewCustomerId(notes.customer_id) ? notes.customer_id : '';
+      if (!customerId && pool) {
+        const known = await pool.query('SELECT customer_id FROM users WHERE phone=$1', [phone]);
+        if (crm.isNewCustomerId(known.rows[0]?.customer_id)) customerId = known.rows[0].customer_id;
+      }
+      if (!customerId) {
+        const allocated = await postAppsScript({ target: 'allocate_customer_id', phone, name: customerName, email: notes.email || '' });
+        customerId = String(allocated.customerId || '');
+        if (!crm.isNewCustomerId(customerId)) throw new Error(`Customer ID allocation failed for ${pl.id}`);
+      }
+      if (pool) {
+        await pool.query('UPDATE users SET customer_id=$1 WHERE phone=$2', [customerId, phone]);
+        await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [pl.id, meetLink]);
+      }
+
       // 4. Generate PDF Invoice
       let invoiceBase64 = null;
       let invoiceBuffer = null;
@@ -813,6 +832,7 @@ app.post('/razorpay-webhook', async (req, res) => {
       try {
         invoiceBuffer = await generateInvoice({
           invoiceNumber: pl.id.replace('plink_', '').toUpperCase(),
+          customerId: customerId,
           customerName: customerName,
           email: notes.email || '',
           phone: phone,
@@ -837,6 +857,7 @@ app.post('/razorpay-webhook', async (req, res) => {
 
         await postAppsScript({
           target: "booking",
+          customerId: customerId,
           name: customerName,
           email: notes.email || '',
           gender: notes.gender || '',
@@ -865,14 +886,21 @@ app.post('/razorpay-webhook', async (req, res) => {
 
         await postAppsScript({
           target: "customer_update",
-          customerId: notes.customer_id || '',
+          customerId: customerId,
           name: customerName,
           phone: phone,
           email: notes.email || '',
           dob: notes.dob || '',
           tob: notes.tob || '',
           pob: notes.pob || '',
-          gender: notes.gender || ''
+          birthTime: notes.tob || '',
+          birthPlace: notes.pob || '',
+          gender: notes.gender || '',
+          billingAddress: notes.billing_address || '',
+          concern: notes.summary || '',
+          service: serviceName,
+          bookingDate: bookedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'medium', timeStyle: 'short' }),
+          countBooking: !isGatewayTest
         });
       }
 
@@ -886,14 +914,16 @@ app.post('/razorpay-webhook', async (req, res) => {
           : 'Payment receipt and consultation details.'))) {
           throw new Error(`WhatsApp receipt delivery failed for paid link ${pl.id}`);
         }
+        const slotText = `${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST`;
         const msg = notes.gateway_test === 'true'
-          ? `Razorpay has verified the ₹${price.toFixed(2)} gateway test payment. This is only a payment-system test; it does not pay for or confirm your ${serviceName} consultation.${agreedSlotMsg}\n\nTest Google Meet link: ${meetLink}\n\nYour clearly labelled test receipt is attached.`
-          : `Payment verified. Thank you, ${customerName}. We received ₹${price.toFixed(2)} for ${serviceName}.${agreedSlotMsg}\n\nYour booking is confirmed for ${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST.\nGoogle Meet: ${meetLink}\n\nYour payment receipt is attached.`;
-        if (!(await sendTextMessage(phone, msg))) throw new Error(`WhatsApp payment confirmation text failed for ${pl.id}`);
-        if (ADMIN_PHONE_NUMBER) {
-          await sendTextMessage(ADMIN_PHONE_NUMBER, `${notes.gateway_test === 'true' ? 'Razorpay gateway test payment verified (not a real booking)' : 'New paid WhatsApp booking'}\nName: ${customerName}\nPhone: +${phone}\nService: ${serviceName}\nRequested time: ${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST\nAmount received: ₹${price.toFixed(2)}${notes.gateway_test === 'true' ? `\nPublished service price (still unpaid): ₹${Number(notes.list_price || 0).toFixed(2)}` : ''}\nDate of birth: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\nCalendar event: ${notes.calendar_event_id}`);
-        }
-
+          ? `Razorpay has verified the ₹${price.toFixed(2)} gateway test payment. This is only a payment-system test; it does not pay for or confirm your ${serviceName} consultation.${agreedSlotMsg}\n\nCustomer ID: ${customerId}\nTest Google Meet link: ${meetLink}\n\nYour clearly labelled test receipt is attached. I will also remind you here 30 minutes before the slot.`
+          : `Payment verified. Thank you, ${customerName}. We received ₹${price.toFixed(2)} for ${serviceName}.${agreedSlotMsg}\n\nYour booking is confirmed for ${slotText}.\nCustomer ID: ${customerId}\nGoogle Meet: ${meetLink}\n\nYour payment receipt is attached. I will remind you here 30 minutes before your consultation.`;
+        if (!(await sendCustomerText(phone, msg))) throw new Error(`WhatsApp payment confirmation text failed for ${pl.id}`);
+        await notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
+          + `When: ${slotText}\nService: ${serviceName}\nCustomer ID: ${customerId}\nPhone: +${phone}\n`
+          + `Gender: ${notes.gender || 'Not provided'}\nDOB: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\n`
+          + `Concern: ${notes.summary || 'Not recorded'}\nAmount received: ₹${price.toFixed(2)}${isGatewayTest ? ` (service price ₹${Number(notes.list_price || 0).toFixed(2)} still unpaid)` : ''}\n`
+          + `Google Meet: ${meetLink}\nYour Google Calendar will also remind you 30 minutes before.`, `Consultation booked: ${customerName}, ${slotText}`);
       }
       if (pool) {
         await pool.query(`UPDATE wa_payment_links SET status=$2,razorpay_payment_id=$3,updated_at=NOW() WHERE payment_link_id=$1`, [pl.id, notes.gateway_test === 'true' ? 'gateway_test_paid' : 'paid', payment?.id || null]);
@@ -949,6 +979,8 @@ app.post('/webhook', async (req, res) => {
     const from = msg.from;
 
     const inboundText = msg.type === 'text' ? String(msg.text?.body || '').trim() : '';
+    if (pool) await pool.query(`INSERT INTO users (phone, last_inbound_at) VALUES ($1, NOW())
+      ON CONFLICT (phone) DO UPDATE SET last_inbound_at=NOW()`, [from]).catch(e => console.error('Inbound record failed:', e.message));
     if (/^(stop|unsubscribe|opt\s*out)$/i.test(inboundText)) {
       if (pool) await pool.query(`INSERT INTO users (phone,marketing_opt_in,marketing_opt_out) VALUES ($1,false,true)
         ON CONFLICT (phone) DO UPDATE SET marketing_opt_in=false,marketing_opt_out=true,last_contact=NOW()`, [from]);
@@ -997,6 +1029,46 @@ app.post('/webhook', async (req, res) => {
     } else {
       await incrementUserMessage(from);
       dbUser.message_count = (dbUser.message_count || 0) + 1;
+    }
+
+    // Returning person whose details are only in Google Sheets (e.g. DB was reset): restore once.
+    if (pool && !dbUser.name && !dbUser.profile_restored && GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
+      try {
+        const found = await postAppsScript({ target: 'profile_lookup', phone: from }, { timeoutMs: 8000, maxAttempts: 1 });
+        const p = found.profile || {};
+        await pool.query(`UPDATE users SET profile_restored=true, name=COALESCE(NULLIF($2,''),name), email=COALESCE(NULLIF($3,''),email),
+          dob=COALESCE(NULLIF($4,''),dob), tob=COALESCE(NULLIF($5,''),tob), pob=COALESCE(NULLIF($6,''),pob), gender=COALESCE(NULLIF($7,''),gender),
+          billing_address=COALESCE(NULLIF($8,''),billing_address), pain_point=COALESCE(NULLIF($9,''),pain_point),
+          customer_id=COALESCE(NULLIF($10,''),customer_id), remedies_prescribed=COALESCE(NULLIF($11,''),remedies_prescribed) WHERE phone=$1`,
+          [from, p.name || '', p.email || '', p.dob || '', p.birthTime || '', p.birthPlace || '', p.gender || '',
+            p.billingAddress || '', p.concern || '', crm.isNewCustomerId(p.customerId) ? p.customerId : '', p.remedies || '']);
+        if (p.name) dbUser = await getUser(from);
+      } catch (e) {
+        await pool.query('UPDATE users SET profile_restored=true WHERE phone=$1', [from]).catch(() => {});
+        console.warn('Profile lookup skipped:', e.message);
+      }
+    }
+
+    // Bring back the saved conversation after a restart (Render sleeps when idle).
+    let lastTurnAt = 'ongoing';
+    if (!sessions[from] || sessions[from].length === 0) {
+      const saved = await crm.loadRecentTurns(pool, from, 16).catch(() => []);
+      lastTurnAt = saved.length ? saved[saved.length - 1].createdAt : null;
+      sessions[from] = saved.map(({ role, parts }) => ({ role, parts }));
+    }
+
+    // Reply to "OK" after the pre-consultation check-in without involving the AI.
+    if (pool && /^(ok|okay|k|ji|haan|han|yes|done|thik hai|theek hai|👍)[.! ]*$/i.test(inboundText)) {
+      const checkin = await pool.query(`SELECT appointment_start FROM wa_payment_links WHERE phone=$1
+        AND checkin_sent_at > NOW() - INTERVAL '4 hours' AND reminder_sent_at IS NULL AND appointment_start > NOW()
+        ORDER BY checkin_sent_at DESC LIMIT 1`, [from]);
+      if (checkin.rows[0]) {
+        await crm.saveTurn(pool, from, 'user', inboundText).catch(() => {});
+        sessions[from].push({ role: 'user', parts: [{ text: inboundText }] });
+        await sendCustomerText(from, `Thank you! I will send your Meet link here 30 minutes before your consultation (${crm.istDateTime(checkin.rows[0].appointment_start)}).`);
+        pushNextWake().catch(() => {});
+        return;
+      }
     }
 
     if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
@@ -1075,6 +1147,7 @@ app.post('/webhook', async (req, res) => {
     if (paymentClaim) {
       if (!sessions[from]) sessions[from] = [];
       sessions[from].push({ role: 'user', parts: [{ text: inboundText }] });
+      crm.saveTurn(pool, from, 'user', inboundText).catch(() => {});
       const paymentLinkId = await findActivePaymentLinkId(from, inboundText);
       if (!paymentLinkId) {
         const reply = "I can't see an active payment link for this conversation yet, so I can't verify a payment. Please share the payment link you used, and I'll check it for you.";
@@ -1116,6 +1189,9 @@ app.post('/webhook', async (req, res) => {
 
     if (msg.type === 'text') {
       text = msg.text.body;
+      crm.saveTurn(pool, from, 'user', text).catch(e => console.error('Chat save failed:', e.message));
+      learnProfileDetails(from, text, latestAssistantText);
+      pushNextWake().catch(() => {});
       if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
         postAppsScript({ target: 'chat', phone: from, sender: 'User', message: text }).catch(e => {});
       }
@@ -1193,13 +1269,10 @@ app.post('/webhook', async (req, res) => {
 
 --- REAL-TIME CONTEXT (FOR YOUR EYES ONLY) ---
 - Current Date & Time (India IST): ${currentTimeIST}
-- Client Status: ${dbUser.is_customer ? 'Returning Paid Client (Acknowledge with warmth and recognition)' : 'New Seeker'}
-- Customer ID: ${dbUser.customer_id || 'Not assigned yet'}
-- Name: ${dbUser.name || 'Not provided yet'}
-- Date of Birth (DOB): ${dbUser.dob || 'Not provided yet'}
-- Remedies Prescribed: ${dbUser.remedies_prescribed || 'None'}
-- Recorded Problem: ${dbUser.pain_point || 'None recorded yet'}
-- Total Messages Exchanged: ${dbUser.message_count || 1}`;
+- Client Status: ${dbUser.is_customer ? 'Returning Paid Client (Acknowledge with warmth and recognition)' : 'Seeker (not yet a paid client)'}
+- Total Messages Exchanged: ${dbUser.message_count || 1}
+
+${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []), lastTurnAt)}`;
       
       const userParts = [];
       if (text) {
@@ -1353,7 +1426,7 @@ app.post('/webhook', async (req, res) => {
               // It does not collect the service price or apply discounts.
               const finalAmount = GATEWAY_VALIDATION_CHARGE_INR;
               const amountPaise = Math.round(finalAmount * 100);
-              const customerId = stableCustomerId(from, dbUser.customer_id);
+              const customerId = crm.isNewCustomerId(dbUser.customer_id) ? dbUser.customer_id : '';
               calendarHold = await reserveCalendarSlot(slot, {
                 serviceName: publishedService.t,
                 customerName: args.customer_name,
@@ -1408,7 +1481,7 @@ app.post('/webhook', async (req, res) => {
               const invoiceBuffer = await generatePaymentRequestInvoice({
                 invoiceNumber,
                 issueDate,
-                customerId: generatedId,
+                customerId: generatedId || 'Allotted on payment',
                 customerName: args.customer_name,
                 email: args.email,
                 phone: from,
@@ -1426,8 +1499,11 @@ app.post('/webhook', async (req, res) => {
               });
               if (pool) {
                 await pool.query(
-                  `UPDATE users SET name=$1, email=$2, dob=$3, tob=$4, pob=$5, gender=$6,
-                    billing_address=$7, customer_gstin=$8, customer_id=$9 WHERE phone=$10`,
+                  `UPDATE users SET name=COALESCE(NULLIF($1,''),name), email=COALESCE(NULLIF($2,''),email),
+                    dob=COALESCE(NULLIF($3,''),dob), tob=COALESCE(NULLIF($4,''),tob), pob=COALESCE(NULLIF($5,''),pob),
+                    gender=COALESCE(NULLIF($6,''),gender), billing_address=COALESCE(NULLIF($7,''),billing_address),
+                    customer_gstin=COALESCE(NULLIF($8,''),customer_gstin), customer_id=COALESCE(NULLIF($9,''),customer_id)
+                    WHERE phone=$10`,
                   [args.customer_name || '', args.email || '', args.dob || '', args.tob || '', args.pob || '',
                     args.gender || '', args.billing_address || '', args.customer_gstin || '', generatedId, from]
                 );
@@ -1554,7 +1630,7 @@ app.post('/webhook', async (req, res) => {
       if (responseText) {
         const cleanText = responseText.replace(/\[SEND_MENU\]/g, '').trim();
         if (cleanText) {
-          await sendTextMessage(from, cleanText);
+          await sendCustomerText(from, cleanText);
           if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
             postAppsScript({ target: 'chat', phone: from, sender: 'AI', message: cleanText }).catch(e => {});
           }
@@ -1777,11 +1853,91 @@ app.post('/payments/verify', async (req, res) => {
   }
 });
 
+// ---------- Customer memory, reminders, follow-ups ----------
+
+// Sends a customer-facing message and keeps it in the saved conversation.
+async function sendCustomerText(to, text) {
+  const ok = await sendTextMessage(to, text);
+  if (ok) {
+    crm.saveTurn(pool, to, 'model', text).catch(() => {});
+    if (sessions[to]) sessions[to].push({ role: 'model', parts: [{ text }] });
+  }
+  return ok;
+}
+
+// WhatsApp to the owner; falls back to email when WhatsApp refuses (e.g. owner's 24h window closed).
+async function notifyOwner(text, subject = 'Veshannastro alert') {
+  const ok = ADMIN_PHONE_NUMBER ? await sendTextMessage(ADMIN_PHONE_NUMBER, text) : false;
+  if (!ok && GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
+    await postAppsScript({ target: 'owner_alert', subject, message: text }, { timeoutMs: 20000, maxAttempts: 2 })
+      .catch(e => console.error('Owner email alert failed:', e.message));
+  }
+  return ok;
+}
+
+// Saves any personal details the customer states (name, DOB, birth time/place, gender, email, concern)
+// to the database and the "Customer Profiles" sheet, so they are never asked twice.
+function learnProfileDetails(phone, text, lastAssistantText) {
+  if (!pool || !GEMINI_API_KEY || String(text || '').trim().length < 2) return;
+  (async () => {
+    const details = await crm.extractProfileDetails(genAI, SchemaType, process.env.GEMINI_MODEL || 'gemini-3.8-flash', text, lastAssistantText);
+    const changed = await crm.applyProfileDetails(pool, phone, details);
+    if (!Object.keys(changed).length) return;
+    console.log(`🗂️ Saved profile details for ${phone}: ${Object.keys(changed).join(', ')}`);
+    if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
+      await postAppsScript(crm.profilePayload(await getUser(phone)), { timeoutMs: 20000, maxAttempts: 2 });
+    }
+  })().catch(e => console.error('Profile detail save failed:', e.message));
+}
+
+function crmDeps() {
+  return {
+    pool, adminPhone: ADMIN_PHONE_NUMBER, genAI: GEMINI_API_KEY ? genAI : null,
+    modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', sendCustomerText, notifyOwner
+  };
+}
+
+// Render's free instance sleeps when idle. Apps Script wakes it (via /cron/tick) 5 minutes before
+// the next reminder/follow-up is due, so the service is not kept awake all day.
+let lastPushedWake;
+async function nextWakeAt() {
+  const next = pool ? await crm.nextDueAt(pool, ADMIN_PHONE_NUMBER) : null;
+  return next ? new Date(next.getTime() - 5 * 60 * 1000).toISOString() : '';
+}
+async function pushNextWake() {
+  if (!pool || !GOOGLE_APPS_SCRIPT_URL || !GOOGLE_APPS_SCRIPT_SECRET) return;
+  const wakeAt = await nextWakeAt();
+  if (wakeAt === lastPushedWake) return;
+  await postAppsScript({ target: 'schedule_wake', wakeAt }, { timeoutMs: 15000, maxAttempts: 1 });
+  lastPushedWake = wakeAt;
+}
+async function runScheduledJobs() {
+  const result = await crm.runDueJobs(crmDeps());
+  await pushNextWake().catch(e => console.error('Wake scheduling failed:', e.message));
+  return result;
+}
+
+app.post('/cron/tick', async (req, res) => {
+  if (!secretsMatch(GOOGLE_APPS_SCRIPT_SECRET, req.body?.apiSecret)) return res.status(401).json({ ok: false });
+  try {
+    const result = await crm.runDueJobs(crmDeps());
+    const wakeAt = await nextWakeAt();
+    lastPushedWake = wakeAt;
+    res.json({ ok: true, result, wakeAt });
+  } catch (e) {
+    console.error('Tick failed:', e.message);
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // --- ENTERPRISE DRIP CAMPAIGN ENGINE ---
 const cron = require('node-cron');
+
+// While awake, check every minute for due reminders, check-ins and follow-ups.
+cron.schedule('* * * * *', () => { runScheduledJobs().catch(e => console.error('Scheduled jobs failed:', e.message)); }, { timezone: 'Asia/Kolkata' });
 
 // A 10% retention message is sent only to opted-in customers and only via the
 // approved WhatsApp template required outside Meta's 24-hour service window.
