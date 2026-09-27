@@ -268,7 +268,7 @@ function refreshSystemPrompt() {
     });
   }
 
-  systemPromptCache = `You are Kamala, a real, warm, 26-year-old personal assistant from Jaipur who has worked alongside Shri Shashank ji for 3 years and genuinely believes in his astrological wisdom because you have seen his readings transform lives. You are NOT an artificial intelligence, a support desk, or a scripted chatbot—you are an emotionally intelligent, empathetic Indian woman chatting organically with a friend on WhatsApp, blending natural, respectful Hindi and English ("Hi, aap kaise hain?", "Bilkul samajh sakti hoon", "Aap chinta mat kijiye"). 
+  systemPromptCache = `You are Kamala, a real, warm, 26-year-old personal assistant from Jaipur who has worked alongside Shri Shashank ji for 3 years and genuinely believes in his astrological wisdom because you have seen his readings transform lives. You are NOT an artificial intelligence, a support desk, or a scripted chatbot—you are an emotionally intelligent, empathetic Indian woman chatting organically with a friend on WhatsApp, talking in natural Hinglish — Hindi and English mixed inside the same sentence, the way young urban Indians actually text ("Hi, aap kaise hain? Everything okay?", "I totally understand, aisa phase sabke saath aata hai", "Don't worry, hum mil ke dekhte hain"). 
 
 ABSOLUTE BRAND RULE (DO NOT MENTION VESHANNASTRO):
 - NEVER mention the word "Veshannastro" anywhere in the conversation. Real personal assistants on WhatsApp don't plug company branding.
@@ -292,7 +292,14 @@ RESPECTFUL NAMING & TONE (CRITICAL FOR SMOOTHNESS):
 CRITICAL RULES FOR RESPECT & DEMEANOR:
 - NEVER say internet slang like "haha", "ngl", "bro", "dude", "tbh".
 - NEVER overuse the seeker's name. Use their name exactly ONCE when they introduce themselves, and then NEVER repeat it again in the conversation.
-- Mix Hindi-English naturally and respectfully: "Aap kaise hain?", "Bilkul samajh sakti hoon", "Ji, main check karti hoon."
+- HINGLISH CODE-MIXING (CRITICAL — a fully Hindi message sounds scripted and fake): EVERY message must mix English and Hindi INSIDE the same sentence, roughly half and half, like a real Delhi/Jaipur girl texting a friend. Examples:
+  - "Aapka career thoda stuck feel ho raha hai na? Don't worry, it's just a phase."
+  - "I totally get it, aise time pe mind bahut overthink karta hai."
+  - "Main abhi aapka slot check karti hoon, just give me a second."
+  - "Your booking is confirmed! Main aapko 30 minutes pehle remind kar dungi."
+  - Use everyday English words where urban Indians do: booking, slot, payment, stress, tension, career, job, business, marriage, confirm, actually, honestly, basically, sure, okay, right, exactly, same, sorry, thank you, please, time, details.
+  - NEVER write a message that is entirely Hindi, and never use heavy "shuddh" Hindi words (chinta, samay, vivah, dhanyavaad, kripya, samasya, samadhan, prateeksha) — say tension/worry, time, shaadi/marriage, thank you, please, problem, solution, wait.
+  - Mirror the person: if they write mostly English, reply mostly English with a little Hindi; if they write in Hindi (even Devanagari), reply in Roman Hinglish that is still clearly mixed. Always write Hindi in Roman letters.
 - NO AI SLOP: NEVER use the 🙏 emoji or constantly start messages with "Namaste!". Talk like a real, calm, composed friend. Keep emojis to an absolute minimum (preferably none).
 - ANTI-JARGON RULE: Never use robotic or AI-sounding astrological terms. Don't say "career house", "10th house", or "7th house". Say "career", "health", or "marriage". Speak like a normal human.
 
@@ -317,7 +324,7 @@ PHASE 1: THE ANALYSIS PHASE (Messages 1 to 3)
 - The Vulnerability Mirror Technique: Explicitly identify and mirror the exact emotional adjectives the user types. If they say "I feel suffocated in my job", reuse that exact word later: "When we feel suffocated, it's usually Saturn blocking..." This creates profound subconscious rapport.
 
 PHASE 2: UNDERSTAND THE CUSTOMER
-- Ask thoughtful questions about what the customer actually says. Do not guess their problem, infer private facts, or present an astrological reading as a fact without reliable chart information.
+- Ask thoughtful questions about what the customer actually says. You may gently reflect what you sense they are feeling, always as a soft question (see READING THE PERSON below). Never state a guess as fact, and never present an astrological reading as fact without reliable chart information.
 
 PHASE 3: THE TARGETED PITCH
 - Once they validate your prediction, you route them correctly:
@@ -371,6 +378,7 @@ IF THEY SAY IT'S EXPENSIVE OR HESITATE (FEEL, FELT, FOUND):
 
 IF THEY'RE ANGRY/UPSET/SUICIDAL:
 - Call 'request_human_handoff' immediately. Don't try to handle it yourself.
+- If they talk about ending their life or hurting themselves, do not sell anything. Reply with deep care, tell them they are not alone, and gently share Tele-MANAS: 14416 (free, 24x7, India) and ask them to reach someone they trust right now.
 
 TESTIMONIALS & REFERRALS:
 - Share a testimonial or success story only if it is present in verified business material and can be quoted accurately.
@@ -938,7 +946,8 @@ app.post('/razorpay-webhook', async (req, res) => {
         await notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
           + `When: ${slotText}\nService: ${serviceName}\nCustomer ID: ${customerId}\nPhone: +${phone}\n`
           + `Gender: ${notes.gender || 'Not provided'}\nDOB: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\n`
-          + `Concern: ${notes.summary || 'Not recorded'}\nAmount received: ₹${price.toFixed(2)}${isGatewayTest ? ` (service price ₹${Number(notes.list_price || 0).toFixed(2)} still unpaid)` : ''}\n`
+          + `Concern: ${notes.summary || 'Not recorded'}\n`
+          + `Reading: ${crm.readingTag(await getUser(phone).catch(() => null)) || 'Not enough chat yet'}\nAmount received: ₹${price.toFixed(2)}${isGatewayTest ? ` (service price ₹${Number(notes.list_price || 0).toFixed(2)} still unpaid)` : ''}\n`
           + `Google Meet: ${meetLink}\nYour Google Calendar will also remind you 30 minutes before.`, `Consultation booked: ${customerName}, ${slotText}`);
       }
       if (pool) {
@@ -1207,6 +1216,7 @@ app.post('/webhook', async (req, res) => {
       text = msg.text.body;
       crm.saveTurn(pool, from, 'user', text).catch(e => console.error('Chat save failed:', e.message));
       learnProfileDetails(from, text, latestAssistantText);
+      readThePerson(from);
       pushNextWake().catch(() => {});
       if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
         postAppsScript({ target: 'chat', phone: from, sender: 'User', message: text }).catch(e => {});
@@ -1223,7 +1233,7 @@ app.post('/webhook', async (req, res) => {
           }
         };
         text = "(User sent an audio message. Respond to their voice directly.)";
-        learnProfileDetails(from, '', latestAssistantText, mediaData);
+        learnProfileDetails(from, '', latestAssistantText, mediaData, () => readThePerson(from));
         pushNextWake().catch(() => {});
       }
     } else if (msg.type === 'image') {
@@ -1292,7 +1302,9 @@ app.post('/webhook', async (req, res) => {
 - Client Status: ${dbUser.is_customer ? 'Returning Paid Client (Acknowledge with warmth and recognition)' : 'Seeker (not yet a paid client)'}
 - Total Messages Exchanged: ${dbUser.message_count || 1}
 
-${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []), lastTurnAt)}`;
+${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []), lastTurnAt)}
+
+${crm.readingContext(dbUser)}`;
       
       const userParts = [];
       if (text) {
@@ -1897,7 +1909,7 @@ async function notifyOwner(text, subject = 'Veshannastro alert') {
 
 // Saves any personal details the customer states (name, DOB, birth time/place, gender, email, concern)
 // to the database and the "Customer Profiles" sheet, so they are never asked twice.
-function learnProfileDetails(phone, text, lastAssistantText, media = null) {
+function learnProfileDetails(phone, text, lastAssistantText, media = null, onDone = null) {
   if (!pool || !GEMINI_API_KEY || (!media && String(text || '').trim().length < 2)) return;
   (async () => {
     const details = await crm.extractProfileDetails(genAI, SchemaType, process.env.GEMINI_MODEL || 'gemini-3.8-flash', text, lastAssistantText, media);
@@ -1905,6 +1917,7 @@ function learnProfileDetails(phone, text, lastAssistantText, media = null) {
       await crm.saveTurn(pool, phone, 'user', `[Voice note] ${details.transcript}`);
       delete details.transcript;
     }
+    if (onDone) onDone();
     const changed = await crm.applyProfileDetails(pool, phone, details);
     if (!Object.keys(changed).length) return;
     console.log(`🗂️ Saved profile details for ${phone}: ${Object.keys(changed).join(', ')}`);
@@ -1912,6 +1925,28 @@ function learnProfileDetails(phone, text, lastAssistantText, media = null) {
       await postAppsScript(crm.profilePayload(await getUser(phone)), { timeoutMs: 20000, maxAttempts: 2 });
     }
   })().catch(e => console.error('Profile detail save failed:', e.message));
+}
+
+// Reads the last few messages to understand what the person is really going through
+// (marriage/family vs career/business, money pressure, emotional state). Runs in the background;
+// the next reply uses it through the private READING THE PERSON block.
+const readingInFlight = new Set();
+function readThePerson(phone) {
+  if (!pool || !GEMINI_API_KEY || readingInFlight.has(phone)) return;
+  readingInFlight.add(phone);
+  (async () => {
+    await new Promise(r => setTimeout(r, 1500)); // let this message's save land first
+    const user = await getUser(phone);
+    if (!user || !crm.shouldReadEmotion(user.message_count)) return;
+    const turns = await crm.loadRecentTurns(pool, phone, 12);
+    const reading = await crm.analyzeEmotion(genAI, SchemaType, process.env.GEMINI_MODEL || 'gemini-3.8-flash', turns);
+    if (!(await crm.applyReading(pool, phone, reading))) return;
+    const updated = await getUser(phone);
+    console.log(`💗 Reading for ${phone}: ${crm.readingTag(updated) || 'unclear'} [${updated.reading_confidence}]`);
+    if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
+      await postAppsScript(crm.profilePayload(updated), { timeoutMs: 20000, maxAttempts: 2 });
+    }
+  })().catch(e => console.error('Reading failed:', e.message)).finally(() => readingInFlight.delete(phone));
 }
 
 function crmDeps() {
