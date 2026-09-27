@@ -319,7 +319,8 @@ test('a full call: audio both ways, barge-in, escalation, goodbye, owner summary
 });
 
 test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the words, Sarvam says them', async () => {
-  assert.equal(speakable('Welcome to **Veshannastro**!'), 'Welcome to   Veshann Astro  !');
+  assert.equal(speakable('Welcome to **Veshannastro**!'), 'Welcome to   वी shan Astro  !');
+  assert.equal(speakable('Hey, welcome to Vishan Astro!'), 'Hey, welcome to वी shan Astro!');
   const live = fakeLive();
   const voices = [];
   const openTts = (key, opts) => {
@@ -333,7 +334,7 @@ test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the w
   };
   const owner = [];
   const { server, url } = await startServer({
-    openLive: live.open, openTts, sarvamApiKey: 'sk-test', sarvamSpeaker: 'simran',
+    openLive: live.open, openTts, sarvamApiKey: 'sk-test', sarvamSpeaker: 'ritu',
     notifyOwner: async text => { owner.push(text); return true; }
   });
   try {
@@ -346,7 +347,7 @@ test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the w
     const voice = voices[0];
     assert.equal(voice.key, 'sk-test');
     assert.equal(voice.opts.rate, 8000);
-    assert.equal(voice.opts.speaker, 'simran');
+    assert.equal(voice.opts.speaker, 'ritu');
 
     // Gemini's own (American-sounding) audio is not played; its words go to the Indian voice.
     const halfSecond = pcmToBuffer(sine(12000, 24000)).toString('base64');
