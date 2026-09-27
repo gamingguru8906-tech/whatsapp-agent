@@ -33,11 +33,11 @@ const GOODBYE_MARK = 'kamala-goodbye';
 // Without the key, Gemini's own voice is used.
 const SARVAM_TTS_URL = 'wss://api.sarvam.ai/text-to-speech/ws';
 const SARVAM_MODEL = process.env.SARVAM_TTS_MODEL || 'bulbul:v3';
-const SARVAM_SPEAKER = process.env.SARVAM_SPEAKER || 'simran';
+const SARVAM_SPEAKER = process.env.SARVAM_SPEAKER || 'ritu';
 const SARVAM_LANGUAGE = process.env.SARVAM_LANGUAGE || 'hi-IN';
-const SARVAM_PACE = Number(process.env.SARVAM_PACE) || 1.0;
+const SARVAM_PACE = Number(process.env.SARVAM_PACE) || 1.05;
 
-const GREETING = "Hi, welcome to Veshannastro! I'm Kamala, your personal advisor. Just so you know, quality ke liye yeh call record ho sakti hai.";
+const GREETING = "Hey, welcome to Veshannastro! I'm Kamala, your personal advisor. Just so you know, quality ke liye yeh call record ho sakti hai.";
 const ROBOT_ANSWER = 'Aap Veshannastro ke automated query advisor se baat kar rahe hain, jo aapko easily right guidance tak pahunchne mein help karta hai.';
 const ESCALATION_LINE = "Shashank ji abhi ek consultation mein busy hain. I've escalated your query to our senior team, aur 24 hours ke andar aapko call back aa jayega.";
 const OPENING_CUE = '[System note, not the caller: the call has just connected. Speak first now, starting with the opening line exactly as instructed.]';
@@ -264,7 +264,7 @@ function buildCallPrompt(ctx) {
   return `You are Kamala, answering phone calls for Veshannastro, Shri Shashank ji's astrology practice. You are a warm, caring young woman from Jaipur. This is a live phone call: everything you say is heard, not read.
 
 HOW YOU SOUND
-- A natural Indian accent, like a young woman from Delhi or Jaipur. Never an American or British accent. Say "Veshannastro" as "Vesh-ann-astro".
+- A natural Indian accent, like a young woman from Delhi or Jaipur. Never an American or British accent. Say "Veshannastro" as "Vee-shan Astro".
 - Natural spoken Hinglish: Hindi and English mixed inside the same sentence, the way young urban Indians talk ("Haan ji, main samajh sakti hoon, it's been a tough time na?", "Don't worry, hum mil ke dekhte hain"). Never fully Hindi and never formal words like chinta, samay, vivah, dhanyavaad, kripya. If the caller speaks mostly English, speak mostly English with a little Hindi.
 - Short turns: one or two short sentences, then let them talk. Only one question at a time. Small natural acknowledgements ("haan ji", "achha", "samajh gayi").
 - Calm, kind, unhurried. Never read out lists, links, emails or IDs. Never say "as an AI", "I understand your query" or "I can help with that". No astrology jargon like "7th house".
@@ -518,10 +518,13 @@ function openGeminiLive(apiKey, setup) {
 
 // ---------- Sarvam text-to-speech (Indian voice) ----------
 
-/** Words Kamala speaks, cleaned for the voice: brand name spelled the way it is said, no stray symbols. */
+/**
+ * Words Kamala speaks, cleaned for the voice. The brand is written the way JK tuned it in Sarvam's
+ * playground ("वी shan Astro") so it is pronounced right, however Gemini spelled it.
+ */
 function speakable(text) {
   return String(text || '')
-    .replace(/veshann?astro/gi, 'Veshann Astro')
+    .replace(/\b(?:v[ei]e?sh?[ae]nn?a?\s*astro|वेशन\s*एस्ट्रो|वेशनएस्ट्रो)\b/gi, 'वी shan Astro')
     .replace(/[*_#`~<>\[\]{}|]/g, ' ');
 }
 
