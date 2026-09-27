@@ -1,5 +1,8 @@
 'use strict';
 
+// Call logs are noisy and can garble the test runner's output stream; set VOICE_TEST_LOGS=1 to see them.
+if (!process.env.VOICE_TEST_LOGS) console.log = () => {};
+
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('http');
@@ -19,6 +22,7 @@ const {
   knowledgeLoader,
   buildCallPrompt,
   formatCallbackAlert,
+  speakable,
   attach
 } = require('./voice-agent');
 
@@ -187,7 +191,8 @@ test('the callback alert matches the agreed WhatsApp format', () => {
 test('without a token, only calls from the configured Exotel account are accepted', async () => {
   const server = http.createServer();
   const gemini = fakeLive();
-  const agent = attach(server, { apiKey: 'test-key', token: '', exotelAccountSid: 'veshannastro1', openLive: gemini.open });
+  const done = [];
+  const agent = attach(server, { apiKey: 'test-key', token: '', exotelAccountSid: 'veshannastro1', openLive: gemini.open, notifyOwner: async t => { done.push(t); return true; } });
   assert.ok(agent.enabled);
   await new Promise(r => server.listen(0, r));
   const url = `ws://127.0.0.1:${server.address().port}`;
@@ -203,6 +208,7 @@ test('without a token, only calls from the configured Exotel account are accepte
     assert.strictEqual(closedEarly, false, 'a call from our own Exotel account stays open');
     assert.strictEqual(gemini.sessions.length, 1, 'only the verified call reaches Gemini');
     exotel.terminate();
+    await new Promise(r => setTimeout(r, 300)); // let both sessions wrap up before the test ends
   } finally {
     server.close();
   }
@@ -307,6 +313,74 @@ test('a full call: audio both ways, barge-in, escalation, goodbye, owner summary
     assert.ok(row.callbackDue);
     assert.match(owner[1], /^📞 Call from Rahul Sharma \(\+919876543210\)/);
     assert.match(owner[1], /Outcome: Callback needed/);
+  } finally {
+    server.close();
+  }
+});
+
+test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the words, Sarvam says them', async () => {
+  assert.equal(speakable('Welcome to **Veshannastro**!'), 'Welcome to   Veshann Astro  !');
+  const live = fakeLive();
+  const voices = [];
+  const openTts = (key, opts) => {
+    const tts = new EventEmitter();
+    tts.key = key; tts.opts = opts; tts.texts = []; tts.flushes = 0; tts.closed = false;
+    tts.send = t => tts.texts.push(t);
+    tts.flush = () => { tts.flushes++; };
+    tts.close = () => { tts.closed = true; };
+    voices.push(tts);
+    return tts;
+  };
+  const owner = [];
+  const { server, url } = await startServer({
+    openLive: live.open, openTts, sarvamApiKey: 'sk-test', sarvamSpeaker: 'simran',
+    notifyOwner: async text => { owner.push(text); return true; }
+  });
+  try {
+    const exotel = await connect(`${url}/voice/exotel?token=secret`);
+    const received = [];
+    exotel.on('message', data => received.push(JSON.parse(data.toString())));
+    exotel.send(startMessage());
+    await waitFor(() => live.sessions.length === 1 && voices.length === 1);
+    const gemini = live.sessions[0];
+    const voice = voices[0];
+    assert.equal(voice.key, 'sk-test');
+    assert.equal(voice.opts.rate, 8000);
+    assert.equal(voice.opts.speaker, 'simran');
+
+    // Gemini's own (American-sounding) audio is not played; its words go to the Indian voice.
+    const halfSecond = pcmToBuffer(sine(12000, 24000)).toString('base64');
+    gemini.emit('message', { serverContent: { outputTranscription: { text: "Hi, welcome to Veshannastro! I'm Kamala, " }, modelTurn: { parts: [{ inlineData: { mimeType: 'audio/pcm;rate=24000', data: halfSecond } }] } } });
+    gemini.emit('message', { serverContent: { outputTranscription: { text: 'your personal advisor.' } } });
+    gemini.emit('message', { serverContent: { turnComplete: true } });
+    await waitFor(() => voice.flushes === 1);
+    assert.deepEqual(voice.texts, ["Hi, welcome to Veshannastro! I'm Kamala, ", 'your personal advisor.']);
+    assert.equal(received.filter(m => m.event === 'media').length, 0);
+
+    // Sarvam's 8 kHz audio goes to Exotel in 320-byte multiples; the tail is flushed on "final".
+    voice.emit('audio', pcmToBuffer(sine(4000, 8000)));
+    voice.emit('final');
+    await waitFor(() => received.filter(m => m.event === 'media').length >= 3);
+    const bytes = received.filter(m => m.event === 'media').reduce((n, m) => n + Buffer.from(m.media.payload, 'base64').length, 0);
+    assert.ok(bytes >= 8000 && bytes <= 8320);
+    assert.ok(received.filter(m => m.event === 'media').every(m => Buffer.from(m.media.payload, 'base64').length % 320 === 0));
+
+    // Barge-in: Exotel is cleared and a fresh voice stream replaces the old one.
+    gemini.emit('message', { serverContent: { interrupted: true } });
+    await waitFor(() => voices.length === 2);
+    assert.ok(voice.closed);
+    await waitFor(() => received.some(m => m.event === 'clear'));
+    voice.emit('audio', pcmToBuffer(sine(4000, 8000)));
+    const before = received.filter(m => m.event === 'media').length;
+    await new Promise(r => setTimeout(r, 50));
+    assert.equal(received.filter(m => m.event === 'media').length, before, 'audio from the old stream is dropped');
+
+    // If the Indian voice fails, the call carries on in Gemini's voice.
+    voices[1].emit('error', new Error('401'));
+    gemini.emit('message', { serverContent: { modelTurn: { parts: [{ inlineData: { mimeType: 'audio/pcm;rate=24000', data: halfSecond } }] } } });
+    await waitFor(() => received.filter(m => m.event === 'media').length > before);
+    exotel.close();
+    await waitFor(() => owner.length >= 1); // let the call wrap up before the test ends
   } finally {
     server.close();
   }
