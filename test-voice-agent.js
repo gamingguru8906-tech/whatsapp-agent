@@ -184,6 +184,30 @@ test('the callback alert matches the agreed WhatsApp format', () => {
     'Callback needed within 24 hours\nName: Rahul Sharma\nNumber: +919876543210\nQuery: Marriage\nSummary: Wants a consultation');
 });
 
+test('without a token, only calls from the configured Exotel account are accepted', async () => {
+  const server = http.createServer();
+  const gemini = fakeLive();
+  const agent = attach(server, { apiKey: 'test-key', token: '', exotelAccountSid: 'veshannastro1', openLive: gemini.open });
+  assert.ok(agent.enabled);
+  await new Promise(r => server.listen(0, r));
+  const url = `ws://127.0.0.1:${server.address().port}`;
+  try {
+    const intruder = await connect(`${url}/voice/exotel`);
+    const closed = new Promise(r => intruder.on('close', r));
+    intruder.send(JSON.stringify({ event: 'start', stream_sid: 'X', start: { stream_sid: 'X', call_sid: 'X', account_sid: 'someone-else', from: '+919000000000', media_format: { sample_rate: '8000' } } }));
+    await closed;
+    const exotel = await connect(`${url}/voice/exotel`);
+    let closedEarly = false; exotel.on('close', () => { closedEarly = true; });
+    exotel.send(JSON.stringify({ event: 'start', stream_sid: 'Y', start: { stream_sid: 'Y', call_sid: 'Y', account_sid: 'veshannastro1', from: '', media_format: { sample_rate: '8000' } } }));
+    await new Promise(r => setTimeout(r, 300));
+    assert.strictEqual(closedEarly, false, 'a call from our own Exotel account stays open');
+    assert.strictEqual(gemini.sessions.length, 1, 'only the verified call reaches Gemini');
+    exotel.terminate();
+  } finally {
+    server.close();
+  }
+});
+
 test('the stream refuses wrong tokens and other paths', async () => {
   const { server, url } = await startServer({ openLive: fakeLive().open });
   try {
