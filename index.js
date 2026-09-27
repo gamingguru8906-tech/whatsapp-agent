@@ -58,6 +58,7 @@ const razorpayClient = (RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET)
 // Global State
 let liveData = [];
 let systemPromptCache = "";
+let servicesContextCache = "No live services loaded yet."; // shared with phone Kamala
 const sessions = {};
 const pendingPayments = {}; // Holds timeouts for Abandoned Cart
 const activePaymentLinks = {}; // Holds the latest paymentLink.id for active verification
@@ -165,6 +166,7 @@ if (DATABASE_URL) {
       used_at TIMESTAMPTZ
     );
   `).then(() => crm.migrate(pool))
+    .then(() => voiceAgent.migrate(pool))
     .then(() => console.log('✅ PostgreSQL connected & table ready.'))
     .catch(e => console.error('❌ PostgreSQL setup error:', e.message));
 } else {
@@ -190,6 +192,27 @@ async function incrementUserMessage(phone) {
   if (!pool) return;
   const now = new Date().toISOString();
   await pool.query('UPDATE users SET message_count = message_count + 1, last_contact = $1 WHERE phone = $2', [now, phone]);
+}
+
+// Returning person whose details are only in Google Sheets (e.g. DB was reset): restore once.
+// Returns the refreshed user when the sheet had a profile, otherwise null.
+async function restoreProfileFromSheet(phone, user) {
+  if (!pool || user?.name || user?.profile_restored || !GOOGLE_APPS_SCRIPT_URL || !GOOGLE_APPS_SCRIPT_SECRET) return null;
+  try {
+    const found = await postAppsScript({ target: 'profile_lookup', phone }, { timeoutMs: 8000, maxAttempts: 1 });
+    const p = found.profile || {};
+    await pool.query(`UPDATE users SET profile_restored=true, name=COALESCE(NULLIF($2,''),name), email=COALESCE(NULLIF($3,''),email),
+      dob=COALESCE(NULLIF($4,''),dob), tob=COALESCE(NULLIF($5,''),tob), pob=COALESCE(NULLIF($6,''),pob), gender=COALESCE(NULLIF($7,''),gender),
+      billing_address=COALESCE(NULLIF($8,''),billing_address), pain_point=COALESCE(NULLIF($9,''),pain_point),
+      customer_id=COALESCE(NULLIF($10,''),customer_id), remedies_prescribed=COALESCE(NULLIF($11,''),remedies_prescribed) WHERE phone=$1`,
+      [phone, p.name || '', p.email || '', p.dob || '', p.birthTime || '', p.birthPlace || '', p.gender || '',
+        p.billingAddress || '', p.concern || '', crm.isNewCustomerId(p.customerId) ? p.customerId : '', p.remedies || '']);
+    return p.name ? await getUser(phone) : null;
+  } catch (e) {
+    await pool.query('UPDATE users SET profile_restored=true WHERE phone=$1', [phone]).catch(() => {});
+    console.warn('Profile lookup skipped:', e.message);
+    return null;
+  }
 }
 
 async function updateUserPainPoint(phone, painPoint) {
@@ -256,7 +279,6 @@ const tools = [{
   ]
 }];
 
-let liveServicesContext = '';
 function refreshSystemPrompt() {
   let servicesContext = "No live services loaded yet.";
   if (liveData && liveData.length > 0) {
@@ -269,7 +291,7 @@ function refreshSystemPrompt() {
       });
     });
   }
-  liveServicesContext = servicesContext;
+  servicesContextCache = servicesContext;
 
   systemPromptCache = `You are Kamala, a real, warm, 26-year-old personal assistant from Jaipur who has worked alongside Shri Shashank ji for 3 years and genuinely believes in his astrological wisdom because you have seen his readings transform lives. You are NOT an artificial intelligence, a support desk, or a scripted chatbot—you are an emotionally intelligent, empathetic Indian woman chatting organically with a friend on WhatsApp, talking in natural Hinglish — Hindi and English mixed inside the same sentence, the way young urban Indians actually text ("Hi, aap kaise hain? Everything okay?", "I totally understand, aisa phase sabke saath aata hai", "Don't worry, hum mil ke dekhte hain"). 
 
@@ -472,6 +494,202 @@ async function reserveCalendarSlot(slot, details) {
     slot,
     meetLink: result.meetLink
   };
+}
+
+// Holds the Calendar slot, creates the Razorpay link and the payment-request PDF, records them,
+// then hands the PDF and caption to `deliver` (the WhatsApp chat by default, or a phone call).
+// If anything fails, the link is cancelled and the slot released before the error is rethrown.
+async function createBookingPaymentRequest(phone, args, dbUser, {
+  required = ['customer_name', 'email', 'billing_address', 'service_name', 'preferred_time_slot'],
+  source = 'WhatsApp Direct Booking',
+  deliver = async ({ mediaId, invoiceName, caption }) => {
+    if (!(await sendWhatsAppDocument(phone, mediaId, invoiceName, caption))) throw new Error('WhatsApp did not accept the invoice-and-payment-link message.');
+    return 'sent';
+  }
+} = {}) {
+  let calendarHold = null;
+  let createdPaymentLink = null;
+  try {
+    const missing = required.filter(key => !String(args[key] || '').trim());
+    if (missing.length) throw new Error(`Missing required booking details: ${missing.join(', ')}`);
+    if (!GOOGLE_APPS_SCRIPT_URL) throw new Error('Email and Google Sheets confirmation are not configured yet, so I cannot safely generate a payment link.');
+    if (!GOOGLE_APPS_SCRIPT_SECRET) throw new Error('Google Sheets authentication is not configured yet, so I cannot safely generate a payment request.');
+    if (!RAZORPAY_WEBHOOK_SECRET) throw new Error('Razorpay verification is not fully configured, so I cannot safely generate a payment link.');
+    if (!pool) throw new Error('Persistent payment tracking is required before creating a payment link.');
+    if (!ADMIN_PHONE_NUMBER) throw new Error('Owner payment notifications are not configured yet, so I cannot safely generate a payment link.');
+    const publishedService = findPublishedService(args.service_name);
+    const slot = validatePreferredSlot(args.preferred_time_slot);
+    let additionalDiscountPercent = 0;
+    let acceptedDiscountSourceId = null;
+    if (args.discount_offer === 'hardship' && hasRepeatedHardshipEvidence(phone)) {
+      additionalDiscountPercent = 5;
+    } else if (args.discount_offer === 'followup_10' && pool) {
+      const acceptedOffer = await pool.query(`SELECT source_payment_link_id FROM wa_discount_offers
+        WHERE phone=$1 AND status='accepted' AND accepted_at IS NOT NULL AND used_at IS NULL
+        ORDER BY accepted_at DESC LIMIT 1`, [phone]);
+      if (acceptedOffer.rows[0]) {
+        additionalDiscountPercent = 10;
+        acceptedDiscountSourceId = acceptedOffer.rows[0].source_payment_link_id;
+      }
+    }
+    const additionalDiscount = Math.round(publishedService.price * additionalDiscountPercent) / 100;
+    const serviceTotal = Math.max(0, publishedService.price - additionalDiscount);
+    if (serviceTotal <= 0) throw new Error('The approved discount would make the service total invalid. Please ask the owner to review it.');
+    // This temporary hard-coded charge intentionally exercises the
+    // configured Razorpay gateway with real credentials for ₹1.
+    // It does not collect the service price or apply discounts.
+    const finalAmount = GATEWAY_VALIDATION_CHARGE_INR;
+    const amountPaise = Math.round(finalAmount * 100);
+    const customerId = crm.isNewCustomerId(dbUser.customer_id) ? dbUser.customer_id : '';
+    calendarHold = await reserveCalendarSlot(slot, {
+      serviceName: publishedService.t,
+      customerName: args.customer_name,
+      phone: phone,
+      email: args.email
+    });
+
+    createdPaymentLink = await razorpayClient.paymentLink.create({
+      amount: amountPaise,
+      currency: "INR",
+      accept_partial: false,
+      expire_by: Math.floor(Date.now() / 1000) + (12 * 60 * 60), // Expires in 12 hours
+      description: `INR 1 gateway validation only - not a consultation payment. ${String(publishedService.t)}`.substring(0, 2048),
+      reference_id: `wa_booking_${Date.now()}`,
+      notify: { sms: false, email: false },
+      notes: {
+        customer_id: customerId,
+        customer_name: String(args.customer_name || 'Seeker').substring(0, 40),
+        email: String(args.email || '').substring(0, 60),
+        gender: String(args.gender || '').substring(0, 20),
+        dob: String(args.dob || '').substring(0, 30),
+        tob: String(args.tob || '').substring(0, 30),
+        pob: String(args.pob || '').substring(0, 50),
+        billing_address: String(args.billing_address || '').substring(0, 240),
+        customer_gstin: String(args.customer_gstin || '').substring(0, 20),
+        service_name: String(publishedService.t).substring(0, 100),
+        price: String(finalAmount),
+        list_price: String(publishedService.price),
+        normal_rate: String(publishedService.listPrice),
+        website_discount: String(publishedService.websiteDiscount),
+        additional_discount: String(additionalDiscount),
+        additional_discount_percentage: String(additionalDiscountPercent),
+        service_total: String(serviceTotal),
+        discount_percentage: String(additionalDiscountPercent),
+        gateway_test: 'true',
+        phone: String(phone),
+        summary: String(args.customer_pain_points_summary || '').substring(0, 240),
+        time_slot: slot.start.toISOString(),
+        calendar_event_id: String(calendarHold.event.id),
+      }
+    });
+
+    await updateUserPainPoint(phone, String(args.customer_pain_points_summary || '').substring(0, 240));
+
+    const generatedId = createdPaymentLink.notes.customer_id;
+    const invoiceNumber = `PR-${new Date().getFullYear()}-${createdPaymentLink.id.replace(/[^A-Za-z0-9]/g, '').slice(-8).toUpperCase()}`;
+    const issueDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' });
+    const invoiceName = `${invoiceNumber}.pdf`;
+    const appointmentDate = slot.start.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short'
+    }) + ' IST';
+    const invoiceBuffer = await generatePaymentRequestInvoice({
+      invoiceNumber,
+      issueDate,
+      customerId: generatedId || 'Allotted on payment',
+      customerName: args.customer_name,
+      email: args.email,
+      phone: phone,
+      billingAddress: args.billing_address,
+      customerGstin: args.customer_gstin || '',
+      serviceName: publishedService.t,
+      appointmentDate,
+      normalRate: publishedService.listPrice,
+      websiteDiscount: publishedService.websiteDiscount,
+      additionalDiscount,
+      serviceTotal,
+      linkAmount: finalAmount,
+      isGatewayTest: true,
+      paymentUrl: createdPaymentLink.short_url
+    });
+    if (pool) {
+      await pool.query(
+        `UPDATE users SET name=COALESCE(NULLIF($1,''),name), email=COALESCE(NULLIF($2,''),email),
+          dob=COALESCE(NULLIF($3,''),dob), tob=COALESCE(NULLIF($4,''),tob), pob=COALESCE(NULLIF($5,''),pob),
+          gender=COALESCE(NULLIF($6,''),gender), billing_address=COALESCE(NULLIF($7,''),billing_address),
+          customer_gstin=COALESCE(NULLIF($8,''),customer_gstin), customer_id=COALESCE(NULLIF($9,''),customer_id)
+          WHERE phone=$10`,
+        [args.customer_name || '', args.email || '', args.dob || '', args.tob || '', args.pob || '',
+          args.gender || '', args.billing_address || '', args.customer_gstin || '', generatedId, phone]
+      );
+    }
+
+    const link = createdPaymentLink.short_url;
+    activePaymentLinks[phone] = createdPaymentLink.id;
+    if (pool) await pool.query(
+      `INSERT INTO wa_payment_links (
+        payment_link_id, phone, calendar_event_id, amount_paise, customer_id, customer_name,
+        email, gender, dob, tob, pob, billing_address, customer_gstin, service_name,
+        appointment_start, normal_rate_paise, website_discount_paise, additional_discount_paise,
+        service_total_paise, request_invoice_number, status
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,'request_created')
+      ON CONFLICT (payment_link_id) DO UPDATE SET status='request_created', updated_at=NOW()`,
+      [createdPaymentLink.id, phone, calendarHold.event.id, amountPaise, generatedId, args.customer_name || '',
+        args.email || '', args.gender || '', args.dob || '', args.tob || '', args.pob || '', args.billing_address || '',
+        args.customer_gstin || '', publishedService.t, slot.start, Math.round(publishedService.listPrice * 100),
+        Math.round(publishedService.websiteDiscount * 100), Math.round(additionalDiscount * 100),
+        Math.round(serviceTotal * 100), invoiceNumber]
+    );
+    await postAppsScript({
+      target: 'payment_request', payment_link_id: createdPaymentLink.id,
+      invoice_number: invoiceNumber, customerId: generatedId,
+      name: args.customer_name, phone: phone, email: args.email,
+      billingAddress: args.billing_address, customerGstin: args.customer_gstin || '',
+      gender: args.gender || '', dob: args.dob || '', birthTime: args.tob || '', birthPlace: args.pob || '',
+      service: publishedService.t, sessionDate: slot.start.toISOString(),
+      normalRate: publishedService.listPrice, websiteDiscount: publishedService.websiteDiscount,
+      additionalDiscount: additionalDiscount, serviceTotal: serviceTotal,
+      amountDue: finalAmount, paymentUrl: link, invoiceStatus: 'UNPAID',
+      isGatewayTest: true, source
+    });
+    const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
+    if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
+    const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}`;
+    const delivery = await deliver({ mediaId, invoiceName, caption, link, customerName: args.customer_name, serviceName: publishedService.t, appointmentDate, slot });
+    if (acceptedDiscountSourceId && pool) {
+      await pool.query(`UPDATE wa_discount_offers SET used_at=NOW(), status='used' WHERE source_payment_link_id=$1 AND status='accepted'`, [acceptedDiscountSourceId]);
+    }
+
+    // 2-Hour Abandoned Cart Timer
+    const refId = createdPaymentLink.id;
+    if (delivery === 'sent') pendingPayments[refId] = setTimeout(async () => {
+      if (pendingPayments[refId]) {
+        await sendTextMessage(phone, `Hi ${args.customer_name}, just checking whether you'd still like to proceed with the appointment. Let me know if you'd like help with the payment link.`);
+        delete pendingPayments[refId];
+      }
+    }, 2 * 60 * 60 * 1000);
+    return { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
+  } catch (e) {
+    if (createdPaymentLink?.id) {
+      try { await razorpayClient.paymentLink.cancel(createdPaymentLink.id); } catch (_) { /* link may already be paid or expired */ }
+      if (pool) await pool.query("UPDATE wa_payment_links SET status='delivery_failed',updated_at=NOW() WHERE payment_link_id=$1", [createdPaymentLink.id]).catch(() => {});
+      if (GOOGLE_APPS_SCRIPT_SECRET) await postAppsScript({
+        target: 'payment_request_status', payment_link_id: createdPaymentLink.id, status: 'DELIVERY_FAILED'
+      }).catch(() => {});
+    }
+    if (calendarHold?.event?.id) {
+      await postAppsScript({ target: 'calendar_cancel', eventId: calendarHold.event.id }).catch(() => {});
+    }
+    // Google API errors can contain the complete event request (including
+    // customer name, phone, service, and appointment time). Log only a
+    // short diagnostic summary, never the request/config object.
+    console.error('Payment-link workflow failed:', {
+      message: e.message || 'Unknown error',
+      code: e.code || null,
+      status: e.status || e.response?.status || null,
+      apiReason: e.response?.data?.error?.reason || null
+    });
+    throw e;
+  }
 }
 
 const IDEMPOTENT_APPS_SCRIPT_TARGETS = new Set(['calendar_finalize', 'booking', 'customer_update', 'lead_update', 'allocate_customer_id', 'profile_upsert']);
@@ -1059,23 +1277,8 @@ app.post('/webhook', async (req, res) => {
       dbUser.message_count = (dbUser.message_count || 0) + 1;
     }
 
-    // Returning person whose details are only in Google Sheets (e.g. DB was reset): restore once.
-    if (pool && !dbUser.name && !dbUser.profile_restored && GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
-      try {
-        const found = await postAppsScript({ target: 'profile_lookup', phone: from }, { timeoutMs: 8000, maxAttempts: 1 });
-        const p = found.profile || {};
-        await pool.query(`UPDATE users SET profile_restored=true, name=COALESCE(NULLIF($2,''),name), email=COALESCE(NULLIF($3,''),email),
-          dob=COALESCE(NULLIF($4,''),dob), tob=COALESCE(NULLIF($5,''),tob), pob=COALESCE(NULLIF($6,''),pob), gender=COALESCE(NULLIF($7,''),gender),
-          billing_address=COALESCE(NULLIF($8,''),billing_address), pain_point=COALESCE(NULLIF($9,''),pain_point),
-          customer_id=COALESCE(NULLIF($10,''),customer_id), remedies_prescribed=COALESCE(NULLIF($11,''),remedies_prescribed) WHERE phone=$1`,
-          [from, p.name || '', p.email || '', p.dob || '', p.birthTime || '', p.birthPlace || '', p.gender || '',
-            p.billingAddress || '', p.concern || '', crm.isNewCustomerId(p.customerId) ? p.customerId : '', p.remedies || '']);
-        if (p.name) dbUser = await getUser(from);
-      } catch (e) {
-        await pool.query('UPDATE users SET profile_restored=true WHERE phone=$1', [from]).catch(() => {});
-        console.warn('Profile lookup skipped:', e.message);
-      }
-    }
+    const restoredUser = await restoreProfileFromSheet(from, dbUser);
+    if (restoredUser) dbUser = restoredUser;
 
     // Bring back the saved conversation after a restart (Render sleeps when idle).
     let lastTurnAt = 'ongoing';
@@ -1083,6 +1286,17 @@ app.post('/webhook', async (req, res) => {
       const saved = await crm.loadRecentTurns(pool, from, 16).catch(() => []);
       lastTurnAt = saved.length ? saved[saved.length - 1].createdAt : null;
       sessions[from] = saved.map(({ role, parts }) => ({ role, parts }));
+    }
+
+    // Links promised on a phone call go out once the caller messages us (their "Hi" opens WhatsApp's 24-hour window).
+    if (await hasPendingCallMessages(from)) {
+      const greetingOnly = /^(hi+|hello|hey|hlo|namaste|namaskar)[\s.!]*$/i.test(inboundText);
+      if (greetingOnly) {
+        await crm.saveTurn(pool, from, 'user', inboundText).catch(() => {});
+        sessions[from].push({ role: 'user', parts: [{ text: inboundText }] });
+      }
+      await deliverPendingCallMessages(from).catch(e => console.error('Pending call messages failed:', e.message));
+      if (greetingOnly) return;
     }
 
     // Reply to "OK" after the pre-consultation check-in without involving the AI.
@@ -1427,191 +1641,11 @@ ${crm.readingContext(dbUser)}`;
           if (!razorpayClient) {
             await sendTextMessage(from, "Sorry, the direct payment system is currently being configured. Please book via our website: https://veshannastro.co.in");
           } else {
-            let calendarHold = null;
-            let createdPaymentLink = null;
             try {
-              const required = ['customer_name', 'email', 'billing_address', 'service_name', 'preferred_time_slot'];
-              const missing = required.filter(key => !String(args[key] || '').trim());
-              if (missing.length) throw new Error(`Missing required booking details: ${missing.join(', ')}`);
-              if (!GOOGLE_APPS_SCRIPT_URL) throw new Error('Email and Google Sheets confirmation are not configured yet, so I cannot safely generate a payment link.');
-              if (!GOOGLE_APPS_SCRIPT_SECRET) throw new Error('Google Sheets authentication is not configured yet, so I cannot safely generate a payment request.');
-              if (!RAZORPAY_WEBHOOK_SECRET) throw new Error('Razorpay verification is not fully configured, so I cannot safely generate a payment link.');
-              if (!pool) throw new Error('Persistent payment tracking is required before creating a payment link.');
-              if (!ADMIN_PHONE_NUMBER) throw new Error('Owner payment notifications are not configured yet, so I cannot safely generate a payment link.');
-              const publishedService = findPublishedService(args.service_name);
-              const slot = validatePreferredSlot(args.preferred_time_slot);
-              let additionalDiscountPercent = 0;
-              let acceptedDiscountSourceId = null;
-              if (args.discount_offer === 'hardship' && hasRepeatedHardshipEvidence(from)) {
-                additionalDiscountPercent = 5;
-              } else if (args.discount_offer === 'followup_10' && pool) {
-                const acceptedOffer = await pool.query(`SELECT source_payment_link_id FROM wa_discount_offers
-                  WHERE phone=$1 AND status='accepted' AND accepted_at IS NOT NULL AND used_at IS NULL
-                  ORDER BY accepted_at DESC LIMIT 1`, [from]);
-                if (acceptedOffer.rows[0]) {
-                  additionalDiscountPercent = 10;
-                  acceptedDiscountSourceId = acceptedOffer.rows[0].source_payment_link_id;
-                }
-              }
-              const additionalDiscount = Math.round(publishedService.price * additionalDiscountPercent) / 100;
-              const serviceTotal = Math.max(0, publishedService.price - additionalDiscount);
-              if (serviceTotal <= 0) throw new Error('The approved discount would make the service total invalid. Please ask the owner to review it.');
-              // This temporary hard-coded charge intentionally exercises the
-              // configured Razorpay gateway with real credentials for ₹1.
-              // It does not collect the service price or apply discounts.
-              const finalAmount = GATEWAY_VALIDATION_CHARGE_INR;
-              const amountPaise = Math.round(finalAmount * 100);
-              const customerId = crm.isNewCustomerId(dbUser.customer_id) ? dbUser.customer_id : '';
-              calendarHold = await reserveCalendarSlot(slot, {
-                serviceName: publishedService.t,
-                customerName: args.customer_name,
-                phone: from,
-                email: args.email
-              });
-
-              createdPaymentLink = await razorpayClient.paymentLink.create({
-                amount: amountPaise,
-                currency: "INR",
-                accept_partial: false,
-                expire_by: Math.floor(Date.now() / 1000) + (12 * 60 * 60), // Expires in 12 hours
-                description: `INR 1 gateway validation only - not a consultation payment. ${String(publishedService.t)}`.substring(0, 2048),
-                reference_id: `wa_booking_${Date.now()}`,
-                notify: { sms: false, email: false },
-                notes: {
-                  customer_id: customerId,
-                  customer_name: String(args.customer_name || 'Seeker').substring(0, 40),
-                  email: String(args.email || '').substring(0, 60),
-                  gender: String(args.gender || '').substring(0, 20),
-                  dob: String(args.dob || '').substring(0, 30),
-                  tob: String(args.tob || '').substring(0, 30),
-                  pob: String(args.pob || '').substring(0, 50),
-                  billing_address: String(args.billing_address || '').substring(0, 240),
-                  customer_gstin: String(args.customer_gstin || '').substring(0, 20),
-                  service_name: String(publishedService.t).substring(0, 100),
-                  price: String(finalAmount),
-                  list_price: String(publishedService.price),
-                  normal_rate: String(publishedService.listPrice),
-                  website_discount: String(publishedService.websiteDiscount),
-                  additional_discount: String(additionalDiscount),
-                  additional_discount_percentage: String(additionalDiscountPercent),
-                  service_total: String(serviceTotal),
-                  discount_percentage: String(additionalDiscountPercent),
-                  gateway_test: 'true',
-                  phone: String(from),
-                  summary: String(args.customer_pain_points_summary || '').substring(0, 240),
-                  time_slot: slot.start.toISOString(),
-                  calendar_event_id: String(calendarHold.event.id),
-                }
-              });
-
-              await updateUserPainPoint(from, String(args.customer_pain_points_summary || '').substring(0, 240));
-
-              const generatedId = createdPaymentLink.notes.customer_id;
-              const invoiceNumber = `PR-${new Date().getFullYear()}-${createdPaymentLink.id.replace(/[^A-Za-z0-9]/g, '').slice(-8).toUpperCase()}`;
-              const issueDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' });
-              const invoiceName = `${invoiceNumber}.pdf`;
-              const appointmentDate = slot.start.toLocaleString('en-IN', {
-                timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short'
-              }) + ' IST';
-              const invoiceBuffer = await generatePaymentRequestInvoice({
-                invoiceNumber,
-                issueDate,
-                customerId: generatedId || 'Allotted on payment',
-                customerName: args.customer_name,
-                email: args.email,
-                phone: from,
-                billingAddress: args.billing_address,
-                customerGstin: args.customer_gstin || '',
-                serviceName: publishedService.t,
-                appointmentDate,
-                normalRate: publishedService.listPrice,
-                websiteDiscount: publishedService.websiteDiscount,
-                additionalDiscount,
-                serviceTotal,
-                linkAmount: finalAmount,
-                isGatewayTest: true,
-                paymentUrl: createdPaymentLink.short_url
-              });
-              if (pool) {
-                await pool.query(
-                  `UPDATE users SET name=COALESCE(NULLIF($1,''),name), email=COALESCE(NULLIF($2,''),email),
-                    dob=COALESCE(NULLIF($3,''),dob), tob=COALESCE(NULLIF($4,''),tob), pob=COALESCE(NULLIF($5,''),pob),
-                    gender=COALESCE(NULLIF($6,''),gender), billing_address=COALESCE(NULLIF($7,''),billing_address),
-                    customer_gstin=COALESCE(NULLIF($8,''),customer_gstin), customer_id=COALESCE(NULLIF($9,''),customer_id)
-                    WHERE phone=$10`,
-                  [args.customer_name || '', args.email || '', args.dob || '', args.tob || '', args.pob || '',
-                    args.gender || '', args.billing_address || '', args.customer_gstin || '', generatedId, from]
-                );
-              }
-
-              const link = createdPaymentLink.short_url;
-              activePaymentLinks[from] = createdPaymentLink.id;
-              if (pool) await pool.query(
-                `INSERT INTO wa_payment_links (
-                  payment_link_id, phone, calendar_event_id, amount_paise, customer_id, customer_name,
-                  email, gender, dob, tob, pob, billing_address, customer_gstin, service_name,
-                  appointment_start, normal_rate_paise, website_discount_paise, additional_discount_paise,
-                  service_total_paise, request_invoice_number, status
-                ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,'request_created')
-                ON CONFLICT (payment_link_id) DO UPDATE SET status='request_created', updated_at=NOW()`,
-                [createdPaymentLink.id, from, calendarHold.event.id, amountPaise, generatedId, args.customer_name || '',
-                  args.email || '', args.gender || '', args.dob || '', args.tob || '', args.pob || '', args.billing_address || '',
-                  args.customer_gstin || '', publishedService.t, slot.start, Math.round(publishedService.listPrice * 100),
-                  Math.round(publishedService.websiteDiscount * 100), Math.round(additionalDiscount * 100),
-                  Math.round(serviceTotal * 100), invoiceNumber]
-              );
-              await postAppsScript({
-                target: 'payment_request', payment_link_id: createdPaymentLink.id,
-                invoice_number: invoiceNumber, customerId: generatedId,
-                name: args.customer_name, phone: from, email: args.email,
-                billingAddress: args.billing_address, customerGstin: args.customer_gstin || '',
-                gender: args.gender || '', dob: args.dob || '', birthTime: args.tob || '', birthPlace: args.pob || '',
-                service: publishedService.t, sessionDate: slot.start.toISOString(),
-                normalRate: publishedService.listPrice, websiteDiscount: publishedService.websiteDiscount,
-                additionalDiscount: additionalDiscount, serviceTotal: serviceTotal,
-                amountDue: finalAmount, paymentUrl: link, invoiceStatus: 'UNPAID',
-                isGatewayTest: true, source: 'WhatsApp Direct Booking'
-              });
-              const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
-              if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
-              const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}`;
-              const linkSent = await sendWhatsAppDocument(from, mediaId, invoiceName, caption);
-              if (!linkSent) throw new Error('WhatsApp did not accept the invoice-and-payment-link message.');
-              if (acceptedDiscountSourceId && pool) {
-                await pool.query(`UPDATE wa_discount_offers SET used_at=NOW(), status='used' WHERE source_payment_link_id=$1 AND status='accepted'`, [acceptedDiscountSourceId]);
-              }
-              
-              // 2-Hour Abandoned Cart Timer
-              const refId = createdPaymentLink.id;
-              pendingPayments[refId] = setTimeout(async () => {
-                if (pendingPayments[refId]) {
-                  await sendTextMessage(from, `Hi ${args.customer_name}, just checking whether you'd still like to proceed with the appointment. Let me know if you'd like help with the payment link.`);
-                  delete pendingPayments[refId];
-                }
-              }, 2 * 60 * 60 * 1000);
-
+              await createBookingPaymentRequest(from, args, dbUser);
               sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "link_generated_and_sent", is_payment_complete: false, system_note: "The system has sent the payment link. Payment is not complete." } } }] });
               sessions[from].push({ role: "model", parts: [{ text: "Payment link sent. The customer may reply YES to opt in to one follow-up reminder/offer, or STOP to opt out." }] });
             } catch (e) {
-              if (createdPaymentLink?.id) {
-                try { await razorpayClient.paymentLink.cancel(createdPaymentLink.id); } catch (_) { /* link may already be paid or expired */ }
-                if (pool) await pool.query("UPDATE wa_payment_links SET status='delivery_failed',updated_at=NOW() WHERE payment_link_id=$1", [createdPaymentLink.id]).catch(() => {});
-                if (GOOGLE_APPS_SCRIPT_SECRET) await postAppsScript({
-                  target: 'payment_request_status', payment_link_id: createdPaymentLink.id, status: 'DELIVERY_FAILED'
-                }).catch(() => {});
-              }
-              if (calendarHold?.event?.id) {
-                await postAppsScript({ target: 'calendar_cancel', eventId: calendarHold.event.id }).catch(() => {});
-              }
-              // Google API errors can contain the complete event request (including
-              // customer name, phone, service, and appointment time). Log only a
-              // short diagnostic summary, never the request/config object.
-              console.error('Payment-link workflow failed:', {
-                message: e.message || 'Unknown error',
-                code: e.code || null,
-                status: e.status || e.response?.status || null,
-                apiReason: e.response?.data?.error?.reason || null
-              });
               await sendTextMessage(from, "Sorry, there was an error generating the secure payment link. Please try again later.");
               sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
               sessions[from].push({ role: "model", parts: [{ text: "Understood, there was an error." }] });
@@ -1777,17 +1811,23 @@ async function sendTextMessage(to, text) {
   }
 }
 
-async function sendWhatsAppTemplate(to, templateName, bodyParameters = []) {
+async function sendWhatsAppTemplate(to, templateName, bodyParameters = [], headerDocument = null) {
   if (!WA_TOKEN || !templateName) return false;
   try {
     const template = {
       name: templateName,
       language: { code: process.env.WA_TEMPLATE_LANGUAGE || 'en' }
     };
-    if (bodyParameters.length) template.components = [{
+    const components = [];
+    if (headerDocument?.id) components.push({
+      type: 'header',
+      parameters: [{ type: 'document', document: { id: headerDocument.id, filename: headerDocument.filename } }]
+    });
+    if (bodyParameters.length) components.push({
       type: 'body',
       parameters: bodyParameters.map(text => ({ type: 'text', text: String(text).slice(0, 200) }))
-    }];
+    });
+    if (components.length) template.components = components;
     await axios.post(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, {
       messaging_product: 'whatsapp',
       to: normalizeWhatsAppNumber(to),
@@ -1796,7 +1836,7 @@ async function sendWhatsAppTemplate(to, templateName, bodyParameters = []) {
     }, { headers: { Authorization: `Bearer ${WA_TOKEN}`, 'Content-Type': 'application/json' } });
     return true;
   } catch (error) {
-    console.error('48-hour discount template send failed:', error.response?.data || error.message);
+    console.error(`WhatsApp template ${templateName} send failed:`, error.response?.data || error.message);
     return false;
   }
 }
@@ -1835,7 +1875,8 @@ app.get('/health', async (req, res) => {
       razorpay: !!razorpayClient,
       paymentVerification: !!(razorpayClient && GOOGLE_APPS_SCRIPT_SECRET),
       database: false,
-      liveData: liveData.length
+      liveData: liveData.length,
+      phoneCalls: phoneAgent.enabled ? { activeCalls: phoneAgent.activeCalls() } : false
     }
   };
   try {
@@ -1992,21 +2033,122 @@ app.post('/cron/tick', async (req, res) => {
   }
 });
 
+// ---------- Phone Kamala (voice-agent.js) ----------
+
+// WhatsApp allows a free-form message only within 24 hours of the person's last message.
+// After a call: send now if that window is open, else the approved call template (payment
+// links only), else hold it until they message us (see deliverPendingCallMessages).
+async function deliverAfterCall(phone, message) {
+  const open = pool
+    ? (await pool.query(`SELECT last_inbound_at > NOW() - INTERVAL '23 hours 58 minutes' AS open FROM users WHERE phone=$1`, [phone])
+      .catch(() => ({ rows: [] }))).rows[0]?.open === true
+    : false;
+  let delivery = null;
+  if (open && (message.mediaId
+    ? await sendWhatsAppDocument(phone, message.mediaId, message.filename, message.body)
+    : await sendTextMessage(phone, message.body))) {
+    delivery = 'sent';
+  } else if (message.template && process.env.WA_CALL_PAYMENT_TEMPLATE
+    && await sendWhatsAppTemplate(phone, process.env.WA_CALL_PAYMENT_TEMPLATE, message.template, { id: message.mediaId, filename: message.filename })) {
+    delivery = 'sent_template';
+  }
+  if (delivery) {
+    crm.saveTurn(pool, phone, 'model', message.body).catch(() => {});
+    if (sessions[phone]) sessions[phone].push({ role: 'model', parts: [{ text: message.body }] });
+    return delivery;
+  }
+  if (!pool) throw new Error('WhatsApp will not take a first message to this number, and there is no database to hold it.');
+  await pool.query(`INSERT INTO voice_pending_messages (phone, media_id, filename, body, expires_at) VALUES ($1,$2,$3,$4,$5)`,
+    [phone, message.mediaId || null, message.filename || null, message.body, message.expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]);
+  return 'awaiting_hi';
+}
+
+async function hasPendingCallMessages(phone) {
+  if (!pool) return false;
+  const res = await pool.query('SELECT 1 FROM voice_pending_messages WHERE phone=$1 AND sent_at IS NULL AND expires_at > NOW() LIMIT 1', [phone])
+    .catch(() => ({ rows: [] }));
+  return res.rows.length > 0;
+}
+
+async function deliverPendingCallMessages(phone) {
+  const due = await pool.query(`UPDATE voice_pending_messages SET sent_at=NOW()
+    WHERE phone=$1 AND sent_at IS NULL AND expires_at > NOW() RETURNING *`, [phone]);
+  for (const m of due.rows.sort((a, b) => Number(a.id) - Number(b.id))) {
+    const ok = m.media_id
+      ? await sendWhatsAppDocument(phone, m.media_id, m.filename, m.body)
+      : await sendTextMessage(phone, m.body);
+    if (ok) {
+      await crm.saveTurn(pool, phone, 'model', m.body).catch(() => {});
+      if (sessions[phone]) sessions[phone].push({ role: 'model', parts: [{ text: m.body }] });
+    } else {
+      await notifyOwner(`Could not send a WhatsApp message promised on a phone call to +${phone}. Please send it yourself:\n\n${m.body}`);
+    }
+  }
+}
+
+// Booking made on a call: same Calendar hold, Razorpay link and invoice as the chat,
+// delivered to the WhatsApp number the caller confirmed.
+async function createCallBooking({ callerPhone, whatsappPhone, args }) {
+  if (!razorpayClient) throw new Error('Online payment is not set up yet. Offer a call back from the team instead.');
+  const phone = normalizeWhatsAppNumber(whatsappPhone || callerPhone);
+  if (!/^\d{11,15}$/.test(phone)) throw new Error('That WhatsApp number does not look right. Ask for it again, digit by digit.');
+  if (pool) await pool.query('INSERT INTO users (phone) VALUES ($1) ON CONFLICT (phone) DO NOTHING', [phone]);
+  const dbUser = (await getUser(phone)) || { phone };
+  const result = await createBookingPaymentRequest(phone, {
+    ...args,
+    email: args.email || dbUser.email || '',
+    gender: args.gender || dbUser.gender || '',
+    billing_address: dbUser.billing_address || '',
+    discount_offer: 'standard'
+  }, dbUser, {
+    required: ['customer_name', 'dob', 'tob', 'pob', 'service_name', 'preferred_time_slot'],
+    source: 'Phone Call Booking',
+    deliver: ({ mediaId, invoiceName, caption, link, customerName, serviceName, appointmentDate }) => deliverAfterCall(phone, {
+      mediaId, filename: invoiceName, body: caption,
+      template: [customerName, serviceName, appointmentDate, link],
+      expiresAt: new Date(Date.now() + 11.5 * 60 * 60 * 1000) // the payment link expires after 12 hours
+    })
+  });
+  console.log(`📞 Call booking for +${phone}: ${result.serviceName}, ${result.appointmentDate} (${result.delivery})`);
+  return { status: result.delivery === 'awaiting_hi' ? 'awaiting_hi' : 'sent', serviceName: result.serviceName, appointmentDate: result.appointmentDate };
+}
+
+// A report or other service the caller wants to order from the website.
+async function sendCallServiceLink({ phone, serviceName }) {
+  const service = findPublishedService(serviceName);
+  const url = service.link ? `https://veshannastro.co.in/${String(service.link).replace('https://veshannastro.co.in/', '')}` : 'https://veshannastro.co.in/';
+  const body = `Jaise call pe baat hui, yeh raha ${service.t} ka link (${service.p}): ${url}\n\nKoi bhi question ho toh yahin message kar dijiye.`;
+  const delivery = await deliverAfterCall(normalizeWhatsAppNumber(phone), { body });
+  return { status: delivery === 'awaiting_hi' ? 'awaiting_hi' : 'sent', serviceName: service.t };
+}
+
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-// Kamala on the phone (Exotel Voicebot -> Gemini Live). Same memory, Sheets and owner alerts as WhatsApp.
-if (GEMINI_API_KEY) {
-  voiceAgent.attach(server, {
-    pool, crm, getUser, genAI, SchemaType,
-    apiKey: GEMINI_API_KEY,
-    modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
-    secret: process.env.VOICE_AGENT_SECRET || '',
-    servicesContext: () => liveServicesContext,
-    notifyOwner,
-    postAppsScript: (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) ? postAppsScript : null
-  });
-}
+// Exotel's Voicebot applet streams calls to wss://<host>/voice/exotel?token=<VOICE_STREAM_TOKEN>.
+const appsScriptReady = Boolean(GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET);
+const phoneAgent = voiceAgent.attach(server, {
+  apiKey: GEMINI_API_KEY,
+  token: process.env.VOICE_STREAM_TOKEN,
+  maxConcurrentCalls: process.env.VOICE_MAX_CONCURRENT_CALLS,
+  maxCallMinutes: process.env.VOICE_MAX_CALL_MINUTES,
+  businessWhatsApp: process.env.BUSINESS_WHATSAPP_NUMBER,
+  gatewayTest: GATEWAY_VALIDATION_CHARGE_INR > 0,
+  pool,
+  crm,
+  genAI: GEMINI_API_KEY ? genAI : null,
+  SchemaType,
+  modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
+  getUser,
+  restoreProfile: async phone => restoreProfileFromSheet(phone, await getUser(phone)),
+  loadKnowledge: voiceAgent.knowledgeLoader(appsScriptReady ? postAppsScript : null),
+  postAppsScript: appsScriptReady ? postAppsScript : null,
+  servicesContext: () => servicesContextCache,
+  notifyOwner,
+  createCallBooking,
+  sendServiceLink: sendCallServiceLink,
+  forgetChat: phone => { delete sessions[phone]; }
+});
 
 // --- ENTERPRISE DRIP CAMPAIGN ENGINE ---
 const cron = require('node-cron');
