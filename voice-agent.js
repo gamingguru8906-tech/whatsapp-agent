@@ -41,6 +41,19 @@ const GREETING = "Hey, welcome to Veshannastro! I'm Kamala, your personal adviso
 const ROBOT_ANSWER = 'Aap Veshannastro ke automated query advisor se baat kar rahe hain, jo aapko easily right guidance tak pahunchne mein help karta hai.';
 const ESCALATION_LINE = "Shashank ji abhi ek consultation mein busy hain. I've escalated your query to our senior team, aur 24 hours ke andar aapko call back aa jayega.";
 const OPENING_CUE = '[System note, not the caller: the call has just connected. Speak first now, starting with the opening line exactly as instructed.]';
+const OPENING_CUE_AFTER_GREETING = '[System note, not the caller: the opening line has already been played to the caller. Do not repeat it. Say your first words now, as instructed under OPENING.]';
+// Replies in text (spoken by Sarvam) start much sooner than waiting for Gemini's own audio transcript.
+// If a Live model refuses text replies, calls fall back to its audio transcript for the rest of the day.
+let liveTextReplies = true;
+// Caller turn detection: reply after a short pause instead of waiting for a long silence.
+const TURN_DETECTION = {
+  automaticActivityDetection: {
+    startOfSpeechSensitivity: 'START_SENSITIVITY_HIGH',
+    endOfSpeechSensitivity: 'END_SENSITIVITY_HIGH',
+    prefixPaddingMs: 100,
+    silenceDurationMs: Number(process.env.VOICE_SILENCE_MS) || 450
+  }
+};
 const WRAP_UP_CUE = '[System note, not the caller: the call time limit is nearly reached. Wrap up warmly in one or two short lines now, then call end_call.]';
 const EMPTY_KNOWLEDGE = Object.freeze({ faq: [], testimonials: [] });
 
@@ -273,8 +286,11 @@ HOW YOU SOUND
 - Use "Shri Shashank ji" rarely, only when it fits (his schedule, his consultations).
 
 OPENING
-- Your very first words: "${GREETING}"
-- ${personalGreeting}
+${ctx.greetingPlayed
+    ? `- The opening line "${GREETING}" is played to the caller automatically the moment the call connects. Never say it again.
+- ${personalGreeting.replace('Right after that line', 'Your first words')}`
+    : `- Your very first words: "${GREETING}"
+- ${personalGreeting}`}
 
 IF ASKED "ROBOT HO?", "AI HO?" OR "REAL PERSON HO?"
 - Say exactly: "${ROBOT_ANSWER}" Then carry on helping. Never claim to be a human and never deny being automated.
@@ -581,6 +597,22 @@ function openSarvamTts(apiKey, { rate, speaker, language, pace, model }) {
   return tts;
 }
 
+/** Speaks one text with Sarvam and returns all the audio (used to pre-record the opening line). */
+function synthesizeOnce(openTts, apiKey, opts, text, timeoutMs = 15000) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    const tts = openTts(apiKey, opts);
+    const done = (err) => { clearTimeout(timer); tts.close(); err ? reject(err) : resolve(Buffer.concat(chunks)); };
+    const timer = setTimeout(() => done(chunks.length ? null : new Error('timed out')), timeoutMs);
+    if (timer.unref) timer.unref();
+    tts.on('audio', b => chunks.push(b));
+    tts.on('final', () => done(null));
+    tts.on('error', e => done(e));
+    tts.send(text);
+    tts.flush();
+  });
+}
+
 // ---------- One phone call ----------
 
 class CallSession {
@@ -643,7 +675,10 @@ class CallSession {
     this.phone = normalizeCallerNumber(start.from);
     this.toGemini = new StreamResampler(this.rate, GEMINI_INPUT_RATE);
     this.frames = new FrameQueue(exotelFrameBytes(this.rate));
-    if (this.deps.sarvamApiKey) this.openVoice();
+    if (this.deps.sarvamApiKey) {
+      this.openVoice();
+      this.playGreeting();
+    }
     console.log(`📞 Call ${this.callSid} from ${this.phone ? `+${this.phone}` : 'a hidden number'} (${this.rate} Hz)`);
 
     const maxMinutes = Math.max(2, Number(this.deps.maxCallMinutes) || 15);
@@ -666,23 +701,28 @@ class CallSession {
       readingBlock: crm ? crm.readingContext(this.context.user) : '',
       services: this.deps.servicesContext ? this.deps.servicesContext() : '',
       businessWhatsApp: this.deps.businessWhatsApp,
-      gatewayTest: this.deps.gatewayTest
+      gatewayTest: this.deps.gatewayTest,
+      greetingPlayed: this.greetingPlayed
     });
     if (!this.finished) this.connectLive();
   }
 
   connectLive() {
+    this.textMode = Boolean(this.tts) && liveTextReplies;
     const setup = {
       model: `models/${LIVE_MODELS[this.modelIndex]}`,
-      generationConfig: {
-        responseModalities: ['AUDIO'],
-        temperature: 0.7,
-        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: LIVE_VOICE } } }
-      },
+      generationConfig: this.textMode
+        ? { responseModalities: ['TEXT'], temperature: 0.7 }
+        : {
+          responseModalities: ['AUDIO'],
+          temperature: 0.7,
+          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: LIVE_VOICE } } }
+        },
       systemInstruction: { parts: [{ text: this.prompt }] },
       tools: CALL_TOOLS,
+      realtimeInputConfig: TURN_DETECTION,
       inputAudioTranscription: {},
-      outputAudioTranscription: {},
+      ...(this.textMode ? {} : { outputAudioTranscription: {} }),
       contextWindowCompression: { slidingWindow: {} },
       sessionResumption: this.resumeHandle ? { handle: this.resumeHandle } : {}
     };
@@ -698,6 +738,12 @@ class CallSession {
     if (live !== this.live || this.finished) return;
     this.live = null;
     this.liveReady = false;
+    if (!this.everReady && this.textMode) {
+      console.warn(`Gemini Live ${LIVE_MODELS[this.modelIndex]} refused text replies (${code} ${reason}); using its audio transcript.`);
+      liveTextReplies = false;
+      this.connectLive();
+      return;
+    }
     if (!this.everReady && this.modelIndex < LIVE_MODELS.length - 1) {
       console.warn(`Gemini Live ${LIVE_MODELS[this.modelIndex]} closed before setup (${code} ${reason}); trying ${LIVE_MODELS[this.modelIndex + 1]}.`);
       this.modelIndex++;
@@ -722,7 +768,7 @@ class CallSession {
       if (!this.everReady) {
         this.everReady = true;
         console.log(`🎙️ ${this.callSid} connected to ${LIVE_MODELS[this.modelIndex]}`);
-        this.sendLive({ realtimeInput: { text: OPENING_CUE } });
+        this.sendLive({ realtimeInput: { text: this.greetingPlayed ? OPENING_CUE_AFTER_GREETING : OPENING_CUE } });
       }
       return;
     }
@@ -736,11 +782,21 @@ class CallSession {
     if (content.inputTranscription?.text) {
       if (this.modelText) this.commit('model');
       this.userText += content.inputTranscription.text;
+      this.heardAt = Date.now();
+      this.replyTimed = false;
     }
-    if (content.outputTranscription?.text) {
+    if (content.outputTranscription?.text && !this.textMode) {
       if (this.userText) this.commit('user');
       this.modelText += content.outputTranscription.text;
-      if (this.tts) this.tts.send(content.outputTranscription.text);
+      if (this.tts) this.speak(content.outputTranscription.text);
+    }
+    if (this.textMode) {
+      for (const part of content.modelTurn?.parts || []) {
+        if (!part.text || part.thought) continue;
+        if (this.userText) this.commit('user');
+        this.modelText += part.text;
+        if (this.tts) this.speak(part.text);
+      }
     }
     if (content.interrupted) {
       this.frames.clear();
@@ -759,7 +815,8 @@ class CallSession {
       this.commit('model');
       if (this.tts) {
         // The Indian voice finishes a moment after Gemini; wrap up when it says it is done.
-        this.tts.flush();
+        this.flushVoice();
+        this.turnDone = true;
         if (this.ending) {
           const t = setTimeout(() => this.afterEndingTurn(), 8000);
           this.timers.push(t);
@@ -781,13 +838,19 @@ class CallSession {
     this.tts = tts;
     tts.on('audio', buf => {
       if (tts !== this.tts || this.finished) return;
+      if (this.replyStartedAt) {
+        console.log(`⏱ ${this.callSid} first audio ${Date.now() - this.replyStartedAt} ms after reply text`);
+        this.replyStartedAt = 0;
+      }
       for (const frame of this.frames.push(buf)) this.sendAudio(frame);
     });
+    this.voicePending = 0;
     tts.on('final', () => {
       if (tts !== this.tts || this.finished) return;
+      this.voicePending = Math.max(0, this.voicePending - 1);
       const tail = this.frames.flush();
       if (tail) this.sendAudio(tail);
-      if (this.ending) this.afterEndingTurn();
+      if (this.ending && this.turnDone && this.voicePending === 0) this.afterEndingTurn();
     });
     const fallBack = why => {
       if (tts !== this.tts || this.finished) return;
@@ -797,6 +860,41 @@ class CallSession {
     };
     tts.on('error', e => fallBack(e.message));
     tts.on('close', code => fallBack(`closed ${code}`));
+  }
+
+  /** Sends Gemini's words to the Indian voice, pushing each finished sentence out straight away. */
+  speak(text) {
+    if (!this.tts) return;
+    if (!this.replyTimed && this.heardAt) {
+      this.replyTimed = true;
+      this.replyStartedAt = Date.now();
+      console.log(`⏱ ${this.callSid} reply text after ${this.replyStartedAt - this.heardAt} ms`);
+    }
+    this.turnDone = false;
+    this.tts.send(text);
+    if (/[.!?।]["')]?\s*$/.test(text)) this.flushVoice();
+  }
+
+  flushVoice() {
+    if (!this.tts) return;
+    this.voicePending++;
+    this.tts.flush();
+  }
+
+  /** The opening line plays the moment the call connects, from a pre-recorded copy when there is one. */
+  playGreeting() {
+    this.greetingPlayed = true;
+    const cached = this.deps.greetingAudio && this.deps.greetingAudio(this.rate);
+    if (cached && cached.length) {
+      for (const frame of this.frames.push(cached)) this.sendAudio(frame);
+      const tail = this.frames.flush();
+      if (tail) this.sendAudio(tail);
+      return;
+    }
+    if (!this.tts) return;
+    this.turnDone = true;
+    this.tts.send(GREETING);
+    this.flushVoice();
   }
 
   fromCaller(payload) {
@@ -1138,6 +1236,24 @@ function refuseUpgrade(socket, status, text) {
 
 /** Accepts Exotel's Voicebot WebSocket on /voice/exotel and runs one CallSession per call. */
 function attach(server, deps) {
+  // Pre-record the opening line in the Indian voice and keep the FAQ warm, so a call starts talking at once.
+  const greetingByRate = new Map();
+  if (deps.sarvamApiKey && !deps.greetingAudio) {
+    const record = rate => (greetingByRate.set(rate, null), synthesizeOnce(deps.openTts || openSarvamTts, deps.sarvamApiKey,
+      { rate, speaker: deps.sarvamSpeaker, language: deps.sarvamLanguage }, GREETING)
+      .then(buf => { greetingByRate.set(rate, buf); console.log(`📞 Opening line recorded (${rate} Hz, ${Math.round(buf.length / 2 / rate * 10) / 10}s).`); })
+      .catch(e => { greetingByRate.delete(rate); console.warn('Opening line not pre-recorded:', e.message); }));
+    record(8000);
+    deps = { ...deps, greetingAudio: rate => {
+      if (!greetingByRate.has(rate)) record(rate);
+      return greetingByRate.get(rate);
+    } };
+  }
+  if (deps.loadKnowledge) {
+    deps.loadKnowledge();
+    const warm = setInterval(() => deps.loadKnowledge(), 9 * 60 * 1000);
+    if (warm.unref) warm.unref();
+  }
   // Two ways to make sure only your Exotel account can open a call stream:
   //  - VOICE_STREAM_TOKEN set: the URL must carry ?token=<same value>;
   //  - otherwise EXOTEL_ACCOUNT_SID: the call's "start" message must come from that Exotel account.
