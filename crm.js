@@ -45,6 +45,15 @@ async function migrate(pool) {
     ALTER TABLE users ADD COLUMN IF NOT EXISTS followup_sent_for TIMESTAMPTZ;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS last_followup_at TIMESTAMPTZ;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_restored BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS problem_category TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS problem_subtype TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS money_pressure BOOLEAN;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS emotional_state TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS emotion_intensity TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS core_concern TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS unspoken_question TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS reading_confidence TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS reading_updated_at TIMESTAMPTZ;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS meet_link TEXT;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS reminder_sent_at TIMESTAMPTZ;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS reminder_status TEXT;
@@ -127,7 +136,7 @@ function profileContext(user, bookings = [], lastTurnAt = null) {
 ${lines.join('\n')}
 MEMORY RULES (PRIVATE — use silently, never recite):
 - Everything above is for YOUR understanding only. Never read out, list or repeat the person's stored details (birth date/time/place, email, address, customer ID, past chats) unless they themselves ask for them.
-- RETURNING PERSON: if a name is known and this is the start of a new conversation (previous conversation is not "Ongoing chat"), your FIRST reply must greet them warmly by first name, like an old friend who is happy to hear from them again, and gently ask whether their earlier concern has improved — mention the topic softly in one or two words (e.g. "career wali pareshani", "shaadi ki baat"), never details. Example: "Arre Priya ji, kitne dino baad! Kaise hain aap? Pichli baar aap career ko lekar thodi pareshan thin — ab kaisa chal raha hai?" If no concern is recorded, just ask how they have been.
+- RETURNING PERSON: if a name is known and this is the start of a new conversation (previous conversation is not "Ongoing chat"), your FIRST reply must greet them warmly by first name, like an old friend who is happy to hear from them again, and gently ask whether their earlier concern has improved — mention the topic softly in one or two words (e.g. "career wali pareshani", "shaadi ki baat"), never details. Example: "Arre Priya ji, kitne time baad! How have you been? Last time aap career ko lekar thoda worried thin — ab kaisa chal raha hai?" If no concern is recorded, just ask how they have been.
 - NEVER ask again for any detail listed above as known (${known.length ? known.join(', ') : 'none yet'}). Simply use it. Ask only for details that are still "Not known yet".`;
 }
 
@@ -195,6 +204,121 @@ async function applyProfileDetails(pool, phone, details) {
   return changed;
 }
 
+// ---------- Reading the person: problem type + emotional state ----------
+
+const CATEGORY_LABELS = { marriage_family: 'Marriage/Family', career_business: 'Career/Business', other: 'Other', unclear: 'Unclear' };
+const CONFIDENCE_RANK = { low: 1, medium: 2, high: 3 };
+
+/** Run a reading from the 2nd message on, every message up to the 10th, then every 4th. */
+function shouldReadEmotion(messageCount) {
+  const n = Number(messageCount) || 0;
+  return n >= 2 && (n <= 10 || n % 4 === 0);
+}
+
+function cleanReading(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const pick = (v, allowed, dflt) => (allowed.includes(String(v || '').toLowerCase()) ? String(v).toLowerCase() : dflt);
+  const str = (v, max) => String(v || '').replace(/\s+/g, ' ').trim().slice(0, max);
+  const out = {
+    category: pick(raw.category, Object.keys(CATEGORY_LABELS), 'unclear'),
+    subtype: str(raw.subtype, 80),
+    money_pressure: raw.money_pressure === true,
+    emotion: str(raw.emotion, 60),
+    intensity: pick(raw.intensity, ['low', 'medium', 'high'], 'low'),
+    core_concern: str(raw.core_concern, 240),
+    unspoken_question: str(raw.unspoken_question, 160),
+    confidence: pick(raw.confidence, ['low', 'medium', 'high'], 'low')
+  };
+  if (out.category === 'unclear' && !out.emotion) return null;
+  return out;
+}
+
+/** Reads the last few turns and returns what the person is really going through. */
+async function analyzeEmotion(genAI, SchemaType, modelName, turns) {
+  const lines = (turns || []).map(t => `${t.role === 'user' ? 'Person' : 'Kamala'}: ${String(t.parts?.[0]?.text || t.text || '').slice(0, 600)}`);
+  if (!genAI || lines.filter(l => l.startsWith('Person:')).length < 2) return null;
+  const model = genAI.getGenerativeModel({
+    model: modelName,
+    generationConfig: {
+      temperature: 0.2,
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: SchemaType.OBJECT,
+        properties: {
+          category: { type: SchemaType.STRING, enum: ['marriage_family', 'career_business', 'other', 'unclear'] },
+          subtype: { type: SchemaType.STRING, description: 'short, e.g. delayed marriage, fights with spouse, in-laws, kids, job culture/boss, job loss, business losses, debt' },
+          money_pressure: { type: SchemaType.BOOLEAN, description: 'true if money worry is present or clearly underneath' },
+          emotion: { type: SchemaType.STRING, description: '1-3 plain words for how they feel, e.g. anxious, stuck, hurt, exhausted, hopeless, angry, lonely' },
+          intensity: { type: SchemaType.STRING, enum: ['low', 'medium', 'high'] },
+          core_concern: { type: SchemaType.STRING, description: 'one line: the deeper worry beneath what they said' },
+          unspoken_question: { type: SchemaType.STRING, description: 'the question in their heart, in their own language, e.g. "Kya meri shaadi kabhi hogi?"' },
+          confidence: { type: SchemaType.STRING, enum: ['low', 'medium', 'high'] }
+        },
+        required: ['category', 'emotion', 'intensity', 'confidence']
+      }
+    }
+  });
+  const prompt = `You help an Indian astrology consultant understand a person who messaged on WhatsApp.
+In this practice nearly every problem falls in one of two groups:
+- marriage_family: marriage delay, spouse, relationship, divorce, in-laws, kids, parents, family peace.
+- career_business: job, job culture, boss, promotion, job loss, studies for a career, business, sales, debts, losses.
+Money is underneath most problems (about 99%): set money_pressure true when money worry is stated or clearly implied (EMIs, salary, losses, dowry, cost of a divorce, providing for family).
+Read the chat below. Judge from what the person actually wrote and how they wrote it (word choice, length, punctuation, repetition, time of day hints). Do not invent facts they did not give.
+Use confidence "low" when there are too few clues; "medium" when the signs point one way; "high" only when they said it plainly.
+
+Chat (oldest first):
+${lines.join('\n').slice(-5000)}`;
+  const result = await model.generateContent(prompt);
+  return cleanReading(JSON.parse(result.response.text()));
+}
+
+/** Saves a reading unless it is weaker than one we already hold for this person. */
+async function applyReading(pool, phone, reading) {
+  if (!reading) return false;
+  const current = (await pool.query('SELECT problem_category, reading_confidence, reading_updated_at FROM users WHERE phone=$1', [phone])).rows[0];
+  if (!current) return false;
+  const fresh = !current.reading_updated_at || (Date.now() - new Date(current.reading_updated_at).getTime()) > 30 * 24 * 3600 * 1000;
+  const weaker = (CONFIDENCE_RANK[reading.confidence] || 0) < (CONFIDENCE_RANK[current.reading_confidence] || 0);
+  if (!fresh && (weaker || reading.category === 'unclear') && current.problem_category) return false;
+  await pool.query(`UPDATE users SET problem_category=$2, problem_subtype=$3, money_pressure=$4, emotional_state=$5,
+      emotion_intensity=$6, core_concern=$7, unspoken_question=$8, reading_confidence=$9, reading_updated_at=NOW() WHERE phone=$1`,
+  [phone, reading.category, reading.subtype, reading.money_pressure, reading.emotion, reading.intensity,
+    reading.core_concern, reading.unspoken_question, reading.confidence]);
+  return true;
+}
+
+/** Short tag for the owner and the sheet, e.g. "Career/Business (job culture) · money pressure · anxious (high)". */
+function readingTag(user) {
+  const u = user || {};
+  if (!u.problem_category || u.problem_category === 'unclear') return '';
+  return [
+    `${CATEGORY_LABELS[u.problem_category] || u.problem_category}${u.problem_subtype ? ` (${u.problem_subtype})` : ''}`,
+    u.money_pressure ? 'money pressure' : '',
+    u.emotional_state ? `${u.emotional_state}${u.emotion_intensity ? ` (${u.emotion_intensity})` : ''}` : ''
+  ].filter(Boolean).join(' · ');
+}
+
+/** Private prompt block that lets Kamala make the person feel understood. */
+function readingContext(user) {
+  const u = user || {};
+  if (!u.problem_category || u.problem_category === 'unclear' || u.reading_confidence === 'low') {
+    return `--- READING THE PERSON (PRIVATE) ---
+- Not clear yet what is really troubling them. Keep listening warmly. With one soft question, find out whether it is more about family/marriage or about work/business — and how long it has been weighing on them.`;
+  }
+  return `--- READING THE PERSON (PRIVATE — never label it, never call it an analysis) ---
+- What it is really about: ${readingTag(u)}
+- The worry under the words: ${u.core_concern || 'not clear yet'}
+- The question in their heart: ${u.unspoken_question || 'not clear yet'}
+- How sure this reading is: ${u.reading_confidence}
+HOW TO USE THIS:
+- Make them feel deeply understood, as if you can see what they have not said yet. Once, at a natural moment (usually your 3rd or 4th reply), gently name their feeling and the worry underneath as a soft question, never as a verdict. Example: "Mujhe lag raha hai it's not just about the job... andar kahin money ki tension bhi chal rahi hai, right?"
+- Use their own words for feelings. Never use clinical labels (depression, anxiety disorder, trauma) and never say you "analysed" or "predicted" anything.
+- ${u.reading_confidence === 'high' ? 'They said this plainly, so you can reflect it with warmth and confidence.' : 'This is a gentle guess: phrase it softly. If they say no, accept it warmly and ask what it really is.'}
+- Money is usually under the surface. Touch it softly and never make them feel judged or small.
+- ${u.emotion_intensity === 'high' ? 'Their feelings are strong right now: comfort first, slow down, and do not sell in this reply.' : 'After they feel understood, move forward with care.'}
+- Do not repeat the same reflection twice in a conversation.`;
+}
+
 function profilePayload(user, extra = {}) {
   const u = user || {};
   return {
@@ -203,7 +327,8 @@ function profilePayload(user, extra = {}) {
     customerId: isNewCustomerId(u.customer_id) ? u.customer_id : '',
     name: u.name || '', gender: u.gender || '', dob: u.dob || '', birthTime: u.tob || '', birthPlace: u.pob || '',
     email: u.email || '', billingAddress: u.billing_address || '', customerGstin: u.customer_gstin || '',
-    concern: u.pain_point || '', remedies: u.remedies_prescribed || '',
+    concern: [u.pain_point || u.core_concern || '', readingTag(u) ? `[${readingTag(u)}]` : ''].filter(Boolean).join(' '),
+    remedies: u.remedies_prescribed || '',
     firstContact: u.first_contact ? istDateTime(u.first_contact) : '',
     lastContact: istDateTime(new Date()),
     source: 'WhatsApp',
@@ -281,13 +406,13 @@ async function sendCheckins(deps) {
 }
 
 async function writeFollowup(deps, user) {
-  const fallback = `Namaste${user.name ? ' ' + firstName(user.name) + ' ji' : ''}, main aapki baat ke baare mein soch rahi thi. Agar aap abhi bhi guidance chahte hain, toh main aapke liye consultation ka ek suitable time dekh sakti hoon. Bas reply kar dijiye.`;
+  const fallback = `Hi${user.name ? ' ' + firstName(user.name) + ' ji' : ''}, main aapke baare mein hi soch rahi thi. If you still want some clarity, main aapke liye consultation ka ek suitable time dekh sakti hoon. Just reply kar dijiye.`;
   if (!deps.genAI) return fallback;
   try {
     const turns = await loadRecentTurns(deps.pool, user.phone, 12);
     const transcript = turns.map(t => `${t.role === 'user' ? 'Customer' : 'Assistant'}: ${t.parts[0].text}`).join('\n').slice(-3000);
     const model = deps.genAI.getGenerativeModel({ model: deps.modelName, generationConfig: { temperature: 0.6 } });
-    const res = await model.generateContent(`You write one short WhatsApp follow-up (max 2 sentences, warm Hindi-English mix, no emojis, no bullet points) for a customer who chatted with an astrology consultation assistant yesterday but did not book.
+    const res = await model.generateContent(`You write one short WhatsApp follow-up (max 2 sentences, warm Hinglish with Hindi and English mixed inside the same sentence, Hindi in Roman letters, never fully Hindi, no emojis, no bullet points) for a customer who chatted with an astrology consultation assistant yesterday but did not book.
 Refer naturally to what they discussed and invite them to continue or pick a consultation time. Do not invent facts, predictions, discounts, deadlines or scarcity. Do not mention being an AI. Do not use their name more than once.
 Customer name: ${user.name || 'unknown'}
 Their concern: ${user.pain_point || 'unknown'}
@@ -342,7 +467,7 @@ async function sendOwnerSummary(deps, now = new Date()) {
   const start = new Date(`${today}T00:00:00+05:30`);
   const end = new Date(start.getTime() + 24 * 3600 * 1000);
   const dayBefore = new Date(start.getTime() - 24 * 3600 * 1000);
-  const consults = (await pool.query(`SELECT l.*, u.pain_point FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
+  const consults = (await pool.query(`SELECT l.*, u.pain_point, u.problem_category, u.problem_subtype, u.money_pressure, u.emotional_state, u.emotion_intensity FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
     WHERE l.status = ANY($1) AND l.appointment_start >= $2 AND l.appointment_start < $3 ORDER BY l.appointment_start`,
   [PAID_STATUSES, start, end])).rows;
   const stats = (await pool.query(`SELECT
@@ -355,6 +480,7 @@ async function sendOwnerSummary(deps, now = new Date()) {
     + `   ${c.service_name} | ${c.customer_id || 'ID pending'} | +${c.phone}\n`
     + `   DOB ${c.dob || '-'}, ${c.tob || '-'}, ${c.pob || '-'}\n`
     + `   Concern: ${c.pain_point || 'Not recorded'}\n`
+    + (readingTag(c) ? `   Reading: ${readingTag(c)}\n` : '')
     + `   Meet: ${c.meet_link || 'in Calendar'}`).join('\n\n') : 'No consultations booked for today.';
   await notifyOwner(`🌅 Good morning! Your day — ${new Date(start).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', day: 'numeric', month: 'short' })}\n\n`
     + `📅 Today's consultations (${consults.length}):\n${list}\n\n`
@@ -417,6 +543,12 @@ module.exports = {
   extractProfileDetails,
   applyProfileDetails,
   profilePayload,
+  shouldReadEmotion,
+  cleanReading,
+  analyzeEmotion,
+  applyReading,
+  readingTag,
+  readingContext,
   istDateTime,
   runDueJobs,
   nextDueAt,
