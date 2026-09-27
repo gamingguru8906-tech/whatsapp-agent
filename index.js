@@ -1006,7 +1006,7 @@ app.post('/webhook', async (req, res) => {
     if (/^yes$/i.test(inboundText) && /reply\s+YES|reply YES|follow-up reminder/i.test(latestAssistantText)) {
       if (pool) await pool.query(`INSERT INTO users (phone,marketing_opt_in,marketing_opt_out) VALUES ($1,true,false)
         ON CONFLICT (phone) DO UPDATE SET marketing_opt_in=true,marketing_opt_out=false,last_contact=NOW()`, [from]);
-      await sendTextMessage(from, 'Thanks, I’ve recorded your consent for one booking follow-up. Reply STOP anytime to opt out.');
+      await sendTextMessage(from, 'Thank you, noted! I will keep you updated.');
       return;
     }
 
@@ -1207,6 +1207,8 @@ app.post('/webhook', async (req, res) => {
           }
         };
         text = "(User sent an audio message. Respond to their voice directly.)";
+        learnProfileDetails(from, '', latestAssistantText, mediaData);
+        pushNextWake().catch(() => {});
       }
     } else if (msg.type === 'image') {
       const mediaId = msg.image.id;
@@ -1220,6 +1222,8 @@ app.post('/webhook', async (req, res) => {
           }
         };
         text = msg.image.caption || "Look at this photo and describe/react to it naturally.";
+        crm.saveTurn(pool, from, 'user', `[Photo]${msg.image.caption ? ' ' + msg.image.caption : ''}`).catch(() => {});
+        pushNextWake().catch(() => {});
       }
     } else if (msg.type === 'video') {
       await sendTextMessage(from, "heyy thanks for sending the video! 😊 unfortunately I can't watch videos here — agar koi specific frame ya screenshot hai toh photo bhej do, I'll definitely look at it!");
@@ -1539,7 +1543,7 @@ ${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []
               });
               const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
               if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
-              const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}\n\nReply YES if you would like one reminder and a follow-up offer. Reply STOP anytime to opt out.`;
+              const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}`;
               const linkSent = await sendWhatsAppDocument(from, mediaId, invoiceName, caption);
               if (!linkSent) throw new Error('WhatsApp did not accept the invoice-and-payment-link message.');
               if (acceptedDiscountSourceId && pool) {
@@ -1877,10 +1881,14 @@ async function notifyOwner(text, subject = 'Veshannastro alert') {
 
 // Saves any personal details the customer states (name, DOB, birth time/place, gender, email, concern)
 // to the database and the "Customer Profiles" sheet, so they are never asked twice.
-function learnProfileDetails(phone, text, lastAssistantText) {
-  if (!pool || !GEMINI_API_KEY || String(text || '').trim().length < 2) return;
+function learnProfileDetails(phone, text, lastAssistantText, media = null) {
+  if (!pool || !GEMINI_API_KEY || (!media && String(text || '').trim().length < 2)) return;
   (async () => {
-    const details = await crm.extractProfileDetails(genAI, SchemaType, process.env.GEMINI_MODEL || 'gemini-3.8-flash', text, lastAssistantText);
+    const details = await crm.extractProfileDetails(genAI, SchemaType, process.env.GEMINI_MODEL || 'gemini-3.8-flash', text, lastAssistantText, media);
+    if (details.transcript) {
+      await crm.saveTurn(pool, phone, 'user', `[Voice note] ${details.transcript}`);
+      delete details.transcript;
+    }
     const changed = await crm.applyProfileDetails(pool, phone, details);
     if (!Object.keys(changed).length) return;
     console.log(`🗂️ Saved profile details for ${phone}: ${Object.keys(changed).join(', ')}`);
