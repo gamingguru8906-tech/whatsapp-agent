@@ -58,6 +58,7 @@ async function migrate(pool) {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
     CREATE INDEX IF NOT EXISTS wa_messages_phone_idx ON wa_messages (phone, id DESC);
+    CREATE TABLE IF NOT EXISTS wa_meta (key TEXT PRIMARY KEY, value TEXT);
   `);
 }
 
@@ -124,11 +125,10 @@ function profileContext(user, bookings = [], lastTurnAt = null) {
   const known = ['name', 'gender', 'dob', 'tob', 'pob', 'email'].filter(k => String(u[k] || '').trim());
   return `--- WHAT YOU ALREADY KNOW ABOUT THIS PERSON (saved from earlier chats) ---
 ${lines.join('\n')}
-MEMORY RULES:
-- If a name is known, this is a returning person: greet them by name warmly and continue naturally, even if months or a year have passed.
-- NEVER ask again for any detail listed above as known (${known.length ? known.join(', ') : 'none yet'}). If you need it for a booking, confirm it instead ("Aapki birth details wahi hain na — ...?").
-- Ask only for the details that are still "Not known yet".
-- When you first collect personal details, mention once that they are kept private and used only for their consultation.`;
+MEMORY RULES (PRIVATE — use silently, never recite):
+- Everything above is for YOUR understanding only. Never read out, list or repeat the person's stored details (birth date/time/place, email, address, customer ID, past chats) unless they themselves ask for them.
+- RETURNING PERSON: if a name is known and this is the start of a new conversation (previous conversation is not "Ongoing chat"), your FIRST reply must greet them warmly by first name, like an old friend who is happy to hear from them again, and gently ask whether their earlier concern has improved — mention the topic softly in one or two words (e.g. "career wali pareshani", "shaadi ki baat"), never details. Example: "Arre Priya ji, kitne dino baad! Kaise hain aap? Pichli baar aap career ko lekar thodi pareshan thin — ab kaisa chal raha hai?" If no concern is recorded, just ask how they have been.
+- NEVER ask again for any detail listed above as known (${known.length ? known.join(', ') : 'none yet'}). Simply use it. Ask only for details that are still "Not known yet".`;
 }
 
 // ---------- Detail extraction ----------
@@ -147,9 +147,9 @@ function cleanExtracted(raw) {
 }
 
 /** Ask Gemini which personal details the customer stated about themselves in this message. */
-async function extractProfileDetails(genAI, SchemaType, modelName, userText, lastAssistantText) {
+async function extractProfileDetails(genAI, SchemaType, modelName, userText, lastAssistantText, media = null) {
   const text = String(userText || '').trim();
-  if (!genAI || text.length < 2) return {};
+  if (!genAI || (!media && text.length < 2)) return {};
   const model = genAI.getGenerativeModel({
     model: modelName,
     generationConfig: {
@@ -164,16 +164,20 @@ async function extractProfileDetails(genAI, SchemaType, modelName, userText, las
           tob: { type: SchemaType.STRING, description: 'time of birth as written' },
           pob: { type: SchemaType.STRING, description: 'place of birth' },
           email: { type: SchemaType.STRING },
-          concern: { type: SchemaType.STRING, description: 'one-line summary of the problem they want help with, only if they describe one' }
+          concern: { type: SchemaType.STRING, description: 'one-line summary of the problem they want help with, only if they describe one' },
+          transcript: { type: SchemaType.STRING, description: 'for a voice note: what the customer said, written out; otherwise empty' }
         }
       }
     }
   });
   const prompt = `A WhatsApp assistant asked: "${String(lastAssistantText || '').slice(0, 500)}"
-The customer replied: "${text.slice(0, 1500)}"
+The customer replied ${media ? 'with the attached voice note' : `: "${text.slice(0, 1500)}"`}
 Return ONLY details the customer explicitly stated in this reply. Use empty strings for anything not stated. Never guess.`;
-  const result = await model.generateContent(prompt);
-  return cleanExtracted(JSON.parse(result.response.text()));
+  const result = await model.generateContent(media ? [{ text: prompt }, media] : prompt);
+  const raw = JSON.parse(result.response.text());
+  const out = cleanExtracted(raw);
+  if (media && raw && raw.transcript) out.transcript = String(raw.transcript).slice(0, 2000);
+  return out;
 }
 
 /** Save newly stated details; returns the changed fields. */
@@ -213,11 +217,9 @@ const WINDOW_OPEN_SQL = "u.last_inbound_at > NOW() - INTERVAL '23 hours 58 minut
 
 const FOLLOWUP_ELIGIBLE_SQL = `
   u.last_inbound_at IS NOT NULL
-  AND COALESCE(u.message_count,0) >= 2
+  AND COALESCE(u.message_count,0) >= 1
   AND COALESCE(u.marketing_opt_out,false) = false
-  AND COALESCE(u.is_paused,false) = false
   AND u.followup_sent_for IS DISTINCT FROM u.last_inbound_at
-  AND (u.last_followup_at IS NULL OR u.last_followup_at < NOW() - INTERVAL '3 days')
   AND NOT EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=u.phone AND l.status = ANY($1)
     AND (l.appointment_start > NOW() OR l.updated_at > u.last_inbound_at - INTERVAL '7 days'))`;
 
@@ -315,8 +317,61 @@ async function sendFollowups(deps) {
   return sent;
 }
 
+// ---------- Daily 8 AM owner summary ----------
+
+function istDayKey(date = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+}
+
+/** 8:00 AM IST of the next summary still to be sent. */
+async function nextSummaryAt(pool, now = new Date()) {
+  const today = istDayKey(now);
+  const row = (await pool.query("SELECT value FROM wa_meta WHERE key='owner_summary_date'")).rows[0];
+  const eightToday = new Date(`${today}T08:00:00+05:30`);
+  if (row?.value === today) return new Date(eightToday.getTime() + 24 * 3600 * 1000);
+  return eightToday;
+}
+
+async function sendOwnerSummary(deps, now = new Date()) {
+  const { pool, notifyOwner } = deps;
+  if (now < await nextSummaryAt(pool, now)) return 0;
+  const today = istDayKey(now);
+  const claimed = await pool.query(`INSERT INTO wa_meta (key, value) VALUES ('owner_summary_date', $1)
+    ON CONFLICT (key) DO UPDATE SET value=$1 WHERE wa_meta.value IS DISTINCT FROM $1 RETURNING key`, [today]);
+  if (!claimed.rows.length) return 0;
+  const start = new Date(`${today}T00:00:00+05:30`);
+  const end = new Date(start.getTime() + 24 * 3600 * 1000);
+  const dayBefore = new Date(start.getTime() - 24 * 3600 * 1000);
+  const consults = (await pool.query(`SELECT l.*, u.pain_point FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
+    WHERE l.status = ANY($1) AND l.appointment_start >= $2 AND l.appointment_start < $3 ORDER BY l.appointment_start`,
+  [PAID_STATUSES, start, end])).rows;
+  const stats = (await pool.query(`SELECT
+      (SELECT COUNT(*) FROM users WHERE first_contact >= $1 AND first_contact < $2) AS new_people,
+      (SELECT COUNT(*) FROM users WHERE last_inbound_at >= $1 AND last_inbound_at < $2) AS active_people,
+      (SELECT COUNT(*) FROM wa_payment_links WHERE status = ANY($3) AND updated_at >= $1 AND updated_at < $2) AS bookings`,
+  [dayBefore, start, PAID_STATUSES])).rows[0];
+  const time = d => new Date(d).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' });
+  const list = consults.length ? consults.map((c, i) => `${i + 1}. ${time(c.appointment_start)} — ${c.customer_name}${c.status === 'gateway_test_paid' ? ' (₹1 test)' : ''}\n`
+    + `   ${c.service_name} | ${c.customer_id || 'ID pending'} | +${c.phone}\n`
+    + `   DOB ${c.dob || '-'}, ${c.tob || '-'}, ${c.pob || '-'}\n`
+    + `   Concern: ${c.pain_point || 'Not recorded'}\n`
+    + `   Meet: ${c.meet_link || 'in Calendar'}`).join('\n\n') : 'No consultations booked for today.';
+  await notifyOwner(`🌅 Good morning! Your day — ${new Date(start).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', day: 'numeric', month: 'short' })}\n\n`
+    + `📅 Today's consultations (${consults.length}):\n${list}\n\n`
+    + `📊 Yesterday: ${stats.new_people} new people, ${stats.active_people} chatted, ${stats.bookings} bookings paid.`,
+  `Today's consultations (${consults.length})`);
+  return 1;
+}
+
 /** Earliest moment any job becomes due (null if nothing is scheduled). */
 async function nextDueAt(pool, adminPhone = '') {
+  const summary = await nextSummaryAt(pool).catch(() => null);
+  const other = await nextJobAt(pool, adminPhone);
+  if (!summary) return other;
+  return other && other < summary ? other : summary;
+}
+
+async function nextJobAt(pool, adminPhone = '') {
   const res = await pool.query(`SELECT MIN(t) AS next FROM (
       SELECT l.appointment_start - INTERVAL '30 minutes' AS t FROM wa_payment_links l
         WHERE l.status = ANY($1) AND l.reminder_sent_at IS NULL AND l.appointment_start > NOW()
@@ -335,11 +390,12 @@ async function runDueJobs(deps) {
   if (!deps.pool || jobsRunning) return null;
   jobsRunning = true;
   try {
-    const result = { reminders: 0, checkins: 0, followups: 0 };
+    const result = { reminders: 0, checkins: 0, followups: 0, summary: 0 };
     result.reminders = await sendReminders(deps).catch(e => { console.error('Reminder job failed:', e.message); return 0; });
     result.checkins = await sendCheckins(deps).catch(e => { console.error('Check-in job failed:', e.message); return 0; });
     result.followups = await sendFollowups(deps).catch(e => { console.error('Follow-up job failed:', e.message); return 0; });
-    if (result.reminders || result.checkins || result.followups) console.log('⏰ Scheduled messages sent:', JSON.stringify(result));
+    result.summary = await sendOwnerSummary(deps).catch(e => { console.error('Owner summary failed:', e.message); return 0; });
+    if (result.reminders || result.checkins || result.followups || result.summary) console.log('⏰ Scheduled messages sent:', JSON.stringify(result));
     return result;
   } finally {
     jobsRunning = false;
@@ -366,5 +422,7 @@ module.exports = {
   nextDueAt,
   sendReminders,
   sendCheckins,
-  sendFollowups
+  sendFollowups,
+  sendOwnerSummary,
+  nextSummaryAt
 };
