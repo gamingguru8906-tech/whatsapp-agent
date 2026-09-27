@@ -342,21 +342,35 @@ test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the w
     const received = [];
     exotel.on('message', data => received.push(JSON.parse(data.toString())));
     exotel.send(startMessage());
-    await waitFor(() => live.sessions.length === 1 && voices.length === 1);
+    // voices[0] pre-records the opening line when the server starts; voices[1] is this call's voice.
+    await waitFor(() => live.sessions.length === 1 && voices.length === 2);
+    assert.deepEqual(voices[0].texts, [GREETING]);
     const gemini = live.sessions[0];
-    const voice = voices[0];
+    const voice = voices[1];
     assert.equal(voice.key, 'sk-test');
     assert.equal(voice.opts.rate, 8000);
     assert.equal(voice.opts.speaker, 'ritu');
 
-    // Gemini's own (American-sounding) audio is not played; its words go to the Indian voice.
-    const halfSecond = pcmToBuffer(sine(12000, 24000)).toString('base64');
-    gemini.emit('message', { serverContent: { outputTranscription: { text: "Hi, welcome to Veshannastro! I'm Kamala, " }, modelTurn: { parts: [{ inlineData: { mimeType: 'audio/pcm;rate=24000', data: halfSecond } }] } } });
-    gemini.emit('message', { serverContent: { outputTranscription: { text: 'your personal advisor.' } } });
+    // The opening line is spoken the moment the call connects, before Gemini is even ready.
+    assert.deepEqual(voice.texts, [GREETING]);
+    assert.equal(voice.flushes, 1);
+    // Gemini replies in text (no waiting for its own audio) with quick turn detection, told the greeting was played.
+    assert.deepEqual(gemini.setup.generationConfig.responseModalities, ['TEXT']);
+    assert.equal(gemini.setup.outputAudioTranscription, undefined);
+    assert.equal(gemini.setup.realtimeInputConfig.automaticActivityDetection.endOfSpeechSensitivity, 'END_SENSITIVITY_HIGH');
+    assert.match(gemini.setup.systemInstruction.parts[0].text, /played to the caller automatically/);
+    await waitFor(() => gemini.sent.length >= 1);
+    assert.match(gemini.sent[0].realtimeInput.text, /already been played/);
+
+    // Each finished sentence goes to the Indian voice straight away; the turn end flushes the rest.
+    gemini.emit('message', { serverContent: { inputTranscription: { text: 'Hello?' } } });
+    gemini.emit('message', { serverContent: { modelTurn: { parts: [{ text: 'Main Kamala bol rahi hoon. ' }] } } });
+    gemini.emit('message', { serverContent: { modelTurn: { parts: [{ text: 'Aapka naam', thought: true }, { text: 'Aapka naam jaan sakti hoon' }] } } });
     gemini.emit('message', { serverContent: { turnComplete: true } });
-    await waitFor(() => voice.flushes === 1);
-    assert.deepEqual(voice.texts, ["Hi, welcome to Veshannastro! I'm Kamala, ", 'your personal advisor.']);
+    await waitFor(() => voice.flushes === 3);
+    assert.deepEqual(voice.texts.slice(1), ['Main Kamala bol rahi hoon. ', 'Aapka naam jaan sakti hoon']);
     assert.equal(received.filter(m => m.event === 'media').length, 0);
+    const halfSecond = pcmToBuffer(sine(12000, 24000)).toString('base64');
 
     // Sarvam's 8 kHz audio goes to Exotel in 320-byte multiples; the tail is flushed on "final".
     voice.emit('audio', pcmToBuffer(sine(4000, 8000)));
@@ -368,7 +382,7 @@ test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the w
 
     // Barge-in: Exotel is cleared and a fresh voice stream replaces the old one.
     gemini.emit('message', { serverContent: { interrupted: true } });
-    await waitFor(() => voices.length === 2);
+    await waitFor(() => voices.length === 3);
     assert.ok(voice.closed);
     await waitFor(() => received.some(m => m.event === 'clear'));
     voice.emit('audio', pcmToBuffer(sine(4000, 8000)));
@@ -377,7 +391,7 @@ test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the w
     assert.equal(received.filter(m => m.event === 'media').length, before, 'audio from the old stream is dropped');
 
     // If the Indian voice fails, the call carries on in Gemini's voice.
-    voices[1].emit('error', new Error('401'));
+    voices[2].emit('error', new Error('401'));
     gemini.emit('message', { serverContent: { modelTurn: { parts: [{ inlineData: { mimeType: 'audio/pcm;rate=24000', data: halfSecond } }] } } });
     await waitFor(() => received.filter(m => m.event === 'media').length > before);
     exotel.close();
