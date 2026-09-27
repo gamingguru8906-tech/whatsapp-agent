@@ -28,6 +28,15 @@ const GEMINI_OUTPUT_RATE = 24000;
 const QUERY_TYPES = ['Marriage', 'Career', 'Business', 'Report', 'Other'];
 const GOODBYE_MARK = 'kamala-goodbye';
 
+// Kamala's speaking voice. With SARVAM_API_KEY set, Gemini Live still listens and decides what to say,
+// but the words are spoken by Sarvam's Bulbul, a native Indian voice that handles Hinglish naturally.
+// Without the key, Gemini's own voice is used.
+const SARVAM_TTS_URL = 'wss://api.sarvam.ai/text-to-speech/ws';
+const SARVAM_MODEL = process.env.SARVAM_TTS_MODEL || 'bulbul:v3';
+const SARVAM_SPEAKER = process.env.SARVAM_SPEAKER || 'simran';
+const SARVAM_LANGUAGE = process.env.SARVAM_LANGUAGE || 'hi-IN';
+const SARVAM_PACE = Number(process.env.SARVAM_PACE) || 1.0;
+
 const GREETING = "Hi, welcome to Veshannastro! I'm Kamala, your personal advisor. Just so you know, quality ke liye yeh call record ho sakti hai.";
 const ROBOT_ANSWER = 'Aap Veshannastro ke automated query advisor se baat kar rahe hain, jo aapko easily right guidance tak pahunchne mein help karta hai.';
 const ESCALATION_LINE = "Shashank ji abhi ek consultation mein busy hain. I've escalated your query to our senior team, aur 24 hours ke andar aapko call back aa jayega.";
@@ -255,6 +264,7 @@ function buildCallPrompt(ctx) {
   return `You are Kamala, answering phone calls for Veshannastro, Shri Shashank ji's astrology practice. You are a warm, caring young woman from Jaipur. This is a live phone call: everything you say is heard, not read.
 
 HOW YOU SOUND
+- A natural Indian accent, like a young woman from Delhi or Jaipur. Never an American or British accent. Say "Veshannastro" as "Vesh-ann-astro".
 - Natural spoken Hinglish: Hindi and English mixed inside the same sentence, the way young urban Indians talk ("Haan ji, main samajh sakti hoon, it's been a tough time na?", "Don't worry, hum mil ke dekhte hain"). Never fully Hindi and never formal words like chinta, samay, vivah, dhanyavaad, kripya. If the caller speaks mostly English, speak mostly English with a little Hindi.
 - Short turns: one or two short sentences, then let them talk. Only one question at a time. Small natural acknowledgements ("haan ji", "achha", "samajh gayi").
 - Calm, kind, unhurried. Never read out lists, links, emails or IDs. Never say "as an AI", "I understand your query" or "I can help with that". No astrology jargon like "7th house".
@@ -506,6 +516,68 @@ function openGeminiLive(apiKey, setup) {
   return live;
 }
 
+// ---------- Sarvam text-to-speech (Indian voice) ----------
+
+/** Words Kamala speaks, cleaned for the voice: brand name spelled the way it is said, no stray symbols. */
+function speakable(text) {
+  return String(text || '')
+    .replace(/veshann?astro/gi, 'Veshann Astro')
+    .replace(/[*_#`~<>\[\]{}|]/g, ' ');
+}
+
+/**
+ * Streams text to Sarvam Bulbul and emits 16-bit PCM at the call's sample rate.
+ * Events: 'audio' (Buffer), 'final' (everything flushed so far has been spoken), 'error', 'close'.
+ */
+function openSarvamTts(apiKey, { rate, speaker, language, pace, model }) {
+  const tts = new EventEmitter();
+  const queue = [];
+  const ws = new WebSocket(`${SARVAM_TTS_URL}?model=${encodeURIComponent(model || SARVAM_MODEL)}&send_completion_event=true`, {
+    headers: { 'api-subscription-key': apiKey }
+  });
+  const sendRaw = msg => {
+    if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(msg));
+    else if (ws.readyState === WebSocket.CONNECTING) queue.push(msg);
+  };
+  ws.on('open', () => {
+    ws.send(JSON.stringify({
+      type: 'config',
+      data: {
+        target_language_code: language || SARVAM_LANGUAGE,
+        speaker: speaker || SARVAM_SPEAKER,
+        speech_sample_rate: String(rate),
+        output_audio_codec: 'linear16',
+        enable_preprocessing: true,
+        pace: pace || SARVAM_PACE,
+        min_buffer_size: 30,
+        max_chunk_length: 150
+      }
+    }));
+    while (queue.length) ws.send(JSON.stringify(queue.shift()));
+  });
+  ws.on('message', data => {
+    let msg;
+    try { msg = JSON.parse(data.toString()); } catch (_) { return; }
+    if (msg.type === 'audio' && msg.data?.audio) {
+      let buf = Buffer.from(msg.data.audio, 'base64');
+      // A WAV header (if the service adds one) is not audio.
+      if (buf.length > 44 && buf.subarray(0, 4).toString('ascii') === 'RIFF') buf = buf.subarray(44);
+      tts.emit('audio', buf);
+    } else if (msg.type === 'event' && msg.data?.event_type === 'final') {
+      tts.emit('final');
+    } else if (msg.type === 'error') {
+      tts.emit('error', new Error(`Sarvam: ${JSON.stringify(msg.data || msg).slice(0, 200)}`));
+    }
+  });
+  ws.on('unexpected-response', (req, res) => tts.emit('error', new Error(`Sarvam HTTP ${res.statusCode}`)));
+  ws.on('error', err => tts.emit('error', err));
+  ws.on('close', code => tts.emit('close', code));
+  tts.send = text => { const t = speakable(text); if (t.trim()) sendRaw({ type: 'text', data: { text: t } }); };
+  tts.flush = () => sendRaw({ type: 'flush' });
+  tts.close = () => { tts.removeAllListeners('close'); try { ws.close(); } catch (_) { /* already closed */ } };
+  return tts;
+}
+
 // ---------- One phone call ----------
 
 class CallSession {
@@ -568,6 +640,7 @@ class CallSession {
     this.phone = normalizeCallerNumber(start.from);
     this.toGemini = new StreamResampler(this.rate, GEMINI_INPUT_RATE);
     this.frames = new FrameQueue(exotelFrameBytes(this.rate));
+    if (this.deps.sarvamApiKey) this.openVoice();
     console.log(`📞 Call ${this.callSid} from ${this.phone ? `+${this.phone}` : 'a hidden number'} (${this.rate} Hz)`);
 
     const maxMinutes = Math.max(2, Number(this.deps.maxCallMinutes) || 15);
@@ -664,23 +737,63 @@ class CallSession {
     if (content.outputTranscription?.text) {
       if (this.userText) this.commit('user');
       this.modelText += content.outputTranscription.text;
+      if (this.tts) this.tts.send(content.outputTranscription.text);
     }
     if (content.interrupted) {
       this.frames.clear();
       this.playbackEndsAt = Date.now();
       this.sendExotel({ event: 'clear', stream_sid: this.streamSid });
       this.commit('model');
+      if (this.tts) this.openVoice(); // drop whatever was still being spoken
     }
-    for (const part of content.modelTurn?.parts || []) {
-      if (part.inlineData?.data && /audio/i.test(part.inlineData.mimeType || 'audio')) this.toCaller(part.inlineData);
+    if (!this.tts) {
+      for (const part of content.modelTurn?.parts || []) {
+        if (part.inlineData?.data && /audio/i.test(part.inlineData.mimeType || 'audio')) this.toCaller(part.inlineData);
+      }
     }
     if (content.turnComplete) {
       this.commit('user');
       this.commit('model');
+      if (this.tts) {
+        // The Indian voice finishes a moment after Gemini; wrap up when it says it is done.
+        this.tts.flush();
+        if (this.ending) {
+          const t = setTimeout(() => this.afterEndingTurn(), 8000);
+          this.timers.push(t);
+        }
+        return;
+      }
       const tail = this.frames.flush();
       if (tail) this.sendAudio(tail);
       if (this.ending) this.afterEndingTurn();
     }
+  }
+
+  /** (Re)opens the Sarvam voice for this call; falls back to Gemini's own voice if it fails. */
+  openVoice() {
+    if (this.tts) this.tts.close();
+    const tts = (this.deps.openTts || openSarvamTts)(this.deps.sarvamApiKey, {
+      rate: this.rate, speaker: this.deps.sarvamSpeaker, language: this.deps.sarvamLanguage
+    });
+    this.tts = tts;
+    tts.on('audio', buf => {
+      if (tts !== this.tts || this.finished) return;
+      for (const frame of this.frames.push(buf)) this.sendAudio(frame);
+    });
+    tts.on('final', () => {
+      if (tts !== this.tts || this.finished) return;
+      const tail = this.frames.flush();
+      if (tail) this.sendAudio(tail);
+      if (this.ending) this.afterEndingTurn();
+    });
+    const fallBack = why => {
+      if (tts !== this.tts || this.finished) return;
+      console.error(`Indian voice unavailable on ${this.callSid} (${why}); using Gemini's voice.`);
+      this.tts = null;
+      tts.close();
+    };
+    tts.on('error', e => fallBack(e.message));
+    tts.on('close', code => fallBack(`closed ${code}`));
   }
 
   fromCaller(payload) {
@@ -890,6 +1003,11 @@ class CallSession {
     if (this.finished) return this.wrapUp;
     this.finished = true;
     this.timers.forEach(clearTimeout);
+    if (this.tts) {
+      const tts = this.tts;
+      this.tts = null;
+      tts.close();
+    }
     if (this.live) {
       const live = this.live;
       this.live = null;
@@ -1094,6 +1212,8 @@ module.exports = {
   formatCallSummary,
   callOutcome,
   CallSession,
+  speakable,
+  openSarvamTts,
   migrate,
   attach
 };
