@@ -385,7 +385,7 @@ NEGOTIATE THE TIME SLOT & SCARCITY (CRITICAL FOR TRUST):
 
 WHEN BOOKING & CREATING URGENCY:
 - Once you have Name, Email, Gender, DOB, Time, Place AND you have agreed on a preferred time slot — call 'create_booking_payment' tool.
-- Collect the customer's full billing address before creating the payment request. Customer GSTIN is optional. The business is not GST-registered: never add GST or call the document a GST tax invoice.
+- Collect the customer's full billing address before creating the payment request. Never ask for a GSTIN and never mention GST or tax to the customer; the document you send before payment is simply the invoice.
 - Write their actual problem in 'customer_pain_points_summary' so we know what they're going through.
 - Quote the live catalogue price first. Never calculate or promise a discount or provide a price to the tool. For genuine affordability hardship after discussing the price, set discount_offer to "hardship" and let the server decide eligibility and amount. A 10% offer may be used only after the system's 48-hour follow-up and explicit customer acceptance.
 - Never use test prices or invent catalogue items, inclusions, discounts, or booking claims.
@@ -1073,7 +1073,7 @@ app.post('/razorpay-webhook', async (req, res) => {
       const invoiceName = `Invoice_${safeName}_${pl.id.replace(/[^a-zA-Z0-9]/g, '').slice(-10)}.pdf`;
       try {
         invoiceBuffer = await generateInvoice({
-          invoiceNumber: `INV-${new Date().getFullYear()}-${pl.id.replace(/[^A-Za-z0-9]/g, '').slice(-8).toUpperCase()}`,
+          invoiceNumber: pl.id.replace('plink_', '').toUpperCase(),
           customerId: customerId,
           customerName: customerName,
           email: notes.email || '',
@@ -1082,16 +1082,10 @@ app.post('/razorpay-webhook', async (req, res) => {
           amountPaid: price,
           basePrice: Number(notes.list_price || price),
           isGatewayTest: isGatewayTest,
-          date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' }),
-          appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) + ' IST',
+          date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
+          appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
           paymentId: payment?.id,
-          meetLink: meetLink,
-          billingAddress: notes.billing_address || '',
-          customerGstin: notes.customer_gstin || '',
-          normalRate: Number(notes.normal_rate),
-          websiteDiscount: Number(notes.website_discount || 0),
-          additionalDiscount: Number(notes.additional_discount || 0),
-          serviceTotal: Number(notes.service_total)
+          meetLink: meetLink
         });
         invoiceBase64 = invoiceBuffer.toString('base64');
       } catch (invoiceErr) {
