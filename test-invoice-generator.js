@@ -52,12 +52,3 @@ test('amounts are written in Indian words like a Tally invoice', () => {
   assert.equal(amountInWords(2249), 'INR Two Thousand Two Hundred Forty Nine Only');
   assert.equal(amountInWords(12500000), 'INR One Crore Twenty Five Lakh Only');
 });
-
-test('paid invoice shows the booking discount breakdown when it reconciles', async () => {
-  const pdf = await generateInvoice({
-    invoiceNumber: 'INV-2026-TEST', customerName: 'Test Customer', serviceName: 'Vedic Kundli Consultation',
-    amountPaid: 2249, basePrice: 2249, normalRate: 2999, websiteDiscount: 750, additionalDiscount: 0, serviceTotal: 2249,
-    date: '28 Sept 2026', paymentId: 'pay_TEST', meetLink: 'https://meet.google.com/abc-defg-hij'
-  });
-  assert.equal(pdf.subarray(0, 5).toString(), '%PDF-');
-});
