@@ -334,6 +334,10 @@ CRITICAL RULES FOR WHATSAPP FORMATTING (MANDATORY):
 - NEVER ask more than ONE question in a single message.
 - If the user sends a short response like "ok" or "hmm", mirror their energy and gently nudge: "Ji, main sun rahi hoon..." or "Aur bataiye..."
 - Never use robotic AI transition phrases like "I understand", "As an assistant", or "I can help with that".
+- SAY EVERYTHING ONCE (CRITICAL): write each sentence one time only. Never repeat a sentence, a question or a phrase inside the same message, and never copy a line you already sent earlier in the chat. If you need to ask again for something, ask it in fresh, different words.
+- Do not start two replies in a row with the same opener ("Got it", "Ji", "Sure", "Actually"). Vary how you begin, or just begin with the point.
+- PROFESSIONAL, CALM VOICE: warm but polished, like a senior client advisor at a respected consultancy. No filler, no over-excitement, no exaggerated praise; every message should read clean enough to be screenshotted.
+- NEVER mention screens, systems, records, databases, files or anything "showing" or "not showing" (never say "mere screen par show nahi ho raha", "system mein nahi dikh raha"). A real assistant simply remembers or asks. If the person says you already have their details but they are "Not known yet" above, apologise simply and ask once: "Sorry ji, woh mere paas note nahi hua. Ek baar full name aur date of birth bhej dijiye, main abhi save kar leti hoon." Then never ask for it again.
 
 PAYMENT VALIDATION PERIOD:
 - Payment links currently collect ₹1 only to validate the live payment gateway. This is not payment for a consultation and does not confirm a real consultation appointment.
@@ -1541,6 +1545,18 @@ ${crm.readingContext(dbUser)}`;
         sessions[from] = sessions[from].slice(-16);
       }
 
+      // Clean up replies already stored with repetition, and drop a reply stored twice in a row,
+      // so Gemini never sees (and copies) a repeated pattern.
+      sessions[from] = sessions[from].filter((turn, i, all) => {
+        if (turn.role === 'model' && Array.isArray(turn.parts)) {
+          turn.parts = turn.parts.map(part => (typeof part?.text === 'string' && !part.thought) ? { ...part, text: crm.collapseRepeats(part.text) } : part);
+        }
+        const prev = all[i - 1];
+        const onlyText = t => Array.isArray(t?.parts) && t.parts.every(part => typeof part?.text === 'string' && !part.thought);
+        return !(prev && prev.role === 'model' && turn.role === 'model' && onlyText(prev) && onlyText(turn)
+          && prev.parts.map(x => x.text).join('') === turn.parts.map(x => x.text).join(''));
+      });
+
       // Sanitize old media payloads in earlier history so RAM stays low
       for (let i = 0; i < sessions[from].length - 2; i++) {
         const turn = sessions[from][i];
@@ -1696,6 +1712,9 @@ ${crm.readingContext(dbUser)}`;
 
       // Handle Normal Text Response
       const responseText = result.response.text();
+      // sendCustomerText records the reply in the chat history itself. Keeping Gemini's copy as well
+      // put every reply in the history twice, and Gemini then copied that pattern (2x, 4x, 8x repeats).
+      if (sessions[from][sessions[from].length - 1] === responseMessage) sessions[from].pop();
       if (responseText) {
         const cleanText = responseText.replace(/\[SEND_MENU\]/g, '').trim();
         if (cleanText) {
@@ -1932,7 +1951,8 @@ app.post('/payments/verify', async (req, res) => {
 // ---------- Customer memory, reminders, follow-ups ----------
 
 // Sends a customer-facing message and keeps it in the saved conversation.
-async function sendCustomerText(to, text) {
+async function sendCustomerText(to, rawText) {
+  const text = crm.collapseRepeats(rawText);
   const ok = await sendTextMessage(to, text);
   if (ok) {
     crm.saveTurn(pool, to, 'model', text).catch(() => {});
