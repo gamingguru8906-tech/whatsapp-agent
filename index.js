@@ -1073,7 +1073,7 @@ app.post('/razorpay-webhook', async (req, res) => {
       const invoiceName = `Invoice_${safeName}_${pl.id.replace(/[^a-zA-Z0-9]/g, '').slice(-10)}.pdf`;
       try {
         invoiceBuffer = await generateInvoice({
-          invoiceNumber: pl.id.replace('plink_', '').toUpperCase(),
+          invoiceNumber: `INV-${new Date().getFullYear()}-${pl.id.replace(/[^A-Za-z0-9]/g, '').slice(-8).toUpperCase()}`,
           customerId: customerId,
           customerName: customerName,
           email: notes.email || '',
@@ -1082,10 +1082,16 @@ app.post('/razorpay-webhook', async (req, res) => {
           amountPaid: price,
           basePrice: Number(notes.list_price || price),
           isGatewayTest: isGatewayTest,
-          date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
-          appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
+          date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' }),
+          appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) + ' IST',
           paymentId: payment?.id,
-          meetLink: meetLink
+          meetLink: meetLink,
+          billingAddress: notes.billing_address || '',
+          customerGstin: notes.customer_gstin || '',
+          normalRate: Number(notes.normal_rate),
+          websiteDiscount: Number(notes.website_discount || 0),
+          additionalDiscount: Number(notes.additional_discount || 0),
+          serviceTotal: Number(notes.service_total)
         });
         invoiceBase64 = invoiceBuffer.toString('base64');
       } catch (invoiceErr) {
