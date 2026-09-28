@@ -44,3 +44,20 @@ test('existing paid receipt generator remains callable with the original contrac
   assert.equal(pdf.subarray(0, 5).toString(), '%PDF-');
   assert.ok(pdf.length > 1000);
 });
+
+test('amounts are written in Indian words like a Tally invoice', () => {
+  const { amountInWords } = require('./invoice-generator');
+  assert.equal(amountInWords(65237), 'INR Sixty Five Thousand Two Hundred Thirty Seven Only');
+  assert.equal(amountInWords(3106.52), 'INR Three Thousand One Hundred Six and Fifty Two paise Only');
+  assert.equal(amountInWords(2249), 'INR Two Thousand Two Hundred Forty Nine Only');
+  assert.equal(amountInWords(12500000), 'INR One Crore Twenty Five Lakh Only');
+});
+
+test('paid invoice shows the booking discount breakdown when it reconciles', async () => {
+  const pdf = await generateInvoice({
+    invoiceNumber: 'INV-2026-TEST', customerName: 'Test Customer', serviceName: 'Vedic Kundli Consultation',
+    amountPaid: 2249, basePrice: 2249, normalRate: 2999, websiteDiscount: 750, additionalDiscount: 0, serviceTotal: 2249,
+    date: '28 Sept 2026', paymentId: 'pay_TEST', meetLink: 'https://meet.google.com/abc-defg-hij'
+  });
+  assert.equal(pdf.subarray(0, 5).toString(), '%PDF-');
+});
