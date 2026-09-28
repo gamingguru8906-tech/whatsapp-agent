@@ -85,6 +85,29 @@ async function saveTurn(pool, phone, role, text) {
     [String(phone), role === 'user' ? 'user' : 'model', clean.slice(0, 4000)]);
 }
 
+// Removes copy-paste repetition from a reply: the whole message repeated back to back
+// ("Got it... ?Got it... ?Got it... ?") or the same sentence said twice in one message.
+function collapseRepeats(text) {
+  let s = String(text == null ? '' : text).trim();
+  if (s.length < 20) return s;
+  const whole = s.match(/^([\s\S]{10,}?)(?:\s*\1)+$/);
+  if (whole) s = whole[1].trim();
+  const pieces = s.match(/[^.!?\u0964\n]+(?:[.!?\u0964]+|\n+|$)\s*/g) || [s];
+  const seen = new Set();
+  const kept = [];
+  let dropped = false;
+  for (const piece of pieces) {
+    const key = piece.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+    if (key.length >= 20 && seen.has(key)) { dropped = true; continue; }
+    if (key.length >= 20) seen.add(key);
+    const prev = kept[kept.length - 1];
+    // After a dropped copy, keep a space between the sentences either side of it.
+    kept.push(dropped && prev && !/\s$/.test(prev) ? ' ' + piece : piece);
+    dropped = false;
+  }
+  return kept.join('').trim();
+}
+
 /** Last text turns in Gemini format, oldest first, always starting with a user turn. */
 async function loadRecentTurns(pool, phone, limit = 16) {
   if (!pool) return [];
@@ -92,7 +115,14 @@ async function loadRecentTurns(pool, phone, limit = 16) {
     [String(phone), limit]);
   const turns = res.rows.reverse();
   while (turns.length && turns[0].role !== 'user') turns.shift();
-  return turns.map(t => ({ role: t.role, parts: [{ text: t.text }], createdAt: t.created_at }));
+  const out = [];
+  for (const t of turns) {
+    const text = t.role === 'model' ? collapseRepeats(t.text) : t.text;
+    const prev = out[out.length - 1];
+    if (prev && prev.role === t.role && prev.parts[0].text === text) continue; // same reply stored twice
+    out.push({ role: t.role, parts: [{ text }], createdAt: t.created_at });
+  }
+  return out;
 }
 
 async function bookingHistory(pool, phone) {
@@ -536,6 +566,7 @@ module.exports = {
   migrate,
   recordInbound,
   saveTurn,
+  collapseRepeats,
   loadRecentTurns,
   bookingHistory,
   profileContext,
