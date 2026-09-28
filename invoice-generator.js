@@ -1,169 +1,400 @@
 'use strict';
 
+// Veshannastro invoices in the classic Indian accounting layout (Tally style): one ruled A4 sheet with the
+// seller and buyer on the left, the reference grid on the right, a ruled item table, the amount in words,
+// a payment summary, the declaration and the authorised signatory.
+// The same layout is used for the proforma invoice sent with the payment link and for the paid invoice.
+// Veshannastro is not registered under GST, so no GST is charged and the documents are never "Tax Invoices".
+
 const PDFDocument = require('pdfkit');
 const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
 
-const COLORS = {
-  canvas: '#F1F4FC',
-  white: '#FFFFFF',
-  navy: '#29304A',
-  slate: '#53617B',
-  line: '#E8EBF3',
-  lavender: '#B9B5F1',
-  lavenderLight: '#F4F3FE',
-  warning: '#FFF7E8',
-  warningInk: '#78581C',
-  soft: '#F7F8FC'
+const SELLER = {
+  name: 'Veshannastro',
+  lines: [
+    'Shashank Agrawal',
+    'Currency Tower, G.E. Road, VIP Road',
+    'Raipur, Chhattisgarh 492001'
+  ],
+  gstin: 'Unregistered (not registered under GST)',
+  state: 'Chhattisgarh, Code : 22',
+  email: 'veshannastro7@gmail.com',
+  phone: '+91 76469 52745',
+  web: 'veshannastro.co.in'
 };
 
+const PAGE = { w: 595.28, h: 841.89 };
+const L = 34;
+const R = PAGE.w - 34;
+const W = R - L;
+const MID = L + 272; // left block | right grid
+const MID2 = MID + (R - MID) / 2;
+const INK = '#000000';
+const MUTED = '#333333';
+const LINE = 0.6;
+
+function money(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) throw new Error('Invoice amounts must be finite, non-negative numbers.');
+  return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 function inr(value) {
-  const amount = Number(value);
-  if (!Number.isFinite(amount) || amount < 0) throw new Error('Invoice amounts must be finite, non-negative numbers.');
-  return `INR ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `INR ${money(value)}`;
 }
 
 function safeText(value, fallback = 'Not provided') {
   return String(value ?? '').trim() || fallback;
 }
 
-/** Creates an A4 receipt using the supplied invoice reference's navy/lavender layout. */
+const ONES = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve',
+  'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+const TENS = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+function below100(n) {
+  return n < 20 ? ONES[n] : `${TENS[Math.floor(n / 10)]}${n % 10 ? ' ' + ONES[n % 10] : ''}`;
+}
+
+function below1000(n) {
+  const h = Math.floor(n / 100);
+  const rest = n % 100;
+  return [h ? `${ONES[h]} Hundred` : '', rest ? below100(rest) : ''].filter(Boolean).join(' ');
+}
+
+/** Indian numbering in words: 65237 -> "Sixty Five Thousand Two Hundred Thirty Seven". */
+function numberToWords(num) {
+  let n = Math.floor(Number(num));
+  if (!Number.isFinite(n) || n < 0) return '';
+  if (n === 0) return 'Zero';
+  const parts = [];
+  for (const [size, name] of [[10000000, 'Crore'], [100000, 'Lakh'], [1000, 'Thousand']]) {
+    if (n >= size) {
+      const chunk = Math.floor(n / size);
+      parts.push(`${size === 10000000 ? numberToWords(chunk) : below100(chunk)} ${name}`);
+      n %= size;
+    }
+  }
+  if (n) parts.push(below1000(n));
+  return parts.join(' ');
+}
+
+/** "INR Two Thousand Two Hundred Forty Nine Only" (with paise when present). */
+function amountInWords(value) {
+  const n = Math.round(Number(value) * 100);
+  const rupees = Math.floor(n / 100);
+  const paise = n % 100;
+  return `INR ${numberToWords(rupees)}${paise ? ` and ${below100(paise)} paise` : ''} Only`;
+}
+
+function hline(doc, y, x1 = L, x2 = R) {
+  doc.moveTo(x1, y).lineTo(x2, y).lineWidth(LINE).strokeColor(INK).stroke();
+}
+
+function vline(doc, x, y1, y2) {
+  doc.moveTo(x, y1).lineTo(x, y2).lineWidth(LINE).strokeColor(INK).stroke();
+}
+
+function label(doc, text, x, y, opts = {}) {
+  doc.font('Helvetica').fontSize(8.5).fillColor(MUTED).text(text, x, y, { lineBreak: false, ...opts });
+}
+
+function value(doc, text, x, y, opts = {}) {
+  doc.font('Helvetica-Bold').fontSize(9.5).fillColor(INK).text(text, x, y, { ...opts });
+}
+
+/**
+ * Draws one invoice page from a plain model:
+ * { title, invoiceNo, date, status, customerId, paymentTerms, consultMode, appointment, reference,
+ *   deliveryTerms, buyer: { name, address, phone, email, gstin },
+ *   item: { name, detail, rate }, adjustments: [{ label, rateText, amount }], total,
+ *   summary: [[heading, value], ...], notice, payUrl, qr }
+ */
+function drawInvoice(doc, m) {
+  doc.rect(0, 0, PAGE.w, PAGE.h).fill('#FFFFFF');
+  doc.font('Helvetica-Bold').fontSize(13).fillColor(INK).text(m.title, L, 26, { width: W, align: 'center' });
+  const top = 46;
+
+  // ---- Right reference grid ----
+  const cellH = 29;
+  const grid = [
+    [['Invoice No.', m.invoiceNo], ['Dated', m.date]],
+    [['Customer ID', m.customerId], ['Mode/Terms of Payment', m.paymentTerms]],
+    [['Consultation Mode', m.consultMode], ['Appointment (IST)', m.appointment]],
+    [['Reference No.', m.reference], ['Status', m.status]]
+  ];
+  grid.forEach((row, i) => {
+    const y = top + i * cellH;
+    row.forEach(([k, v], j) => {
+      const x = j ? MID2 : MID;
+      label(doc, k, x + 4, y + 3);
+      value(doc, safeText(v, '-'), x + 4, y + 14, { width: (R - MID) / 2 - 8, height: 12, ellipsis: true, lineBreak: false });
+    });
+  });
+  const gridBottom = top + grid.length * cellH;
+  label(doc, 'Terms of Delivery', MID + 4, gridBottom + 3);
+  doc.font('Helvetica').fontSize(8.5).fillColor(INK)
+    .text(m.deliveryTerms, MID + 4, gridBottom + 15, { width: R - MID - 8 });
+  const termsBottom = doc.y + 6;
+
+  // ---- Left: seller, then buyer ----
+  const lw = MID - L - 8;
+  let y = top + 4;
+  doc.font('Helvetica-Bold').fontSize(11).fillColor(INK).text(SELLER.name, L + 4, y, { width: lw });
+  doc.font('Helvetica').fontSize(9).fillColor(INK);
+  for (const line of SELLER.lines) doc.text(line, L + 4, doc.y, { width: lw });
+  doc.text(`GSTIN/UIN: ${SELLER.gstin}`, L + 4, doc.y, { width: lw })
+    .text(`State Name : ${SELLER.state}`, L + 4, doc.y, { width: lw })
+    .text(`E-Mail : ${SELLER.email}`, L + 4, doc.y, { width: lw })
+    .text(`Phone : ${SELLER.phone}  |  ${SELLER.web}`, L + 4, doc.y, { width: lw });
+  const sellerBottom = doc.y + 4;
+  hline(doc, sellerBottom, L, MID);
+
+  label(doc, 'Buyer (Bill to)', L + 4, sellerBottom + 3);
+  const b = m.buyer || {};
+  doc.font('Helvetica-Bold').fontSize(10).fillColor(INK).text(safeText(b.name, 'Customer'), L + 4, sellerBottom + 16, { width: lw });
+  doc.font('Helvetica').fontSize(9).fillColor(INK);
+  if (String(b.address || '').trim()) doc.text(String(b.address).trim(), L + 4, doc.y, { width: lw });
+  const kv = (k, v) => doc.text(`${k.padEnd(10)}: ${v}`, L + 4, doc.y, { width: lw });
+  if (b.phone) kv('Phone', b.phone);
+  if (b.email) kv('E-Mail', b.email);
+  if (b.gstin) kv('GSTIN/UIN', b.gstin);
+  const buyerBottom = doc.y + 6;
+
+  const headBottom = Math.max(buyerBottom, termsBottom, gridBottom + 60);
+  // grid rules
+  for (let i = 1; i <= grid.length; i++) hline(doc, top + i * cellH, MID, R);
+  vline(doc, MID2, top, gridBottom);
+  vline(doc, MID, top, headBottom);
+
+  // ---- Item table ----
+  const cols = [L, L + 26, L + 250, L + 298, L + 358, L + 418, L + 456, R];
+  const heads = ['Sl\nNo.', 'Description of Services', 'Mode', 'Quantity', 'Rate', 'per', 'Amount'];
+  const th = headBottom;
+  hline(doc, th);
+  doc.font('Helvetica').fontSize(8.5).fillColor(INK);
+  heads.forEach((h, i) => doc.text(h, cols[i] + 2, th + 4, { width: cols[i + 1] - cols[i] - 4, align: i === 1 ? 'center' : (i === 0 ? 'left' : 'center') }));
+  const bodyTop = th + 26;
+  hline(doc, bodyTop);
+
+  let ry = bodyTop + 8;
+  const it = m.item;
+  doc.font('Helvetica').fontSize(9.5).fillColor(INK).text('1', cols[0] + 2, ry, { width: 20, align: 'right' });
+  doc.font('Helvetica-Bold').fontSize(10).text(it.name, cols[1] + 4, ry, { width: cols[2] - cols[1] - 8 });
+  const nameBottom = doc.y;
+  doc.font('Helvetica').fontSize(9.5)
+    .text('Online', cols[2] + 2, ry, { width: cols[3] - cols[2] - 4, align: 'center' });
+  doc.font('Helvetica-Bold').text('1 Session', cols[3] + 2, ry, { width: cols[4] - cols[3] - 6, align: 'right' });
+  doc.font('Helvetica').text(money(it.rate), cols[4] + 2, ry, { width: cols[5] - cols[4] - 6, align: 'right' })
+    .text('Session', cols[5] + 2, ry, { width: cols[6] - cols[5] - 4, align: 'center' });
+  doc.font('Helvetica-Bold').fontSize(10).text(money(it.rate), cols[6] + 2, ry, { width: cols[7] - cols[6] - 6, align: 'right' });
+  ry = nameBottom + 1;
+  if (it.detail) {
+    doc.font('Helvetica-Oblique').fontSize(8.5).fillColor(MUTED).text(it.detail, cols[1] + 4, ry, { width: cols[2] - cols[1] - 8 });
+    ry = doc.y;
+  }
+
+  const adjustments = (m.adjustments || []).filter(a => Number(a.amount) > 0.004);
+  if (adjustments.length) {
+    ry += 10;
+    hline(doc, ry, cols[6] + 6, R - 4);
+    doc.font('Helvetica').fontSize(9.5).fillColor(INK)
+      .text(money(it.rate), cols[6] + 2, ry + 4, { width: cols[7] - cols[6] - 6, align: 'right' });
+    ry += 22;
+    for (const a of adjustments) {
+      doc.font('Helvetica-BoldOblique').fontSize(9.5).fillColor(INK)
+        .text(a.label, cols[1] + 4, ry, { width: cols[2] - cols[1] - 8, align: 'right' });
+      if (a.rateText) {
+        doc.font('Helvetica-Oblique').fontSize(9.5)
+          .text(a.rateText, cols[4] + 2, ry, { width: cols[5] - cols[4] - 6, align: 'right' })
+          .text('%', cols[5] + 2, ry, { width: cols[6] - cols[5] - 4, align: 'left' });
+      }
+      doc.font('Helvetica-Bold').fontSize(9.5)
+        .text(`(-) ${money(a.amount)}`, cols[6] + 2, ry, { width: cols[7] - cols[6] - 6, align: 'right' });
+      ry += 15;
+    }
+  }
+
+  const bodyBottom = Math.max(ry + 24, bodyTop + 170);
+  hline(doc, bodyBottom);
+  for (const x of cols.slice(1, -1)) vline(doc, x, th, bodyBottom + 22);
+  // Total row
+  doc.font('Helvetica').fontSize(9.5).fillColor(INK)
+    .text('Total', cols[1] + 4, bodyBottom + 6, { width: cols[2] - cols[1] - 8, align: 'right' });
+  doc.font('Helvetica-Bold').fontSize(9.5)
+    .text('1 Session', cols[3] + 2, bodyBottom + 6, { width: cols[4] - cols[3] - 6, align: 'right' });
+  doc.font('Helvetica-Bold').fontSize(11)
+    .text(`Rs. ${money(m.total)}`, cols[5] + 2, bodyBottom + 5, { width: R - cols[5] - 6, align: 'right' });
+  const totalBottom = bodyBottom + 22;
+  hline(doc, totalBottom);
+
+  // ---- Amount in words ----
+  label(doc, 'Amount Chargeable (in words)', L + 4, totalBottom + 4);
+  doc.font('Helvetica-Oblique').fontSize(8.5).fillColor(INK).text('E. & O.E', R - 80, totalBottom + 4, { width: 76, align: 'right' });
+  doc.font('Helvetica-Bold').fontSize(10.5).fillColor(INK).text(amountInWords(m.total), L + 4, totalBottom + 17, { width: W - 8 });
+  let sy = doc.y + 8;
+
+  // ---- Payment summary (in place of the GST tax table) ----
+  const summary = m.summary;
+  const sx = [L + 150];
+  const sw = (R - sx[0]) / summary.length;
+  for (let i = 1; i <= summary.length; i++) sx.push(sx[0] + i * sw);
+  hline(doc, sy);
+  summary.forEach(([h, v], i) => {
+    doc.font('Helvetica').fontSize(8.5).fillColor(INK).text(h, sx[i] + 2, sy + 4, { width: sw - 4, align: 'center' });
+    doc.font('Helvetica').fontSize(9).text(v, sx[i] + 2, sy + 28, { width: sw - 6, align: 'right' });
+  });
+  hline(doc, sy + 24, sx[0], R);
+  for (const x of sx) vline(doc, x, sy, sy + 44);
+  doc.font('Helvetica-Bold').fontSize(9).text('Payment Summary :', L + 4, sy + 28, { width: sx[0] - L - 10, align: 'right' });
+  sy += 44;
+  hline(doc, sy);
+  label(doc, 'Tax Amount :', L + 4, sy + 6);
+  doc.font('Helvetica-Bold').fontSize(9.5).fillColor(INK)
+    .text('Nil. GST not applicable, as the supplier is not registered under GST.', L + 62, sy + 5, { width: W - 66 });
+  sy = doc.y + 6;
+
+  if (m.notice) {
+    hline(doc, sy);
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(INK).text(m.notice, L + 4, sy + 5, { width: W - 8 });
+    sy = doc.y + 6;
+  }
+
+  // ---- Bottom block: QR + declaration | payment details + signatory ----
+  const blockTop = Math.max(sy, 560);
+  const blockBottom = PAGE.h - 58;
+  hline(doc, blockTop);
+  hline(doc, blockBottom);
+  vline(doc, MID + 20, blockTop, blockBottom);
+  vline(doc, L, top, blockBottom);
+  vline(doc, R, top, blockBottom);
+  hline(doc, top);
+
+  // left: QR and declaration
+  if (m.qr) {
+    doc.image(m.qr, L + 8, blockTop + 8, { fit: [78, 78] });
+    doc.font('Helvetica-Bold').fontSize(9).fillColor(INK).text('Scan to Pay', L + 94, blockTop + 14);
+    doc.font('Helvetica').fontSize(8.5).text('UPI, cards and net banking\nthrough Razorpay\'s secure page.', L + 94, blockTop + 28, { width: MID - L - 100 });
+  }
+  if (!m.qr && m.leftNote) {
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(INK).text(m.leftNote, L + 8, blockTop + 10, { width: MID + 20 - L - 16 });
+  }
+  const declY = blockBottom - 62;
+  label(doc, 'Declaration', L + 4, declY);
+  doc.font('Helvetica').fontSize(9).fillColor(INK).text(
+    'We declare that this invoice shows the actual price of the services described and that all particulars are true and correct.',
+    L + 4, declY + 12, { width: MID + 20 - L - 10 });
+
+  // right: payment details, "for Veshannastro", signature
+  const rx = MID + 26;
+  const rw = R - rx - 6;
+  doc.font('Helvetica').fontSize(9).fillColor(INK).text('Company\'s Payment Details', rx, blockTop + 6);
+  const pay = [
+    ['A/c Holder\'s Name', SELLER.name],
+    ['Payment Gateway', 'Razorpay (UPI, Cards)'],
+    ['Payment Link', m.payUrl || 'Not applicable']
+  ];
+  let py = blockTop + 20;
+  for (const [k, v] of pay) {
+    doc.font('Helvetica').fontSize(8.5).text(k, rx, py, { width: 82 });
+    doc.text(':', rx + 82, py);
+    doc.font('Helvetica-Bold').fontSize(8.5).text(v, rx + 90, py, { width: rw - 90, ellipsis: true, lineBreak: false,
+      link: /^https:\/\//.test(v) ? v : undefined });
+    py += 13;
+  }
+  doc.font('Helvetica-Bold').fontSize(9).text(`for ${SELLER.name}`, rx, py + 4, { width: rw, align: 'right' });
+  const signPath = path.join(__dirname, 'assets', 'shashank-signature.png');
+  if (fs.existsSync(signPath)) doc.image(signPath, R - 136, py + 18, { fit: [120, 36] });
+  doc.font('Helvetica').fontSize(8.5).text('Authorised Signatory', rx, blockBottom - 14, { width: rw, align: 'right' });
+
+  doc.font('Helvetica').fontSize(9).fillColor(INK)
+    .text('This is a Computer Generated Invoice', L, blockBottom + 10, { width: W, align: 'center' });
+}
+
+function newDoc(title, subject, resolve, reject) {
+  const doc = new PDFDocument({ size: 'A4', margin: 0, compress: true, info: { Title: title, Author: SELLER.name, Subject: subject } });
+  const buffers = [];
+  doc.on('data', chunk => buffers.push(chunk));
+  doc.on('error', reject);
+  doc.on('end', () => resolve(Buffer.concat(buffers)));
+  return doc;
+}
+
+function discountRows(normalRate, websiteDiscount, additionalDiscount) {
+  const pct = normalRate > 0 ? Number((websiteDiscount / normalRate * 100).toFixed(1)) : 0;
+  return [
+    { label: 'Less : Website Offer', rateText: pct ? String(pct) : '', amount: websiteDiscount },
+    { label: 'Less : Additional Discount', rateText: normalRate > 0 && additionalDiscount > 0 ? String(Number((additionalDiscount / normalRate * 100).toFixed(1))) : '', amount: additionalDiscount }
+  ];
+}
+
+/**
+ * Paid invoice sent after Razorpay verifies the payment (same contract as before:
+ * invoiceNumber, customerId, customerName, email, phone, serviceName, amountPaid, basePrice,
+ * isGatewayTest, date, appointmentDate, paymentId, meetLink; optionally billingAddress, customerGstin,
+ * normalRate, websiteDiscount, additionalDiscount, serviceTotal).
+ */
 function generateInvoice(data) {
   return new Promise((resolve, reject) => {
     try {
       const amountPaid = Number(data.amountPaid);
-      if (!Number.isFinite(amountPaid) || amountPaid <= 0) {
-        throw new Error('Invoice requires a verified positive numeric amount.');
-      }
+      if (!Number.isFinite(amountPaid) || amountPaid <= 0) throw new Error('Invoice requires a verified positive numeric amount.');
       const basePrice = Number(data.basePrice ?? amountPaid);
-      if (!Number.isFinite(basePrice) || basePrice < 0) {
-        throw new Error('Invoice requires a valid published service price.');
+      if (!Number.isFinite(basePrice) || basePrice < 0) throw new Error('Invoice requires a valid published service price.');
+      const test = Boolean(data.isGatewayTest);
+
+      // Price breakdown: use the booking's own figures when they reconcile, otherwise the plain price.
+      let normalRate = Number(data.normalRate);
+      let webDisc = Number(data.websiteDiscount || 0);
+      let addDisc = Number(data.additionalDiscount || 0);
+      let serviceTotal = Number(data.serviceTotal);
+      const reconciles = [normalRate, webDisc, addDisc, serviceTotal].every(Number.isFinite) && normalRate > 0 && serviceTotal > 0
+        && Math.abs(normalRate - webDisc - addDisc - serviceTotal) <= 0.01;
+      if (!reconciles) {
+        serviceTotal = test ? basePrice : amountPaid;
+        normalRate = Math.max(serviceTotal, basePrice);
+        webDisc = normalRate - serviceTotal;
+        addDisc = 0;
       }
+      const received = amountPaid;
+      const due = test ? serviceTotal : Math.max(0, serviceTotal - received);
 
-      const doc = new PDFDocument({ size: 'A4', margin: 0, compress: true, info: {
-        Title: `Payment receipt ${safeText(data.invoiceNumber, 'Receipt')}`,
-        Author: 'Veshannastro',
-        Subject: data.isGatewayTest ? 'Gateway validation receipt - not consultation payment' : 'Consultation payment receipt'
-      } });
-      const buffers = [];
-      doc.on('data', chunk => buffers.push(chunk));
-      doc.on('error', reject);
-      doc.on('end', () => resolve(Buffer.concat(buffers)));
-
-      const pageW = 595.28;
-      const pageH = 841.89;
-      const card = { x: 13, y: 10, w: pageW - 26, h: pageH - 20 };
-      const left = 45;
-      const right = pageW - 45;
-
-      // Reference's pale dotted canvas and large white invoice card.
-      doc.rect(0, 0, pageW, pageH).fill(COLORS.canvas);
-      doc.fillColor('#DDE3F1');
-      for (let x = 4; x < pageW; x += 40) {
-        for (let y = 4; y < pageH; y += 40) doc.circle(x, y, 1.15).fill();
-      }
-      doc.roundedRect(card.x, card.y, card.w, card.h, 14)
-        .fillAndStroke(COLORS.white, '#E6EAF3');
-
-      // Business title and the invoice-number block echo the supplied template.
-      doc.font('Helvetica-Bold').fontSize(22).fillColor(COLORS.navy)
-        .text('VESHANNASTRO', 45, 40, { characterSpacing: 1.1, width: 390 });
-      doc.font('Helvetica').fontSize(14).fillColor(COLORS.slate)
-        .text('Consultation', 45, 68);
-      doc.font('Helvetica-Bold').fontSize(27).fillColor(COLORS.navy)
-        .text('PAYMENT RECEIPT', 45, 127, { width: 390 });
-      doc.font('Helvetica').fontSize(12).fillColor(COLORS.slate)
-        .text(`#${safeText(data.invoiceNumber, 'PENDING')}`, 45, 160, { width: 390 });
-
-      // Lavender brand tile with a simple VN monogram, like the sample's square mark.
-      doc.roundedRect(496, 120, 54, 54, 11).fill(COLORS.lavender);
-      doc.font('Helvetica-Bold').fontSize(15).fillColor(COLORS.white)
-        .text('VN', 496, 139, { width: 54, align: 'center' });
-
-      doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate)
-        .text('AMOUNT RECEIVED', left, 208);
-      doc.font('Helvetica').fontSize(19).fillColor(COLORS.navy)
-        .text(inr(amountPaid), left, 229);
-      doc.roundedRect(415, 205, 135, 28, 5).fill(COLORS.lavenderLight);
-      doc.font('Helvetica-Bold').fontSize(9).fillColor(COLORS.navy)
-        .text(data.isGatewayTest ? 'GATEWAY TEST' : 'PAYMENT RECEIVED', 421, 214, { width: 123, align: 'center' });
-
-      doc.moveTo(30, 270).lineTo(pageW - 30, 270).lineWidth(1).strokeColor(COLORS.line).stroke();
-
-      // Invoice date, service slot, customer information.
-      const rows = [
-        ['Receipt Date', safeText(data.date)],
-        ['Customer ID', safeText(data.customerId, 'Allotted on confirmation')],
-        ['Consultation', safeText(data.serviceName)],
-        ['Requested Slot', safeText(data.appointmentDate, 'Not yet provided')]
-      ];
-      rows.forEach((row, index) => {
-        const y = 287 + index * 24;
-        doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate).text(row[0], left, y, { width: 105 });
-        doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate).text(':', 151, y);
-        doc.font('Helvetica').fontSize(11).fillColor(COLORS.navy).text(row[1], 168, y, { width: 255, ellipsis: true });
+      const doc = newDoc(`Invoice ${safeText(data.invoiceNumber, '')}`,
+        test ? 'Gateway validation payment - consultation fee not paid' : 'Consultation invoice (paid)', resolve, reject);
+      drawInvoice(doc, {
+        title: test ? 'INVOICE (GATEWAY TEST)' : 'INVOICE',
+        invoiceNo: safeText(data.invoiceNumber, '-'),
+        date: safeText(data.date, '-'),
+        status: test ? 'TEST PAYMENT RECEIVED' : (due > 0 ? 'PART PAID' : 'PAID'),
+        customerId: safeText(data.customerId, 'Allotted on confirmation'),
+        paymentTerms: 'Online - Razorpay',
+        consultMode: 'Google Meet',
+        appointment: safeText(data.appointmentDate, 'To be scheduled'),
+        reference: safeText(data.paymentId, '-'),
+        deliveryTerms: data.meetLink
+          ? `Online consultation on Google Meet: ${data.meetLink}\nPlease join 5 minutes before your appointment time.`
+          : 'Online consultation on Google Meet. The meeting link is shared on WhatsApp and e-mail.',
+        buyer: { name: data.customerName, address: data.billingAddress, phone: data.phone ? `+${String(data.phone).replace(/^\+/, '')}` : '', email: data.email, gstin: data.customerGstin },
+        item: { name: safeText(data.serviceName, 'Consultation'), detail: data.appointmentDate ? `Appointment: ${data.appointmentDate}` : '', rate: normalRate },
+        adjustments: discountRows(normalRate, webDisc, addDisc),
+        total: serviceTotal,
+        summary: [
+          ['Service\nValue', money(normalRate)],
+          ['Discount', money(webDisc + addDisc)],
+          ['Net\nAmount', money(serviceTotal)],
+          [test ? 'Received\n(test only)' : 'Amount\nReceived', money(received)],
+          ['Balance\nDue', money(due)]
+        ],
+        notice: test
+          ? `Gateway test only: INR ${money(received)} was received to validate the live payment gateway. It does not pay for or confirm the consultation. Consultation amount due: ${inr(serviceTotal)}.`
+          : '',
+        payUrl: '',
+        qr: null,
+        leftNote: test
+          ? `Gateway test amount of ${inr(received)} received via Razorpay. The consultation fee of ${inr(serviceTotal)} is still due.`
+          : `Received with thanks ${inr(received)} via Razorpay${data.paymentId ? ` (Payment ID ${data.paymentId})` : ''}.`
       });
-
-      doc.font('Helvetica').fontSize(10).fillColor(COLORS.slate).text('Billed To', 430, 289, { width: 120 });
-      doc.font('Helvetica-Bold').fontSize(11).fillColor(COLORS.navy)
-        .text(safeText(data.customerName, 'Customer'), 430, 307, { width: 120, height: 30, ellipsis: true });
-      if (data.phone) doc.font('Helvetica').fontSize(9).fillColor(COLORS.slate).text(String(data.phone), 430, 340, { width: 120, ellipsis: true });
-      if (data.email) doc.font('Helvetica').fontSize(8).fillColor(COLORS.slate).text(String(data.email), 430, 355, { width: 120, ellipsis: true });
-
-      if (data.meetLink) {
-        doc.font('Helvetica').fontSize(9).fillColor(COLORS.slate).text('Google Meet', left, 385);
-        doc.font('Helvetica').fontSize(9).fillColor(COLORS.navy)
-          .text(String(data.meetLink), 168, 385, { width: 360, link: String(data.meetLink), ellipsis: true });
-      }
-
-      // Dark rounded table head and a single paid line item.
-      const tableY = 421;
-      doc.roundedRect(30, tableY, pageW - 60, 44, 8).fill(COLORS.navy);
-      doc.font('Helvetica').fontSize(11).fillColor(COLORS.white);
-      doc.text('Item & Description', 53, tableY + 15, { width: 235 });
-      doc.text('Qty', 306, tableY + 15, { width: 40, align: 'right' });
-      doc.text('Rate', 365, tableY + 15, { width: 75, align: 'right' });
-      doc.text('Amount', 455, tableY + 15, { width: 85, align: 'right' });
-
-      const itemY = tableY + 68;
-      doc.font('Helvetica').fontSize(12).fillColor(COLORS.navy)
-        .text(data.isGatewayTest ? 'Razorpay gateway validation' : safeText(data.serviceName), 53, itemY, { width: 235, ellipsis: true });
-      doc.font('Helvetica').fontSize(9).fillColor(COLORS.slate)
-        .text(data.isGatewayTest ? 'Test only - consultation remains unpaid' : 'Consultation payment', 53, itemY + 21, { width: 235, ellipsis: true });
-      doc.font('Helvetica').fontSize(12).fillColor(COLORS.navy);
-      doc.text('1', 306, itemY, { width: 40, align: 'right' });
-      doc.text(inr(amountPaid), 365, itemY, { width: 75, align: 'right' });
-      doc.text(inr(amountPaid), 455, itemY, { width: 85, align: 'right' });
-
-      doc.moveTo(30, 533).lineTo(pageW - 30, 533).lineWidth(1).strokeColor(COLORS.line).stroke();
-      doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate).text('Sub Total', 350, 555, { width: 90, align: 'right' });
-      doc.font('Helvetica').fontSize(11).fillColor(COLORS.navy).text(inr(amountPaid), 455, 555, { width: 85, align: 'right' });
-      doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate).text('Total Received', 350, 586, { width: 90, align: 'right' });
-      doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.navy).text(inr(amountPaid), 455, 585, { width: 85, align: 'right' });
-
-      doc.roundedRect(330, 620, 220, 47, 8).fill(COLORS.soft);
-      doc.font('Helvetica').fontSize(10).fillColor(COLORS.slate)
-        .text(data.isGatewayTest ? 'Consultation fee still due' : 'Balance', 345, 638, { width: 113 });
-      doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.navy)
-        .text(inr(data.isGatewayTest ? basePrice : Math.max(0, basePrice - amountPaid)), 455, 636, { width: 85, align: 'right' });
-
-      if (data.isGatewayTest) {
-        doc.roundedRect(45, 695, pageW - 90, 57, 7).fill(COLORS.warning);
-        doc.font('Helvetica-Bold').fontSize(9).fillColor(COLORS.warningInk)
-          .text('TEST PAYMENT ONLY - NOT A CONSULTATION INVOICE', 58, 707, { width: pageW - 116 });
-        doc.font('Helvetica').fontSize(8).fillColor(COLORS.warningInk)
-          .text(`INR ${amountPaid.toFixed(2)} validates the payment gateway only. It does not pay for or confirm a consultation. Published consultation price: ${inr(basePrice)}.`, 58, 725, { width: pageW - 116, height: 23 });
-      }
-
-      doc.moveTo(30, 775).lineTo(pageW - 30, 775).lineWidth(1).strokeColor(COLORS.line).stroke();
-      doc.font('Helvetica').fontSize(9).fillColor(COLORS.slate)
-        .text('Thank you. Please retain this payment receipt for your records.', 45, 791, { width: pageW - 90, align: 'center' });
-      if (data.paymentId) {
-        doc.font('Helvetica').fontSize(7).fillColor(COLORS.slate)
-          .text(`Razorpay Payment ID: ${String(data.paymentId)}`, 45, 808, { width: pageW - 90, align: 'center', ellipsis: true });
-      }
-
       doc.end();
     } catch (error) {
       reject(error);
@@ -171,10 +402,7 @@ function generateInvoice(data) {
   });
 }
 
-/**
- * Builds the unpaid, non-GST payment request sent with the Razorpay link.
- * Kept separate from generateInvoice(), which remains the existing paid receipt.
- */
+/** Proforma invoice sent with the Razorpay payment link, before payment. */
 function generatePaymentRequestInvoice(data) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -193,138 +421,41 @@ function generatePaymentRequestInvoice(data) {
       if (!data.paymentUrl || !/^https:\/\//i.test(String(data.paymentUrl))) {
         throw new Error('A secure Razorpay payment URL is required for the invoice QR.');
       }
-
-      const qrBuffer = await QRCode.toBuffer(String(data.paymentUrl), {
-        type: 'png', errorCorrectionLevel: 'M', margin: 1, width: 220,
-        color: { dark: '#111111', light: '#FFFFFF' }
-      });
-      const doc = new PDFDocument({ size: 'A4', margin: 0, compress: true, info: {
-        Title: `Payment request ${safeText(data.invoiceNumber, 'Invoice')}`,
-        Author: 'Veshannastro',
-        Subject: 'Unpaid non-GST consultation payment request'
-      } });
-      const buffers = [];
-      doc.on('data', chunk => buffers.push(chunk));
-      doc.on('error', reject);
-      doc.on('end', () => resolve(Buffer.concat(buffers)));
-
-      const pageW = 595.28;
-      const ink = '#202020';
-      const muted = '#505050';
-      const rule = '#8A8A8A';
-      const left = 42;
-      const right = pageW - 42;
-      doc.rect(0, 0, pageW, 841.89).fill('#FFFFFF');
-      doc.font('Helvetica-Bold').fontSize(14).fillColor(ink)
-        .text('INVOICE / PAYMENT REQUEST', left, 27, { width: pageW - 84, align: 'center' });
-      doc.font('Helvetica-Bold').fontSize(13).fillColor(ink).text('Veshannastro', left + 8, 55);
-      doc.font('Helvetica').fontSize(9).fillColor(ink)
-        .text('Shashank Agrawal', left + 8, 73)
-        .text('Currency Tower, G.E. Road, VIP Road, Raipur, Chhattisgarh 492001', left + 8, 87)
-        .text('veshannastro7@gmail.com  |  +91 7646952745  |  veshannastro.co.in', left + 8, 101);
-      doc.font('Helvetica-Bold').fontSize(9).fillColor(ink).text('Invoice No.', 355, 58)
-        .text('Issue Date', 355, 80).text('Status', 355, 102);
-      doc.font('Helvetica').fontSize(9).fillColor(ink)
-        .text(safeText(data.invoiceNumber), 424, 58, { width: 125 })
-        .text(safeText(data.issueDate), 424, 80, { width: 125 })
-        .text('UNPAID - PAYMENT REQUEST', 424, 102, { width: 130 });
-
-      doc.moveTo(left, 124).lineTo(right, 124).lineWidth(0.6).strokeColor(rule).stroke();
-      doc.font('Helvetica-Bold').fontSize(9).fillColor(ink).text('Bill To', left + 8, 134);
-      doc.font('Helvetica').fontSize(9).fillColor(ink)
-        .text(safeText(data.customerName), left + 8, 150, { width: 250 })
-        .text(safeText(data.billingAddress), left + 8, 164, { width: 300, height: 36 })
-        .text(`Email: ${safeText(data.email)}`, left + 8, 202, { width: 280 })
-        .text(`Phone: ${safeText(data.phone)}`, left + 8, 216, { width: 280 })
-        .text(`Customer ID: ${safeText(data.customerId)}`, left + 8, 230, { width: 280 });
-      if (data.customerGstin) {
-        doc.font('Helvetica').fontSize(8).fillColor(ink)
-          .text(`Customer GSTIN (provided): ${String(data.customerGstin)}`, left + 8, 244, { width: 300, ellipsis: true });
-      }
-      doc.font('Helvetica-Bold').fontSize(9).fillColor(ink).text('Consultation', 355, 134);
-      doc.font('Helvetica').fontSize(9).fillColor(ink)
-        .text(safeText(data.serviceName), 355, 150, { width: 185, height: 28 })
-        .text(`Appointment: ${safeText(data.appointmentDate)}`, 355, 181, { width: 185, height: 30 });
-
-      // Plain bordered table, deliberately distinct from the existing receipt.
-      const tableX = left;
-      const tableY = 270;
-      const tableW = right - left;
-      const headerH = 28;
-      const rowH = 42;
-      const totalDiscount = websiteDiscount + additionalDiscount;
-      const websiteDiscountPercent = normalRate > 0
-        ? Number((websiteDiscount / normalRate * 100).toFixed(1))
-        : 0;
-      const discountCaption = websiteDiscount > 0 && additionalDiscount > 0
-        ? `Website ${websiteDiscountPercent}% + approved extra`
-        : websiteDiscount > 0
-          ? `Website offer (${websiteDiscountPercent}%)`
-          : additionalDiscount > 0 ? 'Approved additional discount' : '';
-      const rows = [
-        [safeText(data.serviceName), '1', inr(normalRate), totalDiscount > 0
-          ? `- ${inr(totalDiscount)}\n${discountCaption}` : '', inr(serviceTotal)]
-      ];
-      const cols = [tableX, tableX + 205, tableX + 255, tableX + 345, tableX + 425, tableX + tableW];
-      doc.rect(tableX, tableY, tableW, headerH).fill('#F1F1F1').strokeColor(rule).lineWidth(0.6).stroke();
-      for (const x of cols.slice(1, -1)) doc.moveTo(x, tableY).lineTo(x, tableY + headerH + rowH * rows.length).stroke();
-      doc.font('Helvetica-Bold').fontSize(8.5).fillColor(ink)
-        .text('Item & Description', cols[0] + 6, tableY + 9, { width: cols[1] - cols[0] - 12 })
-        .text('Qty', cols[1], tableY + 9, { width: cols[2] - cols[1], align: 'center' })
-        .text('Rate (INR)', cols[2] + 3, tableY + 9, { width: cols[3] - cols[2] - 6, align: 'right' })
-        .text('Discount', cols[3] + 3, tableY + 9, { width: cols[4] - cols[3] - 6, align: 'right' })
-        .text('Amount', cols[4] + 3, tableY + 9, { width: cols[5] - cols[4] - 9, align: 'right' });
-
-      rows.forEach((row, index) => {
-        const y = tableY + headerH + index * rowH;
-        doc.rect(tableX, y, tableW, rowH).strokeColor(rule).lineWidth(0.45).stroke();
-        doc.font('Helvetica').fontSize(8.5).fillColor(ink)
-          .text(row[0], cols[0] + 6, y + 9, { width: cols[1] - cols[0] - 12, ellipsis: true })
-          .text(row[1], cols[1], y + 9, { width: cols[2] - cols[1], align: 'center' })
-          .text(row[2], cols[2] + 3, y + 9, { width: cols[3] - cols[2] - 6, align: 'right' })
-          .text(row[4], cols[4] + 3, y + 9, { width: cols[5] - cols[4] - 9, align: 'right' });
-        const [discountAmount, discountLabel] = row[3].split('\n');
-        if (discountAmount) {
-          doc.font('Helvetica').fontSize(8).fillColor(ink)
-            .text(discountAmount, cols[3] + 3, y + 6, { width: cols[4] - cols[3] - 6, align: 'right' });
-        }
-        if (discountLabel) {
-          doc.font('Helvetica').fontSize(6.5).fillColor(muted)
-            .text(discountLabel, cols[3] + 3, y + 23, { width: cols[4] - cols[3] - 6, align: 'right', ellipsis: true });
-        }
+      const test = Boolean(data.isGatewayTest);
+      const payNow = test ? linkAmount : serviceTotal;
+      const qr = await QRCode.toBuffer(String(data.paymentUrl), {
+        type: 'png', errorCorrectionLevel: 'M', margin: 1, width: 240, color: { dark: '#000000', light: '#FFFFFF' }
       });
 
-      const totalY = tableY + headerH + rowH * rows.length + 20;
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(ink)
-        .text('Consultation total (INR)', 320, totalY, { width: 135, align: 'right' })
-        .text(inr(serviceTotal), 460, totalY, { width: 90, align: 'right' });
-      const testOnly = Boolean(data.isGatewayTest);
-      const paymentDue = testOnly ? linkAmount : serviceTotal;
-      const noteY = totalY + 48;
-      doc.rect(left + 6, noteY, tableW - 12, 104)
-        .fill(testOnly ? '#FFF7E8' : '#F7F7F7').strokeColor('#B8B8B8').lineWidth(0.5).stroke();
-      doc.font('Helvetica-Bold').fontSize(9).fillColor(ink)
-        .text(testOnly ? `Amount due on this link: ${inr(paymentDue)}` : `Amount due: ${inr(paymentDue)}`, left + 15, noteY + 10, { width: 330 });
-      doc.font('Helvetica').fontSize(7.5).fillColor(ink).text(
-        testOnly
-          ? `LIVE GATEWAY TEST ONLY. This INR ${linkAmount.toFixed(2)} charge does not pay toward the consultation, confirm the appointment, or reduce the consultation total. Consultation amount remains due: ${inr(serviceTotal)}.`
-          : 'Payment is pending. This document is not a payment receipt. Your appointment is finalized only after payment verification.',
-        left + 15, noteY + 26, { width: 350, height: testOnly ? 28 : 16 }
-      );
-      doc.image(qrBuffer, 438, noteY + 7, { fit: [82, 82], align: 'center', valign: 'center' });
-      doc.font('Helvetica').fontSize(7).fillColor(muted)
-        .text('Scan to open this Razorpay payment link', 420, noteY + 90, { width: 120, align: 'center' });
-
-      const signPath = path.join(__dirname, 'assets', 'shashank-signature.png');
-      const signY = 700;
-      doc.moveTo(left, signY).lineTo(right, signY).lineWidth(0.5).strokeColor(rule).stroke();
-      if (fs.existsSync(signPath)) doc.image(signPath, right - 155, signY + 9, { fit: [125, 44] });
-      doc.font('Helvetica-Bold').fontSize(8).fillColor(ink)
-        .text('Authorized Signatory', right - 155, signY + 57, { width: 125, align: 'center' });
-      doc.font('Helvetica').fontSize(8).fillColor(ink)
-        .text('Shashank Agrawal', right - 155, signY + 70, { width: 125, align: 'center' });
-      doc.font('Helvetica').fontSize(7.5).fillColor(muted)
-        .text('Payment request generated electronically. Please retain this document for your records.', left, 792, { width: tableW, align: 'center' });
+      const doc = newDoc(`Proforma invoice ${safeText(data.invoiceNumber, '')}`, 'Proforma invoice - payment pending', resolve, reject);
+      drawInvoice(doc, {
+        title: 'PROFORMA INVOICE',
+        invoiceNo: safeText(data.invoiceNumber, '-'),
+        date: safeText(data.issueDate, '-'),
+        status: 'UNPAID',
+        customerId: safeText(data.customerId, 'Allotted on payment'),
+        paymentTerms: '100% Advance - Online',
+        consultMode: 'Google Meet',
+        appointment: safeText(data.appointmentDate, 'To be scheduled'),
+        reference: String(data.paymentUrl).replace(/^https:\/\//i, ''),
+        deliveryTerms: 'Online consultation on Google Meet. The appointment is confirmed once the payment is verified; the meeting link is then sent on WhatsApp and e-mail.',
+        buyer: { name: data.customerName, address: data.billingAddress, phone: data.phone ? `+${String(data.phone).replace(/^\+/, '')}` : '', email: data.email, gstin: data.customerGstin },
+        item: { name: safeText(data.serviceName, 'Consultation'), detail: data.appointmentDate ? `Appointment: ${data.appointmentDate}` : '', rate: normalRate },
+        adjustments: discountRows(normalRate, websiteDiscount, additionalDiscount),
+        total: serviceTotal,
+        summary: [
+          ['Service\nValue', money(normalRate)],
+          ['Discount', money(websiteDiscount + additionalDiscount)],
+          ['Net\nAmount', money(serviceTotal)],
+          ['Payable\nNow', money(payNow)],
+          ['Balance\nDue', money(test ? serviceTotal : 0)]
+        ],
+        notice: test
+          ? `Gateway test only: this Razorpay link collects INR ${money(linkAmount)} to validate the live payment gateway. It does not pay for or confirm the consultation. Consultation amount due: ${inr(serviceTotal)}.`
+          : 'Payment pending. This proforma invoice is not a payment receipt; the paid invoice is sent automatically once Razorpay confirms your payment.',
+        payUrl: String(data.paymentUrl),
+        qr
+      });
       doc.end();
     } catch (error) {
       reject(error);
@@ -332,4 +463,4 @@ function generatePaymentRequestInvoice(data) {
   });
 }
 
-module.exports = { generateInvoice, generatePaymentRequestInvoice };
+module.exports = { generateInvoice, generatePaymentRequestInvoice, amountInWords, numberToWords };
