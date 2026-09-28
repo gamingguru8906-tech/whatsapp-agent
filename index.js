@@ -269,7 +269,7 @@ const tools = [{
     },
     {
       name: "verify_payment",
-      description: "Check if the user has completed their payment. Call this immediately when the user claims they have paid or says 'done' after receiving the payment link.",
+      description: "Check with Razorpay whether the customer has paid. Call it ONLY when the customer clearly says they have paid (e.g. 'I have paid', 'payment done', 'payment kar diya'), or replies a bare 'done'/'paid' right after your last message sent them a payment link. Never call it for questions like 'done?', for 'ok', or when your last message was about something else.",
       parameters: {
         type: SchemaType.OBJECT,
         properties: {},
@@ -337,7 +337,8 @@ CRITICAL RULES FOR WHATSAPP FORMATTING (MANDATORY):
 - SAY EVERYTHING ONCE (CRITICAL): write each sentence one time only. Never repeat a sentence, a question or a phrase inside the same message, and never copy a line you already sent earlier in the chat. If you need to ask again for something, ask it in fresh, different words.
 - Do not start two replies in a row with the same opener ("Got it", "Ji", "Sure", "Actually"). Vary how you begin, or just begin with the point.
 - PROFESSIONAL, CALM VOICE: warm but polished, like a senior client advisor at a respected consultancy. No filler, no over-excitement, no exaggerated praise; every message should read clean enough to be screenshotted.
-- NEVER mention screens, systems, records, databases, files or anything "showing" or "not showing" (never say "mere screen par show nahi ho raha", "system mein nahi dikh raha"). A real assistant simply remembers or asks. If the person says you already have their details but they are "Not known yet" above, apologise simply and ask once: "Sorry ji, woh mere paas note nahi hua. Ek baar full name aur date of birth bhej dijiye, main abhi save kar leti hoon." Then never ask for it again.
+- FOLLOW THE CONVERSATION (CRITICAL): read every message against YOUR LAST MESSAGE and the chat so far. A short or unclear message ("done?", "ok", "hmm", "?", "then?") continues the topic you were just discussing; never jump to a different topic (payment, booking, a new service) that was not being discussed. If it is still unclear, ask one short, natural question about it, e.g. "Ji, aap name correction ki details ke baare mein pooch rahe hain?"
+- NEVER mention screens, systems, records, databases, files or anything "showing" or "not showing" (never say "mere screen par show nahi ho raha", "system mein nahi dikh raha"). A real assistant simply remembers or asks. If the person says you already have their details but they are "Not known yet" above, apologise simply and ask once: "Sorry ji, woh mujh tak nahi pahuncha. Ek baar full name aur date of birth bhej dijiye." Then never ask for it again.
 
 PAYMENT VALIDATION PERIOD:
 - Payment links currently collect ₹1 only to validate the live payment gateway. This is not payment for a consultation and does not confirm a real consultation appointment.
@@ -397,7 +398,8 @@ NEVER INVENT ACTIONS OR DELIVERY STATUS (CRITICAL):
 - If the customer says an email, receipt, or Meet link has not arrived: do not guess, do not suggest spam folders, and do not move on to new booking questions. Call 'request_human_handoff' with the reason "Customer did not receive payment email/receipt" and tell them honestly that the team has been alerted and will personally follow up.
 
 FAKE PAYMENT VERIFICATION (CRITICAL SECURITY):
-- If the user says "I have paid", "Payment done", or "done" after receiving the payment link, IMMEDIATELY call the 'verify_payment' tool to actively check their payment status.
+- If the user clearly says they have paid ("I have paid", "Payment done", "payment kar diya"), or answers a bare "done"/"paid" right after YOUR LAST MESSAGE sent them the payment link, IMMEDIATELY call the 'verify_payment' tool to check their payment status.
+- Never bring up payment on your own. If no payment link was sent in your last message and the person does not mention paying, the message is about something else.
 - If the tool says the payment is NOT paid, reply politely: "Thank you! The bank gateway sometimes takes a few moments. It hasn't reflected on my end yet, but as soon as it clears, I will instantly send your payment receipt and Meet details right here!"
 - NEVER manually say the payment is complete unless the 'verify_payment' tool explicitly confirms it is 'paid'.
 
@@ -1580,6 +1582,7 @@ ${crm.readingContext(dbUser)}`;
 
       let result;
       let lastAiError = null;
+      let usedModelName = null;
 
       for (const modelName of uniqueModels) {
         let modelSucceeded = false;
@@ -1605,6 +1608,7 @@ ${crm.readingContext(dbUser)}`;
               }))
             });
             modelSucceeded = true;
+            usedModelName = modelName;
             console.log(`✅ Gemini (${modelName}) responded successfully.`);
             break;
           } catch (aiErr) {
@@ -1671,6 +1675,35 @@ ${crm.readingContext(dbUser)}`;
         }
 
         if (call.name === "verify_payment") {
+          // Guard: Gemini sometimes reads a short message ("done?") as a payment claim. Only check Razorpay
+          // when the customer actually said they paid; otherwise reply to what they really wrote.
+          const claimedPayment = isPaymentClaim(inboundText, /payment link|gateway test/i.test(latestAssistantText))
+            || /rzp\.io\/|\bplink_[A-Za-z0-9]+/i.test(inboundText);
+          if (!claimedPayment) {
+            console.log(`🛑 verify_payment skipped for ${from}: "${String(inboundText).slice(0, 60)}" is not a payment claim`);
+            sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: {
+              status: "not_checked",
+              note: "The customer has NOT said they paid. Do not mention payment. Reply only to what they actually wrote, continuing from your last message; if it is unclear, ask one short question about that topic."
+            } } }] });
+            let followUpText = '';
+            try {
+              const followUpModel = genAI.getGenerativeModel({
+                model: usedModelName,
+                systemInstruction: dynamicSystemPrompt,
+                tools,
+                toolConfig: { functionCallingConfig: { mode: 'NONE' } },
+                generationConfig: { temperature: 0.7 }
+              });
+              const followUp = await followUpModel.generateContent({
+                contents: sessions[from].map(turn => ({ ...turn, role: turn.role === 'function' ? 'user' : turn.role }))
+              });
+              followUpText = String(followUp.response.text() || '').replace(/\[SEND_MENU\]/g, '').trim();
+            } catch (e) {
+              console.error('Follow-up reply after skipped payment check failed:', e.message);
+            }
+            await sendCustomerText(from, followUpText || "Sorry ji, main theek se samjhi nahi. Aap kis baare mein pooch rahe the?");
+            return;
+          }
           const plId = await findActivePaymentLinkId(from, inboundText);
           if (!plId) {
             sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: "No active payment link found for this user." } } }] });
