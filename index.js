@@ -397,7 +397,8 @@ NEGOTIATE THE TIME SLOT & SCARCITY (CRITICAL FOR TRUST):
 - **STRICT Available Timings (NEVER deviate from this):**
   - Sessions are one hour. **Weekdays (Mon-Fri):** the session can START only between 7:30 PM and 9:30 PM IST (it must end by 10:30 PM). Never offer or accept a weekday time outside this.
   - **Weekends (Sat-Sun):** the session can START between 10:00 AM and 7:00 PM IST (it must end by 8:00 PM).
-  - The slot must be at least 2 hours from now.
+  - **Booking notice:** never within 2 hours. If the customer is booking before 11:00 AM IST, today's EVENING is possible (weekday 7:30-9:30 PM, weekend 4:00-7:00 PM). From 11:00 AM IST onward, nothing today: the earliest is tomorrow, EVENING if tomorrow is a weekday, MORNING (10:00 AM-12:00 PM start) if tomorrow is a weekend. Later days follow the normal hours.
+  - "Booking window" under REAL-TIME CONTEXT states exactly what is open right now. Offer the earliest open slot first.
 - Negotiate calmly and friendly. If they ask for a different time, check that it falls EXACTLY within the above rules, and agree on it. ONLY proceed to payment once the exact time and date is confirmed by them. If they suggest a time outside the rules, explicitly state the available time windows and ask them to choose from there.
 
 WHEN BOOKING & CREATING URGENCY:
@@ -517,17 +518,12 @@ function validatePreferredSlot(value) {
   }
   const start = new Date(iso);
   if (!Number.isFinite(start.getTime()) || start <= new Date()) throw customerFixable('That appointment time is invalid or has already passed. Agree a new time with the customer.');
-  if (start.getTime() - Date.now() < 2 * 60 * 60 * 1000) throw customerFixable('Consultations need at least 2 hours notice so there is time to pay and prepare. Offer a later time today or another day.');
+  if (start.getTime() - Date.now() < 2 * 60 * 60 * 1000) throw customerFixable(`We cannot hold a consultation within 2 hours. ${voiceAgent.slotRuleNow()} Offer a time that fits.`);
   const local = partsInTimezone(start);
   const minuteOfDay = Number(local.hour) * 60 + Number(local.minute);
-  const weekday = local.weekday;
-  const isWeekend = weekday === 'Sat' || weekday === 'Sun';
-  const startAllowed = isWeekend ? minuteOfDay >= 600 : minuteOfDay >= 1170;
-  const endAllowed = isWeekend ? minuteOfDay + 60 <= 1200 : minuteOfDay + 60 <= 1350;
-  if (!startAllowed || !endAllowed) {
-    throw customerFixable(isWeekend
-      ? 'Weekend sessions are one hour and can START between 10:00 AM and 7:00 PM IST. Offer a start time in that window.'
-      : 'Weekday sessions are one hour and can START between 7:30 PM and 9:30 PM IST. Offer a start time in that window.');
+  const win = voiceAgent.startWindowFor(`${local.year}-${local.month}-${local.day}`, new Date());
+  if (!win || minuteOfDay < win.from || minuteOfDay > win.to) {
+    throw customerFixable(`That start time is not available. ${voiceAgent.slotRuleNow()} Sessions are one hour. Offer a start time that fits.`);
   }
   return { start, end: new Date(start.getTime() + 60 * 60 * 1000), local };
 }
@@ -1719,6 +1715,7 @@ async function handleInboundMessage(msg) {
 
 --- REAL-TIME CONTEXT (FOR YOUR EYES ONLY) ---
 - Current Date & Time (India IST): ${currentTimeIST}
+- Booking window: ${voiceAgent.slotRuleNow()}
 - Client Status: ${dbUser.is_customer ? 'Returning Paid Client (Acknowledge with warmth and recognition)' : 'Seeker (not yet a paid client)'}
 - Total Messages Exchanged: ${dbUser.message_count || 1}
 
