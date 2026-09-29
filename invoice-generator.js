@@ -94,7 +94,7 @@ function generateInvoice(data) {
       // Invoice date, service slot, customer information.
       const rows = [
         ['Receipt Date', safeText(data.date)],
-        ['Customer ID', safeText(data.customerId, 'Allotted on confirmation')],
+        ['Invoice No.', safeText(data.invoiceNumber, '-')],
         ['Consultation', safeText(data.serviceName)],
         ['Requested Slot', safeText(data.appointmentDate, 'Not yet provided')]
       ];
@@ -171,7 +171,7 @@ function generateInvoice(data) {
   });
 }
 
-// ---------- Proforma invoice (sent with the payment link, before payment) ----------
+// ---------- Invoice (sent with the payment link, before payment) ----------
 // Classic Indian accounting layout (Tally style): ruled A4 sheet with seller and buyer on the left,
 // the reference grid on the right, the item table, amount in words, payment summary, declaration and signatory.
 
@@ -261,7 +261,7 @@ function value(doc, text, x, y, opts = {}) {
 
 /**
  * Draws one invoice page from a plain model:
- * { title, invoiceNo, date, status, customerId, paymentTerms, consultMode, appointment, reference,
+ * { title, invoiceNo, date, status, paymentTerms, consultMode, appointment, reference,
  *   deliveryTerms, buyer: { name, address, phone, email },
  *   item: { name, detail, rate }, adjustments: [{ label, rateText, amount }], total,
  *   summary: [[heading, value], ...], notice, payUrl, qr }
@@ -273,9 +273,10 @@ function drawInvoice(doc, m) {
 
   // ---- Right reference grid ----
   const cellH = 29;
+  // The invoice number is how every order is tracked, so it gets the full width of the first row.
   const grid = [
-    [['Invoice No.', m.invoiceNo], ['Dated', m.date]],
-    [['Customer ID', m.customerId], ['Mode/Terms of Payment', m.paymentTerms]],
+    [['Invoice No.', m.invoiceNo]],
+    [['Dated', m.date], ['Mode/Terms of Payment', m.paymentTerms]],
     [['Consultation Mode', m.consultMode], ['Appointment (IST)', m.appointment]],
     [['Reference No.', m.reference], ['Status', m.status]]
   ];
@@ -283,8 +284,9 @@ function drawInvoice(doc, m) {
     const y = top + i * cellH;
     row.forEach(([k, v], j) => {
       const x = j ? MID2 : MID;
+      const width = (row.length === 1 ? R - MID : (R - MID) / 2) - 8;
       label(doc, k, x + 4, y + 3);
-      value(doc, safeText(v, '-'), x + 4, y + 14, { width: (R - MID) / 2 - 8, height: 12, ellipsis: true, lineBreak: false });
+      value(doc, safeText(v, '-'), x + 4, y + 14, { width, height: 12, ellipsis: true, lineBreak: false });
     });
   });
   const gridBottom = top + grid.length * cellH;
@@ -318,7 +320,7 @@ function drawInvoice(doc, m) {
   const headBottom = Math.max(buyerBottom, termsBottom, gridBottom + 60);
   // grid rules
   for (let i = 1; i <= grid.length; i++) hline(doc, top + i * cellH, MID, R);
-  vline(doc, MID2, top, gridBottom);
+  vline(doc, MID2, top + cellH, gridBottom);
   vline(doc, MID, top, headBottom);
 
   // ---- Item table ----
@@ -451,10 +453,13 @@ function drawInvoice(doc, m) {
       link: /^https:\/\//.test(v) ? v : undefined });
     py += 13;
   }
-  doc.font('Helvetica-Bold').fontSize(9).text(`for ${SELLER.name}`, rx, py + 4, { width: rw, align: 'right' });
+  // Signature block, bottom right: "for Veshannastro", the signature right under it, then "Authorised Signatory".
   const signPath = path.join(__dirname, 'assets', 'shashank-signature.png');
-  if (fs.existsSync(signPath)) doc.image(signPath, R - 136, py + 18, { fit: [120, 36] });
-  doc.font('Helvetica').fontSize(8.5).text('Authorised Signatory', rx, blockBottom - 14, { width: rw, align: 'right' });
+  const signLabelY = blockBottom - 14;
+  const signTop = signLabelY - 40;
+  doc.font('Helvetica-Bold').fontSize(9).text(`for ${SELLER.name}`, rx, signTop - 13, { width: rw, align: 'right' });
+  if (fs.existsSync(signPath)) doc.image(signPath, R - 6 - 110, signTop, { fit: [110, 38], align: 'right', valign: 'bottom' });
+  doc.font('Helvetica').fontSize(8.5).text('Authorised Signatory', rx, signLabelY, { width: rw, align: 'right' });
 
   doc.font('Helvetica').fontSize(9).fillColor(INK)
     .text('This is a Computer Generated Invoice', L, blockBottom + 10, { width: W, align: 'center' });
@@ -477,7 +482,7 @@ function discountRows(normalRate, websiteDiscount, additionalDiscount) {
   ];
 }
 
-/** Proforma invoice sent with the Razorpay payment link, before payment. */
+/** Invoice sent with the Razorpay payment link, before payment. */
 function generatePaymentRequestInvoice(data) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -502,13 +507,12 @@ function generatePaymentRequestInvoice(data) {
         type: 'png', errorCorrectionLevel: 'M', margin: 1, width: 240, color: { dark: '#000000', light: '#FFFFFF' }
       });
 
-      const doc = newDoc(`Proforma invoice ${safeText(data.invoiceNumber, '')}`, 'Proforma invoice - payment pending', resolve, reject);
+      const doc = newDoc(`Invoice ${safeText(data.invoiceNumber, '')}`, 'Invoice - payment pending', resolve, reject);
       drawInvoice(doc, {
-        title: 'PROFORMA INVOICE',
+        title: 'INVOICE',
         invoiceNo: safeText(data.invoiceNumber, '-'),
         date: safeText(data.issueDate, '-'),
         status: 'UNPAID',
-        customerId: safeText(data.customerId, 'Allotted on payment'),
         paymentTerms: '100% Advance - Online',
         consultMode: 'Google Meet',
         appointment: safeText(data.appointmentDate, 'To be scheduled'),
@@ -527,7 +531,7 @@ function generatePaymentRequestInvoice(data) {
         ],
         notice: test
           ? `Gateway test only: this Razorpay link collects INR ${money(linkAmount)} to validate the live payment gateway. It does not pay for or confirm the consultation. Consultation amount due: ${inr(serviceTotal)}.`
-          : 'Payment pending. This proforma invoice is not a payment receipt; the paid invoice is sent automatically once Razorpay confirms your payment.',
+          : 'Payment pending. This invoice is not a payment receipt; the payment receipt is sent automatically once Razorpay confirms your payment.',
         payUrl: String(data.paymentUrl),
         qr
       });
