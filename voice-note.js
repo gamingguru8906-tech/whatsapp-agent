@@ -94,8 +94,15 @@ function toOggOpus(audio, ffmpegPath = require('ffmpeg-static')) {
     const out = []; const err = [];
     ff.stdout.on('data', d => out.push(d));
     ff.stderr.on('data', d => err.push(d));
-    ff.on('error', reject);
-    ff.on('close', code => code === 0 ? resolve(Buffer.concat(out)) : reject(new Error(`ffmpeg exit ${code}: ${Buffer.concat(err).toString().slice(0, 200)}`)));
+    // If ffmpeg exits early, writing to its input raises EPIPE; without a listener that crashes the whole server.
+    ff.stdin.on('error', e => { if (e.code !== 'EPIPE') reject(e); });
+    const killer = setTimeout(() => ff.kill('SIGKILL'), 30000);
+    ff.on('error', e => { clearTimeout(killer); reject(e); });
+    ff.on('close', code => {
+      clearTimeout(killer);
+      if (code === 0) resolve(Buffer.concat(out));
+      else reject(new Error(`ffmpeg exit ${code}: ${Buffer.concat(err).toString().slice(0, 200)}`));
+    });
     ff.stdin.end(audio);
   });
 }
