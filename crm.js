@@ -485,7 +485,11 @@ async function sendFollowups(deps) {
       WHERE phone=$1 AND followup_sent_for IS DISTINCT FROM last_inbound_at RETURNING *`, [phone]);
     const user = claimed.rows[0];
     if (!user) continue;
-    if (await sendCustomerText(phone, await writeFollowup(deps, user))) sent++;
+    if (await sendCustomerText(phone, await writeFollowup(deps, user))) {
+      sent++;
+      // Leads are asked once, right after the follow-up, whether they want festival reminders and updates.
+      if (deps.afterFollowup) await deps.afterFollowup(phone).catch(e => console.error('Opt-in ask failed:', e.message));
+    }
   }
   return sent;
 }
