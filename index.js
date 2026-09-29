@@ -70,7 +70,7 @@ const pendingLeadSheetUpdates = new Map(); // Coalesce bursts of inbound message
 setInterval(() => {
   const now = Date.now();
   for (const [id, time] of processedMessageIds.entries()) {
-    if (now - time > 10 * 60 * 1000) processedMessageIds.delete(id);
+    if (now - time > 24 * 60 * 60 * 1000) processedMessageIds.delete(id);
   }
 }, 5 * 60 * 1000);
 
@@ -97,7 +97,6 @@ if (DATABASE_URL) {
       pain_point TEXT,
       conversion_date TIMESTAMPTZ
     );
-    ALTER TABLE users ADD COLUMN IF NOT EXISTS customer_id TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS name TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS dob TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT;
@@ -114,7 +113,6 @@ if (DATABASE_URL) {
       phone TEXT NOT NULL,
       calendar_event_id TEXT NOT NULL,
       amount_paise BIGINT NOT NULL,
-      customer_id TEXT,
       customer_name TEXT,
       email TEXT,
       gender TEXT,
@@ -135,7 +133,6 @@ if (DATABASE_URL) {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS customer_id TEXT;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS customer_name TEXT;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS email TEXT;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS gender TEXT;
@@ -157,6 +154,7 @@ if (DATABASE_URL) {
       status TEXT NOT NULL,
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+    ALTER TABLE wa_payment_fulfillments ADD COLUMN IF NOT EXISTS steps JSONB NOT NULL DEFAULT '{}'::jsonb;
     CREATE TABLE IF NOT EXISTS wa_discount_offers (
       source_payment_link_id TEXT PRIMARY KEY,
       phone TEXT NOT NULL,
@@ -165,12 +163,29 @@ if (DATABASE_URL) {
       accepted_at TIMESTAMPTZ,
       used_at TIMESTAMPTZ
     );
-  `).then(() => crm.migrate(pool))
+  `).then(() => retireCustomerIds(pool))
+    .then(() => crm.migrate(pool))
     .then(() => voiceAgent.migrate(pool))
     .then(() => console.log('✅ PostgreSQL connected & table ready.'))
     .catch(e => console.error('❌ PostgreSQL setup error:', e.message));
 } else {
   console.warn('⚠️ No DATABASE_URL set — running without persistent CRM. Set DATABASE_URL env var for Neon PostgreSQL.');
+}
+
+// Customers are tracked by invoice number only. The old customer IDs (same VA/FY/MM-NNN format) seed the
+// invoice counter so no invoice number repeats one already given out, then the columns are removed.
+async function retireCustomerIds(pool) {
+  await pool.query('CREATE TABLE IF NOT EXISTS invoice_counters (prefix TEXT PRIMARY KEY, last_no INTEGER NOT NULL)');
+  for (const table of ['users', 'wa_payment_links']) {
+    const has = await pool.query("SELECT 1 FROM information_schema.columns WHERE table_name=$1 AND column_name='customer_id'", [table]);
+    if (!has.rows.length) continue;
+    await pool.query(String.raw`INSERT INTO invoice_counters (prefix, last_no)
+      SELECT substring(customer_id from '^(VA/\d{2}-\d{2}/\d{2}-)'), MAX(substring(customer_id from '(\d+)$')::int)
+      FROM ${table} WHERE customer_id ~ '^VA/\d{2}-\d{2}/\d{2}-\d{3,}$' GROUP BY 1
+      ON CONFLICT (prefix) DO UPDATE SET last_no = GREATEST(invoice_counters.last_no, EXCLUDED.last_no)`);
+    await pool.query(`ALTER TABLE ${table} DROP COLUMN customer_id`);
+    console.log(`🧾 Customer IDs removed from ${table}; invoice numbers continue after them.`);
+  }
 }
 
 async function getUser(phone) {
@@ -204,9 +219,9 @@ async function restoreProfileFromSheet(phone, user) {
     await pool.query(`UPDATE users SET profile_restored=true, name=COALESCE(NULLIF($2,''),name), email=COALESCE(NULLIF($3,''),email),
       dob=COALESCE(NULLIF($4,''),dob), tob=COALESCE(NULLIF($5,''),tob), pob=COALESCE(NULLIF($6,''),pob), gender=COALESCE(NULLIF($7,''),gender),
       billing_address=COALESCE(NULLIF($8,''),billing_address), pain_point=COALESCE(NULLIF($9,''),pain_point),
-      customer_id=COALESCE(NULLIF($10,''),customer_id), remedies_prescribed=COALESCE(NULLIF($11,''),remedies_prescribed) WHERE phone=$1`,
+      remedies_prescribed=COALESCE(NULLIF($10,''),remedies_prescribed) WHERE phone=$1`,
       [phone, p.name || '', p.email || '', p.dob || '', p.birthTime || '', p.birthPlace || '', p.gender || '',
-        p.billingAddress || '', p.concern || '', crm.isNewCustomerId(p.customerId) ? p.customerId : '', p.remedies || '']);
+        p.billingAddress || '', p.concern || '', p.remedies || '']);
     return p.name ? await getUser(phone) : null;
   } catch (e) {
     await pool.query('UPDATE users SET profile_restored=true WHERE phone=$1', [phone]).catch(() => {});
@@ -244,16 +259,16 @@ const tools = [{
           email: { type: SchemaType.STRING, description: "Email address for calendar invite and receipt" },
           billing_address: { type: SchemaType.STRING, description: "Customer-provided full billing address for the payment request invoice" },
           customer_gstin: { type: SchemaType.STRING, description: "Optional customer GSTIN if the customer asks to show it; the business is not GST-registered and must not charge GST" },
-          gender: { type: SchemaType.STRING, description: "Gender of the customer" },
-          dob: { type: SchemaType.STRING, description: "Date of birth" },
-          tob: { type: SchemaType.STRING, description: "Time of birth" },
-          pob: { type: SchemaType.STRING, description: "Place of birth" },
+          gender: { type: SchemaType.STRING, description: "Gender, only if the service's 'Details needed' lists it" },
+          dob: { type: SchemaType.STRING, description: "Date of birth, only if the service's 'Details needed' lists it" },
+          tob: { type: SchemaType.STRING, description: "Time of birth, ONLY for services whose 'Details needed' lists it (astrology/kundli). Leave empty otherwise; never guess" },
+          pob: { type: SchemaType.STRING, description: "Place of birth, ONLY for services whose 'Details needed' lists it (astrology/kundli). Leave empty otherwise; never guess" },
           service_name: { type: SchemaType.STRING, description: "Name of the service to book" },
           discount_offer: { type: SchemaType.STRING, description: "Use 'standard' normally, 'hardship' for repeated affordability concerns, or 'followup_10' only after the system records YES to its 48-hour offer. The server decides eligibility and amount." },
-          customer_pain_points_summary: { type: SchemaType.STRING, description: "A 2-3 sentence summary of the user's emotional state and core problem." },
+          customer_pain_points_summary: { type: SchemaType.STRING, description: "A 2-3 sentence summary of the user's emotional state and core problem. For relationship/divorce reports also include the partner's name and birth details the customer gave." },
           preferred_time_slot: { type: SchemaType.STRING, description: "The exact date and time explicitly agreed with the customer, formatted ISO-8601 with +05:30 offset (e.g. 2026-09-26T19:30:00+05:30). Never invent this." }
         },
-        required: ["customer_name", "email", "billing_address", "gender", "dob", "tob", "pob", "service_name", "preferred_time_slot"]
+        required: ["customer_name", "email", "billing_address", "service_name", "preferred_time_slot"]
       }
     },
     {
@@ -287,7 +302,7 @@ function refreshSystemPrompt() {
       servicesContext += `\nCATEGORY: ${cat.name}\n`;
       cat.services.forEach(svc => {
         const featuresStr = svc.features ? svc.features.join(', ') : 'N/A';
-      servicesContext += `- ${svc.t}: Published price ${svc.p}; regular/list price ${svc.was || svc.p}; published discount ${svc.off || 'none listed'}. ${svc.d} Features: ${featuresStr}\n`;
+      servicesContext += `- ${svc.t}: Published price ${svc.p}; regular/list price ${svc.was || svc.p}; published discount ${svc.off || 'none listed'}. ${svc.d} Features: ${featuresStr}. Details needed: ${describeServiceNeeds(serviceNeeds(svc, cat.name))}\n`;
       });
     });
   }
@@ -320,8 +335,8 @@ CRITICAL RULES FOR RESPECT & DEMEANOR:
 - HINGLISH CODE-MIXING (CRITICAL — a fully Hindi message sounds scripted and fake): EVERY message must mix English and Hindi INSIDE the same sentence, roughly half and half, like a real Delhi/Jaipur girl texting a friend. Examples:
   - "Aapka career thoda stuck feel ho raha hai na? Don't worry, it's just a phase."
   - "I totally get it, aise time pe mind bahut overthink karta hai."
-  - "Main abhi aapka slot check karti hoon, just give me a second."
-  - "Your booking is confirmed! Main aapko 30 minutes pehle remind kar dungi."
+  - "Aapke liye weekend better rahega ya weekday evening?"
+  - "Perfect, Saturday 11 AM aapke liye sahi hai? Then I'll share the payment link."
   - Use everyday English words where urban Indians do: booking, slot, payment, stress, tension, career, job, business, marriage, confirm, actually, honestly, basically, sure, okay, right, exactly, same, sorry, thank you, please, time, details.
   - NEVER write a message that is entirely Hindi, and never use heavy "shuddh" Hindi words (chinta, samay, vivah, dhanyavaad, kripya, samasya, samadhan, prateeksha) — say tension/worry, time, shaadi/marriage, thank you, please, problem, solution, wait.
   - Mirror the person: if they write mostly English, reply mostly English with a little Hindi; if they write in Hindi (even Devanagari), reply in Roman Hinglish that is still clearly mixed. Always write Hindi in Roman letters.
@@ -351,25 +366,26 @@ PHASE 1: THE ANALYSIS PHASE (Messages 1 to 3)
 - Your ONLY goal in the first 3 messages is to analyze their situation. DO NOT pitch anything.
 - If they are direct, you be indirect. Ask gentle probing questions. "Kab se chal raha hai ye?" or "I completely understand, that must be very difficult."
 - Pay extreme attention to their context: Are they old? Young? Do they have a stable job?
-- The Vulnerability Mirror Technique: Explicitly identify and mirror the exact emotional adjectives the user types. If they say "I feel suffocated in my job", reuse that exact word later: "When we feel suffocated, it's usually Saturn blocking..." This creates profound subconscious rapport.
+- The Vulnerability Mirror Technique: Explicitly identify and mirror the exact emotional adjectives the user types. If they say "I feel suffocated in my job", reuse that exact word later: "Jab kaam mein itna suffocated feel hota hai, it really drains you..." Never attach a planet or prediction to it.
 
 PHASE 2: UNDERSTAND THE CUSTOMER
 - Ask thoughtful questions about what the customer actually says. You may gently reflect what you sense they are feeling, always as a soft question (see READING THE PERSON below). Never state a guess as fact, and never present an astrological reading as fact without reliable chart information.
 
 PHASE 3: THE TARGETED PITCH
-- Once they validate your prediction, you route them correctly:
+- Once they agree with your gentle summary of their concern, you route them correctly (offer ONLY services listed in the LIVE SERVICES DATA, by their exact names):
   - **LIGHT CUSTOMERS (Relationships, standard issues):** Pitch them standard Astrology/Numerology Reports or basic consultations. 
-  - **HEAVY CUSTOMERS (Business owners, HNI, severe money blocks):** DO NOT pitch a standard consultation. Pitch the "Business Numerology & Astrology Pack". Tell them this covers: Logo Designing, Name Correction, deciding lucky Bank Account Numbers, Passwords, Phone numbers, choosing the right sales team based on Mulank/Bhagyank matching, and auspicious colors for staff t-shirts and office ambiance.
+  - **HEAVY CUSTOMERS (Business owners, HNI, severe money blocks):** pitch the business-related services that appear in the LIVE SERVICES DATA (for example business numerology, name correction or logo services, if listed), describing only the inclusions written there.
+  - Never ask for or accept passwords, OTPs, or full bank account / card numbers.
 - Explain relevant services accurately and without promising a diagnosis, guaranteed result, or remedy.
 - The Pre-Qualification Illusion (Reverse Pitching): Before offering the payment link, play slightly hard to get. Make them qualify themselves. Ask: "Before I generate the booking link, I need to ask: Are you genuinely ready to strictly follow the remedies provided? These consultations are only for serious individuals."
 - The "Tie-Down": Once they agree, get a micro-commitment. Ask: "If we could look at your chart and tell you exactly how to overcome this, would you be willing to actually follow the remedies?"
 
-THE DRIP-FEED & MICRO-READING (CRITICAL):
+THE DRIP-FEED (CRITICAL):
 - When they are interested, DO NOT ask for all their details at once.
 - First, just ask: "Great! First, I'll need just your full Name and Date of Birth to check."
 - Wait for them to answer. 
 - Do not create a reading from a birth date alone. If an actual chart or image is unclear, say so and request the needed birth details or human review.
-- Immediately after the micro-reading, ask for the rest: "To get the exact planetary alignments and book the session, I'll also need your Time of birth, Place of birth, Gender, and your Email ID (for the receipt and meet link)."
+- Then ask only for what the chosen service needs, exactly as listed under "Details needed" for that service in the services data, one or two details per message, plus their Email ID (for the receipt and Meet link). Numerology, name correction and number services need ONLY name and date of birth: never ask their time or place of birth. Time of birth, place of birth and gender are only for astrology/kundli services. Palmistry needs clear photos of both palms.
 
 IF THEY SEND AN IMAGE:
 - If they send a kundli, birth chart, horoscope, or palm photo: describe only visible, legible information and distinguish observation from interpretation. Never invent placements or claim certainty.
@@ -377,15 +393,15 @@ IF THEY SEND AN IMAGE:
 
 NEGOTIATE THE TIME SLOT & SCARCITY (CRITICAL FOR TRUST):
 - NEVER generate a payment link until you have explicitly agreed on a time slot.
-- Never claim scarcity or availability unless the live calendar check confirms it. Negotiate politely only within the stated hours.
+- Never claim scarcity or say a slot is free or taken; you cannot see the calendar. Negotiate politely only within the stated hours; the server holds the slot when the link is created.
 - **STRICT Available Timings (NEVER deviate from this):**
-  - **Weekdays (Mon-Fri):** ONLY 7:30 PM to 10:30 PM IST. Never offer or accept a weekday time outside this window.
-  - **Weekends (Sat-Sun):** Any time between 10:00 AM and 8:00 PM.
+  - Sessions are one hour. **Weekdays (Mon-Fri):** the session can START only between 7:30 PM and 9:30 PM IST (it must end by 10:30 PM). Never offer or accept a weekday time outside this.
+  - **Weekends (Sat-Sun):** the session can START between 10:00 AM and 7:00 PM IST (it must end by 8:00 PM).
+  - The slot must be at least 2 hours from now.
 - Negotiate calmly and friendly. If they ask for a different time, check that it falls EXACTLY within the above rules, and agree on it. ONLY proceed to payment once the exact time and date is confirmed by them. If they suggest a time outside the rules, explicitly state the available time windows and ask them to choose from there.
-- Explain that the system checks and holds the agreed slot while payment is pending; the booking is confirmed after verified payment.
 
 WHEN BOOKING & CREATING URGENCY:
-- Once you have Name, Email, Gender, DOB, Time, Place AND you have agreed on a preferred time slot — call 'create_booking_payment' tool.
+- Once you have the details listed under "Details needed" for that service, the email, the billing address AND an agreed time slot — call 'create_booking_payment'. Never fill a field the customer did not give you.
 - Collect the customer's full billing address before creating the payment request. Never ask for a GSTIN and never mention GST or tax to the customer; the document you send before payment is simply the invoice.
 - Write their actual problem in 'customer_pain_points_summary' so we know what they're going through.
 - Quote the live catalogue price first. Never calculate or promise a discount or provide a price to the tool. For genuine affordability hardship after discussing the price, set discount_offer to "hardship" and let the server decide eligibility and amount. A 10% offer may be used only after the system's 48-hour follow-up and explicit customer acceptance.
@@ -407,14 +423,52 @@ IF THEY SAY IT'S EXPENSIVE OR HESITATE (FEEL, FELT, FOUND):
 - Handle objections using the 'Feel, Felt, Found' framework. Acknowledge their concern, relate to it, and pivot to value.
 - Acknowledge the concern warmly, explain the service and price honestly, and let the customer decide without pressure or unverified claims.
 
-IF THEY'RE ANGRY/UPSET/SUICIDAL:
-- Call 'request_human_handoff' immediately. Don't try to handle it yourself.
+IF THEY'RE EXTREMELY ANGRY OR ABUSIVE, INSIST ON SPEAKING TO THE OWNER, OR MENTION SELF-HARM:
+- Call 'request_human_handoff'. For ordinary sadness, worry or frustration, do NOT hand off: listen and comfort them yourself.
 - If they talk about ending their life or hurting themselves, do not sell anything. Reply with deep care, tell them they are not alone, and gently share Tele-MANAS: 14416 (free, 24x7, India) and ask them to reach someone they trust right now.
 
 TESTIMONIALS & REFERRALS:
 - Share a testimonial or success story only if it is present in verified business material and can be quoted accurately.
 - Always refer to our work naturally as "us" or "we" without ever mentioning the word "Veshannastro". (e.g. "our priority is your peace of mind").
 ${servicesContext}`;
+}
+
+// Booking problems the customer can fix (wrong slot, missing detail, unknown service): Kamala asks them
+// instead of saying "try again later".
+function firstNameOf(name) {
+  return String(name || '').trim().split(/\s+/)[0] || '';
+}
+
+function customerFixable(message) {
+  const error = new Error(message);
+  error.customerFixable = true;
+  return error;
+}
+
+// Birth details each kind of service really needs. Numerology works from the name and date of birth only;
+// time and place of birth are needed only for astrology (kundli) work; palmistry needs palm photos.
+function serviceNeeds(service, categoryName = '') {
+  const text = `${categoryName} ${service?.t || ''}`.toLowerCase();
+  if (/palm|hast/.test(text)) return { fields: [], extra: 'clear photos of both palms (sent in the chat)' };
+  if (/vastu/.test(text)) return { fields: [], extra: '' };
+  if (/divorce|separation|compatib|relationship|partner|gun milan|matchmak|matching/.test(text)) {
+    return { fields: ['dob', 'tob', 'pob', 'gender'], extra: "partner's full name and date, time and place of birth" };
+  }
+  if (/numero|name correct|name spell|lucky number|mobile number|phone number|logo|signature|brand name|business name|mulank|bhagyank/.test(text)) {
+    return { fields: ['dob'], extra: '' };
+  }
+  if (/astro|kundli|kundali|horoscope|jyotish|vedic|birth chart|natal|gun milan|matchmak|matching|dasha|transit|gochar|varshphal|solar return/.test(text)) {
+    return { fields: ['dob', 'tob', 'pob', 'gender'], extra: '' };
+  }
+  return { fields: ['dob'], extra: '' };
+}
+
+const NEED_LABELS = { dob: 'date of birth', tob: 'time of birth', pob: 'place of birth', gender: 'gender' };
+
+function describeServiceNeeds(needs) {
+  const list = ['full name', ...needs.fields.map(f => NEED_LABELS[f]), 'email'];
+  if (needs.extra) list.push(needs.extra);
+  return list.join(', ') + (needs.fields.includes('tob') ? '' : ' (do NOT ask time or place of birth)');
 }
 
 function findPublishedService(requestedName) {
@@ -430,16 +484,11 @@ function findPublishedService(requestedName) {
         if (!Number.isFinite(price) || price <= 0) throw new Error(`Published price is missing or invalid for ${service.t}`);
         const normalPrice = parsePrice(service.was);
         const listPrice = Number.isFinite(normalPrice) && normalPrice >= price ? normalPrice : price;
-        return { ...service, price, listPrice, websiteDiscount: Math.max(0, listPrice - price) };
+        return { ...service, price, listPrice, websiteDiscount: Math.max(0, listPrice - price), needs: serviceNeeds(service, category.name) };
       }
     }
   }
-  throw new Error('Please choose a service exactly as listed on the website; I could not match that service to the published catalogue.');
-}
-
-function stableCustomerId(phone, existingId) {
-  if (existingId) return String(existingId);
-  return `VA-${crypto.createHash('sha256').update(String(phone)).digest('hex').slice(0, 10).toUpperCase()}`;
+  throw customerFixable('That service name does not match the website list. Offer the closest services from the LIVE SERVICES DATA by their exact names and ask which one they want.');
 }
 
 function hasRepeatedHardshipEvidence(phone) {
@@ -463,11 +512,12 @@ function partsInTimezone(date, timeZone = 'Asia/Kolkata') {
 
 function validatePreferredSlot(value) {
   const iso = String(value || '').trim();
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+05:30$/.test(iso)) {
-    throw new Error('I need the customer-confirmed date and start time in India time before generating payment.');
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?\+05:30$/.test(iso)) {
+    throw customerFixable('I need the customer-confirmed date and start time in India time before generating payment.');
   }
   const start = new Date(iso);
-  if (!Number.isFinite(start.getTime()) || start <= new Date()) throw new Error('That appointment time is invalid or has already passed.');
+  if (!Number.isFinite(start.getTime()) || start <= new Date()) throw customerFixable('That appointment time is invalid or has already passed. Agree a new time with the customer.');
+  if (start.getTime() - Date.now() < 2 * 60 * 60 * 1000) throw customerFixable('Consultations need at least 2 hours notice so there is time to pay and prepare. Offer a later time today or another day.');
   const local = partsInTimezone(start);
   const minuteOfDay = Number(local.hour) * 60 + Number(local.minute);
   const weekday = local.weekday;
@@ -475,9 +525,9 @@ function validatePreferredSlot(value) {
   const startAllowed = isWeekend ? minuteOfDay >= 600 : minuteOfDay >= 1170;
   const endAllowed = isWeekend ? minuteOfDay + 60 <= 1200 : minuteOfDay + 60 <= 1350;
   if (!startAllowed || !endAllowed) {
-    throw new Error(isWeekend
-      ? 'Weekend appointments are available from 10:00 AM to 8:00 PM IST.'
-      : 'Weekday appointments are available from 7:30 PM to 10:30 PM IST.');
+    throw customerFixable(isWeekend
+      ? 'Weekend sessions are one hour and can START between 10:00 AM and 7:00 PM IST. Offer a start time in that window.'
+      : 'Weekday sessions are one hour and can START between 7:30 PM and 9:30 PM IST. Offer a start time in that window.');
   }
   return { start, end: new Date(start.getTime() + 60 * 60 * 1000), local };
 }
@@ -510,20 +560,29 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
   source = 'WhatsApp Direct Booking',
   deliver = async ({ mediaId, invoiceName, caption }) => {
     if (!(await sendWhatsAppDocument(phone, mediaId, invoiceName, caption))) throw new Error('WhatsApp did not accept the invoice-and-payment-link message.');
+    await crm.saveTurn(pool, phone, 'model', caption).catch(() => {}); // so the chat history shows the link was sent
     return 'sent';
   }
 } = {}) {
   let calendarHold = null;
   let createdPaymentLink = null;
+  let delivered = null;
   try {
     const missing = required.filter(key => !String(args[key] || '').trim());
-    if (missing.length) throw new Error(`Missing required booking details: ${missing.join(', ')}`);
+    if (missing.length) throw customerFixable(`Missing booking details: ${missing.join(', ')}. Ask the customer for them.`);
     if (!GOOGLE_APPS_SCRIPT_URL) throw new Error('Email and Google Sheets confirmation are not configured yet, so I cannot safely generate a payment link.');
     if (!GOOGLE_APPS_SCRIPT_SECRET) throw new Error('Google Sheets authentication is not configured yet, so I cannot safely generate a payment request.');
     if (!RAZORPAY_WEBHOOK_SECRET) throw new Error('Razorpay verification is not fully configured, so I cannot safely generate a payment link.');
     if (!pool) throw new Error('Persistent payment tracking is required before creating a payment link.');
     if (!ADMIN_PHONE_NUMBER) throw new Error('Owner payment notifications are not configured yet, so I cannot safely generate a payment link.');
     const publishedService = findPublishedService(args.service_name);
+    const missingForService = publishedService.needs.fields.filter(key => !String(args[key] || '').trim()
+      && !(key === 'gender' && source !== 'WhatsApp Direct Booking'));
+    if (missingForService.length) {
+      throw customerFixable(`For ${publishedService.t} I still need the customer's ${missingForService.map(k => NEED_LABELS[k]).join(', ')}. Ask for it before booking.`);
+    }
+    // Never carry birth time/place into a service that does not use them (e.g. numerology).
+    if (!publishedService.needs.fields.includes('tob')) { args = { ...args, tob: '', pob: '' }; }
     const slot = validatePreferredSlot(args.preferred_time_slot);
     let additionalDiscountPercent = 0;
     let acceptedDiscountSourceId = null;
@@ -546,7 +605,23 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
     // It does not collect the service price or apply discounts.
     const finalAmount = GATEWAY_VALIDATION_CHARGE_INR;
     const amountPaise = Math.round(finalAmount * 100);
-    const customerId = crm.isNewCustomerId(dbUser.customer_id) ? dbUser.customer_id : '';
+    // A new link replaces any earlier unpaid one for this number: cancel it and free its slot,
+    // so the customer cannot pay twice or keep two slots blocked.
+    if (pool && razorpayClient) {
+      const older = await pool.query("SELECT payment_link_id, calendar_event_id FROM wa_payment_links WHERE phone=$1 AND status='request_created'", [phone])
+        .catch(() => ({ rows: [] }));
+      for (const row of older.rows) {
+        try {
+          await razorpayClient.paymentLink.cancel(row.payment_link_id);
+        } catch (_) {
+          continue; // already paid or expired: leave it alone
+        }
+        await pool.query("UPDATE wa_payment_links SET status='superseded', updated_at=NOW() WHERE payment_link_id=$1", [row.payment_link_id]).catch(() => {});
+        if (row.calendar_event_id) await postAppsScript({ target: 'calendar_cancel', eventId: row.calendar_event_id }).catch(() => {});
+        if (pendingPayments[row.payment_link_id]) { clearTimeout(pendingPayments[row.payment_link_id]); delete pendingPayments[row.payment_link_id]; }
+        if (activePaymentLinks[phone] === row.payment_link_id) delete activePaymentLinks[phone];
+      }
+    }
     calendarHold = await reserveCalendarSlot(slot, {
       serviceName: publishedService.t,
       customerName: args.customer_name,
@@ -558,12 +633,12 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
       amount: amountPaise,
       currency: "INR",
       accept_partial: false,
-      expire_by: Math.floor(Date.now() / 1000) + (12 * 60 * 60), // Expires in 12 hours
+      // Expires after 12 hours, or 30 minutes before the slot if that is sooner (never less than 16 minutes).
+      expire_by: Math.floor(Math.max(Date.now() + 16 * 60 * 1000, Math.min(Date.now() + 12 * 60 * 60 * 1000, slot.start.getTime() - 30 * 60 * 1000)) / 1000),
       description: `INR 1 gateway validation only - not a consultation payment. ${String(publishedService.t)}`.substring(0, 2048),
       reference_id: `wa_booking_${Date.now()}`,
       notify: { sms: false, email: false },
       notes: {
-        customer_id: customerId,
         customer_name: String(args.customer_name || 'Seeker').substring(0, 40),
         email: String(args.email || '').substring(0, 60),
         gender: String(args.gender || '').substring(0, 20),
@@ -591,17 +666,16 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
 
     await updateUserPainPoint(phone, String(args.customer_pain_points_summary || '').substring(0, 240));
 
-    const generatedId = createdPaymentLink.notes.customer_id;
-    const invoiceNumber = `PR-${new Date().getFullYear()}-${createdPaymentLink.id.replace(/[^A-Za-z0-9]/g, '').slice(-8).toUpperCase()}`;
+    // One invoice number per order (VA/26-27/09-001); it is how every booking is tracked.
+    const invoiceNumber = await crm.allocateInvoiceNumber(pool);
     const issueDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' });
-    const invoiceName = `${invoiceNumber}.pdf`;
+    const invoiceName = `Invoice_${invoiceNumber.replace(/\//g, '-')}.pdf`;
     const appointmentDate = slot.start.toLocaleString('en-IN', {
       timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short'
     }) + ' IST';
     const invoiceBuffer = await generatePaymentRequestInvoice({
       invoiceNumber,
       issueDate,
-      customerId: generatedId || 'Allotted on payment',
       customerName: args.customer_name,
       email: args.email,
       phone: phone,
@@ -622,10 +696,10 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
         `UPDATE users SET name=COALESCE(NULLIF($1,''),name), email=COALESCE(NULLIF($2,''),email),
           dob=COALESCE(NULLIF($3,''),dob), tob=COALESCE(NULLIF($4,''),tob), pob=COALESCE(NULLIF($5,''),pob),
           gender=COALESCE(NULLIF($6,''),gender), billing_address=COALESCE(NULLIF($7,''),billing_address),
-          customer_gstin=COALESCE(NULLIF($8,''),customer_gstin), customer_id=COALESCE(NULLIF($9,''),customer_id)
-          WHERE phone=$10`,
+          customer_gstin=COALESCE(NULLIF($8,''),customer_gstin)
+          WHERE phone=$9`,
         [args.customer_name || '', args.email || '', args.dob || '', args.tob || '', args.pob || '',
-          args.gender || '', args.billing_address || '', args.customer_gstin || '', generatedId, phone]
+          args.gender || '', args.billing_address || '', args.customer_gstin || '', phone]
       );
     }
 
@@ -633,21 +707,23 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
     activePaymentLinks[phone] = createdPaymentLink.id;
     if (pool) await pool.query(
       `INSERT INTO wa_payment_links (
-        payment_link_id, phone, calendar_event_id, amount_paise, customer_id, customer_name,
+        payment_link_id, phone, calendar_event_id, amount_paise, customer_name,
         email, gender, dob, tob, pob, billing_address, customer_gstin, service_name,
         appointment_start, normal_rate_paise, website_discount_paise, additional_discount_paise,
         service_total_paise, request_invoice_number, status
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,'request_created')
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,'request_created')
       ON CONFLICT (payment_link_id) DO UPDATE SET status='request_created', updated_at=NOW()`,
-      [createdPaymentLink.id, phone, calendarHold.event.id, amountPaise, generatedId, args.customer_name || '',
+      [createdPaymentLink.id, phone, calendarHold.event.id, amountPaise, args.customer_name || '',
         args.email || '', args.gender || '', args.dob || '', args.tob || '', args.pob || '', args.billing_address || '',
         args.customer_gstin || '', publishedService.t, slot.start, Math.round(publishedService.listPrice * 100),
         Math.round(publishedService.websiteDiscount * 100), Math.round(additionalDiscount * 100),
         Math.round(serviceTotal * 100), invoiceNumber]
     );
+    await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, calendarHold.meetLink || null])
+      .catch(e => console.error('Saving the Meet link failed:', e.message));
     await postAppsScript({
       target: 'payment_request', payment_link_id: createdPaymentLink.id,
-      invoice_number: invoiceNumber, customerId: generatedId,
+      invoice_number: invoiceNumber, invoiceNumber,
       name: args.customer_name, phone: phone, email: args.email,
       billingAddress: args.billing_address, customerGstin: args.customer_gstin || '',
       gender: args.gender || '', dob: args.dob || '', birthTime: args.tob || '', birthPlace: args.pob || '',
@@ -661,20 +737,31 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
     if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
     const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}`;
     const delivery = await deliver({ mediaId, invoiceName, caption, link, customerName: args.customer_name, serviceName: publishedService.t, appointmentDate, slot });
+    const refId = createdPaymentLink.id;
+    delivered = { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
+    // The customer has the link now: nothing below may cancel it.
     if (acceptedDiscountSourceId && pool) {
-      await pool.query(`UPDATE wa_discount_offers SET used_at=NOW(), status='used' WHERE source_payment_link_id=$1 AND status='accepted'`, [acceptedDiscountSourceId]);
+      await pool.query(`UPDATE wa_discount_offers SET used_at=NOW(), status='used' WHERE source_payment_link_id=$1 AND status='accepted'`, [acceptedDiscountSourceId])
+        .catch(e => console.error('Discount offer update failed:', e.message));
     }
 
-    // 2-Hour Abandoned Cart Timer
-    const refId = createdPaymentLink.id;
+    // One gentle nudge 2 hours later, only if this link is still the unpaid, current one.
     if (delivery === 'sent') pendingPayments[refId] = setTimeout(async () => {
-      if (pendingPayments[refId]) {
-        await sendTextMessage(phone, `Hi ${args.customer_name}, just checking whether you'd still like to proceed with the appointment. Let me know if you'd like help with the payment link.`);
-        delete pendingPayments[refId];
+      delete pendingPayments[refId];
+      try {
+        const row = pool ? (await pool.query('SELECT status FROM wa_payment_links WHERE payment_link_id=$1', [refId])).rows[0] : null;
+        if (row && row.status !== 'request_created') return;
+        await sendCustomerText(phone, `Hi ${firstNameOf(args.customer_name)} ji, bas check kar rahi thi ki aap appointment ke saath aage badhna chahenge? Payment link mein koi help chahiye ho toh bataiye.`);
+      } catch (e) {
+        console.error('Payment nudge failed:', e.message);
       }
     }, 2 * 60 * 60 * 1000);
-    return { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
+    return delivered;
   } catch (e) {
+    if (delivered) {
+      console.error('A step after sending the payment link failed (link kept):', e.message);
+      return delivered;
+    }
     if (createdPaymentLink?.id) {
       try { await razorpayClient.paymentLink.cancel(createdPaymentLink.id); } catch (_) { /* link may already be paid or expired */ }
       if (pool) await pool.query("UPDATE wa_payment_links SET status='delivery_failed',updated_at=NOW() WHERE payment_link_id=$1", [createdPaymentLink.id]).catch(() => {});
@@ -698,7 +785,7 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
   }
 }
 
-const IDEMPOTENT_APPS_SCRIPT_TARGETS = new Set(['calendar_finalize', 'booking', 'customer_update', 'lead_update', 'allocate_customer_id', 'profile_upsert']);
+const IDEMPOTENT_APPS_SCRIPT_TARGETS = new Set(['calendar_finalize', 'booking', 'customer_update', 'lead_update', 'profile_upsert']);
 
 function appsScriptFailure(target, error) {
   const status = error?.response?.status;
@@ -760,7 +847,8 @@ function queueLeadSheetUpdate(data) {
   }
   entry.latest = data;
   if (entry.timer) clearTimeout(entry.timer);
-  if (!entry.inFlight) scheduleLeadSheetUpdate_(phone, entry, 750);
+  // Batch a burst of messages into one sheet write: Apps Script is slow and serialises requests.
+  if (!entry.inFlight) scheduleLeadSheetUpdate_(phone, entry, 10000);
 }
 
 function scheduleLeadSheetUpdate_(phone, entry, delayMs) {
@@ -771,9 +859,10 @@ function scheduleLeadSheetUpdate_(phone, entry, delayMs) {
     const snapshot = entry.latest;
     entry.inFlight = true;
     try {
-      await postAppsScript(snapshot, { timeoutMs: 15000, maxAttempts: 2 });
+      // One attempt with a longer wait: a timed-out write usually still lands, so retrying only adds load.
+      await postAppsScript(snapshot, { timeoutMs: 30000, maxAttempts: 1 });
     } catch (error) {
-      console.error(`Sheet Lead Update Error target=lead_update: ${error.message}`);
+      console.warn(`Lead sheet update skipped (Apps Script slow): ${error.message}`);
     } finally {
       entry.inFlight = false;
       if (entry.latest !== snapshot) scheduleLeadSheetUpdate_(phone, entry, 250);
@@ -830,6 +919,44 @@ async function findActivePaymentLinkId(phone, inboundText = '') {
   return paymentLinkId;
 }
 
+// One answer for "I have paid": check Razorpay, fulfil if paid, and say the right thing, including
+// when the payment was already confirmed earlier (no false "no link found" alerts to the owner).
+async function checkPaymentForCustomer(from, claimText) {
+  const recentlyConfirmed = async () => {
+    if (!pool) return null;
+    const res = await pool.query(`SELECT l.appointment_start FROM wa_payment_links l
+      JOIN wa_payment_fulfillments f ON f.payment_link_id = l.payment_link_id
+      WHERE l.phone=$1 AND f.status='fulfilled' AND l.created_at > NOW() - INTERVAL '7 days'
+      ORDER BY l.created_at DESC LIMIT 1`, [from]).catch(() => ({ rows: [] }));
+    return res.rows[0] || null;
+  };
+  const alreadyReply = row => `Aapka payment pehle hi confirm ho chuka hai ji. Receipt aur Meet link upar bhej diye the${row?.appointment_start ? ` (slot: ${crm.istDateTime(row.appointment_start)})` : ''}.`;
+  const plId = await findActivePaymentLinkId(from, claimText);
+  if (!plId) {
+    const done = await recentlyConfirmed();
+    if (done) return { status: 'already_confirmed', reply: alreadyReply(done) };
+    await notifyOwner(`Payment check needs attention: +${from} says they paid but no pending payment link was found. Customer message: ${String(claimText || '').slice(0, 200)}`, 'Payment check needs attention');
+    return { status: 'no_link', reply: "Mujhe aapke number se juda koi pending payment link nahi mil raha. Maine team ko bata diya hai, woh Razorpay mein check karke aapse contact karenge." };
+  }
+  const before = pool
+    ? (await pool.query('SELECT status FROM wa_payment_fulfillments WHERE payment_link_id=$1', [plId]).catch(() => ({ rows: [] }))).rows[0]?.status
+    : null;
+  try {
+    const verification = await fetchAndFulfillVerifiedPayment(plId);
+    if (!verification.paid) {
+      return { status: 'unpaid', reply: "Maine abhi check kiya, payment abhi reflect nahi hua hai. Kabhi kabhi bank gateway thoda time leta hai. Razorpay confirm karte hi receipt aur Meet details yahin aa jayenge." };
+    }
+    if (!verification.fulfilled) {
+      return { status: 'paid_processing', reply: "Razorpay par aapka payment verify ho gaya hai. Receipt aur confirmation abhi process ho rahe hain, thodi der mein yahin aa jayenge." };
+    }
+    if (before === 'fulfilled') return { status: 'already_confirmed', reply: alreadyReply(null) };
+    return { status: 'paid_and_fulfilled', reply: '' }; // fulfilment itself just sent the receipt and confirmation
+  } catch (error) {
+    console.error('Payment check failed:', error.message);
+    return { status: 'error', reply: "Abhi payment check karne mein thodi dikkat aa rahi hai. Maine payment complete mark nahi kiya hai; Razorpay confirm karte hi confirmation yahin aa jayega." };
+  }
+}
+
 async function fetchAndFulfillVerifiedPayment(paymentLinkId) {
   const result = await verifyAndFulfillPaymentLinkViaWebhook(paymentLinkId);
   if (!result.paid) return result;
@@ -870,7 +997,7 @@ async function fetchLiveServices() {
     if (match) {
       const sandbox = {};
       vm.createContext(sandbox);
-      vm.runInContext(`var parsed = ${match[1]};`, sandbox);
+      vm.runInContext(`var parsed = ${match[1]};`, sandbox, { timeout: 500 }); // a broken page cannot hang the server
       liveData = sandbox.parsed || [];
       console.log(`Successfully fetched ${liveData.length} categories from live website.`);
       refreshSystemPrompt();
@@ -981,11 +1108,16 @@ app.post('/razorpay-webhook', async (req, res) => {
     if (event.event === 'payment_link.paid') {
       const pl = event.payload.payment_link.entity;
       if (processedPayments.has(pl.id)) return res.sendStatus(200);
+      // Links made elsewhere (e.g. by hand in the Razorpay dashboard) are not ours to fulfil; retrying cannot help.
+      if (!String(pl.reference_id || '').startsWith('wa_booking_')) {
+        console.log(`Razorpay link ${pl.id} was not created by the bot; ignoring.`);
+        return res.sendStatus(200);
+      }
       if (!pool) throw new Error('Persistent payment tracking is unavailable; refusing non-idempotent fulfillment.');
       const claim = await pool.query(`
         INSERT INTO wa_payment_fulfillments (payment_link_id,status) VALUES ($1,'processing')
         ON CONFLICT (payment_link_id) DO UPDATE SET status='processing',updated_at=NOW()
-        WHERE wa_payment_fulfillments.status <> 'fulfilled'
+        WHERE wa_payment_fulfillments.status NOT IN ('fulfilled','manual_review')
           AND (wa_payment_fulfillments.status <> 'processing' OR wa_payment_fulfillments.updated_at < NOW() - INTERVAL '5 minutes')
         RETURNING payment_link_id`, [pl.id]);
       if (!claim.rows.length) {
@@ -1001,20 +1133,40 @@ app.post('/razorpay-webhook', async (req, res) => {
       const price = Number(notes.price);
       const payment = event.payload?.payment?.entity;
       const actualAmountPaise = Number(payment?.amount_paid ?? payment?.amount);
+      // A mismatch never fixes itself on retry: park it for a manual check, tell the owner once, stop retries.
+      const needsManualReview = async reason => {
+        await pool.query("UPDATE wa_payment_fulfillments SET status='manual_review', updated_at=NOW() WHERE payment_link_id=$1", [pl.id]);
+        await notifyOwner(`Payment ${pl.id} (+${notes.phone || 'unknown'}) needs a manual check: ${reason}. Nothing was sent to the customer. Please check Razorpay.`, 'Payment needs a manual check');
+        return res.sendStatus(200);
+      };
       if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(actualAmountPaise) || Math.round(price * 100) !== actualAmountPaise) {
-        throw new Error(`Payment amount mismatch or missing payment entity for ${pl.id}; refusing to confirm booking/invoice.`);
+        return needsManualReview('the amount paid does not match the link amount');
       }
+      let storedLinkRow = null;
       if (pool) {
-        const storedLink = await pool.query(`SELECT amount_paise,phone,calendar_event_id,customer_id,service_name,
+        const storedLink = await pool.query(`SELECT amount_paise,phone,calendar_event_id,service_name,meet_link,
           request_invoice_number,appointment_start FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id]);
         const stored = storedLink.rows[0];
+        storedLinkRow = stored || null;
         if (!stored || Number(stored.amount_paise) !== actualAmountPaise || stored.phone !== notes.phone
-          || stored.calendar_event_id !== notes.calendar_event_id || stored.customer_id !== notes.customer_id
+          || stored.calendar_event_id !== notes.calendar_event_id
           || stored.service_name !== notes.service_name || !stored.request_invoice_number
           || Math.abs(new Date(stored.appointment_start).getTime() - new Date(notes.time_slot).getTime()) > 1000) {
-          throw new Error(`Stored booking/payment details do not match Razorpay link ${pl.id}.`);
+          return needsManualReview('the stored booking details do not match the Razorpay link');
         }
       }
+
+      // Each step below runs once per payment, even if Razorpay retries after a partial failure.
+      // Recording a step also refreshes the lease, so a slow run is not taken over by a retry.
+      const doneSteps = (await pool.query('SELECT steps FROM wa_payment_fulfillments WHERE payment_link_id=$1', [pl.id])).rows[0]?.steps || {};
+      const once = async (name, fn) => {
+        if (Object.prototype.hasOwnProperty.call(doneSteps, name)) return doneSteps[name];
+        const value = await fn();
+        doneSteps[name] = value === undefined ? true : value;
+        await pool.query(`UPDATE wa_payment_fulfillments SET steps = COALESCE(steps,'{}'::jsonb) || jsonb_build_object($2::text, $3::jsonb), updated_at=NOW()
+          WHERE payment_link_id=$1`, [pl.id, name, JSON.stringify(doneSteps[name])]);
+        return doneSteps[name];
+      };
 
       // 1. Clear Abandoned Cart Timer
       const plId = pl.id;
@@ -1042,47 +1194,44 @@ app.post('/razorpay-webhook', async (req, res) => {
         ? `₹1 gateway validation only. This is not a confirmed consultation booking and does not pay the consultation fee.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nRequested appointment (test only): ${notes.time_slot || ''}`
         : `Confirmed Veshannastro Consultation Booking.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nAppointment time: ${notes.time_slot || ''}\nQuery: ${notes.summary || ''}`;
 
-      const finalizedCalendar = await postAppsScript({
-        target: 'calendar_finalize',
-        eventId: notes.calendar_event_id,
-        summary: eventSummary,
-        description: eventDescription
+      // Confirm the Calendar hold. A slow Apps Script is retried; a hold that is gone or has no Meet link never
+      // fixes itself, so the payment still completes (with the Meet link saved at booking, if any) and the owner is told.
+      const invoiceNumber = storedLinkRow?.request_invoice_number || pl.id.replace('plink_', '').toUpperCase();
+      const calendarResult = await once('calendar', async () => {
+        try {
+          const finalized = await postAppsScript({
+            target: 'calendar_finalize',
+            eventId: notes.calendar_event_id,
+            summary: eventSummary,
+            description: eventDescription
+          });
+          if (finalized.meetLink) return finalized.meetLink;
+          return { failed: 'Google Calendar returned no Meet link' };
+        } catch (error) {
+          if (/ECONNABORTED|ETIMEDOUT|ECONNRESET|timeout|temporarily|status code 5\d\d/i.test(error.message || '')) throw error;
+          return { failed: error.message };
+        }
       });
-      const meetLink = finalizedCalendar.meetLink;
-      if (!meetLink) throw new Error(`Calendar hold ${notes.calendar_event_id} has no Google Meet URL; manual fulfillment is required.`);
-
-      // Customer ID (VA/FY/MM-NNN): a new customer gets one at their first paid booking and keeps it for life.
-      // Apps Script owns the counter so WhatsApp and website bookings share one sequence.
-      let customerId = crm.isNewCustomerId(notes.customer_id) ? notes.customer_id : '';
-      if (!customerId && pool) {
-        const known = await pool.query('SELECT customer_id FROM users WHERE phone=$1', [phone]);
-        if (crm.isNewCustomerId(known.rows[0]?.customer_id)) customerId = known.rows[0].customer_id;
+      const meetLink = typeof calendarResult === 'string' ? calendarResult : (storedLinkRow?.meet_link || '');
+      if (typeof calendarResult !== 'string') {
+        await once('calendar_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })} IST), but the Google Calendar event could not be confirmed: ${calendarResult.failed}. ${meetLink ? `The Meet link saved at booking was sent to them: ${meetLink}` : 'Please add the slot to your calendar and send them a Google Meet link.'}`, 'Calendar needs attention').then(() => true));
       }
-      if (!customerId) {
-        const allocated = await postAppsScript({ target: 'allocate_customer_id', phone, name: customerName, email: notes.email || '' });
-        customerId = String(allocated.customerId || '');
-        if (!crm.isNewCustomerId(customerId)) throw new Error(`Customer ID allocation failed for ${pl.id}`);
-      }
-      if (pool) {
-        await pool.query('UPDATE users SET customer_id=$1 WHERE phone=$2', [customerId, phone]);
-        await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [pl.id, meetLink]);
-      }
+      if (pool && meetLink) await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [pl.id, meetLink]);
 
       // 4. Generate PDF Invoice
       let invoiceBase64 = null;
       let invoiceBuffer = null;
       const safeName = (customerName || 'Customer').replace(/[^a-zA-Z0-9_-]/g, '_');
-      const invoiceName = `Invoice_${safeName}_${pl.id.replace(/[^a-zA-Z0-9]/g, '').slice(-10)}.pdf`;
+      const invoiceName = `Receipt_${String(invoiceNumber).replace(/[^A-Za-z0-9-]/g, '-')}.pdf`;
       try {
         invoiceBuffer = await generateInvoice({
-          invoiceNumber: pl.id.replace('plink_', '').toUpperCase(),
-          customerId: customerId,
+          invoiceNumber,
           customerName: customerName,
           email: notes.email || '',
           phone: phone,
           serviceName: serviceName,
           amountPaid: price,
-          basePrice: Number(notes.list_price || price),
+          basePrice: Number(notes.service_total || notes.list_price || price),
           isGatewayTest: isGatewayTest,
           date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
           appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
@@ -1099,9 +1248,9 @@ app.post('/razorpay-webhook', async (req, res) => {
         const bookedAt = new Date(notes.time_slot);
         if (!Number.isFinite(bookedAt.getTime())) throw new Error(`Invalid booked time in payment notes for ${pl.id}`);
 
-        await postAppsScript({
+        await once('booking_sheet', () => postAppsScript({
           target: "booking",
-          customerId: customerId,
+          invoiceNumber,
           name: customerName,
           email: notes.email || '',
           gender: notes.gender || '',
@@ -1125,12 +1274,12 @@ app.post('/razorpay-webhook', async (req, res) => {
           invoiceName: invoiceName,
           invoicePdfName: invoiceName,
           isGatewayTest: isGatewayTest,
-          basePrice: Number(notes.list_price || price)
-        });
+          basePrice: Number(notes.service_total || notes.list_price || price)
+        }).then(() => true));
 
-        await postAppsScript({
+        await once('customer_sheet', () => postAppsScript({
           target: "customer_update",
-          customerId: customerId,
+          invoiceNumber,
           name: customerName,
           phone: phone,
           email: notes.email || '',
@@ -1145,37 +1294,48 @@ app.post('/razorpay-webhook', async (req, res) => {
           service: serviceName,
           bookingDate: bookedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'medium', timeStyle: 'short' }),
           countBooking: !isGatewayTest
-        });
+        }).then(() => true));
       }
 
       // 6. Send WhatsApp Confirmation
       if (phone) {
         const agreedSlotMsg = notes.time_slot && notes.time_slot !== "Not specified" ? `\n\nRequested test slot: ${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST.` : '';
         if (!invoiceBuffer) throw new Error(`Invoice buffer missing for paid link ${pl.id}`);
-        const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
-        if (!mediaId || !(await sendWhatsAppDocument(phone, mediaId, invoiceName, notes.gateway_test === 'true'
-          ? '₹1 gateway test receipt - not a consultation payment.'
-          : 'Payment receipt and consultation details.'))) {
-          throw new Error(`WhatsApp receipt delivery failed for paid link ${pl.id}`);
-        }
         const slotText = `${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST`;
         const msg = notes.gateway_test === 'true'
-          ? `Razorpay has verified the ₹${price.toFixed(2)} gateway test payment. This is only a payment-system test; it does not pay for or confirm your ${serviceName} consultation.${agreedSlotMsg}\n\nCustomer ID: ${customerId}\nTest Google Meet link: ${meetLink}\n\nYour clearly labelled test receipt is attached. I will also remind you here 30 minutes before the slot.`
-          : `Payment verified. Thank you, ${customerName}. We received ₹${price.toFixed(2)} for ${serviceName}.${agreedSlotMsg}\n\nYour booking is confirmed for ${slotText}.\nCustomer ID: ${customerId}\nGoogle Meet: ${meetLink}\n\nYour payment receipt is attached. I will remind you here 30 minutes before your consultation.`;
-        if (!(await sendCustomerText(phone, msg))) throw new Error(`WhatsApp payment confirmation text failed for ${pl.id}`);
-        // Personal thank-you voice note from Kamala (best effort; never blocks fulfillment).
-        if (GEMINI_API_KEY) voiceNote.sendThankYouVoiceNote({
+          ? `Razorpay has verified the ₹${price.toFixed(2)} gateway test payment. This is only a payment-system test; it does not pay for or confirm your ${serviceName} consultation.${agreedSlotMsg}\n\nInvoice No.: ${invoiceNumber}\nTest Google Meet link: ${meetLink || 'will be shared here before the slot'}\n\nYour clearly labelled test receipt is attached. I will also remind you here 30 minutes before the slot.`
+          : `Payment verified. Thank you, ${customerName}. We received ₹${price.toFixed(2)} for ${serviceName}.\n\nYour booking is confirmed for ${slotText}.\nInvoice No.: ${invoiceNumber}\nGoogle Meet: ${meetLink || 'will be shared here before your consultation'}\n\nYour payment receipt is attached. I will remind you here 30 minutes before your consultation.`;
+        // WhatsApp only allows free messages within 24 hours of the customer's last message. If the receipt or
+        // confirmation cannot go out (e.g. they paid from a template after a phone call), the owner is told once
+        // with everything needed to send it by hand, instead of Razorpay retrying the whole booking for a day.
+        const receiptSent = await once('receipt', async () => {
+          const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
+          const ok = Boolean(mediaId) && await sendWhatsAppDocument(phone, mediaId, invoiceName, notes.gateway_test === 'true'
+            ? '₹1 gateway test receipt - not a consultation payment.'
+            : 'Payment receipt and consultation details.');
+          if (ok) await crm.saveTurn(pool, phone, 'model', 'Payment receipt bheji.').catch(() => {});
+          return Boolean(ok);
+        });
+        const confirmationSent = await once('confirmation', async () => Boolean(await sendCustomerText(phone, msg)));
+        if (!receiptSent || !confirmationSent) {
+          await once('delivery_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${slotText}), but WhatsApp would not deliver the ${!receiptSent ? 'receipt' : 'confirmation'} (their 24-hour window is probably closed). The email confirmation has gone out. Please message them the Meet link yourself: ${meetLink}`, 'Payment confirmation not delivered on WhatsApp').then(() => true));
+        }
+        // Personal thank-you voice note from Kamala (best effort; never blocks fulfillment; sent once).
+        if (GEMINI_API_KEY && confirmationSent && !doneSteps.voice_note) {
+          await once('voice_note', async () => true);
+          voiceNote.sendThankYouVoiceNote({
           genAI, modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', apiKey: GEMINI_API_KEY,
           uploadMedia: uploadWhatsAppMedia, token: WA_TOKEN, phoneNumberId: PHONE_NUMBER_ID, normalize: normalizeWhatsAppNumber
         }, { phone, name: customerName, service: serviceName, when: slotText, concern: notes.summary || '', isTest: isGatewayTest })
           .then(script => { console.log(`🎙️ Voice note sent to ${phone}`); crm.saveTurn(pool, phone, 'model', `[Voice note] ${script}`).catch(() => {}); })
           .catch(e => console.error('Voice note failed:', e.message));
-        await notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
-          + `When: ${slotText}\nService: ${serviceName}\nCustomer ID: ${customerId}\nPhone: +${phone}\n`
+        }
+        await once('owner_alert', async () => notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
+          + `When: ${slotText}\nService: ${serviceName}\nInvoice No.: ${invoiceNumber}\nPhone: +${phone}\n`
           + `Gender: ${notes.gender || 'Not provided'}\nDOB: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\n`
           + `Concern: ${notes.summary || 'Not recorded'}\n`
           + `Reading: ${crm.readingTag(await getUser(phone).catch(() => null)) || 'Not enough chat yet'}\nAmount received: ₹${price.toFixed(2)}${isGatewayTest ? ` (service price ₹${Number(notes.list_price || 0).toFixed(2)} still unpaid)` : ''}\n`
-          + `Google Meet: ${meetLink}\nYour Google Calendar will also remind you 30 minutes before.`, `Consultation booked: ${customerName}, ${slotText}`);
+          + `Google Meet: ${meetLink}\nYour Google Calendar will also remind you 30 minutes before.`, `Consultation booked: ${customerName}, ${slotText}`).then(() => true));
       }
       if (pool) {
         await pool.query(`UPDATE wa_payment_links SET status=$2,razorpay_payment_id=$3,updated_at=NOW() WHERE payment_link_id=$1`, [pl.id, notes.gateway_test === 'true' ? 'gateway_test_paid' : 'paid', payment?.id || null]);
@@ -1183,6 +1343,7 @@ app.post('/razorpay-webhook', async (req, res) => {
           ON CONFLICT (payment_link_id) DO UPDATE SET status='fulfilled',updated_at=NOW()`, [pl.id]);
       }
       processedPayments.add(pl.id);
+      if (phone && activePaymentLinks[phone] === pl.id) delete activePaymentLinks[phone];
     } else if (event.event === 'payment_link.expired') {
       const pl = event.payload?.payment_link?.entity;
       const eventId = pl?.notes?.calendar_event_id;
@@ -1198,9 +1359,13 @@ app.post('/razorpay-webhook', async (req, res) => {
   } catch(e) {
     console.error("Razorpay Webhook Error:", e.message);
     const failedLinkId = req.body?.payload?.payment_link?.entity?.id;
+    const previous = failedLinkId && pool
+      ? (await pool.query('SELECT status FROM wa_payment_fulfillments WHERE payment_link_id=$1', [failedLinkId]).catch(() => ({ rows: [] }))).rows[0]?.status
+      : null;
     if (failedLinkId && pool) await pool.query(`INSERT INTO wa_payment_fulfillments (payment_link_id,status) VALUES ($1,'failed')
       ON CONFLICT (payment_link_id) DO UPDATE SET status='failed',updated_at=NOW()`, [failedLinkId]).catch(() => {});
-    if (ADMIN_PHONE_NUMBER) await sendTextMessage(ADMIN_PHONE_NUMBER, `Payment received but automatic fulfillment needs attention. Payment link: ${failedLinkId || 'unknown'}. Error: ${e.message}. Verify payment status in Razorpay before taking manual action.`);
+    // Alert once per failure streak, not on every Razorpay retry.
+    if (previous !== 'failed') await notifyOwner(`Payment received but automatic fulfillment needs attention. Payment link: ${failedLinkId || 'unknown'}. Error: ${e.message}. It will retry automatically; verify in Razorpay before taking manual action.`, 'Payment fulfilment failed').catch(() => {});
     return res.status(500).send('Payment fulfillment failed; retry requested');
   }
 });
@@ -1219,18 +1384,62 @@ app.post('/webhook', async (req, res) => {
     console.error(`RawBody Length: ${rawBodyLen}`);
     return res.sendStatus(401);
   }
-  res.sendStatus(200); 
-  try {
-    const messages = req.body?.entry?.[0]?.changes?.[0]?.value?.messages;
-    if (!messages || messages.length === 0) {
-      console.log('📭 Webhook received but no messages (status update or echo).');
-      return;
+  res.sendStatus(200);
+  const incoming = [];
+  for (const entry of req.body?.entry || []) {
+    for (const change of entry.changes || []) {
+      for (const m of change.value?.messages || []) incoming.push(m);
     }
+  }
+  if (!incoming.length) {
+    console.log('📭 Webhook received but no messages (status update or echo).');
+    return;
+  }
+  for (const msg of incoming) {
+    // Meta redelivers messages (e.g. around cold starts): handle each message id once, before anything replies.
+    if (msg.id) {
+      if (processedMessageIds.has(msg.id)) {
+        console.log(`🔁 Duplicate message ${msg.id} ignored.`);
+        continue;
+      }
+      processedMessageIds.set(msg.id, Date.now());
+    }
+    enqueueForPhone(msg.from, () => handleInboundMessage(msg));
+  }
+});
 
-    const msg  = messages[0];
-    const from = msg.from;
+// One person's messages are handled one at a time, in order. Two quick messages used to run in parallel,
+// which gave two replies and could break the chat history (e.g. a message landing mid-booking).
+const phoneQueues = new Map();
+const lastSeenAt = new Map();
+setInterval(() => {
+  const cutoff = Date.now() - 2 * 60 * 60 * 1000;
+  for (const [phone, at] of lastSeenAt) {
+    if (at < cutoff && !phoneQueues.has(phone)) { delete sessions[phone]; lastSeenAt.delete(phone); }
+  }
+}, 30 * 60 * 1000).unref();
+function enqueueForPhone(phone, job) {
+  const previous = phoneQueues.get(phone) || Promise.resolve();
+  const run = previous.then(job).catch(e => console.error('Message handling failed:', e.message));
+  phoneQueues.set(phone, run);
+  run.finally(() => { if (phoneQueues.get(phone) === run) phoneQueues.delete(phone); });
+}
 
-    const inboundText = msg.type === 'text' ? String(msg.text?.body || '').trim() : '';
+async function handleInboundMessage(msg) {
+  const from = msg.from;
+  lastSeenAt.set(from, Date.now());
+  try {
+    const inboundText = msg.type === 'text' ? String(msg.text?.body || '').trim()
+      : msg.type === 'button' ? String(msg.button?.text || '').trim()
+      : msg.type === 'interactive' ? String(msg.interactive?.button_reply?.title || msg.interactive?.list_reply?.title || '').trim() : '';
+
+    // Bring back the saved conversation after a restart (Render sleeps when idle), before anything reads it.
+    let lastTurnAt = 'ongoing';
+    if (!sessions[from] || sessions[from].length === 0) {
+      const saved = await crm.loadRecentTurns(pool, from, 16).catch(() => []);
+      lastTurnAt = saved.length ? saved[saved.length - 1].createdAt : null;
+      sessions[from] = saved.map(({ role, parts }) => ({ role, parts }));
+    }
     if (pool) await pool.query(`INSERT INTO users (phone, last_inbound_at) VALUES ($1, NOW())
       ON CONFLICT (phone) DO UPDATE SET last_inbound_at=NOW()`, [from]).catch(e => console.error('Inbound record failed:', e.message));
     if (/^(stop|unsubscribe|opt\s*out)$/i.test(inboundText)) {
@@ -1254,21 +1463,12 @@ app.post('/webhook', async (req, res) => {
       }
     }
     const latestAssistantText = (sessions[from] || []).slice().reverse()
-      .find(turn => turn.role === 'model')?.parts?.map(part => part.text || '').join(' ') || '';
+      .find(turn => turn?.role === 'model')?.parts?.map(part => part.text || '').join(' ') || '';
     if (/^yes$/i.test(inboundText) && /reply\s+YES|reply YES|follow-up reminder/i.test(latestAssistantText)) {
       if (pool) await pool.query(`INSERT INTO users (phone,marketing_opt_in,marketing_opt_out) VALUES ($1,true,false)
         ON CONFLICT (phone) DO UPDATE SET marketing_opt_in=true,marketing_opt_out=false,last_contact=NOW()`, [from]);
       await sendTextMessage(from, 'Thank you, noted! I will keep you updated.');
       return;
-    }
-
-    // Deduplicate incoming messages from Meta retries
-    if (msg.id) {
-      if (processedMessageIds.has(msg.id)) {
-        console.log(`🔁 Duplicate message ${msg.id} ignored.`);
-        return;
-      }
-      processedMessageIds.set(msg.id, Date.now());
     }
 
     console.log(`📩 MESSAGE RECEIVED from ${from} | type: ${msg.type}`);
@@ -1286,14 +1486,6 @@ app.post('/webhook', async (req, res) => {
     const restoredUser = await restoreProfileFromSheet(from, dbUser);
     if (restoredUser) dbUser = restoredUser;
 
-    // Bring back the saved conversation after a restart (Render sleeps when idle).
-    let lastTurnAt = 'ongoing';
-    if (!sessions[from] || sessions[from].length === 0) {
-      const saved = await crm.loadRecentTurns(pool, from, 16).catch(() => []);
-      lastTurnAt = saved.length ? saved[saved.length - 1].createdAt : null;
-      sessions[from] = saved.map(({ role, parts }) => ({ role, parts }));
-    }
-
     // Links promised on a phone call go out once the caller messages us (their "Hi" opens WhatsApp's 24-hour window).
     if (await hasPendingCallMessages(from)) {
       const greetingOnly = /^(hi+|hello|hey|hlo|namaste|namaskar)[\s.!]*$/i.test(inboundText);
@@ -1306,7 +1498,8 @@ app.post('/webhook', async (req, res) => {
     }
 
     // Reply to "OK" after the pre-consultation check-in without involving the AI.
-    if (pool && /^(ok|okay|k|ji|haan|han|yes|done|thik hai|theek hai|👍)[.! ]*$/i.test(inboundText)) {
+    if (pool && /^(ok|okay|k|ji|haan|han|yes|done|thik hai|theek hai|👍)[.! ]*$/i.test(inboundText)
+      && /reply OK so the reminder/i.test(latestAssistantText)) {
       const checkin = await pool.query(`SELECT appointment_start FROM wa_payment_links WHERE phone=$1
         AND checkin_sent_at > NOW() - INTERVAL '4 hours' AND reminder_sent_at IS NULL AND appointment_start > NOW()
         ORDER BY checkin_sent_at DESC LIMIT 1`, [from]);
@@ -1333,17 +1526,25 @@ app.post('/webhook', async (req, res) => {
       const command = msg.text.body.trim();
       const lowerCmd = command.toLowerCase();
       
-      if (lowerCmd === '/unpause') {
-        if (pool) await pool.query('UPDATE users SET is_paused = false WHERE phone = $1', [from]);
-        await sendTextMessage(from, "AI unpaused. You can now chat normally.");
-        return;
-      }
-
-      if (lowerCmd === '/reset') {
-        if (pool) await pool.query('DELETE FROM users WHERE phone = $1', [from]);
-        if (sessions[from]) delete sessions[from];
-        await sendTextMessage(from, "✅ Session and memory completely wiped. Send 'hi' to start fresh!");
-        return;
+      const isOwner = from === normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER);
+      const target = normalizeWhatsAppNumber((command.split(/\s+/)[1] || '').replace(/\D/g, '')) || from;
+      if (lowerCmd.startsWith('/unpause') || lowerCmd.startsWith('/reset')) {
+        // Owner-only, and it acts on the number given ("/unpause 9198xxxxxxx"); customers get a normal reply instead.
+        if (!isOwner) {
+          sessions[from] = sessions[from] || [];
+        } else if (lowerCmd.startsWith('/unpause')) {
+          if (pool) await pool.query('UPDATE users SET is_paused = false WHERE phone = $1', [target]);
+          await sendTextMessage(from, `Kamala will reply to +${target} again.`);
+          return;
+        } else {
+          if (pool) {
+            await pool.query('DELETE FROM wa_messages WHERE phone = $1', [target]);
+            await pool.query('UPDATE users SET name=NULL, dob=NULL, tob=NULL, pob=NULL, gender=NULL, email=NULL, pain_point=NULL, is_paused=false WHERE phone=$1', [target]);
+          }
+          delete sessions[target];
+          await sendTextMessage(from, `Chat history and saved details cleared for +${target}.`);
+          return;
+        }
       }
 
       if (lowerCmd === '/stats') {
@@ -1370,12 +1571,15 @@ app.post('/webhook', async (req, res) => {
         // Background task
         (async () => {
           try {
-            const users = await pool.query("SELECT phone FROM users WHERE is_customer = false AND is_paused = false");
+            // Only people who have not opted out and whose 24-hour WhatsApp window is open can get free-form text.
+            const users = await pool.query(`SELECT phone FROM users WHERE is_customer = false AND is_paused = false
+              AND COALESCE(marketing_opt_out,false) = false AND last_inbound_at > NOW() - INTERVAL '23 hours 50 minutes'`);
+            let delivered = 0;
             for (const user of users.rows) {
-              await sendTextMessage(user.phone, broadcastMsg);
+              if (await sendTextMessage(user.phone, broadcastMsg)) delivered++;
               await new Promise(r => setTimeout(r, 1500)); // Rate limit
             }
-            await sendTextMessage(from, `✅ Broadcast completed to ${users.rows.length} leads.`);
+            await sendTextMessage(from, `✅ Broadcast delivered to ${delivered} of ${users.rows.length} leads (only people who messaged in the last 24 hours and did not opt out can receive it).`);
           } catch (e) {
             await sendTextMessage(from, `❌ Broadcast failed: ${e.message}`);
           }
@@ -1388,7 +1592,12 @@ app.post('/webhook', async (req, res) => {
     await markAsRead(msg.id);
 
     // Ignore if Human Handoff activated
-    if (dbUser.is_paused) return;
+    if (dbUser.is_paused) {
+      // Kamala handed this person to the team: pass their message on so it is never silently dropped.
+      await crm.saveTurn(pool, from, 'user', inboundText || `[${msg.type}]`).catch(() => {});
+      await notifyOwner(`💬 +${from} wrote (Kamala is paused for them): ${inboundText || `[${msg.type}]`}\n\nReply to them yourself, or send /unpause ${from} to hand them back to Kamala.`, 'Message from a customer waiting for you');
+      return;
+    }
 
     const paymentClaim = isPaymentClaim(inboundText, /payment link|gateway test/i.test(latestAssistantText))
       || /rzp\.io\/|\bplink_[A-Za-z0-9]+/i.test(inboundText);
@@ -1396,35 +1605,9 @@ app.post('/webhook', async (req, res) => {
       if (!sessions[from]) sessions[from] = [];
       sessions[from].push({ role: 'user', parts: [{ text: inboundText }] });
       crm.saveTurn(pool, from, 'user', inboundText).catch(() => {});
-      const paymentLinkId = await findActivePaymentLinkId(from, inboundText);
-      if (!paymentLinkId) {
-        const reply = "I can't see an active payment link for this conversation yet, so I can't verify a payment. Please share the payment link you used, and I'll check it for you.";
-        await sendTextMessage(from, reply);
-        if (ADMIN_PHONE_NUMBER) await sendTextMessage(ADMIN_PHONE_NUMBER, `Payment check needs attention: +${from} says they paid but no unfulfilled payment link was found. Customer message: ${String(inboundText || '').slice(0, 200)}`);
-        sessions[from].push({ role: 'model', parts: [{ text: reply }] });
-      } else {
-        try {
-          const verification = await fetchAndFulfillVerifiedPayment(paymentLinkId);
-          if (!verification.paid) {
-            const reply = "I just checked, but the payment hasn't reflected yet. Sometimes the bank gateway takes a moment. I'll send the receipt and meeting details as soon as Razorpay confirms it.";
-            await sendTextMessage(from, reply);
-            sessions[from].push({ role: 'model', parts: [{ text: reply }] });
-          } else if (!verification.fulfilled) {
-            const reply = "Razorpay par aapka payment verify ho gaya hai. Receipt aur email abhi process ho rahe hain; bhejte hi main yahin confirm kar dungi.";
-            await sendTextMessage(from, reply);
-            sessions[from].push({ role: 'model', parts: [{ text: reply }] });
-          } else {
-            sessions[from].push({ role: 'model', parts: [{ text: verification.paymentLink.notes?.gateway_test === 'true'
-              ? 'Razorpay has verified the ₹1 gateway test. The test receipt and test meeting details were sent; no consultation has been paid for or booked.'
-              : 'Razorpay has verified the payment. The booking confirmation and receipt were sent.' }] });
-          }
-        } catch (error) {
-          console.error('Deterministic payment verification failed:', error.message);
-          const reply = "I'm having trouble checking Razorpay right now. I haven't marked the payment as complete; I'll send the confirmation only after the server verifies it.";
-          await sendTextMessage(from, reply);
-          sessions[from].push({ role: 'model', parts: [{ text: reply }] });
-        }
-      }
+      const check = await checkPaymentForCustomer(from, inboundText);
+      if (check.reply) await sendCustomerText(from, check.reply);
+      else sessions[from].push({ role: 'model', parts: [{ text: 'Payment verify ho gaya; receipt aur confirmation bhej diye gaye.' }] });
       if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) postAppsScript({
         target: 'chat', phone: from, sender: 'User', message: inboundText
       }).catch(() => {});
@@ -1435,8 +1618,8 @@ app.post('/webhook', async (req, res) => {
     let mediaData = null;
     let interactiveId = null;
 
-    if (msg.type === 'text') {
-      text = msg.text.body;
+    if (msg.type === 'text' || msg.type === 'button') {
+      text = msg.type === 'text' ? msg.text.body : inboundText;
       crm.saveTurn(pool, from, 'user', text).catch(e => console.error('Chat save failed:', e.message));
       learnProfileDetails(from, text, latestAssistantText);
       readThePerson(from);
@@ -1459,6 +1642,14 @@ app.post('/webhook', async (req, res) => {
         learnProfileDetails(from, '', latestAssistantText, mediaData, () => readThePerson(from));
         pushNextWake().catch(() => {});
       }
+    } else if (msg.type === 'document' && /pdf|image\//i.test(String(msg.document?.mime_type || ''))) {
+      const mediaInfo = await downloadWhatsAppMedia(msg.document.id);
+      if (mediaInfo) {
+        mediaData = { inlineData: { data: mediaInfo.buffer.toString('base64'), mimeType: msg.document.mime_type } };
+        text = msg.document.caption || '(User sent a document, for example their kundli. Look at it and respond naturally.)';
+        crm.saveTurn(pool, from, 'user', `[Document]${msg.document.caption ? ' ' + msg.document.caption : ''}`).catch(() => {});
+        pushNextWake().catch(() => {});
+      }
     } else if (msg.type === 'image') {
       const mediaId = msg.image.id;
       const mediaInfo = await downloadWhatsAppMedia(mediaId);
@@ -1475,7 +1666,7 @@ app.post('/webhook', async (req, res) => {
         pushNextWake().catch(() => {});
       }
     } else if (msg.type === 'video') {
-      await sendTextMessage(from, "heyy thanks for sending the video! 😊 unfortunately I can't watch videos here — agar koi specific frame ya screenshot hai toh photo bhej do, I'll definitely look at it!");
+      await sendCustomerText(from, "Thank you for sending the video. Video main yahan nahi dekh paati; agar koi specific cheez dikhani hai toh uska photo ya screenshot bhej dijiye.");
       return;
     } else if (msg.type === 'interactive') {
       if (msg.interactive.type === 'list_reply') {
@@ -1500,6 +1691,12 @@ app.post('/webhook', async (req, res) => {
           }
         }
       }
+      return;
+    }
+
+    if (!text && !mediaData && !['reaction', 'unsupported', 'system'].includes(msg.type)) {
+      // A file that could not be opened (failed download, location, contact, other document types): never leave it on "seen".
+      await sendCustomerText(from, "Sorry ji, yeh file mere yahan khul nahi rahi. Ek baar photo ya text mein bhej dijiye?");
       return;
     }
 
@@ -1546,6 +1743,11 @@ ${crm.readingContext(dbUser)}`;
       if (sessions[from].length > 20) {
         sessions[from] = sessions[from].slice(-16);
       }
+      // The history must start with a plain user message: a cut between a tool call and its answer
+      // (or a leftover empty turn) makes Gemini reject every later request.
+      sessions[from] = sessions[from].filter(turn => turn && Array.isArray(turn.parts) && turn.parts.length);
+      while (sessions[from].length > 1 && !(sessions[from][0].role === 'user'
+        && sessions[from][0].parts.every(part => !part.functionResponse))) sessions[from].shift();
 
       // Clean up replies already stored with repetition, and drop a reply stored twice in a row,
       // so Gemini never sees (and copies) a repeated pattern.
@@ -1636,109 +1838,110 @@ ${crm.readingContext(dbUser)}`;
       if (!result) {
         throw new Error(`All candidate Gemini models failed. Last error: ${lastAiError?.message || 'Unknown'}`);
       }
+      // Photos and voice notes are only needed for this one call; keep a short marker instead of the raw bytes.
+      for (const turn of sessions[from]) {
+        if (turn.role === 'user' && Array.isArray(turn.parts) && turn.parts.some(part => part?.inlineData)) {
+          turn.parts = turn.parts.map(part => part?.inlineData ? { text: '[Photo/voice note reviewed]' } : part);
+        }
+      }
       
-      const responseMessage = result.response.candidates[0].content;
+      const responseMessage = result.response.candidates?.[0]?.content;
+      if (!responseMessage?.parts?.length) {
+        // Blocked or empty answer (e.g. a safety stop). Never push undefined into the history.
+        console.warn(`Gemini returned no content for ${from} (finish: ${result.response.candidates?.[0]?.finishReason || 'none'})`);
+        await sendCustomerText(from, "Sorry ji, ek baar phir se likh dijiye? Main dhyaan se dekhti hoon.");
+        return;
+      }
       sessions[from].push(responseMessage); // Add assistant response to history
-      
+
       // Handle Function Calls
-      const functionCalls = result.response.functionCalls();
-      if (functionCalls && functionCalls.length > 0) {
+      let functionCalls = [];
+      try { functionCalls = result.response.functionCalls() || []; } catch (e) { functionCalls = []; }
+      if (functionCalls.length > 0) {
         const call = functionCalls[0];
-        const args = call.args;
-        
-        if (call.name === "request_human_handoff") {
-          await upsertUser(from, dbUser.is_customer, true); // Pause AI
-          await sendTextMessage(from, "I completely understand. I am escalating this to our team. Our senior team will personally contact you on this number within 24 hours.");
-          if (ADMIN_PHONE_NUMBER) {
-             await sendTextMessage(ADMIN_PHONE_NUMBER, `🚨 *ESCALATION REQUIRED* 🚨\n\nClient Phone: +${from}\nReason: ${args.reason}\n\n*The AI has paused itself for this user. Please take over the chat manually via the WhatsApp app within 24 hours.*`);
+        const args = call.args || {};
+        // Gemini needs exactly one response per call; only the first call is acted on.
+        const extraResponses = functionCalls.slice(1).map(c => ({ functionResponse: { name: c.name, response: { status: 'skipped', note: 'Only one action is handled per message.' } } }));
+        const respond = response => sessions[from].push({ role: 'user', parts: [{ functionResponse: { name: call.name, response } }, ...extraResponses] });
+        // A fresh reply from Kamala after a tool result, with tools switched off.
+        const followUp = async fallbackText => {
+          let text = '';
+          try {
+            const followUpModel = genAI.getGenerativeModel({
+              model: usedModelName,
+              systemInstruction: dynamicSystemPrompt,
+              tools,
+              toolConfig: { functionCallingConfig: { mode: 'NONE' } },
+              generationConfig: { temperature: 0.7 }
+            });
+            const again = await followUpModel.generateContent({
+              contents: sessions[from].map(turn => ({ ...turn, role: turn.role === 'function' ? 'user' : turn.role }))
+            });
+            text = String(again.response.text() || '').replace(/\[SEND_MENU\]/g, '').trim();
+          } catch (e) {
+            console.error('Follow-up reply failed:', e.message);
           }
-          sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "paused_by_human_handoff" } } }] });
-          sessions[from].push({ role: "model", parts: [{ text: "Understood. Handoff completed." }] });
+          await sendCustomerText(from, text || fallbackText);
+        };
+
+        if (call.name === "request_human_handoff") {
+          const reason = String(args.reason || '');
+          const crisis = /suicid|self.?harm|kill (?:my|him|her)self|end (?:my|this|his|her) life|jeena nahi|marna chaht|mar jaun|khud ko (?:khatam|maar|nuksan)/i.test(`${reason} ${inboundText}`);
+          const modelText = responseMessage.parts.filter(part => typeof part.text === 'string' && !part.thought).map(part => part.text).join(' ').trim();
+          await upsertUser(from, dbUser.is_customer, true); // Pause AI replies for this person
+          respond({ status: "paused_by_human_handoff" });
+          const reply = crisis
+            ? `${modelText ? modelText + '\n\n' : ''}Aap akele nahi hain. Please abhi Tele-MANAS 14416 par call kijiye (free, 24x7), aur kisi apne ko bhi abhi bataiye. Hamari senior team bhi aapse personally baat karegi.`
+            : "Main samajh sakti hoon. Maine yeh hamari senior team tak pahuncha diya hai; woh aapko isi number par 24 hours ke andar personally contact karenge.";
+          await sendCustomerText(from, reply);
+          await notifyOwner(`${crisis ? '🆘 URGENT - possible self-harm. Please reach out now.' : '🚨 ESCALATION REQUIRED'}\n\nClient Phone: +${from}\nReason: ${reason}\nTheir message: ${String(inboundText || '').slice(0, 300)}\n\nKamala has paused herself for this person. Please take over the chat in WhatsApp. To hand it back, send: /unpause ${from}`, crisis ? 'URGENT: customer in distress' : 'Escalation required');
           return;
         }
 
         if (call.name === "create_booking_payment") {
           if (!razorpayClient) {
-            await sendTextMessage(from, "Sorry, the direct payment system is currently being configured. Please book via our website: https://veshannastro.co.in");
-          } else {
-            try {
-              await createBookingPaymentRequest(from, args, dbUser);
-              sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "link_generated_and_sent", is_payment_complete: false, system_note: "The system has sent the payment link. Payment is not complete." } } }] });
-              sessions[from].push({ role: "model", parts: [{ text: "Payment link sent. The customer may reply YES to opt in to one follow-up reminder/offer, or STOP to opt out." }] });
-            } catch (e) {
-              await sendTextMessage(from, "Sorry, there was an error generating the secure payment link. Please try again later.");
-              sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
-              sessions[from].push({ role: "model", parts: [{ text: "Understood, there was an error." }] });
+            respond({ status: 'not_configured' });
+            await sendCustomerText(from, "Sorry ji, online booking abhi yahan se nahi ho pa rahi. Aap website se book kar sakte hain: https://veshannastro.co.in");
+            return;
+          }
+          try {
+            await createBookingPaymentRequest(from, args, dbUser);
+            respond({ status: "link_generated_and_sent", is_payment_complete: false, system_note: "The payment link and invoice have been sent to the customer. Payment is not complete." });
+            sessions[from].push({ role: "model", parts: [{ text: "Payment link aur invoice bhej diya hai. Payment abhi pending hai." }] });
+          } catch (e) {
+            if (e.customerFixable) {
+              respond({ status: 'needs_customer_input', problem: e.message, note: 'Nothing was sent to the customer. Ask them, in one short Hinglish message, for exactly what is needed.' });
+              await followUp("Sorry ji, booking ke liye ek detail aur chahiye. Aap confirm kar dijiye, phir main link bhejti hoon.");
+            } else {
+              console.error('Booking payment request failed:', e.message);
+              respond({ status: "error", note: 'An internal problem stopped the payment link. The team has been told.' });
+              await sendCustomerText(from, "Sorry ji, payment link banane mein abhi dikkat aa rahi hai. Maine team ko bata diya hai, woh jaldi aapse contact karenge.");
+              await notifyOwner(`Payment link could not be created for +${from} (${args.service_name || 'service'}): ${e.message}`, 'Payment link failed');
             }
           }
-          return; 
+          return;
         }
 
         if (call.name === "verify_payment") {
           // Guard: Gemini sometimes reads a short message ("done?") as a payment claim. Only check Razorpay
-          // when the customer actually said they paid; otherwise reply to what they really wrote.
-          const claimedPayment = isPaymentClaim(inboundText, /payment link|gateway test/i.test(latestAssistantText))
-            || /rzp\.io\/|\bplink_[A-Za-z0-9]+/i.test(inboundText);
+          // when the customer actually said they paid (or sent a screenshot/voice note); otherwise reply to what they wrote.
+          const claimText = text || inboundText;
+          const claimedPayment = Boolean(mediaData)
+            || isPaymentClaim(claimText, /payment link|gateway test/i.test(latestAssistantText))
+            || /rzp\.io\/|\bplink_[A-Za-z0-9]+/i.test(claimText);
           if (!claimedPayment) {
-            console.log(`🛑 verify_payment skipped for ${from}: "${String(inboundText).slice(0, 60)}" is not a payment claim`);
-            sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: {
+            console.log(`🛑 verify_payment skipped for ${from}: "${String(claimText).slice(0, 60)}" is not a payment claim`);
+            respond({
               status: "not_checked",
               note: "The customer has NOT said they paid. Do not mention payment. Reply only to what they actually wrote, continuing from your last message; if it is unclear, ask one short question about that topic."
-            } } }] });
-            let followUpText = '';
-            try {
-              const followUpModel = genAI.getGenerativeModel({
-                model: usedModelName,
-                systemInstruction: dynamicSystemPrompt,
-                tools,
-                toolConfig: { functionCallingConfig: { mode: 'NONE' } },
-                generationConfig: { temperature: 0.7 }
-              });
-              const followUp = await followUpModel.generateContent({
-                contents: sessions[from].map(turn => ({ ...turn, role: turn.role === 'function' ? 'user' : turn.role }))
-              });
-              followUpText = String(followUp.response.text() || '').replace(/\[SEND_MENU\]/g, '').trim();
-            } catch (e) {
-              console.error('Follow-up reply after skipped payment check failed:', e.message);
-            }
-            await sendCustomerText(from, followUpText || "Sorry ji, main theek se samjhi nahi. Aap kis baare mein pooch rahe the?");
+            });
+            await followUp("Sorry ji, main theek se samjhi nahi. Aap kis baare mein pooch rahe the?");
             return;
           }
-          const plId = await findActivePaymentLinkId(from, inboundText);
-          if (!plId) {
-            sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: "No active payment link found for this user." } } }] });
-            const msg = "Mujhe aapke number se juda koi pending payment link nahi mil raha. Maine team ko inform kar diya hai, woh Razorpay mein check karke aapse contact karenge.";
-            sessions[from].push({ role: "model", parts: [{ text: msg }] });
-            await sendTextMessage(from, msg);
-            if (ADMIN_PHONE_NUMBER) await sendTextMessage(ADMIN_PHONE_NUMBER, `Payment check needs attention: +${from} says they paid but no unfulfilled payment link was found. Customer message: ${String(inboundText || '').slice(0, 200)}`);
-            return;
-          }
-          try {
-            const verification = await fetchAndFulfillVerifiedPayment(plId);
-            const pl = verification.paymentLink;
-            if (verification.paid && !verification.fulfilled) {
-              sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "paid_but_receipt_not_sent_yet" } } }] });
-              const msg = "Razorpay par aapka payment verify ho gaya hai. Receipt aur email abhi process ho rahe hain; bhejte hi main yahin confirm kar dungi.";
-              sessions[from].push({ role: "model", parts: [{ text: msg }] });
-              await sendTextMessage(from, msg);
-            } else if (verification.paid) {
-              sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "paid_and_fulfilled" } } }] });
-              sessions[from].push({ role: "model", parts: [{ text: pl.notes?.gateway_test === 'true'
-                ? "The ₹1 Razorpay gateway test was verified. A test receipt and test meeting details were sent; no consultation has been paid for or booked."
-                : "Payment verified, booking confirmed, and receipt sent." }] });
-
-            } else {
-              sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "unpaid", razorpay_status: verification.status, amount_matches: verification.amountMatches } } }] });
-              const msg = "I just checked, but the payment hasn't reflected yet. Sometimes the bank gateways take a minute. Please complete it via the link, and I will instantly send your official PDF invoice!";
-              sessions[from].push({ role: "model", parts: [{ text: msg }] });
-              await sendTextMessage(from, msg);
-            }
-          } catch (e) {
-            sessions[from].push({ role: "user", parts: [{ functionResponse: { name: call.name, response: { status: "error", error: e.message } } }] });
-            const msg = "I'm having trouble verifying the payment right now. Please wait a moment or try again.";
-            sessions[from].push({ role: "model", parts: [{ text: msg }] });
-            await sendTextMessage(from, msg);
-          }
+          const check = await checkPaymentForCustomer(from, claimText);
+          respond({ status: check.status });
+          if (check.reply) await sendCustomerText(from, check.reply);
+          else sessions[from].push({ role: 'model', parts: [{ text: 'Payment verify ho gaya; receipt aur confirmation bhej diye gaye.' }] });
           return;
         }
       }
@@ -1763,23 +1966,11 @@ ${crm.readingContext(dbUser)}`;
     }
   } catch (err) {
     console.error('❌ CRITICAL ERROR in webhook processing:', err.message, err.stack);
-    
-    // Alert the Admin immediately so they know WHY it crashed without needing server logs
-    try {
-      if (ADMIN_PHONE_NUMBER) {
-        await sendTextMessage(ADMIN_PHONE_NUMBER, `🚨 *WEBHOOK CRASH ALERT* 🚨\n\nError: ${err.message}\n\nCheck Render logs for the full stack trace.`);
-      }
-    } catch (e) { /* ignore admin alert failure */ }
-
-    // Graceful, warm customer fallback (NEVER leak technical stack traces)
-    try {
-      const fallbackFrom = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
-      if (fallbackFrom) {
-        await sendTextMessage(fallbackFrom, "Namaste! 🙏 I am currently reviewing your chart details. Please give me just a few moments, or feel free to type 'menu' to view our consultations.");
-      }
-    } catch (e) { /* ignore fallback failure */ }
+    await notifyOwner(`🚨 WEBHOOK CRASH ALERT\n\nCustomer: +${from}\nError: ${err.message}\n\nCheck Render logs for the full stack trace.`, 'Kamala crashed on a message').catch(() => {});
+    // Warm, neutral fallback (never leak technical details, never promise anything).
+    if (from) await sendTextMessage(from, "Sorry ji, aapka message theek se process nahi ho paya. Ek baar phir bhej dijiye?").catch(() => {});
   }
-});
+}
 
 async function sendInteractiveMenu(to) {
   if (!WA_TOKEN || !liveData || liveData.length === 0) return;
@@ -2048,7 +2239,7 @@ function readThePerson(phone) {
 
 function crmDeps() {
   return {
-    pool, adminPhone: ADMIN_PHONE_NUMBER, genAI: GEMINI_API_KEY ? genAI : null,
+    pool, adminPhone: normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || ''), genAI: GEMINI_API_KEY ? genAI : null,
     modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', sendCustomerText, notifyOwner
   };
 }
@@ -2154,7 +2345,7 @@ async function createCallBooking({ callerPhone, whatsappPhone, args }) {
     billing_address: dbUser.billing_address || '',
     discount_offer: 'standard'
   }, dbUser, {
-    required: ['customer_name', 'dob', 'tob', 'pob', 'service_name', 'preferred_time_slot'],
+    required: ['customer_name', 'service_name', 'preferred_time_slot'],
     source: 'Phone Call Booking',
     deliver: ({ mediaId, invoiceName, caption, link, customerName, serviceName, appointmentDate }) => deliverAfterCall(phone, {
       mediaId, filename: invoiceName, body: caption,
@@ -2227,7 +2418,7 @@ cron.schedule('0 * * * *', async () => {
   try {
     const eligible = await pool.query(`SELECT l.payment_link_id,l.phone
       FROM wa_payment_links l JOIN users u ON u.phone=l.phone
-      WHERE l.status IN ('created','expired') AND l.created_at <= NOW() - INTERVAL '48 hours'
+      WHERE l.status IN ('request_created','expired','gateway_test_expired') AND l.created_at <= NOW() - INTERVAL '48 hours'
         AND u.marketing_opt_in=true AND u.marketing_opt_out=false
         AND NOT EXISTS (SELECT 1 FROM wa_discount_offers d WHERE d.source_payment_link_id=l.payment_link_id)
       ORDER BY l.created_at ASC LIMIT 50`);
@@ -2265,7 +2456,7 @@ cron.schedule('0 10 * * *', async () => {
 
     // 2. Day 3 Unconverted Lead Nudge
     const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
-    const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
+    const fiveDaysAgo = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(); // 3-4 days: one day wide, so it is sent once
     
     const leads = await pool.query(
       `SELECT phone,name FROM users WHERE is_customer = false AND is_paused = false AND marketing_opt_in = true AND marketing_opt_out = false AND last_contact < $1 AND last_contact > $2`,
@@ -2279,7 +2470,7 @@ cron.schedule('0 10 * * *', async () => {
 
     // 3. Day 2 Post-Consultation Referral
     const twoDaysAgoConv = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
-    const fourDaysAgoConv = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString();
+    const fourDaysAgoConv = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(); // 2-3 days: sent once
     const recentConverted = await pool.query(
       `SELECT phone,name FROM users WHERE status = 'converted' AND is_paused = false AND marketing_opt_in = true AND marketing_opt_out = false AND conversion_date < $1 AND conversion_date > $2`,
       [twoDaysAgoConv, fourDaysAgoConv]
@@ -2292,7 +2483,7 @@ cron.schedule('0 10 * * *', async () => {
 
     // 4. Day 7 Family Chart Cross-Sell
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const nineDaysAgo = new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString();
+    const nineDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(); // 7-8 days: sent once
     
     const converted = await pool.query(
       `SELECT phone,name FROM users WHERE status = 'converted' AND is_paused = false AND marketing_opt_in = true AND marketing_opt_out = false AND conversion_date < $1 AND conversion_date > $2`,
