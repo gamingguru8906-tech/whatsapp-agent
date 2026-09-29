@@ -157,18 +157,72 @@ class FrameQueue {
   }
 }
 
-/** One-hour consultation starts (India time) on a YYYY-MM-DD date, at least 2 hours from now (as the booking server requires). */
-function candidateSlots(date, now = new Date()) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date || ''))) return [];
+const MIN_NOTICE_MS = 2 * 60 * 60 * 1000; // never a consultation within 2 hours
+const SAME_DAY_CUTOFF = 11 * 60; // bookings made before 11:00 AM IST may still take today's evening
+
+function istDayParts(date) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short',
+    hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+  }).formatToParts(date).filter(x => x.type !== 'literal').map(x => [x.type, x.value]));
+  return { ymd: `${p.year}-${p.month}-${p.day}`, weekday: p.weekday, minute: Number(p.hour) * 60 + Number(p.minute) };
+}
+
+function clock(min) {
+  const h = Math.floor(min / 60), m = min % 60;
+  return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
+}
+
+/**
+ * Consultation START window (minutes after midnight, India time) for a YYYY-MM-DD date, or null if that date is closed.
+ * - Booked 12:00 AM-10:59 AM: today is open, evening only (weekday 7:30-9:30 PM; weekend 4:00-7:00 PM).
+ * - Booked 11:00 AM-11:59 PM: today is closed; tomorrow is evening on a weekday (7:30-9:30 PM) or morning on a weekend (10:00 AM-12:00 PM).
+ * - Any later day: normal hours (weekday 7:30-9:30 PM, weekend 10:00 AM-7:00 PM).
+ */
+function startWindowFor(date, now = new Date()) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date || ''))) return null;
   const noon = new Date(`${date}T12:00:00+05:30`);
-  if (!Number.isFinite(noon.getTime())) return [];
-  const weekday = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Kolkata', weekday: 'short' }).format(noon);
+  if (!Number.isFinite(noon.getTime())) return null;
+  const today = istDayParts(now);
+  const days = Math.round((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${today.ymd}T00:00:00Z`)) / 86400000);
+  if (days < 0) return null;
+  const weekday = istDayParts(noon).weekday;
   const weekend = weekday === 'Sat' || weekday === 'Sun';
-  const starts = weekend
-    ? ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
-    : ['19:30', '20:30', '21:30'];
-  const earliest = now.getTime() + 2 * 60 * 60 * 1000;
-  return starts.map(t => `${date}T${t}:00+05:30`).filter(iso => new Date(iso).getTime() >= earliest);
+  const normal = weekend ? { from: 600, to: 1140, part: 'day' } : { from: 1170, to: 1290, part: 'evening' };
+  const bookedLate = today.minute >= SAME_DAY_CUTOFF;
+  let w = normal;
+  if (days === 0) {
+    if (bookedLate) return null;
+    w = weekend ? { from: 960, to: 1140, part: 'evening' } : normal;
+  } else if (days === 1 && bookedLate) {
+    w = weekend ? { from: 600, to: 720, part: 'morning' } : normal;
+  }
+  return { ...w, weekday, weekend, days, label: `${clock(w.from)} and ${clock(w.to)}` };
+}
+
+/** Plain-language booking rule for right now, for the prompts and for error messages. */
+function slotRuleNow(now = new Date()) {
+  const today = istDayParts(now);
+  const tomorrowYmd = new Date(Date.parse(`${today.ymd}T00:00:00Z`) + 86400000).toISOString().slice(0, 10);
+  const t = startWindowFor(today.ymd, now);
+  const n = startWindowFor(tomorrowYmd, now);
+  const todayText = t
+    ? `today (${t.weekday}) only in the evening: a start between ${t.label}`
+    : 'nothing today (it is past 11:00 AM)';
+  return `Earliest possible right now: ${todayText}; tomorrow (${n.weekday}) a start between ${n.label}${n.part === 'morning' ? ' (morning)' : ''}. Days after that: weekdays 7:30 PM to 9:30 PM, weekends 10:00 AM to 7:00 PM. Never within 2 hours.`;
+}
+
+/** One-hour consultation starts (India time) on a YYYY-MM-DD date that the booking rule allows. */
+function candidateSlots(date, now = new Date()) {
+  const w = startWindowFor(date, now);
+  if (!w) return [];
+  const earliest = now.getTime() + MIN_NOTICE_MS;
+  const out = [];
+  for (let m = w.from; m <= w.to; m += 60) {
+    const iso = `${date}T${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}:00+05:30`;
+    if (new Date(iso).getTime() >= earliest) out.push(iso);
+  }
+  return out;
 }
 
 function spokenTime(iso) {
@@ -304,7 +358,7 @@ WHAT YOU DO ON THIS CALL
 5. Close with one warm, hopeful line, then call end_call.
 
 BOOKING A CONSULTATION ON THE PHONE
-- Consultations are one hour (India time). Monday to Friday a session can START between 7:30 PM and 9:30 PM; Saturday and Sunday between 10:00 AM and 7:00 PM; always at least 2 hours from now. Call find_free_slots for the day they want and offer at most two times. Never invent availability.
+- Consultations are one hour (India time). Normal START times: Monday to Friday 7:30 PM to 9:30 PM; Saturday and Sunday 10:00 AM to 7:00 PM. Never within 2 hours. If they call before 11:00 AM, today's evening is possible; from 11:00 AM onward, nothing today and tomorrow is evening on a weekday or morning (10 AM to 12 PM) on a weekend. The exact rule for right now is under REAL-TIME CONTEXT. Call find_free_slots for the day they want and offer at most two times. Never invent availability.
 - You need: full name, the service (exact name from SERVICES), the agreed time, and only the birth details listed under "Details needed" for that service. Numerology and name/number services need only the date of birth: never ask their time or place of birth. Time and place of birth are only for astrology/kundli services. Gender and email only if they come up naturally; the Meet link reaches them on WhatsApp anyway. Ask only for what is not already known, one detail at a time, and never ask twice.
 - Before sending anything ask: "Is this number aapka WhatsApp number bhi hai? I'll send the payment link wahin." Yes: use the calling number. No: ask for their WhatsApp number, read it back digit by digit in small groups, and wait for a yes.
 - Then call create_booking_and_send_link. Say the link is sent only after the tool says "sent". If it says "awaiting_hi", ask them to ${whatsappHi} and tell them the link will come right after that.${gatewayNote}
@@ -319,6 +373,7 @@ PRIVACY
 
 --- REAL-TIME CONTEXT (PRIVATE) ---
 - Now (India): ${ctx.now || istNow()}
+- Booking window: ${slotRuleNow()}
 - Calling number: ${ctx.callerPhone ? `+${ctx.callerPhone}` : 'hidden or unknown (ask for their WhatsApp number before booking)'}
 - Upcoming consultation: ${upcoming}
 
@@ -1022,7 +1077,7 @@ class CallSession {
     const day = clean(date, 10);
     const slots = candidateSlots(day, new Date());
     if (!slots.length) {
-      return { status: 'none', message: 'No consultation time left on that date. Hours: Monday-Friday 7:30-10:30 PM, Saturday-Sunday 10 AM-8 PM, India time.' };
+      return { status: 'none', message: `No consultation time on that date. ${slotRuleNow()}` };
     }
     let free = slots;
     let checked = false;
@@ -1392,6 +1447,8 @@ module.exports = {
   FrameQueue,
   exotelFrameBytes,
   candidateSlots,
+  startWindowFor,
+  slotRuleNow,
   cleanKnowledge,
   knowledgeLoader,
   buildCallPrompt,
