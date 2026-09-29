@@ -1,21 +1,23 @@
 'use strict';
 
 /**
- * Customer memory, customer IDs, consultation reminders and follow-ups.
+ * Customer memory, invoice numbers, consultation reminders and follow-ups.
  *
  * WhatsApp only allows free-form messages within 24 hours of the customer's
  * last message, so every scheduled message here is sent inside that window.
  */
 
 const PAID_STATUSES = ['paid', 'gateway_test_paid'];
-const CUSTOMER_ID_RE = /^VA\/\d{2}-\d{2}\/\d{2}-\d{3,}$/;
+// Invoice numbers look like VA/26-27/09-001: financial year, month, then a serial that restarts monthly.
+// (This is the format that used to be the customer ID; customers are now tracked by invoice number only.)
+const INVOICE_NO_RE = /^VA\/\d{2}-\d{2}\/\d{2}-\d{3,}$/;
 
-function isNewCustomerId(id) {
-  return CUSTOMER_ID_RE.test(String(id || '').trim());
+function isInvoiceNumber(id) {
+  return INVOICE_NO_RE.test(String(id || '').trim());
 }
 
 /** "VA/26-27/09-" for September 2026 (Indian financial year April-March, IST). */
-function customerIdPrefix(date = new Date()) {
+function invoicePrefix(date = new Date()) {
   const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit' })
     .formatToParts(date);
   const year = Number(parts.find(p => p.type === 'year').value);
@@ -25,9 +27,9 @@ function customerIdPrefix(date = new Date()) {
   return `VA/${yy(fyStart)}-${yy(fyStart + 1)}/${String(month).padStart(2, '0')}-`;
 }
 
-/** Next ID for this month given every ID already issued (serial restarts monthly). */
-function nextCustomerId(existingIds, date = new Date()) {
-  const prefix = customerIdPrefix(date);
+/** Next number for this month given every number already issued (serial restarts monthly). */
+function nextInvoiceNumber(existingIds, date = new Date()) {
+  const prefix = invoicePrefix(date);
   let max = 0;
   for (const id of existingIds || []) {
     const s = String(id || '').trim();
@@ -37,6 +39,14 @@ function nextCustomerId(existingIds, date = new Date()) {
     }
   }
   return prefix + String(max + 1).padStart(3, '0');
+}
+
+/** Hands out the next invoice number from the database, one per invoice, safe under concurrent bookings. */
+async function allocateInvoiceNumber(pool, date = new Date()) {
+  const prefix = invoicePrefix(date);
+  const res = await pool.query(`INSERT INTO invoice_counters (prefix, last_no) VALUES ($1, 1)
+    ON CONFLICT (prefix) DO UPDATE SET last_no = invoice_counters.last_no + 1 RETURNING last_no`, [prefix]);
+  return prefix + String(res.rows[0].last_no).padStart(3, '0');
 }
 
 async function migrate(pool) {
@@ -127,7 +137,7 @@ async function loadRecentTurns(pool, phone, limit = 16) {
 
 async function bookingHistory(pool, phone) {
   if (!pool) return [];
-  const res = await pool.query(`SELECT service_name, appointment_start, status, customer_id FROM wa_payment_links
+  const res = await pool.query(`SELECT service_name, appointment_start, status, request_invoice_number FROM wa_payment_links
     WHERE phone=$1 AND status = ANY($2) ORDER BY appointment_start DESC LIMIT 5`, [phone, PAID_STATUSES]);
   return res.rows;
 }
@@ -143,7 +153,6 @@ function profileContext(user, bookings = [], lastTurnAt = null) {
   const u = user || {};
   const v = x => (String(x || '').trim() || 'Not known yet');
   const lines = [
-    `- Customer ID: ${isNewCustomerId(u.customer_id) ? u.customer_id : 'Not assigned yet (given at first booking)'}`,
     `- Name: ${v(u.name)}`,
     `- Gender: ${v(u.gender)}`,
     `- Date of birth: ${v(u.dob)}`,
@@ -165,7 +174,7 @@ function profileContext(user, bookings = [], lastTurnAt = null) {
   return `--- WHAT YOU ALREADY KNOW ABOUT THIS PERSON (saved from earlier chats) ---
 ${lines.join('\n')}
 MEMORY RULES (PRIVATE — use silently, never recite):
-- Everything above is for YOUR understanding only. Never read out, list or repeat the person's stored details (birth date/time/place, email, address, customer ID, past chats) unless they themselves ask for them.
+- Everything above is for YOUR understanding only. Never read out, list or repeat the person's stored details (birth date/time/place, email, address, invoice numbers, past chats) unless they themselves ask for them.
 - RETURNING PERSON: if a name is known and this is the start of a new conversation (previous conversation is not "Ongoing chat"), your FIRST reply must greet them warmly by first name, like an old friend who is happy to hear from them again, and gently ask whether their earlier concern has improved — mention the topic softly in one or two words (e.g. "career wali pareshani", "shaadi ki baat"), never details. Example: "Arre Priya ji, kitne time baad! How have you been? Last time aap career ko lekar thoda worried thin — ab kaisa chal raha hai?" If no concern is recorded, just ask how they have been.
 - NEVER ask again for any detail listed above as known (${known.length ? known.join(', ') : 'none yet'}). Simply use it. Ask only for details that are still "Not known yet".`;
 }
@@ -354,7 +363,6 @@ function profilePayload(user, extra = {}) {
   return {
     target: 'profile_upsert',
     phone: u.phone,
-    customerId: isNewCustomerId(u.customer_id) ? u.customer_id : '',
     name: u.name || '', gender: u.gender || '', dob: u.dob || '', birthTime: u.tob || '', birthPlace: u.pob || '',
     email: u.email || '', billingAddress: u.billing_address || '', customerGstin: u.customer_gstin || '',
     concern: [u.pain_point || u.core_concern || '', readingTag(u) ? `[${readingTag(u)}]` : ''].filter(Boolean).join(' '),
@@ -370,8 +378,18 @@ function profilePayload(user, extra = {}) {
 
 const WINDOW_OPEN_SQL = "u.last_inbound_at > NOW() - INTERVAL '23 hours 58 minutes'";
 
+// When the day-after follow-up goes out: 23 hours after their last message, or, if that falls at night
+// in India (before 9 AM / after 9 PM), at 8:30 PM IST the evening before, still inside WhatsApp's 24h window.
+const FOLLOWUP_AT_SQL = `(CASE
+  WHEN EXTRACT(HOUR FROM (u.last_inbound_at + INTERVAL '23 hours') AT TIME ZONE 'Asia/Kolkata') BETWEEN 9 AND 20
+    THEN u.last_inbound_at + INTERVAL '23 hours'
+  ELSE (date_trunc('day', (u.last_inbound_at + INTERVAL '23 hours' - INTERVAL '9 hours') AT TIME ZONE 'Asia/Kolkata')
+    + INTERVAL '20 hours 30 minutes') AT TIME ZONE 'Asia/Kolkata'
+END)`;
+
 const FOLLOWUP_ELIGIBLE_SQL = `
   u.last_inbound_at IS NOT NULL
+  AND COALESCE(u.is_paused,false) = false
   AND COALESCE(u.message_count,0) >= 1
   AND COALESCE(u.marketing_opt_out,false) = false
   AND u.followup_sent_for IS DISTINCT FROM u.last_inbound_at
@@ -458,7 +476,7 @@ ${transcript}`);
 async function sendFollowups(deps) {
   const { pool, sendCustomerText, adminPhone } = deps;
   const due = await pool.query(`SELECT u.phone FROM users u WHERE ${FOLLOWUP_ELIGIBLE_SQL}
-    AND NOW() >= u.last_inbound_at + INTERVAL '23 hours'
+    AND NOW() >= ${FOLLOWUP_AT_SQL}
     AND NOW() < u.last_inbound_at + INTERVAL '23 hours 55 minutes'
     AND u.phone <> $2`, [PAID_STATUSES, String(adminPhone || '')]);
   let sent = 0;
@@ -507,7 +525,7 @@ async function sendOwnerSummary(deps, now = new Date()) {
   [dayBefore, start, PAID_STATUSES])).rows[0];
   const time = d => new Date(d).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' });
   const list = consults.length ? consults.map((c, i) => `${i + 1}. ${time(c.appointment_start)} — ${c.customer_name}${c.status === 'gateway_test_paid' ? ' (₹1 test)' : ''}\n`
-    + `   ${c.service_name} | ${c.customer_id || 'ID pending'} | +${c.phone}\n`
+    + `   ${c.service_name} | ${c.request_invoice_number || 'Invoice pending'} | +${c.phone}\n`
     + `   DOB ${c.dob || '-'}, ${c.tob || '-'}, ${c.pob || '-'}\n`
     + `   Concern: ${c.pain_point || 'Not recorded'}\n`
     + (readingTag(c) ? `   Reading: ${readingTag(c)}\n` : '')
@@ -535,7 +553,7 @@ async function nextJobAt(pool, adminPhone = '') {
       SELECT u.last_inbound_at + INTERVAL '20 hours' FROM wa_payment_links l JOIN users u ON u.phone=l.phone
         WHERE ${CHECKIN_ELIGIBLE_SQL} AND u.last_inbound_at + INTERVAL '23 hours 50 minutes' > NOW()
       UNION ALL
-      SELECT u.last_inbound_at + INTERVAL '23 hours' FROM users u
+      SELECT ${FOLLOWUP_AT_SQL} FROM users u
         WHERE ${FOLLOWUP_ELIGIBLE_SQL} AND u.last_inbound_at + INTERVAL '23 hours 55 minutes' > NOW() AND u.phone <> $2
     ) x`, [PAID_STATUSES, String(adminPhone || '')]);
   return res.rows[0]?.next ? new Date(res.rows[0].next) : null;
@@ -560,9 +578,11 @@ async function runDueJobs(deps) {
 
 module.exports = {
   PAID_STATUSES,
-  isNewCustomerId,
-  customerIdPrefix,
-  nextCustomerId,
+  isInvoiceNumber,
+  invoicePrefix,
+  nextInvoiceNumber,
+  allocateInvoiceNumber,
+  isNewCustomerId: isInvoiceNumber, // old name, kept so a partly deployed server keeps working
   migrate,
   recordInbound,
   saveTurn,
