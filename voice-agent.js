@@ -143,10 +143,10 @@ class FrameQueue {
     return frames;
   }
 
-  /** Last partial frame, padded with silence to a multiple of 320 bytes. */
+  /** Last partial frame, padded with silence to a full frame (Exotel needs at least 3.2 KB, in 320-byte steps). */
   flush() {
     if (!this.pending.length) return null;
-    const frame = Buffer.alloc(Math.ceil(this.pending.length / 320) * 320);
+    const frame = Buffer.alloc(Math.max(this.frameBytes, Math.ceil(this.pending.length / 320) * 320));
     this.pending.copy(frame);
     this.pending = Buffer.alloc(0);
     return frame;
@@ -157,7 +157,7 @@ class FrameQueue {
   }
 }
 
-/** One-hour consultation starts (India time) on a YYYY-MM-DD date, at least 30 minutes from now. */
+/** One-hour consultation starts (India time) on a YYYY-MM-DD date, at least 2 hours from now (as the booking server requires). */
 function candidateSlots(date, now = new Date()) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date || ''))) return [];
   const noon = new Date(`${date}T12:00:00+05:30`);
@@ -167,7 +167,7 @@ function candidateSlots(date, now = new Date()) {
   const starts = weekend
     ? ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
     : ['19:30', '20:30', '21:30'];
-  const earliest = now.getTime() + 30 * 60 * 1000;
+  const earliest = now.getTime() + 2 * 60 * 60 * 1000;
   return starts.map(t => `${date}T${t}:00+05:30`).filter(iso => new Date(iso).getTime() >= earliest);
 }
 
@@ -304,18 +304,18 @@ WHAT YOU DO ON THIS CALL
 5. Close with one warm, hopeful line, then call end_call.
 
 BOOKING A CONSULTATION ON THE PHONE
-- Consultation hours (India time, one hour): Monday to Friday only 7:30 PM to 10:30 PM; Saturday and Sunday 10:00 AM to 8:00 PM. Call find_free_slots for the day they want and offer at most two times. Never invent availability.
-- You need: full name, date of birth, time of birth, place of birth, the service (exact name from SERVICES) and the agreed time. Gender and email only if they come up naturally; the Meet link reaches them on WhatsApp anyway. Ask only for what is not already known, one detail at a time, and never ask twice.
+- Consultations are one hour (India time). Monday to Friday a session can START between 7:30 PM and 9:30 PM; Saturday and Sunday between 10:00 AM and 7:00 PM; always at least 2 hours from now. Call find_free_slots for the day they want and offer at most two times. Never invent availability.
+- You need: full name, the service (exact name from SERVICES), the agreed time, and only the birth details listed under "Details needed" for that service. Numerology and name/number services need only the date of birth: never ask their time or place of birth. Time and place of birth are only for astrology/kundli services. Gender and email only if they come up naturally; the Meet link reaches them on WhatsApp anyway. Ask only for what is not already known, one detail at a time, and never ask twice.
 - Before sending anything ask: "Is this number aapka WhatsApp number bhi hai? I'll send the payment link wahin." Yes: use the calling number. No: ask for their WhatsApp number, read it back digit by digit in small groups, and wait for a yes.
 - Then call create_booking_and_send_link. Say the link is sent only after the tool says "sent". If it says "awaiting_hi", ask them to ${whatsappHi} and tell them the link will come right after that.${gatewayNote}
 - After that, payment, receipt, Meet link and reminders all happen on WhatsApp. Never say on the call that the booking is paid or confirmed.
 
 ESCALATION (you cannot transfer the call)
 - If they ask for Shri Shashank ji, are very upset or angry, or ask something you cannot answer from the material below: call escalate_to_owner with a short summary, then say: "${ESCALATION_LINE}" Close warmly and call end_call.
-- If they talk about ending their life or hurting themselves: sell nothing. Speak with deep care, tell them they are not alone, share Tele-MANAS 14416 (free, 24x7, India), ask them to reach someone they trust right now, and call escalate_to_owner.
+- If they talk about ending their life or hurting themselves: sell nothing. Speak with deep care, tell them they are not alone, share Tele-MANAS 14416 (free, 24x7, India), ask them to reach someone they trust right now, and call escalate_to_owner with urgent_wellbeing true. Do NOT say the escalation line and do NOT end the call: stay with them, keep them talking gently, and only close when they say they are safe.
 
 PRIVACY
-- Use what you know about the caller silently. Never read out their stored birth details, email, address, customer ID or past chats unless they ask.
+- Use what you know about the caller silently. Never read out their stored birth details, email, address, invoice numbers or past chats, even if asked: a phone number alone does not prove who is calling. If they want their details, say they will get them on WhatsApp.
 
 --- REAL-TIME CONTEXT (PRIVATE) ---
 - Now (India): ${ctx.now || istNow()}
@@ -353,8 +353,8 @@ const CALL_TOOLS = [{
         properties: {
           customer_name: { type: 'STRING', description: 'Full name' },
           dob: { type: 'STRING', description: 'Date of birth' },
-          tob: { type: 'STRING', description: 'Time of birth' },
-          pob: { type: 'STRING', description: 'Place of birth' },
+          tob: { type: 'STRING', description: 'Time of birth, only for astrology/kundli services; empty otherwise' },
+          pob: { type: 'STRING', description: 'Place of birth, only for astrology/kundli services; empty otherwise' },
           gender: { type: 'STRING', description: 'Only if known' },
           email: { type: 'STRING', description: 'Only if the caller gave it and confirmed the spelling' },
           service_name: { type: 'STRING', description: 'Exact service name from SERVICES' },
@@ -362,7 +362,7 @@ const CALL_TOOLS = [{
           whatsapp_number: { type: 'STRING', description: 'The confirmed WhatsApp number, digits only; empty to use the calling number' },
           customer_pain_points_summary: { type: 'STRING', description: 'Two or three sentences on what they are going through' }
         },
-        required: ['customer_name', 'dob', 'tob', 'pob', 'service_name', 'preferred_time_slot']
+        required: ['customer_name', 'service_name', 'preferred_time_slot']
       }
     },
     {
@@ -386,7 +386,8 @@ const CALL_TOOLS = [{
           reason: { type: 'STRING', description: 'Why a call back is needed' },
           query_type: { type: 'STRING', enum: QUERY_TYPES, description: 'One word for the topic' },
           summary: { type: 'STRING', description: 'One or two sentences on what they need' },
-          caller_name: { type: 'STRING', description: 'Name if known' }
+          caller_name: { type: 'STRING', description: 'Name if known' },
+          urgent_wellbeing: { type: 'BOOLEAN', description: 'True only if the caller talked about ending their life or hurting themselves' }
         },
         required: ['reason', 'query_type', 'summary']
       }
@@ -643,6 +644,7 @@ class CallSession {
     this.problem = '';
     this.playbackEndsAt = 0;
     this.timers = [];
+    this.pendingTools = new Set();
     this.frames = new FrameQueue(exotelFrameBytes(this.rate));
   }
 
@@ -670,6 +672,7 @@ class CallSession {
   }
 
   async begin(start, streamSid) {
+    this.started = true;
     this.streamSid = start.stream_sid || streamSid || '';
     this.callSid = start.call_sid || this.callSid;
     this.rate = Number(start.media_format?.sample_rate) || 8000;
@@ -685,7 +688,7 @@ class CallSession {
     const maxMinutes = Math.max(2, Number(this.deps.maxCallMinutes) || 15);
     this.timers.push(
       setTimeout(() => this.sendLive({ realtimeInput: { text: WRAP_UP_CUE } }), (maxMinutes - 1) * 60 * 1000),
-      setTimeout(() => this.hangUp('time limit'), maxMinutes * 60 * 1000)
+      setTimeout(() => { if (!this.noTimeLimit) this.hangUp('time limit'); }, maxMinutes * 60 * 1000)
     );
 
     this.context = await loadCallerContext(this.deps, this.phone);
@@ -803,6 +806,14 @@ class CallSession {
     if (!content) return;
     if (content.modelTurn || content.outputTranscription) this.liveSpoke = true;
     if (content.inputTranscription?.text) {
+      // The caller talks while Kamala's last reply is still playing (Gemini already finished it, so no
+      // "interrupted" event comes): stop her so she does not talk over them.
+      if (content.inputTranscription.text.trim().length > 1 && this.playbackEndsAt - Date.now() > 300) {
+        this.frames.clear();
+        this.playbackEndsAt = Date.now();
+        this.sendExotel({ event: 'clear', stream_sid: this.streamSid });
+        if (this.tts) this.openVoice();
+      }
       if (this.modelText) this.commit('model');
       this.userText += content.inputTranscription.text;
       this.heardAt = Date.now();
@@ -877,6 +888,11 @@ class CallSession {
     });
     const fallBack = why => {
       if (tts !== this.tts || this.finished) return;
+      if (/^closed/.test(why) && (this.voiceReopens || 0) < 3) {
+        this.voiceReopens = (this.voiceReopens || 0) + 1; // idle or dropped socket: reconnect the same voice
+        this.openVoice();
+        return;
+      }
       console.error(`Indian voice unavailable on ${this.callSid} (${why}); using Gemini's voice.`);
       this.tts = null;
       tts.close();
@@ -967,7 +983,7 @@ class CallSession {
   // ----- tools -----
 
   async runTools(calls) {
-    const functionResponses = await Promise.all(calls.map(async call => {
+    const work = Promise.all(calls.map(async call => {
       let response;
       try {
         response = await this.tool(call.name, call.args || {});
@@ -977,6 +993,13 @@ class CallSession {
       }
       return { id: call.id, name: call.name, response };
     }));
+    this.pendingTools.add(work);
+    let functionResponses;
+    try {
+      functionResponses = await work;
+    } finally {
+      this.pendingTools.delete(work);
+    }
     this.sendLive({ toolResponse: { functionResponses } });
   }
 
@@ -1028,10 +1051,17 @@ class CallSession {
 
   async book(args) {
     if (this.tools.booking) return { status: 'already_sent', whatsapp_number: `+${this.tools.booking.whatsapp}` };
+    if (this.bookingInFlight) return { status: 'in_progress', next: 'The link is already being sent; wait for it, do not book again.' };
     const whatsapp = this.whatsappNumber(args.whatsapp_number);
     if (!whatsapp) return { status: 'error', error: 'No WhatsApp number. Ask for their 10-digit WhatsApp number and read it back.' };
     if (!this.deps.createCallBooking) return { status: 'error', error: 'Booking by phone is not set up. Offer a call back instead.' };
-    const result = await this.deps.createCallBooking({ callerPhone: this.phone, whatsappPhone: whatsapp, args, callSid: this.callSid });
+    this.bookingInFlight = true; // two booking calls at once must not create two links
+    let result;
+    try {
+      result = await this.deps.createCallBooking({ callerPhone: this.phone, whatsappPhone: whatsapp, args, callSid: this.callSid });
+    } finally {
+      this.bookingInFlight = false;
+    }
     this.tools.booking = { ...result, whatsapp, name: args.customer_name || '' };
     if (result.status === 'awaiting_hi') {
       return { status: 'awaiting_hi', whatsapp_number: `+${whatsapp}`, next: 'WhatsApp lets us message this number only after they message us. Ask them to send "Hi" on WhatsApp; the payment link and invoice go out right after.' };
@@ -1058,8 +1088,16 @@ class CallSession {
       queryType: normalizeQueryType(args.query_type),
       summary: clean(args.summary || args.reason, 400)
     };
-    this.tools.escalation = { ...alert, reason: clean(args.reason, 300), at: new Date() };
-    if (this.deps.notifyOwner) await this.deps.notifyOwner(formatCallbackAlert(alert), `Callback needed: ${alert.name || (alert.phone ? `+${alert.phone}` : 'caller')}`);
+    const urgent = args.urgent_wellbeing === true || args.urgent_wellbeing === 'true';
+    this.tools.escalation = { ...alert, reason: clean(args.reason, 300), at: new Date(), urgent };
+    if (this.deps.notifyOwner) {
+      await this.deps.notifyOwner(`${urgent ? '🆘 URGENT: the caller mentioned hurting themselves. Please call them back as soon as possible.\n\n' : ''}${formatCallbackAlert(alert)}`,
+        `${urgent ? 'URGENT ' : ''}Callback needed: ${alert.name || (alert.phone ? `+${alert.phone}` : 'caller')}`);
+    }
+    if (urgent) {
+      this.noTimeLimit = true;
+      return { status: 'owner_alerted', next: 'Do not say the escalation line and do not end the call. Stay with them, gently repeat Tele-MANAS 14416, and keep them talking until they say they are safe.' };
+    }
     return { status: 'owner_alerted', next: `Say: "${ESCALATION_LINE}" Then close warmly and call end_call.` };
   }
 
@@ -1127,6 +1165,11 @@ class CallSession {
     if (this.finished) return this.wrapUp;
     this.finished = true;
     this.timers.forEach(clearTimeout);
+    if (!this.started) {
+      // Never a real call (bad account, no start event): no summary, no sheet row, no owner alert.
+      this.wrapUp = Promise.resolve();
+      return this.wrapUp;
+    }
     if (this.tts) {
       const tts = this.tts;
       this.tts = null;
@@ -1139,7 +1182,10 @@ class CallSession {
     }
     this.commit('user');
     this.commit('model');
-    this.wrapUp = wrapUpCall(this, reason).catch(e => console.error(`Call wrap-up failed for ${this.callSid}:`, e.message));
+    // Let a booking or alert that is still running finish first, so the summary includes it.
+    this.wrapUp = Promise.allSettled([...this.pendingTools])
+      .then(() => wrapUpCall(this, reason))
+      .catch(e => console.error(`Call wrap-up failed for ${this.callSid}:`, e.message));
     return this.wrapUp;
   }
 }
@@ -1175,7 +1221,6 @@ async function wrapUpCall(session, reason) {
       date: istNow(new Date(session.startedAt)),
       name,
       phone: phone ? `+${phone}` : 'Hidden',
-      customerId: crm?.isNewCustomerId(user.customer_id) ? user.customer_id : '',
       query: queryType,
       summary: summary.summary,
       mood,
@@ -1185,7 +1230,7 @@ async function wrapUpCall(session, reason) {
       whatsapp: whatsappPhone ? `+${whatsappPhone}` : '',
       durationSeconds: seconds,
       callSid: session.callSid
-    }, { timeoutMs: 20000, maxAttempts: 2 }).catch(e => console.error('Phone Queries sheet update failed:', e.message));
+    }, { timeoutMs: 30000, maxAttempts: 1 }).catch(e => console.error('Phone Queries sheet update failed:', e.message)); // one attempt: a slow retry used to add the row twice
   }
 
   if (!pool) return;
