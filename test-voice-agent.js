@@ -134,14 +134,14 @@ test('outgoing audio is cut into Exotel frames that are multiples of 320 bytes',
   const frames = queue.push(Buffer.alloc(7000, 1));
   assert.deepEqual(frames.map(f => f.length), [3200, 3200]);
   const tail = queue.flush();
-  assert.equal(tail.length, 640);
+  assert.equal(tail.length, 3200); // padded with silence to a full frame: Exotel needs at least 3.2 KB
   assert.equal(tail[599], 1);
   assert.equal(tail[600], 0);
   assert.equal(queue.flush(), null);
 });
 
 test('slots follow consultation hours and skip times that are too soon', () => {
-  const now = new Date('2026-09-28T20:05:00+05:30'); // Monday 8:05 PM, so 8:30 is too soon
+  const now = new Date('2026-09-28T19:05:00+05:30'); // Monday 7:05 PM: 7:30 and 8:30 are under 2 hours away
   assert.deepEqual(candidateSlots('2026-09-28', now), ['2026-09-28T21:30:00+05:30']);
   assert.equal(candidateSlots('2026-10-03', now).length, 10); // Saturday 10 AM - 7 PM starts
   assert.equal(candidateSlots('2026-10-03', now)[0], '2026-10-03T10:00:00+05:30');
@@ -275,7 +275,7 @@ test('a full call: audio both ways, barge-in, escalation, goodbye, owner summary
     const media = received.filter(m => m.event === 'media');
     assert.ok(media.every(m => m.stream_sid === 'MZ1' && Buffer.from(m.media.payload, 'base64').length % 320 === 0));
     const bytes = media.reduce((sum, m) => sum + Buffer.from(m.media.payload, 'base64').length, 0);
-    assert.ok(bytes >= 8000 && bytes <= 8320);
+    assert.ok(bytes >= 8000 && bytes <= 9600); // the last frame is padded to a full 3.2 KB
 
     // The caller talks over Kamala: Exotel is told to drop queued audio.
     gemini.emit('message', { serverContent: { inputTranscription: { text: 'Mujhe Shashank ji se baat karni hai' } } });
@@ -379,7 +379,7 @@ test('with a Sarvam key, Kamala speaks in the Indian voice: Gemini decides the w
     voice.emit('final');
     await waitFor(() => received.filter(m => m.event === 'media').length >= 3);
     const bytes = received.filter(m => m.event === 'media').reduce((n, m) => n + Buffer.from(m.media.payload, 'base64').length, 0);
-    assert.ok(bytes >= 8000 && bytes <= 8320);
+    assert.ok(bytes >= 8000 && bytes <= 9600); // the last frame is padded to a full 3.2 KB
     assert.ok(received.filter(m => m.event === 'media').every(m => Buffer.from(m.media.payload, 'base64').length % 320 === 0));
 
     // Barge-in: Exotel is cleared and a fresh voice stream replaces the old one.
