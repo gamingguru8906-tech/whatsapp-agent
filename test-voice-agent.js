@@ -19,6 +19,8 @@ const {
   FrameQueue,
   exotelFrameBytes,
   candidateSlots,
+  startWindowFor,
+  slotRuleNow,
   knowledgeLoader,
   buildCallPrompt,
   formatCallbackAlert,
@@ -140,13 +142,32 @@ test('outgoing audio is cut into Exotel frames that are multiples of 320 bytes',
   assert.equal(queue.flush(), null);
 });
 
-test('slots follow consultation hours and skip times that are too soon', () => {
-  const now = new Date('2026-09-28T19:05:00+05:30'); // Monday 7:05 PM: 7:30 and 8:30 are under 2 hours away
-  assert.deepEqual(candidateSlots('2026-09-28', now), ['2026-09-28T21:30:00+05:30']);
-  assert.equal(candidateSlots('2026-10-03', now).length, 10); // Saturday 10 AM - 7 PM starts
-  assert.equal(candidateSlots('2026-10-03', now)[0], '2026-10-03T10:00:00+05:30');
+test('slots follow consultation hours and the booking-notice rule', () => {
+  // Monday 9:00 AM (before 11 AM): today's evening is open
+  let now = new Date('2026-09-28T09:00:00+05:30');
+  assert.deepEqual(candidateSlots('2026-09-28', now), ['2026-09-28T19:30:00+05:30', '2026-09-28T20:30:00+05:30', '2026-09-28T21:30:00+05:30']);
+  // Monday 11:00 AM onward: nothing today, Tuesday evening
+  now = new Date('2026-09-28T11:00:00+05:30');
+  assert.deepEqual(candidateSlots('2026-09-28', now), []);
+  assert.deepEqual(candidateSlots('2026-09-29', now), ['2026-09-29T19:30:00+05:30', '2026-09-29T20:30:00+05:30', '2026-09-29T21:30:00+05:30']);
+  // Friday 3 PM: tomorrow is Saturday, so morning only; Sunday is normal weekend hours
+  now = new Date('2026-10-02T15:00:00+05:30');
+  assert.deepEqual(candidateSlots('2026-10-03', now), ['2026-10-03T10:00:00+05:30', '2026-10-03T11:00:00+05:30', '2026-10-03T12:00:00+05:30']);
+  assert.equal(candidateSlots('2026-10-04', now).length, 10);
+  // Saturday 8 AM: today's evening (4-7 PM starts)
+  now = new Date('2026-10-03T08:00:00+05:30');
+  assert.deepEqual(candidateSlots('2026-10-03', now), ['2026-10-03T16:00:00+05:30', '2026-10-03T17:00:00+05:30', '2026-10-03T18:00:00+05:30', '2026-10-03T19:00:00+05:30']);
+  // Sunday 11:30 PM: tomorrow is Monday, evening
+  now = new Date('2026-10-04T23:30:00+05:30');
+  assert.deepEqual(candidateSlots('2026-10-05', now), ['2026-10-05T19:30:00+05:30', '2026-10-05T20:30:00+05:30', '2026-10-05T21:30:00+05:30']);
   assert.deepEqual(candidateSlots('2026-09-27', now), []);
   assert.deepEqual(candidateSlots('next monday', now), []);
+});
+
+test('the booking rule is stated plainly for the prompts', () => {
+  assert.match(slotRuleNow(new Date('2026-09-28T09:00:00+05:30')), /today \(Mon\) only in the evening: a start between 7:30 PM and 9:30 PM/);
+  assert.match(slotRuleNow(new Date('2026-10-02T15:00:00+05:30')), /nothing today.*tomorrow \(Sat\) a start between 10:00 AM and 12:00 PM \(morning\)/);
+  assert.deepEqual(startWindowFor('2026-10-03', new Date('2026-10-02T15:00:00+05:30')).part, 'morning');
 });
 
 test('the call prompt carries the agreed greeting, robot answer, escalation line and only approved facts', () => {
