@@ -26,6 +26,7 @@ const { isPaymentClaim, secretsMatch, verifyCapturedPayment, verifyAndFulfillPay
 const crm = require('./crm');
 const voiceNote = require('./voice-note');
 const voiceAgent = require('./voice-agent');
+const growth = require('./growth');
 
 // Temporary, explicit gateway validation charge. This is not the consultation
 // fee and must be changed back to catalogue pricing after the live-gateway test.
@@ -166,6 +167,7 @@ if (DATABASE_URL) {
   `).then(() => retireCustomerIds(pool))
     .then(() => crm.migrate(pool))
     .then(() => voiceAgent.migrate(pool))
+    .then(() => growth.migrate(pool))
     .then(() => console.log('✅ PostgreSQL connected & table ready.'))
     .catch(e => console.error('❌ PostgreSQL setup error:', e.message));
 } else {
@@ -1141,7 +1143,7 @@ app.post('/razorpay-webhook', async (req, res) => {
       let storedLinkRow = null;
       if (pool) {
         const storedLink = await pool.query(`SELECT amount_paise,phone,calendar_event_id,service_name,meet_link,
-          request_invoice_number,appointment_start FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id]);
+          request_invoice_number,appointment_start,email FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id]);
         const stored = storedLink.rows[0];
         storedLinkRow = stored || null;
         if (!stored || Number(stored.amount_paise) !== actualAmountPaise || stored.phone !== notes.phone
@@ -1332,9 +1334,15 @@ app.post('/razorpay-webhook', async (req, res) => {
           + `Concern: ${notes.summary || 'Not recorded'}\n`
           + `Reading: ${crm.readingTag(await getUser(phone).catch(() => null)) || 'Not enough chat yet'}\nAmount received: ₹${price.toFixed(2)}${isGatewayTest ? ` (service price ₹${Number(notes.list_price || 0).toFixed(2)} still unpaid)` : ''}\n`
           + `Google Meet: ${meetLink}\nYour Google Calendar will also remind you 30 minutes before.`, `Consultation booked: ${customerName}, ${slotText}`).then(() => true));
+        // Ask once whether they want festival reminders and updates (their consent is recorded with its wording).
+        if (confirmationSent) await once('optin_ask', () => growth.askOptIn(pool, phone, sendCustomerText).catch(() => false));
+        // Tell Meta about the sale so ads can find people like this client (only once META_CAPI_TOKEN is set).
+        if (!isGatewayTest) await once('meta_capi', () => growth.reportPurchase(axios, {
+          paymentLinkId: pl.id, phone, email: notes.email || storedLinkRow?.email || '', amountInr: price, serviceName
+        }).catch(e => { console.error('Meta purchase event failed:', e.response?.data?.error?.message || e.message); return 'failed'; }));
       }
       if (pool) {
-        await pool.query(`UPDATE wa_payment_links SET status=$2,razorpay_payment_id=$3,updated_at=NOW() WHERE payment_link_id=$1`, [pl.id, notes.gateway_test === 'true' ? 'gateway_test_paid' : 'paid', payment?.id || null]);
+        await pool.query(`UPDATE wa_payment_links SET status=$2,razorpay_payment_id=$3,paid_at=COALESCE(paid_at,NOW()),updated_at=NOW() WHERE payment_link_id=$1`, [pl.id, notes.gateway_test === 'true' ? 'gateway_test_paid' : 'paid', payment?.id || null]);
         await pool.query(`INSERT INTO wa_payment_fulfillments (payment_link_id,status) VALUES ($1,'fulfilled')
           ON CONFLICT (payment_link_id) DO UPDATE SET status='fulfilled',updated_at=NOW()`, [pl.id]);
       }
@@ -1382,11 +1390,14 @@ app.post('/webhook', async (req, res) => {
   }
   res.sendStatus(200);
   const incoming = [];
+  const statuses = [];
   for (const entry of req.body?.entry || []) {
     for (const change of entry.changes || []) {
       for (const m of change.value?.messages || []) incoming.push(m);
+      for (const st of change.value?.statuses || []) statuses.push(st);
     }
   }
+  if (statuses.length) growth.recordStatuses(pool, statuses).catch(e => console.error('Status receipts failed:', e.message));
   if (!incoming.length) {
     console.log('📭 Webhook received but no messages (status update or echo).');
     return;
@@ -1425,6 +1436,9 @@ async function handleInboundMessage(msg) {
   const from = msg.from;
   lastSeenAt.set(from, Date.now());
   try {
+    // A source tag like "(Ref: IG-DIWALI)" from a website button or ad is saved silently and never shown to Kamala.
+    const tagged = msg.type === 'text' ? growth.extractRef(msg.text?.body) : { ref: null };
+    if (tagged.ref) msg.text.body = tagged.clean || 'Namaste';
     const inboundText = msg.type === 'text' ? String(msg.text?.body || '').trim()
       : msg.type === 'button' ? String(msg.button?.text || '').trim()
       : msg.type === 'interactive' ? String(msg.interactive?.button_reply?.title || msg.interactive?.list_reply?.title || '').trim() : '';
@@ -1438,6 +1452,11 @@ async function handleInboundMessage(msg) {
     }
     if (pool) await pool.query(`INSERT INTO users (phone, last_inbound_at) VALUES ($1, NOW())
       ON CONFLICT (phone) DO UPDATE SET last_inbound_at=NOW()`, [from]).catch(e => console.error('Inbound record failed:', e.message));
+    await growth.recordInbound(pool, from, { ref: tagged.ref, referral: msg.referral, text: inboundText }).catch(e => console.error('Lead source failed:', e.message));
+    if (pool && from !== normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || '')) {
+      // After Kamala has replied and saved any new details, refresh the lead score (and alert on hot leads).
+      setTimeout(() => growth.updateLeadScore(pool, from, notifyOwner).catch(e => console.error('Lead score failed:', e.message)), 25000).unref?.();
+    }
     if (/^(stop|unsubscribe|opt\s*out)$/i.test(inboundText)) {
       if (pool) await pool.query(`INSERT INTO users (phone,marketing_opt_in,marketing_opt_out) VALUES ($1,false,true)
         ON CONFLICT (phone) DO UPDATE SET marketing_opt_in=false,marketing_opt_out=true,last_contact=NOW()`, [from]);
@@ -1460,10 +1479,10 @@ async function handleInboundMessage(msg) {
     }
     const latestAssistantText = (sessions[from] || []).slice().reverse()
       .find(turn => turn?.role === 'model')?.parts?.map(part => part.text || '').join(' ') || '';
-    if (/^yes$/i.test(inboundText) && /reply\s+YES|reply YES|follow-up reminder/i.test(latestAssistantText)) {
-      if (pool) await pool.query(`INSERT INTO users (phone,marketing_opt_in,marketing_opt_out) VALUES ($1,true,false)
-        ON CONFLICT (phone) DO UPDATE SET marketing_opt_in=true,marketing_opt_out=false,last_contact=NOW()`, [from]);
-      await sendTextMessage(from, 'Thank you, noted! I will keep you updated.');
+    if (/^(yes|haan|ha|han|ji|yes please|ok yes)[.!]?$/i.test(inboundText) && (growth.isOptInPrompt(latestAssistantText) || /reply\s+YES|reply YES|follow-up reminder/i.test(latestAssistantText)
+      || (/^\[Voice note\]/.test(latestAssistantText) && await growth.optInPending(pool, from)))) {
+      await growth.recordOptIn(pool, from).catch(e => console.error('Opt-in save failed:', e.message));
+      await sendCustomerText(from, 'Dhanyavaad, noted! Festival muhurat reminders aur updates yahin aayenge. Band karne ke liye kabhi bhi STOP likh dijiye.');
       return;
     }
 
@@ -1555,6 +1574,33 @@ async function handleInboundMessage(msg) {
         `);
         const { total_leads, total_customers, total_converted } = stats.rows[0];
         await sendTextMessage(from, `📊 *Veshannastro Stats*\nTotal Leads: ${total_leads || 0}\nPaid Customers: ${total_customers || 0}\nConverted by AI: ${total_converted || 0}`);
+        return;
+      }
+
+      if (lowerCmd === '/campaign' || lowerCmd.startsWith('/campaign ')) {
+        if (!isOwner) return await sendTextMessage(from, 'That command is available to the business owner only.');
+        if (!pool) return await sendTextMessage(from, 'Database not connected.');
+        const args = command.split(/\s+/).slice(1);
+        if (!args.length || args[0].toLowerCase() === 'help') return await sendTextMessage(from, growth.campaignHelp());
+        if (args[0].toLowerCase() === 'list') return await sendTextMessage(from, await growth.listCampaigns(pool));
+        if (args[0].toLowerCase() === 'send') {
+          const id = Number(args[1]);
+          if (!Number.isInteger(id)) return await sendTextMessage(from, 'Use: /campaign send <id>');
+          growth.runCampaign(pool, id, { sendTemplate: sendCampaignTemplate, report: text => sendTextMessage(from, text) })
+            .catch(e => sendTextMessage(from, `❌ Campaign #${id} failed: ${e.message}`));
+          return;
+        }
+        return await sendTextMessage(from, await growth.previewCampaign(pool, args));
+      }
+
+      if (lowerCmd === '/analytics') {
+        if (!isOwner) return await sendTextMessage(from, 'That command is available to the business owner only.');
+        try {
+          const counts = await growth.publishAnalytics(pool, postAppsScript);
+          await sendTextMessage(from, `📊 Analytics updated in the Sheet: ${Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(', ')} rows.`);
+        } catch (e) {
+          await sendTextMessage(from, `❌ Analytics update failed: ${e.message}`);
+        }
         return;
       }
 
@@ -2081,6 +2127,22 @@ async function sendWhatsAppTemplate(to, templateName, bodyParameters = [], heade
   }
 }
 
+// Campaign sends need the WhatsApp message id so delivery and read receipts can be matched later.
+async function sendCampaignTemplate(to, templateName, lang, bodyParameters = []) {
+  if (!WA_TOKEN) return { ok: false, error: 'WhatsApp token missing' };
+  const template = { name: templateName, language: { code: lang || 'en' } };
+  if (bodyParameters.length) template.components = [{ type: 'body', parameters: bodyParameters.map(text => ({ type: 'text', text: String(text).slice(0, 60) })) }];
+  try {
+    const r = await axios.post(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, {
+      messaging_product: 'whatsapp', to: normalizeWhatsAppNumber(to), type: 'template', template
+    }, { headers: { Authorization: `Bearer ${WA_TOKEN}`, 'Content-Type': 'application/json' }, timeout: 20000 });
+    return { ok: true, id: r.data?.messages?.[0]?.id || null };
+  } catch (error) {
+    const e = error.response?.data?.error;
+    return { ok: false, error: e ? `${e.code} ${e.message}` : error.message };
+  }
+}
+
 async function sendDiscountTemplate(to) {
   return sendWhatsAppTemplate(to, process.env.WA_48H_DISCOUNT_TEMPLATE);
 }
@@ -2237,7 +2299,8 @@ function readThePerson(phone) {
 function crmDeps() {
   return {
     pool, adminPhone: normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || ''), genAI: GEMINI_API_KEY ? genAI : null,
-    modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', sendCustomerText, notifyOwner
+    modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', sendCustomerText, notifyOwner,
+    afterFollowup: phone => growth.askOptIn(pool, phone, sendCustomerText)
   };
 }
 
@@ -2255,7 +2318,27 @@ async function pushNextWake() {
   await postAppsScript({ target: 'schedule_wake', wakeAt }, { timeoutMs: 15000, maxAttempts: 1 });
   lastPushedWake = wakeAt;
 }
+// Once a day, after the 8 AM owner summary has woken the server, refresh the analytics tabs in the Sheet.
+async function maybeDailyAnalytics() {
+  if (!pool || !GOOGLE_APPS_SCRIPT_URL || !GOOGLE_APPS_SCRIPT_SECRET) return;
+  const now = new Date();
+  const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', hourCycle: 'h23' }).format(now));
+  if (hour < 8) return;
+  const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(now);
+  const claimed = await pool.query(`INSERT INTO wa_meta (key,value) VALUES ('analytics_date',$1)
+    ON CONFLICT (key) DO UPDATE SET value=$1 WHERE wa_meta.value IS DISTINCT FROM $1 RETURNING key`, [day]);
+  if (!claimed.rows[0]) return;
+  try {
+    const counts = await growth.publishAnalytics(pool, postAppsScript);
+    console.log('📊 Daily analytics published:', JSON.stringify(counts));
+  } catch (e) {
+    // One try a day; the owner can rerun it any time with /analytics.
+    console.error('Daily analytics failed:', e.message);
+  }
+}
+
 async function runScheduledJobs() {
+  maybeDailyAnalytics().catch(e => console.error('Daily analytics failed:', e.message));
   const result = await crm.runDueJobs(crmDeps());
   await pushNextWake().catch(e => console.error('Wake scheduling failed:', e.message));
   return result;
@@ -2265,6 +2348,7 @@ app.post('/cron/tick', async (req, res) => {
   if (!secretsMatch(GOOGLE_APPS_SCRIPT_SECRET, req.body?.apiSecret)) return res.status(401).json({ ok: false });
   try {
     const result = await crm.runDueJobs(crmDeps());
+    maybeDailyAnalytics().catch(e => console.error('Daily analytics failed:', e.message));
     const wakeAt = await nextWakeAt();
     lastPushedWake = wakeAt;
     res.json({ ok: true, result, wakeAt });
