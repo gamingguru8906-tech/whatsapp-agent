@@ -69,6 +69,11 @@ async function migrate(pool) {
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS reminder_status TEXT;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS checkin_for TIMESTAMPTZ;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS checkin_sent_at TIMESTAMPTZ;
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS payment_url TEXT;
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+    -- Links that already existed when this column arrived count as nudged (the old in-memory nudge may have gone out).
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS nudge_sent_at TIMESTAMPTZ DEFAULT NOW();
+    ALTER TABLE wa_payment_links ALTER COLUMN nudge_sent_at DROP DEFAULT;
     CREATE TABLE IF NOT EXISTS wa_messages (
       id BIGSERIAL PRIMARY KEY,
       phone TEXT NOT NULL,
@@ -403,6 +408,25 @@ const CHECKIN_ELIGIBLE_SQL = `
   AND u.last_inbound_at + INTERVAL '24 hours' < l.appointment_start - INTERVAL '30 minutes'
   AND l.checkin_for IS DISTINCT FROM u.last_inbound_at`;
 
+// One nudge for an unpaid payment link: 2 hours after it was sent and 30 minutes after the customer's last message,
+// or at 9 AM IST if that falls at night. It goes only while the link has 15+ minutes left and WhatsApp's 24-hour
+// window allows a free message. Kept in the database so it survives the server sleeping or restarting.
+const NUDGE_BASE_SQL = "GREATEST(l.created_at + INTERVAL '2 hours', u.last_inbound_at + INTERVAL '30 minutes')";
+const NUDGE_AT_SQL = `(CASE
+  WHEN EXTRACT(HOUR FROM ${NUDGE_BASE_SQL} AT TIME ZONE 'Asia/Kolkata') BETWEEN 9 AND 20 THEN ${NUDGE_BASE_SQL}
+  ELSE (date_trunc('day', (${NUDGE_BASE_SQL} AT TIME ZONE 'Asia/Kolkata') + INTERVAL '3 hours') + INTERVAL '9 hours') AT TIME ZONE 'Asia/Kolkata'
+END)`;
+const NUDGE_DEADLINE_SQL = `LEAST(
+  COALESCE(l.expires_at, LEAST(l.created_at + INTERVAL '12 hours', l.appointment_start - INTERVAL '30 minutes')) - INTERVAL '15 minutes',
+  u.last_inbound_at + INTERVAL '23 hours 58 minutes')`;
+const NUDGE_ELIGIBLE_SQL = `
+  l.status = 'request_created' AND l.nudge_sent_at IS NULL
+  AND u.last_inbound_at IS NOT NULL
+  AND COALESCE(u.is_paused,false) = false
+  AND COALESCE(u.marketing_opt_out,false) = false
+  AND ${NUDGE_AT_SQL} < ${NUDGE_DEADLINE_SQL}
+  AND NOW() < ${NUDGE_DEADLINE_SQL}`;
+
 function firstName(name) {
   return String(name || '').trim().split(/\s+/)[0] || '';
 }
@@ -449,6 +473,32 @@ async function sendCheckins(deps) {
     const msg = `Namaste ${firstName(b.customer_name)} ji, your ${b.service_name} consultation is on ${istDateTime(b.appointment_start)}.`
       + ' I will send you the Meet link here 30 minutes before it starts. Please just reply OK so the reminder can reach you on WhatsApp.';
     if (await sendCustomerText(b.phone, msg)) sent++;
+  }
+  return sent;
+}
+
+/** The slot really is held until the link expires, so the nudge says until when and gives the link again. */
+function paymentNudgeText(link) {
+  const name = firstName(link.customer_name);
+  const expires = link.expires_at ? new Date(link.expires_at) : new Date(Math.min(
+    new Date(link.created_at).getTime() + 12 * 3600 * 1000,
+    new Date(link.appointment_start).getTime() - 30 * 60 * 1000));
+  return `Hi${name ? ` ${name} ji` : ''}, aapke ${link.service_name} ke liye ${istDateTime(link.appointment_start)} wala slot abhi hold par hai.`
+    + ` Payment link ${istDateTime(expires)} tak valid hai${link.payment_url ? `: ${link.payment_url}` : '.'}`
+    + '\n\nLink mein koi help chahiye ho ya time badalna ho toh bas yahin bata dijiye.';
+}
+
+async function sendPaymentNudges(deps) {
+  const { pool, sendCustomerText } = deps;
+  const due = await pool.query(`SELECT l.payment_link_id FROM wa_payment_links l JOIN users u ON u.phone=l.phone
+    WHERE ${NUDGE_ELIGIBLE_SQL} AND NOW() >= ${NUDGE_AT_SQL}`);
+  let sent = 0;
+  for (const { payment_link_id: id } of due.rows) {
+    const claimed = await pool.query(`UPDATE wa_payment_links SET nudge_sent_at=NOW()
+      WHERE payment_link_id=$1 AND nudge_sent_at IS NULL AND status='request_created' RETURNING *`, [id]);
+    const link = claimed.rows[0];
+    if (!link) continue;
+    if (await sendCustomerText(link.phone, paymentNudgeText(link))) sent++;
   }
   return sent;
 }
@@ -559,6 +609,8 @@ async function nextJobAt(pool, adminPhone = '') {
       UNION ALL
       SELECT ${FOLLOWUP_AT_SQL} FROM users u
         WHERE ${FOLLOWUP_ELIGIBLE_SQL} AND u.last_inbound_at + INTERVAL '23 hours 55 minutes' > NOW() AND u.phone <> $2
+      UNION ALL
+      SELECT ${NUDGE_AT_SQL} FROM wa_payment_links l JOIN users u ON u.phone=l.phone WHERE ${NUDGE_ELIGIBLE_SQL}
     ) x`, [PAID_STATUSES, String(adminPhone || '')]);
   return res.rows[0]?.next ? new Date(res.rows[0].next) : null;
 }
@@ -568,12 +620,13 @@ async function runDueJobs(deps) {
   if (!deps.pool || jobsRunning) return null;
   jobsRunning = true;
   try {
-    const result = { reminders: 0, checkins: 0, followups: 0, summary: 0 };
+    const result = { reminders: 0, checkins: 0, nudges: 0, followups: 0, summary: 0 };
     result.reminders = await sendReminders(deps).catch(e => { console.error('Reminder job failed:', e.message); return 0; });
     result.checkins = await sendCheckins(deps).catch(e => { console.error('Check-in job failed:', e.message); return 0; });
+    result.nudges = await sendPaymentNudges(deps).catch(e => { console.error('Payment nudge job failed:', e.message); return 0; });
     result.followups = await sendFollowups(deps).catch(e => { console.error('Follow-up job failed:', e.message); return 0; });
     result.summary = await sendOwnerSummary(deps).catch(e => { console.error('Owner summary failed:', e.message); return 0; });
-    if (result.reminders || result.checkins || result.followups || result.summary) console.log('⏰ Scheduled messages sent:', JSON.stringify(result));
+    if (result.reminders || result.checkins || result.nudges || result.followups || result.summary) console.log('⏰ Scheduled messages sent:', JSON.stringify(result));
     return result;
   } finally {
     jobsRunning = false;
@@ -609,6 +662,8 @@ module.exports = {
   nextDueAt,
   sendReminders,
   sendCheckins,
+  paymentNudgeText,
+  sendPaymentNudges,
   sendFollowups,
   sendOwnerSummary,
   nextSummaryAt
