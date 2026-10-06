@@ -28,9 +28,11 @@ const voiceNote = require('./voice-note');
 const voiceAgent = require('./voice-agent');
 const growth = require('./growth');
 
-// Temporary, explicit gateway validation charge. This is not the consultation
-// fee and must be changed back to catalogue pricing after the live-gateway test.
+// Until PAYMENT_MODE=live is set, payment links collect only this explicit ₹1
+// gateway validation charge, not the consultation fee. In live mode they
+// collect the catalogue price after the approved discounts.
 const GATEWAY_VALIDATION_CHARGE_INR = 1;
+const GATEWAY_TEST = String(process.env.PAYMENT_MODE || '').trim().toLowerCase() !== 'live';
 
 const app = express();
 app.use(express.json({
@@ -61,7 +63,6 @@ let liveData = [];
 let systemPromptCache = "";
 let servicesContextCache = "No live services loaded yet."; // shared with phone Kamala
 const sessions = {};
-const pendingPayments = {}; // Holds timeouts for Abandoned Cart
 const activePaymentLinks = {}; // Holds the latest paymentLink.id for active verification
 const processedPayments = new Set(); // Prevent duplicate invoices if both manual verify and webhook fire
 const processedMessageIds = new Map(); // msgId -> timestamp to prevent duplicate processing
@@ -357,11 +358,14 @@ CRITICAL RULES FOR WHATSAPP FORMATTING (MANDATORY):
 - FOLLOW THE CONVERSATION (CRITICAL): read every message against YOUR LAST MESSAGE and the chat so far. A short or unclear message ("done?", "ok", "hmm", "?", "then?") continues the topic you were just discussing; never jump to a different topic (payment, booking, a new service) that was not being discussed. If it is still unclear, ask one short, natural question about it, e.g. "Ji, aap name correction ki details ke baare mein pooch rahe hain?"
 - NEVER mention screens, systems, records, databases, files or anything "showing" or "not showing" (never say "mere screen par show nahi ho raha", "system mein nahi dikh raha"). A real assistant simply remembers or asks. If the person says you already have their details but they are "Not known yet" above, apologise simply and ask once: "Sorry ji, woh mujh tak nahi pahuncha. Ek baar full name aur date of birth bhej dijiye." Then never ask for it again.
 
-PAYMENT VALIDATION PERIOD:
+${GATEWAY_TEST ? `PAYMENT VALIDATION PERIOD:
 - Payment links currently collect ₹1 only to validate the live payment gateway. This is not payment for a consultation and does not confirm a real consultation appointment.
 - The server sends an unpaid payment-request invoice with the Razorpay link. It is not a payment receipt or a GST tax invoice. Only after Razorpay verifies payment may the server send the existing payment receipt and the appropriate booking or test-payment confirmation.
 - Do not say or imply that the consultation price has been paid or that the requested appointment is a real confirmed booking after a ₹1 gateway test. The server sends the customer a clearly labelled gateway-test receipt and test meeting details after Razorpay confirms the ₹1 transaction.
-- Keep quoting the published catalogue price accurately; the ₹1 amount is only the temporary gateway validation transaction.
+- Keep quoting the published catalogue price accurately; the ₹1 amount is only the temporary gateway validation transaction.` : `PAYMENTS:
+- The payment link collects the consultation total: the published price after any approved discount.
+- The server sends an unpaid payment-request invoice with the Razorpay link. It is not a payment receipt or a GST tax invoice. Only after Razorpay verifies payment does the server send the payment receipt and the booking confirmation with the Meet link.
+- Do not say or imply that the booking is confirmed before Razorpay verifies the payment.`}
 
 PHASE 1: THE ANALYSIS PHASE (Messages 1 to 3)
 - When they first say hi, don't give a speech. Just be warm and casual: "Hi, aap kaise hain?"
@@ -438,10 +442,6 @@ ${servicesContext}`;
 
 // Booking problems the customer can fix (wrong slot, missing detail, unknown service): Kamala asks them
 // instead of saying "try again later".
-function firstNameOf(name) {
-  return String(name || '').trim().split(/\s+/)[0] || '';
-}
-
 function customerFixable(message) {
   const error = new Error(message);
   error.customerFixable = true;
@@ -598,10 +598,9 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
     const additionalDiscount = Math.round(publishedService.price * additionalDiscountPercent) / 100;
     const serviceTotal = Math.max(0, publishedService.price - additionalDiscount);
     if (serviceTotal <= 0) throw new Error('The approved discount would make the service total invalid. Please ask the owner to review it.');
-    // This temporary hard-coded charge intentionally exercises the
-    // configured Razorpay gateway with real credentials for ₹1.
-    // It does not collect the service price or apply discounts.
-    const finalAmount = GATEWAY_VALIDATION_CHARGE_INR;
+    // In gateway-test mode the link exercises the configured Razorpay gateway with real
+    // credentials for ₹1; it does not collect the service price or apply discounts.
+    const finalAmount = GATEWAY_TEST ? GATEWAY_VALIDATION_CHARGE_INR : serviceTotal;
     const amountPaise = Math.round(finalAmount * 100);
     // A new link replaces any earlier unpaid one for this number: cancel it and free its slot,
     // so the customer cannot pay twice or keep two slots blocked.
@@ -616,7 +615,6 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
         }
         await pool.query("UPDATE wa_payment_links SET status='superseded', updated_at=NOW() WHERE payment_link_id=$1", [row.payment_link_id]).catch(() => {});
         if (row.calendar_event_id) await postAppsScript({ target: 'calendar_cancel', eventId: row.calendar_event_id }).catch(() => {});
-        if (pendingPayments[row.payment_link_id]) { clearTimeout(pendingPayments[row.payment_link_id]); delete pendingPayments[row.payment_link_id]; }
         if (activePaymentLinks[phone] === row.payment_link_id) delete activePaymentLinks[phone];
       }
     }
@@ -627,13 +625,16 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
       email: args.email
     });
 
+    // Expires after 12 hours, or 30 minutes before the slot if that is sooner (never less than 16 minutes).
+    const expireBy = Math.floor(Math.max(Date.now() + 16 * 60 * 1000, Math.min(Date.now() + 12 * 60 * 60 * 1000, slot.start.getTime() - 30 * 60 * 1000)) / 1000);
     createdPaymentLink = await razorpayClient.paymentLink.create({
       amount: amountPaise,
       currency: "INR",
       accept_partial: false,
-      // Expires after 12 hours, or 30 minutes before the slot if that is sooner (never less than 16 minutes).
-      expire_by: Math.floor(Math.max(Date.now() + 16 * 60 * 1000, Math.min(Date.now() + 12 * 60 * 60 * 1000, slot.start.getTime() - 30 * 60 * 1000)) / 1000),
-      description: `INR 1 gateway validation only - not a consultation payment. ${String(publishedService.t)}`.substring(0, 2048),
+      expire_by: expireBy,
+      description: (GATEWAY_TEST
+        ? `INR 1 gateway validation only - not a consultation payment. ${String(publishedService.t)}`
+        : `${String(publishedService.t)} consultation`).substring(0, 2048),
       reference_id: `wa_booking_${Date.now()}`,
       notify: { sms: false, email: false },
       notes: {
@@ -654,7 +655,7 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
         additional_discount_percentage: String(additionalDiscountPercent),
         service_total: String(serviceTotal),
         discount_percentage: String(additionalDiscountPercent),
-        gateway_test: 'true',
+        gateway_test: String(GATEWAY_TEST),
         phone: String(phone),
         summary: String(args.customer_pain_points_summary || '').substring(0, 240),
         time_slot: slot.start.toISOString(),
@@ -686,7 +687,7 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
       additionalDiscount,
       serviceTotal,
       linkAmount: finalAmount,
-      isGatewayTest: true,
+      isGatewayTest: GATEWAY_TEST,
       paymentUrl: createdPaymentLink.short_url
     });
     if (pool) {
@@ -708,14 +709,14 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
         payment_link_id, phone, calendar_event_id, amount_paise, customer_name,
         email, gender, dob, tob, pob, billing_address, customer_gstin, service_name,
         appointment_start, normal_rate_paise, website_discount_paise, additional_discount_paise,
-        service_total_paise, request_invoice_number, status
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,'request_created')
+        service_total_paise, request_invoice_number, payment_url, expires_at, status
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,'request_created')
       ON CONFLICT (payment_link_id) DO UPDATE SET status='request_created', updated_at=NOW()`,
       [createdPaymentLink.id, phone, calendarHold.event.id, amountPaise, args.customer_name || '',
         args.email || '', args.gender || '', args.dob || '', args.tob || '', args.pob || '', args.billing_address || '',
         args.customer_gstin || '', publishedService.t, slot.start, Math.round(publishedService.listPrice * 100),
         Math.round(publishedService.websiteDiscount * 100), Math.round(additionalDiscount * 100),
-        Math.round(serviceTotal * 100), invoiceNumber]
+        Math.round(serviceTotal * 100), invoiceNumber, link, new Date(expireBy * 1000)]
     );
     await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, calendarHold.meetLink || null])
       .catch(e => console.error('Saving the Meet link failed:', e.message));
@@ -729,11 +730,13 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
       normalRate: publishedService.listPrice, websiteDiscount: publishedService.websiteDiscount,
       additionalDiscount: additionalDiscount, serviceTotal: serviceTotal,
       amountDue: finalAmount, paymentUrl: link, invoiceStatus: 'UNPAID',
-      isGatewayTest: true, source
+      isGatewayTest: GATEWAY_TEST, source
     });
     const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
     if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
-    const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}`;
+    const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\n${GATEWAY_TEST
+      ? `This link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.`
+      : `Amount due: ₹${serviceTotal.toFixed(2)}.`}\n\nPay securely here: ${link}`;
     const delivery = await deliver({ mediaId, invoiceName, caption, link, customerName: args.customer_name, serviceName: publishedService.t, appointmentDate, slot });
     const refId = createdPaymentLink.id;
     delivered = { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
@@ -742,18 +745,7 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
       await pool.query(`UPDATE wa_discount_offers SET used_at=NOW(), status='used' WHERE source_payment_link_id=$1 AND status='accepted'`, [acceptedDiscountSourceId])
         .catch(e => console.error('Discount offer update failed:', e.message));
     }
-
-    // One gentle nudge 2 hours later, only if this link is still the unpaid, current one.
-    if (delivery === 'sent') pendingPayments[refId] = setTimeout(async () => {
-      delete pendingPayments[refId];
-      try {
-        const row = pool ? (await pool.query('SELECT status FROM wa_payment_links WHERE payment_link_id=$1', [refId])).rows[0] : null;
-        if (row && row.status !== 'request_created') return;
-        await sendCustomerText(phone, `Hi ${firstNameOf(args.customer_name)} ji, bas check kar rahi thi ki aap appointment ke saath aage badhna chahenge? Payment link mein koi help chahiye ho toh bataiye.`);
-      } catch (e) {
-        console.error('Payment nudge failed:', e.message);
-      }
-    }, 2 * 60 * 60 * 1000);
+    // The one nudge for an unpaid link is a scheduled job (crm.sendPaymentNudges), so it survives the server sleeping.
     return delivered;
   } catch (e) {
     if (delivered) {
@@ -1166,13 +1158,6 @@ app.post('/razorpay-webhook', async (req, res) => {
         return doneSteps[name];
       };
 
-      // 1. Clear Abandoned Cart Timer
-      const plId = pl.id;
-      if (pendingPayments[plId]) {
-        clearTimeout(pendingPayments[plId]);
-        delete pendingPayments[plId];
-      }
-
       // 2. Mark user as returning customer
       if (phone && notes.gateway_test !== 'true') {
         await upsertUser(phone, true, false);
@@ -1357,7 +1342,6 @@ app.post('/razorpay-webhook', async (req, res) => {
         });
       }
       if (pl?.id && pool) await pool.query("UPDATE wa_payment_links SET status=$2,updated_at=NOW() WHERE payment_link_id=$1", [pl.id, pl.notes?.gateway_test === 'true' ? 'gateway_test_expired' : 'expired']);
-      if (pl?.id && pendingPayments[pl.id]) clearTimeout(pendingPayments[pl.id]);
     }
     return res.sendStatus(200);
   } catch(e) {
@@ -2305,11 +2289,16 @@ function crmDeps() {
 }
 
 // Render's free instance sleeps when idle. Apps Script wakes it (via /cron/tick) 5 minutes before
-// the next reminder/follow-up is due, so the service is not kept awake all day.
+// the next reminder, nudge, follow-up, 48-hour offer or daily drip is due, so the service is not kept awake all day.
 let lastPushedWake;
 async function nextWakeAt() {
-  const next = pool ? await crm.nextDueAt(pool, ADMIN_PHONE_NUMBER) : null;
-  return next ? new Date(next.getTime() - 5 * 60 * 1000).toISOString() : '';
+  if (!pool) return '';
+  const times = (await Promise.all([
+    crm.nextDueAt(pool, ADMIN_PHONE_NUMBER),
+    nextDiscountOfferAt().catch(() => null),
+    nextDripAt().catch(() => null)
+  ])).filter(Boolean).map(t => t.getTime());
+  return times.length ? new Date(Math.min(...times) - 5 * 60 * 1000).toISOString() : '';
 }
 async function pushNextWake() {
   if (!pool || !GOOGLE_APPS_SCRIPT_URL || !GOOGLE_APPS_SCRIPT_SECRET) return;
@@ -2339,6 +2328,8 @@ async function maybeDailyAnalytics() {
 
 async function runScheduledJobs() {
   maybeDailyAnalytics().catch(e => console.error('Daily analytics failed:', e.message));
+  sendDiscountOffers().catch(e => console.error('48-hour opted-in follow-up failed:', e.message));
+  runDailyDrip().catch(e => console.error('❌ Drip campaign error:', e.message));
   const result = await crm.runDueJobs(crmDeps());
   await pushNextWake().catch(e => console.error('Wake scheduling failed:', e.message));
   return result;
@@ -2349,6 +2340,8 @@ app.post('/cron/tick', async (req, res) => {
   try {
     const result = await crm.runDueJobs(crmDeps());
     maybeDailyAnalytics().catch(e => console.error('Daily analytics failed:', e.message));
+    sendDiscountOffers().catch(e => console.error('48-hour opted-in follow-up failed:', e.message));
+    await runDailyDrip().catch(e => console.error('❌ Drip campaign error:', e.message));
     const wakeAt = await nextWakeAt();
     lastPushedWake = wakeAt;
     res.json({ ok: true, result, wakeAt });
@@ -2469,7 +2462,7 @@ const phoneAgent = voiceAgent.attach(server, {
   maxConcurrentCalls: process.env.VOICE_MAX_CONCURRENT_CALLS,
   maxCallMinutes: process.env.VOICE_MAX_CALL_MINUTES,
   businessWhatsApp: process.env.BUSINESS_WHATSAPP_NUMBER,
-  gatewayTest: GATEWAY_VALIDATION_CHARGE_INR > 0,
+  gatewayTest: GATEWAY_TEST,
   pool,
   crm,
   genAI: GEMINI_API_KEY ? genAI : null,
@@ -2489,19 +2482,24 @@ const phoneAgent = voiceAgent.attach(server, {
 // --- ENTERPRISE DRIP CAMPAIGN ENGINE ---
 const cron = require('node-cron');
 
-// While awake, check every minute for due reminders, check-ins and follow-ups.
+// While awake, check every minute for due reminders, check-ins, nudges, follow-ups, offers and the daily drip.
 cron.schedule('* * * * *', () => { runScheduledJobs().catch(e => console.error('Scheduled jobs failed:', e.message)); }, { timezone: 'Asia/Kolkata' });
 
 // A 10% retention message is sent only to opted-in customers and only via the
 // approved WhatsApp template required outside Meta's 24-hour service window.
-cron.schedule('0 * * * *', async () => {
+// It runs from runScheduledJobs (every 5 minutes while awake), and nextWakeAt wakes the server when one falls due.
+const DISCOUNT_ELIGIBLE_SQL = `l.status IN ('request_created','expired','gateway_test_expired')
+  AND u.marketing_opt_in=true AND u.marketing_opt_out=false
+  AND NOT EXISTS (SELECT 1 FROM wa_discount_offers d WHERE d.source_payment_link_id=l.payment_link_id)`;
+let lastDiscountRunAt = 0;
+async function sendDiscountOffers() {
   if (!pool || !process.env.WA_48H_DISCOUNT_TEMPLATE) return;
+  if (Date.now() - lastDiscountRunAt < 5 * 60 * 1000) return;
+  lastDiscountRunAt = Date.now();
   try {
     const eligible = await pool.query(`SELECT l.payment_link_id,l.phone
       FROM wa_payment_links l JOIN users u ON u.phone=l.phone
-      WHERE l.status IN ('request_created','expired','gateway_test_expired') AND l.created_at <= NOW() - INTERVAL '48 hours'
-        AND u.marketing_opt_in=true AND u.marketing_opt_out=false
-        AND NOT EXISTS (SELECT 1 FROM wa_discount_offers d WHERE d.source_payment_link_id=l.payment_link_id)
+      WHERE ${DISCOUNT_ELIGIBLE_SQL} AND l.created_at <= NOW() - INTERVAL '48 hours'
       ORDER BY l.created_at ASC LIMIT 50`);
     for (const row of eligible.rows) {
       if (await sendDiscountTemplate(row.phone)) {
@@ -2513,11 +2511,39 @@ cron.schedule('0 * * * *', async () => {
   } catch (error) {
     console.error('48-hour opted-in follow-up failed:', error.message);
   }
-}, { timezone: 'Asia/Kolkata' });
+}
+async function nextDiscountOfferAt() {
+  if (!pool || !process.env.WA_48H_DISCOUNT_TEMPLATE) return null;
+  const res = await pool.query(`SELECT MIN(l.created_at + INTERVAL '48 hours') AS next
+    FROM wa_payment_links l JOIN users u ON u.phone=l.phone
+    WHERE ${DISCOUNT_ELIGIBLE_SQL} AND l.created_at + INTERVAL '48 hours' > NOW()`);
+  return res.rows[0]?.next ? new Date(res.rows[0].next) : null;
+}
 
-// Runs daily at 10:00 AM IST
-cron.schedule('0 10 * * *', async () => {
+// The daily drip runs once a day between 10 AM and noon IST (its windows are one day wide, so the time stays
+// close to 10 AM; a day the server could not be woken is skipped). nextWakeAt wakes the server for it.
+function istDayAndHour(now = new Date()) {
+  const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(now);
+  const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', hourCycle: 'h23' }).format(now));
+  return { day, hour };
+}
+async function nextDripAt(now = new Date()) {
+  if (!pool || !process.env.WA_FOLLOWUP_TEMPLATE) return null;
+  const { day, hour } = istDayAndHour(now);
+  const tenToday = new Date(`${day}T10:00:00+05:30`);
+  const ranToday = (await pool.query("SELECT value FROM wa_meta WHERE key='drip_date'")).rows[0]?.value === day;
+  return ranToday || hour >= 12 ? new Date(tenToday.getTime() + 24 * 3600 * 1000) : tenToday;
+}
+// Resolves once today's run is claimed; the sends carry on in the background, so /cron/tick never waits for them.
+async function runDailyDrip() {
   if (!pool || !process.env.WA_FOLLOWUP_TEMPLATE) return;
+  const { day, hour } = istDayAndHour();
+  if (hour < 10 || hour >= 12) return;
+  const claimed = await pool.query(`INSERT INTO wa_meta (key,value) VALUES ('drip_date',$1)
+    ON CONFLICT (key) DO UPDATE SET value=$1 WHERE wa_meta.value IS DISTINCT FROM $1 RETURNING key`, [day]);
+  if (claimed.rows[0]) sendDailyDrip();
+}
+async function sendDailyDrip() {
   console.log("🚀 Running Daily Drip Campaigns...");
 
   try {
@@ -2601,6 +2627,4 @@ cron.schedule('0 10 * * *', async () => {
   } catch (e) {
     console.error('❌ Drip campaign error:', e.message);
   }
-}, {
-  timezone: "Asia/Kolkata"
-});
+}
