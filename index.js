@@ -530,24 +530,79 @@ function validatePreferredSlot(value) {
   return { start, end: new Date(start.getTime() + 60 * 60 * 1000), local };
 }
 
+const MEET_LINK_RE = /^https:\/\/meet\.google\.com\/[A-Za-z0-9-]+(?:\?[A-Za-z0-9_=&%-]*)?$/;
+
+// Holds the slot in Google Calendar. holdKey makes retries safe: if an earlier attempt created the
+// event but its answer was lost, Apps Script returns that same event instead of making a second one.
+// The Meet link is optional here; calendar_finalize creates or fetches it once the customer has paid.
 async function reserveCalendarSlot(slot, details) {
+  const holdKey = details.holdKey || crypto.randomUUID();
   const result = await postAppsScript({
     target: 'calendar_hold',
+    holdKey,
     startTime: slot.start.toISOString(),
     endTime: slot.end.toISOString(),
     customerName: details.customerName,
     phone: details.phone,
     serviceName: details.serviceName
-  });
-  if (!result.eventId || !/^https:\/\/meet\.google\.com\/[A-Za-z0-9-]+(?:\?[A-Za-z0-9_=&%-]*)?$/.test(String(result.meetLink || ''))) {
-    if (result.eventId) await postAppsScript({ target: 'calendar_cancel', eventId: result.eventId }).catch(() => {});
-    throw new Error('Apps Script did not return a verified Google Meet link. No payment link was created.');
+  }, { maxAttempts: 3, timeoutMs: 40000 });
+  if (!result.eventId) {
+    throw new Error(`Apps Script returned no calendar event (keys: ${Object.keys(result || {}).join(',') || 'none'}); retryable`);
   }
+  const meetLink = MEET_LINK_RE.test(String(result.meetLink || '')) ? result.meetLink : '';
+  if (!meetLink) console.warn(`Calendar hold ${result.eventId} has no Meet link yet; it will be created when the booking is paid.`);
   return {
-    event: { id: result.eventId, hangoutLink: result.meetLink, htmlLink: result.htmlLink || '' },
+    event: { id: result.eventId, hangoutLink: meetLink, htmlLink: result.htmlLink || '' },
     slot,
-    meetLink: result.meetLink
+    meetLink
   };
+}
+
+// Errors worth retrying: Google Apps Script / Calendar, Razorpay or WhatsApp being slow or busy.
+const RETRYABLE_BOOKING_ERROR = /Apps Script|ECONNABORTED|ETIMEDOUT|ECONNRESET|EAI_AGAIN|timeout|socket hang up|status code (429|5\d\d)|retryable|busy|no calendar event|WhatsApp did not accept/i;
+const bookingRetries = new Map();
+
+// Retries a failed booking quietly (30s, 1.5 min, 3 min, 5 min later). Stops as soon as a link goes out
+// some other way. Only if every retry fails is the owner asked to step in.
+function retryBookingInBackground(phone, args, holdKey, firstError) {
+  if (bookingRetries.has(phone)) return;
+  const startedAt = new Date();
+  bookingRetries.set(phone, startedAt);
+  (async () => {
+    let lastError = firstError;
+    try {
+      for (const wait of [30000, 90000, 180000, 300000]) {
+        await new Promise(resolve => setTimeout(resolve, wait));
+        if (pool) {
+          const already = await pool.query(`SELECT 1 FROM wa_payment_links WHERE phone=$1 AND created_at > $2
+            AND status IN ('request_created','paid','gateway_test_paid') LIMIT 1`, [phone, startedAt]).catch(() => ({ rows: [] }));
+          if (already.rows[0]) return;
+        }
+        try {
+          const user = (await getUser(phone)) || { phone };
+          await createBookingPaymentRequest(phone, args, user, { holdKey });
+          console.log(`✅ Payment link for +${phone} sent on a background retry.`);
+          if (sessions[phone]) sessions[phone].push({ role: 'model', parts: [{ text: 'Payment link aur invoice bhej diya hai. Payment abhi pending hai.' }] });
+          return;
+        } catch (e) {
+          lastError = e;
+          if (e.customerFixable) {
+            const slotGone = /time|slot|available|limit/i.test(e.message || '');
+            await sendCustomerText(phone, slotGone
+              ? 'Sorry ji, jo time humne decide kiya tha woh abhi available nahi raha. Aap koi aur time bata dijiye, main turant link bhejti hoon.'
+              : 'Ji, link bhejne se pehle ek detail confirm karni hai. Kya aap apni booking details ek baar phir bata sakte hain?');
+            return;
+          }
+          if (!RETRYABLE_BOOKING_ERROR.test(e.message || '')) break;
+          console.warn(`Background booking retry for +${phone} failed: ${e.message}`);
+        }
+      }
+      await sendCustomerText(phone, 'Ji, system mein thodi der lag rahi hai. Hamari team aapko 10-15 minute mein personally payment link bhejegi 🙏');
+      await notifyOwner(`⚠️ Payment link for +${phone} still not created after 4 automatic retries (${args.service_name || 'service'}, ${args.preferred_time_slot || 'time not set'}).\nLast error: ${lastError?.message || 'unknown'}\nThe customer was told the team will send it in 10-15 minutes. Please send it or reply to them.`, 'Payment link needs you');
+    } finally {
+      bookingRetries.delete(phone);
+    }
+  })().catch(e => console.error('Background booking retry crashed:', e.message));
 }
 
 // Holds the Calendar slot, creates the Razorpay link and the payment-request PDF, records them,
@@ -560,7 +615,8 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
     if (!(await sendWhatsAppDocument(phone, mediaId, invoiceName, caption))) throw new Error('WhatsApp did not accept the invoice-and-payment-link message.');
     await crm.saveTurn(pool, phone, 'model', caption).catch(() => {}); // so the chat history shows the link was sent
     return 'sent';
-  }
+  },
+  holdKey = crypto.randomUUID() // the same key across retries of one booking, so a slot is never held twice
 } = {}) {
   let calendarHold = null;
   let createdPaymentLink = null;
@@ -621,6 +677,7 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
       }
     }
     calendarHold = await reserveCalendarSlot(slot, {
+      holdKey,
       serviceName: publishedService.t,
       customerName: args.customer_name,
       phone: phone,
@@ -783,7 +840,7 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
   }
 }
 
-const IDEMPOTENT_APPS_SCRIPT_TARGETS = new Set(['calendar_finalize', 'booking', 'customer_update', 'lead_update', 'profile_upsert']);
+const IDEMPOTENT_APPS_SCRIPT_TARGETS = new Set(['calendar_finalize', 'booking', 'customer_update', 'lead_update', 'profile_upsert', 'calendar_hold', 'calendar_cancel']);
 
 function appsScriptFailure(target, error) {
   const status = error?.response?.status;
@@ -799,16 +856,29 @@ async function postAppsScript(payload, options = {}) {
   if (!GOOGLE_APPS_SCRIPT_SECRET) throw new Error('Google Apps Script authentication is not configured; payment and customer records cannot be safely logged.');
   const target = String(payload.target || 'default');
   const timeout = Number(options.timeoutMs) || (target === 'lead_update' ? 15000 : 45000);
-  const maxAttempts = Number.isInteger(options.maxAttempts)
+  let maxAttempts = Number.isInteger(options.maxAttempts)
     ? Math.max(1, options.maxAttempts)
     : IDEMPOTENT_APPS_SCRIPT_TARGETS.has(target) ? 2 : 1;
   let lastError;
+  let lostRequests = 0;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       const response = await axios.post(GOOGLE_APPS_SCRIPT_URL.trim(), {
         ...payload, sourceSystem: 'whatsapp', apiSecret: GOOGLE_APPS_SCRIPT_SECRET
       }, { timeout });
+      // Under load Google sometimes drops the POST body on its redirect and answers with doGet's health check
+      // ({ ok: true, service: 'consultations-logger' }). Nothing ran, so it is always safe to send again.
+      if (response.data && response.data.service === 'consultations-logger' && target !== 'health') {
+        if (lostRequests < 3) {
+          lostRequests++;
+          console.warn(`Apps Script target=${target} attempt ${attempt}: request was lost on Google's redirect; sending again.`);
+          maxAttempts++;
+          await new Promise(resolve => setTimeout(resolve, 1500 * attempt));
+          continue;
+        }
+        throw new Error(`Apps Script target=${target} rejected request: Google kept losing the request (busy); retryable`);
+      }
       if (!response.data || response.data.ok !== true) {
         const details = response.data?.error || 'no successful response';
         const retryableBusy = /temporarily busy|retryable/i.test(String(details));
@@ -1947,19 +2017,26 @@ ${crm.readingContext(dbUser)}`;
             await sendCustomerText(from, "Sorry ji, online booking abhi yahan se nahi ho pa rahi. Aap website se book kar sakte hain: https://veshannastro.co.in");
             return;
           }
+          const holdKey = crypto.randomUUID();
           try {
-            await createBookingPaymentRequest(from, args, dbUser);
+            await createBookingPaymentRequest(from, args, dbUser, { holdKey });
             respond({ status: "link_generated_and_sent", is_payment_complete: false, system_note: "The payment link and invoice have been sent to the customer. Payment is not complete." });
             sessions[from].push({ role: "model", parts: [{ text: "Payment link aur invoice bhej diya hai. Payment abhi pending hai." }] });
           } catch (e) {
             if (e.customerFixable) {
               respond({ status: 'needs_customer_input', problem: e.message, note: 'Nothing was sent to the customer. Ask them, in one short Hinglish message, for exactly what is needed.' });
               await followUp("Sorry ji, booking ke liye ek detail aur chahiye. Aap confirm kar dijiye, phir main link bhejti hoon.");
+            } else if (RETRYABLE_BOOKING_ERROR.test(e.message || '')) {
+              // Google or Razorpay hiccup: the customer is not shown an error. Kamala keeps trying quietly.
+              console.error('Booking payment request failed (will retry in background):', e.message);
+              respond({ status: 'pending', note: 'The link is being prepared and will arrive in this chat in a minute or two. It has already been told to the customer; do not repeat it or mention any problem.' });
+              await sendCustomerText(from, "Ji, aapka slot hold kar rahi hoon. Payment link aur invoice 1-2 minute mein yahin aa jayenge 🙏");
+              retryBookingInBackground(from, args, holdKey, e);
             } else {
               console.error('Booking payment request failed:', e.message);
               respond({ status: "error", note: 'An internal problem stopped the payment link. The team has been told.' });
-              await sendCustomerText(from, "Sorry ji, payment link banane mein abhi dikkat aa rahi hai. Maine team ko bata diya hai, woh jaldi aapse contact karenge.");
-              await notifyOwner(`Payment link could not be created for +${from} (${args.service_name || 'service'}): ${e.message}`, 'Payment link failed');
+              await sendCustomerText(from, "Ji, aapki booking details mil gayi hain. Payment link hamari team aapko kuch hi minute mein yahin bhejegi 🙏");
+              await notifyOwner(`⚠️ Payment link could not be created for +${from} (${args.service_name || 'service'}, ${args.preferred_time_slot || 'time not set'}): ${e.message}\nThe customer was told the team will send it in a few minutes. Please send it or reply to them.`, 'Payment link needs you');
             }
           }
           return;
