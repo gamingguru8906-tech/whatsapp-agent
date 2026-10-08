@@ -28,6 +28,12 @@ const voiceNote = require('./voice-note');
 const voiceAgent = require('./voice-agent');
 const growth = require('./growth');
 
+// No outside call may hang forever (WhatsApp, Meta media, website). Calls that need longer pass their own timeout.
+axios.defaults.timeout = 60000;
+// A stray error in background work is logged instead of taking the whole server down with every chat in it.
+process.on('unhandledRejection', reason => console.error('Unhandled promise rejection:', reason?.message || reason));
+process.on('uncaughtException', err => console.error('Uncaught exception:', err?.stack || err?.message || err));
+
 // Temporary, explicit gateway validation charge. This is not the consultation
 // fee and must be changed back to catalogue pricing after the live-gateway test.
 const GATEWAY_VALIDATION_CHARGE_INR = 1;
@@ -84,8 +90,12 @@ if (DATABASE_URL) {
   pool = new Pool({
     connectionString: DATABASE_URL,
     ssl: { rejectUnauthorized: false },
-    family: 4 // Explicitly force node-postgres to use IPv4
+    family: 4, // Explicitly force node-postgres to use IPv4
+    connectionTimeoutMillis: 15000,
+    idleTimeoutMillis: 30000
   });
+  // Neon closes idle connections when it suspends; without this listener that error would crash the server.
+  pool.on('error', e => console.error('Postgres idle connection error (recovered):', e.message));
   pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       phone TEXT PRIMARY KEY,
@@ -156,6 +166,11 @@ if (DATABASE_URL) {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
     ALTER TABLE wa_payment_fulfillments ADD COLUMN IF NOT EXISTS steps JSONB NOT NULL DEFAULT '{}'::jsonb;
+    ALTER TABLE wa_payment_fulfillments ADD COLUMN IF NOT EXISTS payload JSONB;
+    ALTER TABLE wa_payment_fulfillments ADD COLUMN IF NOT EXISTS attempts INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS pause_reason TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS crisis_reply_at TIMESTAMPTZ;
+    CREATE TABLE IF NOT EXISTS wa_calendar_cancels (event_id TEXT PRIMARY KEY, attempts INTEGER NOT NULL DEFAULT 0, next_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
     CREATE TABLE IF NOT EXISTS wa_discount_offers (
       source_payment_link_id TEXT PRIMARY KEY,
       phone TEXT NOT NULL,
@@ -248,6 +263,11 @@ async function updateUserStatus(phone, status) {
 }
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || 'dummy');
+// Every Gemini call gets a time limit: one hung request must never freeze a customer's chat queue.
+{
+  const getModel = genAI.getGenerativeModel.bind(genAI);
+  genAI.getGenerativeModel = (params, requestOptions = {}) => getModel(params, { timeout: 45000, ...requestOptions });
+}
 
 const tools = [{
   functionDeclarations: [
@@ -540,6 +560,7 @@ async function reserveCalendarSlot(slot, details) {
   const result = await postAppsScript({
     target: 'calendar_hold',
     holdKey,
+    ignoreEventIds: details.ignoreEventIds || [],
     startTime: slot.start.toISOString(),
     endTime: slot.end.toISOString(),
     customerName: details.customerName,
@@ -605,10 +626,59 @@ function retryBookingInBackground(phone, args, holdKey, firstError) {
   })().catch(e => console.error('Background booking retry crashed:', e.message));
 }
 
+// Cancels an older unpaid link and its calendar hold. A network error is not taken as "already paid":
+// the link is re-checked, and anything still open is left for the owner instead of silently staying payable.
+async function supersedePaymentLink(phone, row) {
+  let cancelled = false;
+  for (let attempt = 1; attempt <= 2 && !cancelled; attempt++) {
+    try {
+      await razorpayClient.paymentLink.cancel(row.payment_link_id);
+      cancelled = true;
+    } catch (e) {
+      const live = await razorpayClient.paymentLink.fetch(row.payment_link_id).catch(() => null);
+      if (live && ['paid', 'partially_paid'].includes(live.status)) return; // they paid it: the webhook handles it
+      if (live && ['cancelled', 'expired'].includes(live.status)) cancelled = true;
+      else if (attempt === 2) {
+        console.error(`Could not cancel old link ${row.payment_link_id}:`, e.message || e.error?.description);
+        await notifyOwner(`⚠️ +${phone} got a new payment link, but their older link ${row.payment_link_id} could not be cancelled. Please cancel it in Razorpay so they cannot pay twice.`, 'Old payment link still open').catch(() => {});
+        return;
+      }
+    }
+  }
+  await pool.query("UPDATE wa_payment_links SET status='superseded', updated_at=NOW() WHERE payment_link_id=$1", [row.payment_link_id]).catch(() => {});
+  if (row.calendar_event_id) await cancelCalendarHold(row.calendar_event_id);
+  if (pendingPayments[row.payment_link_id]) { clearTimeout(pendingPayments[row.payment_link_id]); delete pendingPayments[row.payment_link_id]; }
+  if (activePaymentLinks[phone] === row.payment_link_id) delete activePaymentLinks[phone];
+}
+
+// Frees a calendar slot. If Google is busy, the cancel is saved and retried by the scheduler, so a slot is never
+// left blocked by a booking that did not happen.
+async function cancelCalendarHold(eventId) {
+  if (!eventId) return;
+  try {
+    await postAppsScript({ target: 'calendar_cancel', eventId });
+  } catch (e) {
+    if (/not found|already missing|deleted/i.test(e.message || '')) return;
+    console.error(`Calendar cancel for ${eventId} failed; will retry:`, e.message);
+    if (pool) await pool.query(`INSERT INTO wa_calendar_cancels (event_id) VALUES ($1) ON CONFLICT (event_id) DO NOTHING`, [eventId]).catch(() => {});
+  }
+}
+
 // Holds the Calendar slot, creates the Razorpay link and the payment-request PDF, records them,
 // then hands the PDF and caption to `deliver` (the WhatsApp chat by default, or a phone call).
 // If anything fails, the link is cancelled and the slot released before the error is rethrown.
-async function createBookingPaymentRequest(phone, args, dbUser, {
+// One booking at a time per customer: a chat request, a background retry and a call can never run side by side
+// (that is how two live links and two slot holds could happen).
+const bookingLocks = new Map();
+function createBookingPaymentRequest(phone, ...rest) {
+  const previous = bookingLocks.get(phone) || Promise.resolve();
+  const run = previous.catch(() => {}).then(() => createBookingPaymentRequestNow(phone, ...rest));
+  bookingLocks.set(phone, run);
+  run.finally(() => { if (bookingLocks.get(phone) === run) bookingLocks.delete(phone); }).catch(() => {});
+  return run;
+}
+
+async function createBookingPaymentRequestNow(phone, args, dbUser, {
   required = ['customer_name', 'email', 'billing_address', 'service_name', 'preferred_time_slot'],
   source = 'WhatsApp Direct Booking',
   deliver = async ({ mediaId, invoiceName, caption }) => {
@@ -659,25 +729,15 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
     // It does not collect the service price or apply discounts.
     const finalAmount = GATEWAY_VALIDATION_CHARGE_INR;
     const amountPaise = Math.round(finalAmount * 100);
-    // A new link replaces any earlier unpaid one for this number: cancel it and free its slot,
-    // so the customer cannot pay twice or keep two slots blocked.
-    if (pool && razorpayClient) {
-      const older = await pool.query("SELECT payment_link_id, calendar_event_id FROM wa_payment_links WHERE phone=$1 AND status='request_created'", [phone])
-        .catch(() => ({ rows: [] }));
-      for (const row of older.rows) {
-        try {
-          await razorpayClient.paymentLink.cancel(row.payment_link_id);
-        } catch (_) {
-          continue; // already paid or expired: leave it alone
-        }
-        await pool.query("UPDATE wa_payment_links SET status='superseded', updated_at=NOW() WHERE payment_link_id=$1", [row.payment_link_id]).catch(() => {});
-        if (row.calendar_event_id) await postAppsScript({ target: 'calendar_cancel', eventId: row.calendar_event_id }).catch(() => {});
-        if (pendingPayments[row.payment_link_id]) { clearTimeout(pendingPayments[row.payment_link_id]); delete pendingPayments[row.payment_link_id]; }
-        if (activePaymentLinks[phone] === row.payment_link_id) delete activePaymentLinks[phone];
-      }
-    }
+    // Earlier unpaid links for this number stay valid until the new one has reached the customer (see below),
+    // so a failure here never leaves them with nothing. The new hold may overlap their own old holds.
+    const older = pool
+      ? (await pool.query("SELECT payment_link_id, calendar_event_id FROM wa_payment_links WHERE phone=$1 AND status='request_created'", [phone])
+        .catch(() => ({ rows: [] }))).rows
+      : [];
     calendarHold = await reserveCalendarSlot(slot, {
       holdKey,
+      ignoreEventIds: older.map(r => r.calendar_event_id).filter(Boolean),
       serviceName: publishedService.t,
       customerName: args.customer_name,
       phone: phone,
@@ -776,6 +836,16 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
     );
     await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, calendarHold.meetLink || null])
       .catch(e => console.error('Saving the Meet link failed:', e.message));
+    const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
+    if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
+    const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}`;
+    const delivery = await deliver({ mediaId, invoiceName, caption, link, customerName: args.customer_name, serviceName: publishedService.t, appointmentDate, slot });
+    const refId = createdPaymentLink.id;
+    delivered = { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
+    // The customer has the link now: nothing below may cancel it.
+    // Replace their earlier unpaid links: cancel each one and free its slot (a paid one is left alone).
+    for (const row of older) await supersedePaymentLink(phone, row);
+    // Sheets/email log of the request: best effort, it must never undo a link the customer already has.
     await postAppsScript({
       target: 'payment_request', payment_link_id: createdPaymentLink.id,
       invoice_number: invoiceNumber, invoiceNumber,
@@ -787,14 +857,7 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
       additionalDiscount: additionalDiscount, serviceTotal: serviceTotal,
       amountDue: finalAmount, paymentUrl: link, invoiceStatus: 'UNPAID',
       isGatewayTest: true, source
-    });
-    const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
-    if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
-    const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}`;
-    const delivery = await deliver({ mediaId, invoiceName, caption, link, customerName: args.customer_name, serviceName: publishedService.t, appointmentDate, slot });
-    const refId = createdPaymentLink.id;
-    delivered = { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
-    // The customer has the link now: nothing below may cancel it.
+    }).catch(e => console.error('Payment request log failed (link kept):', e.message));
     if (acceptedDiscountSourceId && pool) {
       await pool.query(`UPDATE wa_discount_offers SET used_at=NOW(), status='used' WHERE source_payment_link_id=$1 AND status='accepted'`, [acceptedDiscountSourceId])
         .catch(e => console.error('Discount offer update failed:', e.message));
@@ -824,9 +887,7 @@ async function createBookingPaymentRequest(phone, args, dbUser, {
         target: 'payment_request_status', payment_link_id: createdPaymentLink.id, status: 'DELIVERY_FAILED'
       }).catch(() => {});
     }
-    if (calendarHold?.event?.id) {
-      await postAppsScript({ target: 'calendar_cancel', eventId: calendarHold.event.id }).catch(() => {});
-    }
+    if (calendarHold?.event?.id) await cancelCalendarHold(calendarHold.event.id);
     // Google API errors can contain the complete event request (including
     // customer name, phone, service, and appointment time). Log only a
     // short diagnostic summary, never the request/config object.
@@ -1051,7 +1112,7 @@ async function verifyAndFulfillPaymentLinkViaWebhook(paymentLinkId) {
     const bodyString = JSON.stringify(payloadData);
     const signature = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(bodyString).digest('hex');
     await axios.post(`http://127.0.0.1:${PORT}/razorpay-webhook`, bodyString, {
-      headers: { 'Content-Type': 'application/json', 'x-razorpay-signature': signature }
+      headers: { 'Content-Type': 'application/json', 'x-razorpay-signature': signature, 'x-kamala-internal': '1' }, timeout: 300000
     });
   });
 }
@@ -1157,11 +1218,272 @@ app.get('/webhook', (req, res) => {
     console.log('✅ Webhook Verified by Meta');
     return res.status(200).send(challenge);
   }
-  console.error(`🚨 Webhook Verification Failed! Mode: ${mode}, Token: ${token}, Expected Token: ${VERIFY_TOKEN}`);
+  console.error(`🚨 Webhook verification failed (mode: ${String(mode).slice(0, 20)}, token length ${String(token || '').length}).`); // never log the real token
   res.sendStatus(403);
 });
 
 // Razorpay Webhook for Payment Confirmation
+// Everything that happens after a verified payment. Each step runs once (recorded in wa_payment_fulfillments.steps),
+// so a retry after a crash or a Google hiccup carries on where it stopped and never sends anything twice.
+async function fulfilPaidLink(event) {
+  const pl = event.payload.payment_link.entity;
+  const notes = pl.notes || {};
+  const customerName = notes.customer_name || 'Customer';
+  const serviceName = notes.service_name || 'Consultation';
+  const phone = notes.phone;
+  const price = Number(notes.price);
+  const payment = event.payload?.payment?.entity;
+  const storedLinkRow = (await pool.query(`SELECT amount_paise,phone,calendar_event_id,service_name,meet_link,
+    request_invoice_number,appointment_start,email FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id])).rows[0] || null;
+  // Each step below runs once per payment, even if Razorpay retries after a partial failure.
+  // Recording a step also refreshes the lease, so a slow run is not taken over by a retry.
+  const doneSteps = (await pool.query('SELECT steps FROM wa_payment_fulfillments WHERE payment_link_id=$1', [pl.id])).rows[0]?.steps || {};
+  const once = async (name, fn) => {
+    if (Object.prototype.hasOwnProperty.call(doneSteps, name)) return doneSteps[name];
+    const value = await fn();
+    doneSteps[name] = value === undefined ? true : value;
+    await pool.query(`UPDATE wa_payment_fulfillments SET steps = COALESCE(steps,'{}'::jsonb) || jsonb_build_object($2::text, $3::jsonb), updated_at=NOW()
+      WHERE payment_link_id=$1`, [pl.id, name, JSON.stringify(doneSteps[name])]);
+    return doneSteps[name];
+  };
+
+  // 1. Clear Abandoned Cart Timer
+  const plId = pl.id;
+  if (pendingPayments[plId]) {
+    clearTimeout(pendingPayments[plId]);
+    delete pendingPayments[plId];
+  }
+
+  // 2. Mark user as returning customer
+  if (phone && notes.gateway_test !== 'true') {
+    await upsertUser(phone, true, false);
+    await updateUserStatus(phone, 'converted');
+  }
+
+  // 3. (Moved to after Calendar generation)
+
+  // A Calendar event was created as a temporary hold before the payment link.
+  // Upgrade that exact event only after Razorpay confirms the exact amount.
+  if (!notes.calendar_event_id) throw new Error(`No appointment hold exists for paid link ${pl.id}; manual fulfillment is required.`);
+  const isGatewayTest = notes.gateway_test === 'true';
+  const eventSummary = isGatewayTest
+    ? `GATEWAY TEST ONLY — NOT A BOOKING — ${serviceName} — ${customerName}`
+    : `Veshannastro Consultation — ${serviceName} — ${customerName}`;
+  const eventDescription = isGatewayTest
+    ? `₹1 gateway validation only. This is not a confirmed consultation booking and does not pay the consultation fee.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nRequested appointment (test only): ${notes.time_slot || ''}`
+    : `Confirmed Veshannastro Consultation Booking.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nAppointment time: ${notes.time_slot || ''}\nQuery: ${notes.summary || ''}`;
+
+  // Confirm the Calendar hold. A slow Apps Script is retried; a hold that is gone or has no Meet link never
+  // fixes itself, so the payment still completes (with the Meet link saved at booking, if any) and the owner is told.
+  const invoiceNumber = storedLinkRow?.request_invoice_number || pl.id.replace('plink_', '').toUpperCase();
+  const calendarResult = await once('calendar', async () => {
+    try {
+      const finalized = await postAppsScript({
+        target: 'calendar_finalize',
+        eventId: notes.calendar_event_id,
+        summary: eventSummary,
+        description: eventDescription
+      });
+      if (finalized.meetLink) return finalized.meetLink;
+      return { failed: 'Google Calendar returned no Meet link' };
+    } catch (error) {
+      if (/ECONNABORTED|ETIMEDOUT|ECONNRESET|EAI_AGAIN|timeout|temporarily|status code 5\d\d|HTTP 5\d\d|HTTP 429|HTTP 404|busy|retryable|lost|socket hang up/i.test(error.message || '')) throw error;
+      return { failed: error.message };
+    }
+  });
+  const meetLink = typeof calendarResult === 'string' ? calendarResult : (storedLinkRow?.meet_link || '');
+  if (typeof calendarResult !== 'string') {
+    await once('calendar_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })} IST), but the Google Calendar event could not be confirmed: ${calendarResult.failed}. ${meetLink ? `The Meet link saved at booking was sent to them: ${meetLink}` : 'Please add the slot to your calendar and send them a Google Meet link.'}`, 'Calendar needs attention').then(() => true));
+  }
+  if (pool && meetLink) await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [pl.id, meetLink]);
+
+  // 4. Generate PDF Invoice
+  let invoiceBase64 = null;
+  let invoiceBuffer = null;
+  const safeName = (customerName || 'Customer').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const invoiceName = `Receipt_${String(invoiceNumber).replace(/[^A-Za-z0-9-]/g, '-')}.pdf`;
+  try {
+    invoiceBuffer = await generateInvoice({
+      invoiceNumber,
+      customerName: customerName,
+      email: notes.email || '',
+      phone: phone,
+      serviceName: serviceName,
+      amountPaid: price,
+      basePrice: Number(notes.service_total || notes.list_price || price),
+      isGatewayTest: isGatewayTest,
+      date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
+      paymentId: payment?.id,
+      meetLink: meetLink
+    });
+    invoiceBase64 = invoiceBuffer.toString('base64');
+  } catch (invoiceErr) {
+    throw new Error(`Invoice generation failed for ${pl.id}: ${invoiceErr.message}`);
+  }
+
+  // 5. Log to Google Sheets & send the same personalized confirmation by email.
+  {
+    const bookedAt = new Date(notes.time_slot);
+    if (!Number.isFinite(bookedAt.getTime())) throw new Error(`Invalid booked time in payment notes for ${pl.id}`);
+
+    await once('booking_sheet', () => postAppsScript({
+      target: "booking",
+      invoiceNumber,
+      name: customerName,
+      email: notes.email || '',
+      gender: notes.gender || '',
+      phone: phone,
+      dob: notes.dob || '',
+      birthTime: notes.tob || '',
+      birthPlace: notes.pob || '',
+      service: serviceName,
+      amountPaid: price,
+      paymentStatus: isGatewayTest ? 'Gateway test paid - consultation not paid' : 'Paid',
+      payment_id: event.payload?.payment?.entity?.id || pl.id,
+      payment_link_id: pl.id,
+      source: "WhatsApp Direct Booking",
+      sessionDate: `${notes.time_slot || ''}`,
+      query: notes.summary || '',
+      meetLink: meetLink,
+      eventTime: bookedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' }),
+      notes: '',
+      invoiceBase64: invoiceBase64,
+      invoicePdfBase64: invoiceBase64,
+      invoiceName: invoiceName,
+      invoicePdfName: invoiceName,
+      isGatewayTest: isGatewayTest,
+      basePrice: Number(notes.service_total || notes.list_price || price)
+    }).then(() => true));
+
+    await once('customer_sheet', () => postAppsScript({
+      target: "customer_update",
+      invoiceNumber,
+      name: customerName,
+      phone: phone,
+      email: notes.email || '',
+      dob: notes.dob || '',
+      tob: notes.tob || '',
+      pob: notes.pob || '',
+      birthTime: notes.tob || '',
+      birthPlace: notes.pob || '',
+      gender: notes.gender || '',
+      billingAddress: notes.billing_address || '',
+      concern: notes.summary || '',
+      service: serviceName,
+      bookingDate: bookedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'medium', timeStyle: 'short' }),
+      countBooking: !isGatewayTest
+    }).then(() => true));
+  }
+
+  // 6. Send WhatsApp Confirmation
+  if (phone) {
+    const agreedSlotMsg = notes.time_slot && notes.time_slot !== "Not specified" ? `\n\nRequested test slot: ${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST.` : '';
+    if (!invoiceBuffer) throw new Error(`Invoice buffer missing for paid link ${pl.id}`);
+    const slotText = `${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST`;
+    const msg = notes.gateway_test === 'true'
+      ? `Razorpay has verified the ₹${price.toFixed(2)} gateway test payment. This is only a payment-system test; it does not pay for or confirm your ${serviceName} consultation.${agreedSlotMsg}\n\nInvoice No.: ${invoiceNumber}\nTest Google Meet link: ${meetLink || 'will be shared here before the slot'}\n\nYour clearly labelled test receipt is attached. I will also remind you here 30 minutes before the slot.`
+      : `Payment verified. Thank you, ${customerName}. We received ₹${price.toFixed(2)} for ${serviceName}.\n\nYour booking is confirmed for ${slotText}.\nInvoice No.: ${invoiceNumber}\nGoogle Meet: ${meetLink || 'will be shared here before your consultation'}\n\nYour payment receipt is attached. I will remind you here 30 minutes before your consultation.`;
+    // WhatsApp only allows free messages within 24 hours of the customer's last message. If the receipt or
+    // confirmation cannot go out (e.g. they paid from a template after a phone call), the owner is told once
+    // with everything needed to send it by hand, instead of Razorpay retrying the whole booking for a day.
+    // WhatsApp only delivers free-form messages within 24 hours of the customer's last message, and outside it
+    // the API still says "ok" and drops them later. deliverAfterCall checks the window first: inside it sends now;
+    // outside it uses the approved template (WA_BOOKING_CONFIRMED_TEMPLATE, if set) or holds the message and sends it
+    // the moment the customer writes again. The owner is told whenever it could not go out straight away.
+    const delivered = d => d === true || d === 'sent' || d === 'sent_template';
+    const receiptSent = await once('receipt', async () => {
+      const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
+      if (!mediaId) return false;
+      return deliverAfterCall(phone, {
+        mediaId, filename: invoiceName,
+        body: notes.gateway_test === 'true' ? '₹1 gateway test receipt - not a consultation payment.' : 'Payment receipt and consultation details.',
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      });
+    });
+    const confirmationSent = await once('confirmation', () => deliverAfterCall(phone, {
+      body: msg,
+      template: process.env.WA_BOOKING_CONFIRMED_TEMPLATE ? [customerName, serviceName, slotText, meetLink || 'shared before the session'] : null,
+      templateName: process.env.WA_BOOKING_CONFIRMED_TEMPLATE || '',
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    }));
+    if (!delivered(receiptSent) || !delivered(confirmationSent)) {
+      const held = receiptSent === 'awaiting_hi' || confirmationSent === 'awaiting_hi';
+      await once('delivery_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${slotText}), but WhatsApp could not deliver the ${!delivered(receiptSent) ? 'receipt' : 'confirmation'} now (their 24-hour window is closed).${held ? ' It will go out automatically the next time they message.' : ''} The email confirmation has gone out. To be safe, message them the Meet link yourself: ${meetLink || 'see Google Calendar'}`, 'Payment confirmation not delivered on WhatsApp').then(() => true));
+    }
+    // Personal thank-you voice note from Kamala (best effort; never blocks fulfillment; sent once).
+    if (GEMINI_API_KEY && confirmationSent === 'sent' && !doneSteps.voice_note) {
+      await once('voice_note', async () => true);
+      voiceNote.sendThankYouVoiceNote({
+      genAI, modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', apiKey: GEMINI_API_KEY,
+      uploadMedia: uploadWhatsAppMedia, token: WA_TOKEN, phoneNumberId: PHONE_NUMBER_ID, normalize: normalizeWhatsAppNumber
+    }, { phone, name: customerName, service: serviceName, when: slotText, concern: notes.summary || '', isTest: isGatewayTest })
+      .then(script => { console.log(`🎙️ Voice note sent to ${phone}`); crm.saveTurn(pool, phone, 'model', `[Voice note] ${script}`).catch(() => {}); })
+      .catch(e => console.error('Voice note failed:', e.message));
+    }
+    await once('owner_alert', async () => notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
+      + `When: ${slotText}\nService: ${serviceName}\nInvoice No.: ${invoiceNumber}\nPhone: +${phone}\n`
+      + `Gender: ${notes.gender || 'Not provided'}\nDOB: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\n`
+      + `Concern: ${notes.summary || 'Not recorded'}\n`
+      + `Reading: ${crm.readingTag(await getUser(phone).catch(() => null)) || 'Not enough chat yet'}\nAmount received: ₹${price.toFixed(2)}${isGatewayTest ? ` (service price ₹${Number(notes.list_price || 0).toFixed(2)} still unpaid)` : ''}\n`
+      + `Google Meet: ${meetLink}\nYour Google Calendar will also remind you 30 minutes before.`, `Consultation booked: ${customerName}, ${slotText}`).then(() => true));
+    // Ask once whether they want festival reminders and updates (their consent is recorded with its wording).
+    if (confirmationSent === 'sent') await once('optin_ask', () => growth.askOptIn(pool, phone, sendCustomerText).catch(() => false));
+    // Tell Meta about the sale so ads can find people like this client (only once META_CAPI_TOKEN is set).
+    if (!isGatewayTest) await once('meta_capi', () => growth.reportPurchase(axios, {
+      paymentLinkId: pl.id, phone, email: notes.email || storedLinkRow?.email || '', amountInr: price, serviceName
+    }).catch(e => { console.error('Meta purchase event failed:', e.response?.data?.error?.message || e.message); return 'failed'; }));
+  }
+  processedPayments.add(pl.id);
+  if (phone && activePaymentLinks[phone] === pl.id) delete activePaymentLinks[phone];
+  await pool.query(`INSERT INTO wa_payment_fulfillments (payment_link_id,status) VALUES ($1,'fulfilled')
+    ON CONFLICT (payment_link_id) DO UPDATE SET status='fulfilled',updated_at=NOW()`, [pl.id]);
+}
+
+// Runs fulfilPaidLink and records the outcome. A failure is retried by recoverFulfilments(); the owner hears once.
+async function runFulfilment(event) {
+  const linkId = event?.payload?.payment_link?.entity?.id;
+  try {
+    await fulfilPaidLink(event);
+  } catch (e) {
+    console.error('Payment fulfilment error:', e.message);
+    const previous = linkId && pool
+      ? (await pool.query('SELECT status FROM wa_payment_fulfillments WHERE payment_link_id=$1', [linkId]).catch(() => ({ rows: [] }))).rows[0]?.status
+      : null;
+    if (linkId && pool) await pool.query(`UPDATE wa_payment_fulfillments SET status='failed', updated_at=NOW() WHERE payment_link_id=$1 AND status <> 'fulfilled'`, [linkId]).catch(() => {});
+    if (previous !== 'failed') await notifyOwner(`Payment received; finishing the booking hit a problem: ${e.message}\nPayment link: ${linkId || 'unknown'}. Kamala retries automatically every few minutes; you will hear again only if it still fails.`, 'Payment fulfilment retrying').catch(() => {});
+  }
+}
+
+// Finishes payments whose fulfilment failed or was cut off (crash, restart, sleep). Called by the scheduler.
+let recoveringFulfilments = false;
+async function recoverFulfilments() {
+  if (!pool || recoveringFulfilments) return 0;
+  recoveringFulfilments = true;
+  let done = 0;
+  try {
+    const due = await pool.query(`SELECT payment_link_id FROM wa_payment_fulfillments WHERE payload IS NOT NULL AND attempts < 6
+      AND ((status='failed' AND updated_at < NOW() - INTERVAL '2 minutes') OR (status='processing' AND updated_at < NOW() - INTERVAL '10 minutes'))
+      ORDER BY updated_at LIMIT 5`);
+    for (const { payment_link_id: id } of due.rows) {
+      const claimed = await pool.query(`UPDATE wa_payment_fulfillments SET status='processing', attempts=attempts+1, updated_at=NOW()
+        WHERE payment_link_id=$1 AND ((status='failed' AND updated_at < NOW() - INTERVAL '2 minutes') OR (status='processing' AND updated_at < NOW() - INTERVAL '10 minutes'))
+        RETURNING payload, attempts`, [id]);
+      if (!claimed.rows[0]) continue;
+      console.log(`🔁 Finishing payment ${id} (attempt ${claimed.rows[0].attempts}).`);
+      await runFulfilment(claimed.rows[0].payload);
+      const after = (await pool.query('SELECT status, attempts FROM wa_payment_fulfillments WHERE payment_link_id=$1', [id])).rows[0];
+      if (after?.status === 'fulfilled') done++;
+      else if (after && after.attempts >= 6) await notifyOwner(`⚠️ Payment ${id} is paid but the booking could not be finished after 6 tries. Please check Razorpay and send the customer their receipt and Meet link yourself.`, 'Payment needs you').catch(() => {});
+    }
+  } catch (e) {
+    console.error('Fulfilment recovery failed:', e.message);
+  } finally {
+    recoveringFulfilments = false;
+  }
+  return done;
+}
+
 app.post('/razorpay-webhook', async (req, res) => {
   if (!RAZORPAY_WEBHOOK_SECRET) return res.status(503).send('Razorpay webhook secret is not configured');
   const signature = req.headers['x-razorpay-signature'];
@@ -1186,7 +1508,7 @@ app.post('/razorpay-webhook', async (req, res) => {
         INSERT INTO wa_payment_fulfillments (payment_link_id,status) VALUES ($1,'processing')
         ON CONFLICT (payment_link_id) DO UPDATE SET status='processing',updated_at=NOW()
         WHERE wa_payment_fulfillments.status NOT IN ('fulfilled','manual_review')
-          AND (wa_payment_fulfillments.status <> 'processing' OR wa_payment_fulfillments.updated_at < NOW() - INTERVAL '5 minutes')
+          AND (wa_payment_fulfillments.status <> 'processing' OR wa_payment_fulfillments.updated_at < NOW() - INTERVAL '10 minutes')
         RETURNING payment_link_id`, [pl.id]);
       if (!claim.rows.length) {
         const existing = await pool.query('SELECT status FROM wa_payment_fulfillments WHERE payment_link_id=$1', [pl.id]);
@@ -1224,208 +1546,19 @@ app.post('/razorpay-webhook', async (req, res) => {
         }
       }
 
-      // Each step below runs once per payment, even if Razorpay retries after a partial failure.
-      // Recording a step also refreshes the lease, so a slow run is not taken over by a retry.
-      const doneSteps = (await pool.query('SELECT steps FROM wa_payment_fulfillments WHERE payment_link_id=$1', [pl.id])).rows[0]?.steps || {};
-      const once = async (name, fn) => {
-        if (Object.prototype.hasOwnProperty.call(doneSteps, name)) return doneSteps[name];
-        const value = await fn();
-        doneSteps[name] = value === undefined ? true : value;
-        await pool.query(`UPDATE wa_payment_fulfillments SET steps = COALESCE(steps,'{}'::jsonb) || jsonb_build_object($2::text, $3::jsonb), updated_at=NOW()
-          WHERE payment_link_id=$1`, [pl.id, name, JSON.stringify(doneSteps[name])]);
-        return doneSteps[name];
-      };
-
-      // 1. Clear Abandoned Cart Timer
-      const plId = pl.id;
-      if (pendingPayments[plId]) {
-        clearTimeout(pendingPayments[plId]);
-        delete pendingPayments[plId];
-      }
-
-      // 2. Mark user as returning customer
-      if (phone && notes.gateway_test !== 'true') {
-        await upsertUser(phone, true, false);
-        await updateUserStatus(phone, 'converted');
-      }
-
-      // 3. (Moved to after Calendar generation)
-
-      // A Calendar event was created as a temporary hold before the payment link.
-      // Upgrade that exact event only after Razorpay confirms the exact amount.
-      if (!notes.calendar_event_id) throw new Error(`No appointment hold exists for paid link ${pl.id}; manual fulfillment is required.`);
-      const isGatewayTest = notes.gateway_test === 'true';
-      const eventSummary = isGatewayTest
-        ? `GATEWAY TEST ONLY — NOT A BOOKING — ${serviceName} — ${customerName}`
-        : `Veshannastro Consultation — ${serviceName} — ${customerName}`;
-      const eventDescription = isGatewayTest
-        ? `₹1 gateway validation only. This is not a confirmed consultation booking and does not pay the consultation fee.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nRequested appointment (test only): ${notes.time_slot || ''}`
-        : `Confirmed Veshannastro Consultation Booking.\nName: ${customerName}\nDOB: ${notes.dob || ''}\nBirth time: ${notes.tob || ''}\nBirth place: ${notes.pob || ''}\nPhone: ${phone || ''}\nAppointment time: ${notes.time_slot || ''}\nQuery: ${notes.summary || ''}`;
-
-      // Confirm the Calendar hold. A slow Apps Script is retried; a hold that is gone or has no Meet link never
-      // fixes itself, so the payment still completes (with the Meet link saved at booking, if any) and the owner is told.
-      const invoiceNumber = storedLinkRow?.request_invoice_number || pl.id.replace('plink_', '').toUpperCase();
-      const calendarResult = await once('calendar', async () => {
-        try {
-          const finalized = await postAppsScript({
-            target: 'calendar_finalize',
-            eventId: notes.calendar_event_id,
-            summary: eventSummary,
-            description: eventDescription
-          });
-          if (finalized.meetLink) return finalized.meetLink;
-          return { failed: 'Google Calendar returned no Meet link' };
-        } catch (error) {
-          if (/ECONNABORTED|ETIMEDOUT|ECONNRESET|timeout|temporarily|status code 5\d\d/i.test(error.message || '')) throw error;
-          return { failed: error.message };
-        }
-      });
-      const meetLink = typeof calendarResult === 'string' ? calendarResult : (storedLinkRow?.meet_link || '');
-      if (typeof calendarResult !== 'string') {
-        await once('calendar_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })} IST), but the Google Calendar event could not be confirmed: ${calendarResult.failed}. ${meetLink ? `The Meet link saved at booking was sent to them: ${meetLink}` : 'Please add the slot to your calendar and send them a Google Meet link.'}`, 'Calendar needs attention').then(() => true));
-      }
-      if (pool && meetLink) await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [pl.id, meetLink]);
-
-      // 4. Generate PDF Invoice
-      let invoiceBase64 = null;
-      let invoiceBuffer = null;
-      const safeName = (customerName || 'Customer').replace(/[^a-zA-Z0-9_-]/g, '_');
-      const invoiceName = `Receipt_${String(invoiceNumber).replace(/[^A-Za-z0-9-]/g, '-')}.pdf`;
-      try {
-        invoiceBuffer = await generateInvoice({
-          invoiceNumber,
-          customerName: customerName,
-          email: notes.email || '',
-          phone: phone,
-          serviceName: serviceName,
-          amountPaid: price,
-          basePrice: Number(notes.service_total || notes.list_price || price),
-          isGatewayTest: isGatewayTest,
-          date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
-          appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
-          paymentId: payment?.id,
-          meetLink: meetLink
-        });
-        invoiceBase64 = invoiceBuffer.toString('base64');
-      } catch (invoiceErr) {
-        throw new Error(`Invoice generation failed for ${pl.id}: ${invoiceErr.message}`);
-      }
-
-      // 5. Log to Google Sheets & send the same personalized confirmation by email.
-      {
-        const bookedAt = new Date(notes.time_slot);
-        if (!Number.isFinite(bookedAt.getTime())) throw new Error(`Invalid booked time in payment notes for ${pl.id}`);
-
-        await once('booking_sheet', () => postAppsScript({
-          target: "booking",
-          invoiceNumber,
-          name: customerName,
-          email: notes.email || '',
-          gender: notes.gender || '',
-          phone: phone,
-          dob: notes.dob || '',
-          birthTime: notes.tob || '',
-          birthPlace: notes.pob || '',
-          service: serviceName,
-          amountPaid: price,
-          paymentStatus: isGatewayTest ? 'Gateway test paid - consultation not paid' : 'Paid',
-          payment_id: event.payload?.payment?.entity?.id || pl.id,
-          payment_link_id: pl.id,
-          source: "WhatsApp Direct Booking",
-          sessionDate: `${notes.time_slot || ''}`,
-          query: notes.summary || '',
-          meetLink: meetLink,
-          eventTime: bookedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'full', timeStyle: 'short' }),
-          notes: '',
-          invoiceBase64: invoiceBase64,
-          invoicePdfBase64: invoiceBase64,
-          invoiceName: invoiceName,
-          invoicePdfName: invoiceName,
-          isGatewayTest: isGatewayTest,
-          basePrice: Number(notes.service_total || notes.list_price || price)
-        }).then(() => true));
-
-        await once('customer_sheet', () => postAppsScript({
-          target: "customer_update",
-          invoiceNumber,
-          name: customerName,
-          phone: phone,
-          email: notes.email || '',
-          dob: notes.dob || '',
-          tob: notes.tob || '',
-          pob: notes.pob || '',
-          birthTime: notes.tob || '',
-          birthPlace: notes.pob || '',
-          gender: notes.gender || '',
-          billingAddress: notes.billing_address || '',
-          concern: notes.summary || '',
-          service: serviceName,
-          bookingDate: bookedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: 'medium', timeStyle: 'short' }),
-          countBooking: !isGatewayTest
-        }).then(() => true));
-      }
-
-      // 6. Send WhatsApp Confirmation
-      if (phone) {
-        const agreedSlotMsg = notes.time_slot && notes.time_slot !== "Not specified" ? `\n\nRequested test slot: ${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST.` : '';
-        if (!invoiceBuffer) throw new Error(`Invoice buffer missing for paid link ${pl.id}`);
-        const slotText = `${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST`;
-        const msg = notes.gateway_test === 'true'
-          ? `Razorpay has verified the ₹${price.toFixed(2)} gateway test payment. This is only a payment-system test; it does not pay for or confirm your ${serviceName} consultation.${agreedSlotMsg}\n\nInvoice No.: ${invoiceNumber}\nTest Google Meet link: ${meetLink || 'will be shared here before the slot'}\n\nYour clearly labelled test receipt is attached. I will also remind you here 30 minutes before the slot.`
-          : `Payment verified. Thank you, ${customerName}. We received ₹${price.toFixed(2)} for ${serviceName}.\n\nYour booking is confirmed for ${slotText}.\nInvoice No.: ${invoiceNumber}\nGoogle Meet: ${meetLink || 'will be shared here before your consultation'}\n\nYour payment receipt is attached. I will remind you here 30 minutes before your consultation.`;
-        // WhatsApp only allows free messages within 24 hours of the customer's last message. If the receipt or
-        // confirmation cannot go out (e.g. they paid from a template after a phone call), the owner is told once
-        // with everything needed to send it by hand, instead of Razorpay retrying the whole booking for a day.
-        const receiptSent = await once('receipt', async () => {
-          const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
-          const ok = Boolean(mediaId) && await sendWhatsAppDocument(phone, mediaId, invoiceName, notes.gateway_test === 'true'
-            ? '₹1 gateway test receipt - not a consultation payment.'
-            : 'Payment receipt and consultation details.');
-          if (ok) await crm.saveTurn(pool, phone, 'model', 'Payment receipt bheji.').catch(() => {});
-          return Boolean(ok);
-        });
-        const confirmationSent = await once('confirmation', async () => Boolean(await sendCustomerText(phone, msg)));
-        if (!receiptSent || !confirmationSent) {
-          await once('delivery_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${slotText}), but WhatsApp would not deliver the ${!receiptSent ? 'receipt' : 'confirmation'} (their 24-hour window is probably closed). The email confirmation has gone out. Please message them the Meet link yourself: ${meetLink}`, 'Payment confirmation not delivered on WhatsApp').then(() => true));
-        }
-        // Personal thank-you voice note from Kamala (best effort; never blocks fulfillment; sent once).
-        if (GEMINI_API_KEY && confirmationSent && !doneSteps.voice_note) {
-          await once('voice_note', async () => true);
-          voiceNote.sendThankYouVoiceNote({
-          genAI, modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', apiKey: GEMINI_API_KEY,
-          uploadMedia: uploadWhatsAppMedia, token: WA_TOKEN, phoneNumberId: PHONE_NUMBER_ID, normalize: normalizeWhatsAppNumber
-        }, { phone, name: customerName, service: serviceName, when: slotText, concern: notes.summary || '', isTest: isGatewayTest })
-          .then(script => { console.log(`🎙️ Voice note sent to ${phone}`); crm.saveTurn(pool, phone, 'model', `[Voice note] ${script}`).catch(() => {}); })
-          .catch(e => console.error('Voice note failed:', e.message));
-        }
-        await once('owner_alert', async () => notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
-          + `When: ${slotText}\nService: ${serviceName}\nInvoice No.: ${invoiceNumber}\nPhone: +${phone}\n`
-          + `Gender: ${notes.gender || 'Not provided'}\nDOB: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\n`
-          + `Concern: ${notes.summary || 'Not recorded'}\n`
-          + `Reading: ${crm.readingTag(await getUser(phone).catch(() => null)) || 'Not enough chat yet'}\nAmount received: ₹${price.toFixed(2)}${isGatewayTest ? ` (service price ₹${Number(notes.list_price || 0).toFixed(2)} still unpaid)` : ''}\n`
-          + `Google Meet: ${meetLink}\nYour Google Calendar will also remind you 30 minutes before.`, `Consultation booked: ${customerName}, ${slotText}`).then(() => true));
-        // Ask once whether they want festival reminders and updates (their consent is recorded with its wording).
-        if (confirmationSent) await once('optin_ask', () => growth.askOptIn(pool, phone, sendCustomerText).catch(() => false));
-        // Tell Meta about the sale so ads can find people like this client (only once META_CAPI_TOKEN is set).
-        if (!isGatewayTest) await once('meta_capi', () => growth.reportPurchase(axios, {
-          paymentLinkId: pl.id, phone, email: notes.email || storedLinkRow?.email || '', amountInr: price, serviceName
-        }).catch(e => { console.error('Meta purchase event failed:', e.response?.data?.error?.message || e.message); return 'failed'; }));
-      }
-      if (pool) {
-        await pool.query(`UPDATE wa_payment_links SET status=$2,razorpay_payment_id=$3,paid_at=COALESCE(paid_at,NOW()),updated_at=NOW() WHERE payment_link_id=$1`, [pl.id, notes.gateway_test === 'true' ? 'gateway_test_paid' : 'paid', payment?.id || null]);
-        await pool.query(`INSERT INTO wa_payment_fulfillments (payment_link_id,status) VALUES ($1,'fulfilled')
-          ON CONFLICT (payment_link_id) DO UPDATE SET status='fulfilled',updated_at=NOW()`, [pl.id]);
-      }
-      processedPayments.add(pl.id);
-      if (phone && activePaymentLinks[phone] === pl.id) delete activePaymentLinks[phone];
+      // Mark it paid now, before the slow steps: reminders, check-ins and the "please pay" nudge all key off this.
+      await pool.query(`UPDATE wa_payment_links SET status=$2,razorpay_payment_id=COALESCE($3,razorpay_payment_id),paid_at=COALESCE(paid_at,NOW()),updated_at=NOW()
+        WHERE payment_link_id=$1`, [pl.id, notes.gateway_test === 'true' ? 'gateway_test_paid' : 'paid', payment?.id || null]);
+      // Keep the event so a stuck or failed fulfilment can be finished later without Razorpay.
+      await pool.query('UPDATE wa_payment_fulfillments SET payload=$2::jsonb WHERE payment_link_id=$1', [pl.id, JSON.stringify(event)]);
+      // Answer Razorpay at once (it gives up after a few seconds) and do the slow work in the background.
+      // The customer's own "I have paid" check waits for it, so their reply can say the receipt has gone out.
+      const job = runFulfilment(event);
+      if (req.headers['x-kamala-internal'] === '1') await job;
     } else if (event.event === 'payment_link.expired') {
       const pl = event.payload?.payment_link?.entity;
       const eventId = pl?.notes?.calendar_event_id;
-      if (eventId) {
-        await postAppsScript({ target: 'calendar_cancel', eventId }).catch(error => {
-          if (!/not found|already missing/i.test(error.message || '')) throw error;
-        });
-      }
+      if (eventId) await cancelCalendarHold(eventId);
       if (pl?.id && pool) await pool.query("UPDATE wa_payment_links SET status=$2,updated_at=NOW() WHERE payment_link_id=$1", [pl.id, pl.notes?.gateway_test === 'true' ? 'gateway_test_expired' : 'expired']);
       if (pl?.id && pendingPayments[pl.id]) clearTimeout(pendingPayments[pl.id]);
     }
@@ -1452,10 +1585,8 @@ app.post('/webhook', async (req, res) => {
   const receivedBuffer = Buffer.from(signature);
   const expectedBuffer = Buffer.from(expected);
   if (receivedBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(receivedBuffer, expectedBuffer)) {
-    console.error('🚨 Webhook Signature Verification Failed!');
-    console.error(`Received: ${signature}`);
-    console.error(`Expected: ${expected}`);
-    console.error(`RawBody Length: ${rawBodyLen}`);
+    // Never log the expected signature: with it anyone reading the logs could forge WhatsApp webhooks.
+    console.error(`🚨 Webhook signature verification failed (body ${rawBodyLen} bytes, signature length ${signature.length}).`);
     return res.sendStatus(401);
   }
   res.sendStatus(200);
@@ -1618,7 +1749,7 @@ async function handleInboundMessage(msg) {
         if (!isOwner) {
           sessions[from] = sessions[from] || [];
         } else if (lowerCmd.startsWith('/unpause')) {
-          if (pool) await pool.query('UPDATE users SET is_paused = false WHERE phone = $1', [target]);
+          if (pool) await pool.query('UPDATE users SET is_paused = false, pause_reason = NULL, crisis_reply_at = NULL WHERE phone = $1', [target]);
           await sendTextMessage(from, `Kamala will reply to +${target} again.`);
           return;
         } else {
@@ -1707,6 +1838,17 @@ async function handleInboundMessage(msg) {
     if (dbUser.is_paused) {
       // Kamala handed this person to the team: pass their message on so it is never silently dropped.
       await crm.saveTurn(pool, from, 'user', inboundText || `[${msg.type}]`).catch(() => {});
+      if (dbUser.pause_reason === 'crisis') {
+        // Someone in distress is never met with silence while they wait for the team: a short caring reply with the
+        // helpline (at most every 10 minutes, so it does not feel automated), and an urgent alert to the owner each time.
+        const lastReply = dbUser.crisis_reply_at ? new Date(dbUser.crisis_reply_at).getTime() : 0;
+        if (Date.now() - lastReply > 10 * 60 * 1000) {
+          await sendCustomerText(from, 'Main yahin hoon, aapki baat padh rahi hoon. Aap akele nahi hain. Agar abhi bahut bhaari lag raha hai, please Tele-MANAS 14416 par call kijiye (free, 24x7), aur kisi apne ko abhi bataiye. Hamari team aapse jaldi personally baat karegi.');
+          if (pool) await pool.query('UPDATE users SET crisis_reply_at=NOW() WHERE phone=$1', [from]).catch(() => {});
+        }
+        await notifyOwner(`🆘 URGENT: +${from} (earlier possible self-harm) wrote again: ${String(inboundText || `[${msg.type}]`).slice(0, 300)}\n\nPlease reach out to them now. Kamala sent them the Tele-MANAS helpline. Send /unpause ${from} when they are safe to talk to Kamala again.`, 'URGENT: customer in distress wrote again');
+        return;
+      }
       await notifyOwner(`💬 +${from} wrote (Kamala is paused for them): ${inboundText || `[${msg.type}]`}\n\nReply to them yourself, or send /unpause ${from} to hand them back to Kamala.`, 'Message from a customer waiting for you');
       return;
     }
@@ -1861,6 +2003,7 @@ ${crm.readingContext(dbUser)}`;
       sessions[from] = sessions[from].filter(turn => turn && Array.isArray(turn.parts) && turn.parts.length);
       while (sessions[from].length > 1 && !(sessions[from][0].role === 'user'
         && sessions[from][0].parts.every(part => !part.functionResponse))) sessions[from].shift();
+      sessions[from] = repairToolTurns(sessions[from]);
 
       // Clean up replies already stored with repetition, and drop a reply stored twice in a row,
       // so Gemini never sees (and copies) a repeated pattern.
@@ -2001,8 +2144,10 @@ ${crm.readingContext(dbUser)}`;
           const reason = String(args.reason || '');
           const crisis = /suicid|self.?harm|kill (?:my|him|her)self|end (?:my|this|his|her) life|jeena nahi|marna chaht|mar jaun|khud ko (?:khatam|maar|nuksan)/i.test(`${reason} ${inboundText}`);
           const modelText = responseMessage.parts.filter(part => typeof part.text === 'string' && !part.thought).map(part => part.text).join(' ').trim();
-          await upsertUser(from, dbUser.is_customer, true); // Pause AI replies for this person
           respond({ status: "paused_by_human_handoff" });
+          await upsertUser(from, dbUser.is_customer, true); // Pause AI replies for this person
+          if (pool) await pool.query('UPDATE users SET pause_reason=$2, crisis_reply_at=$3 WHERE phone=$1',
+            [from, crisis ? 'crisis' : 'handoff', crisis ? new Date() : null]).catch(e => console.error('Pause reason save failed:', e.message));
           const reply = crisis
             ? `${modelText ? modelText + '\n\n' : ''}Aap akele nahi hain. Please abhi Tele-MANAS 14416 par call kijiye (free, 24x7), aur kisi apne ko bhi abhi bataiye. Hamari senior team bhi aapse personally baat karegi.`
             : "Main samajh sakti hoon. Maine yeh hamari senior team tak pahuncha diya hai; woh aapko isi number par 24 hours ke andar personally contact karenge.";
@@ -2015,6 +2160,11 @@ ${crm.readingContext(dbUser)}`;
           if (!razorpayClient) {
             respond({ status: 'not_configured' });
             await sendCustomerText(from, "Sorry ji, online booking abhi yahan se nahi ho pa rahi. Aap website se book kar sakte hain: https://veshannastro.co.in");
+            return;
+          }
+          if (bookingRetries.has(from)) {
+            respond({ status: 'pending', note: 'The payment link for this booking is already being prepared and will arrive in this chat shortly. Tell the customer that in one short line; do not create another.' });
+            await followUp('Ji, aapka payment link ban raha hai, bas 1-2 minute mein yahin aa jayega 🙏');
             return;
           }
           const holdKey = crypto.randomUUID();
@@ -2086,10 +2236,45 @@ ${crm.readingContext(dbUser)}`;
     }
   } catch (err) {
     console.error('❌ CRITICAL ERROR in webhook processing:', err.message, err.stack);
+    // A failure between a tool call and its answer must not leave the chat history broken for the next message.
+    if (from && sessions[from]) sessions[from] = repairToolTurns(sessions[from]);
     await notifyOwner(`🚨 WEBHOOK CRASH ALERT\n\nCustomer: +${from}\nError: ${err.message}\n\nCheck Render logs for the full stack trace.`, 'Kamala crashed on a message').catch(() => {});
     // Warm, neutral fallback (never leak technical details, never promise anything).
     if (from) await sendTextMessage(from, "Sorry ji, aapka message theek se process nahi ho paya. Ek baar phir bhej dijiye?").catch(() => {});
   }
+}
+
+// Gemini rejects a history where a tool call is not followed by its answer (or an answer has no call), and then
+// fails on every later message. A failed step, a restart or a message sent in between can leave such a gap:
+// drop the unmatched parts so the conversation always continues.
+function repairToolTurns(turns) {
+  const out = [];
+  for (let i = 0; i < turns.length; i++) {
+    const turn = turns[i];
+    if (!turn || !Array.isArray(turn.parts)) continue;
+    const hasCall = turn.parts.some(p => p && p.functionCall);
+    const hasAnswer = turn.parts.some(p => p && p.functionResponse);
+    if (turn.role === 'model' && hasCall) {
+      const next = turns[i + 1];
+      const answered = next && next.role === 'user' && Array.isArray(next.parts) && next.parts.some(p => p && p.functionResponse);
+      if (!answered) {
+        const rest = turn.parts.filter(p => p && !p.functionCall);
+        if (rest.length) out.push({ ...turn, parts: rest });
+        continue;
+      }
+    }
+    if (hasAnswer) {
+      const prev = out[out.length - 1];
+      const asked = prev && prev.role === 'model' && prev.parts.some(p => p && p.functionCall);
+      if (!asked) {
+        const rest = turn.parts.filter(p => p && !p.functionResponse);
+        if (rest.length) out.push({ ...turn, parts: rest });
+        continue;
+      }
+    }
+    out.push(turn);
+  }
+  return out;
 }
 
 async function sendInteractiveMenu(to) {
@@ -2384,9 +2569,47 @@ function crmDeps() {
 // Render's free instance sleeps when idle. Apps Script wakes it (via /cron/tick) 5 minutes before
 // the next reminder/follow-up is due, so the service is not kept awake all day.
 let lastPushedWake;
+// Work Kamala owes at a set time (finishing payments, retries, nudges, daily messages). The scheduler runs it
+// every minute while the server is awake, and the wake-up schedule includes it so a sleeping server is woken.
+async function ownJobsNextDue() {
+  if (!pool) return null;
+  const r = await pool.query(`SELECT MIN(t) AS t FROM (
+      SELECT NOW() + INTERVAL '2 minutes' AS t FROM wa_payment_fulfillments
+        WHERE payload IS NOT NULL AND attempts < 6 AND status IN ('failed','processing')
+      UNION ALL SELECT next_at FROM wa_calendar_cancels
+    ) due`).catch(() => ({ rows: [] }));
+  return r.rows[0]?.t ? new Date(r.rows[0].t) : null;
+}
+
 async function nextWakeAt() {
-  const next = pool ? await crm.nextDueAt(pool, ADMIN_PHONE_NUMBER) : null;
-  return next ? new Date(next.getTime() - 5 * 60 * 1000).toISOString() : '';
+  const times = pool ? [await crm.nextDueAt(pool, ADMIN_PHONE_NUMBER), await ownJobsNextDue()].filter(Boolean) : [];
+  if (!times.length) return '';
+  const next = new Date(Math.min(...times.map(t => t.getTime())));
+  return new Date(next.getTime() - 5 * 60 * 1000).toISOString();
+}
+
+async function runOwnJobs() {
+  await recoverFulfilments();
+  await retryCalendarCancels();
+}
+
+// Slots whose cancel failed earlier (Google busy) are freed here, with growing gaps; the owner hears after 6 tries.
+async function retryCalendarCancels() {
+  if (!pool) return;
+  const due = await pool.query('SELECT event_id, attempts FROM wa_calendar_cancels WHERE next_at <= NOW() ORDER BY next_at LIMIT 5').catch(() => ({ rows: [] }));
+  for (const row of due.rows) {
+    try {
+      await postAppsScript({ target: 'calendar_cancel', eventId: row.event_id });
+      await pool.query('DELETE FROM wa_calendar_cancels WHERE event_id=$1', [row.event_id]);
+    } catch (e) {
+      if (/not found|already missing|deleted/i.test(e.message || '') || row.attempts + 1 >= 6) {
+        await pool.query('DELETE FROM wa_calendar_cancels WHERE event_id=$1', [row.event_id]);
+        if (row.attempts + 1 >= 6) await notifyOwner(`⚠️ A cancelled booking's calendar slot (event ${row.event_id}) could not be freed after 6 tries. Please delete it from Google Calendar so the slot is open again.`, 'Calendar slot still blocked').catch(() => {});
+      } else {
+        await pool.query(`UPDATE wa_calendar_cancels SET attempts=attempts+1, next_at=NOW() + (attempts+1) * INTERVAL '5 minutes' WHERE event_id=$1`, [row.event_id]);
+      }
+    }
+  }
 }
 async function pushNextWake() {
   if (!pool || !GOOGLE_APPS_SCRIPT_URL || !GOOGLE_APPS_SCRIPT_SECRET) return;
@@ -2416,6 +2639,7 @@ async function maybeDailyAnalytics() {
 
 async function runScheduledJobs() {
   maybeDailyAnalytics().catch(e => console.error('Daily analytics failed:', e.message));
+  await runOwnJobs().catch(e => console.error('Scheduled work failed:', e.message));
   const result = await crm.runDueJobs(crmDeps());
   await pushNextWake().catch(e => console.error('Wake scheduling failed:', e.message));
   return result;
@@ -2426,6 +2650,7 @@ app.post('/cron/tick', async (req, res) => {
   try {
     const result = await crm.runDueJobs(crmDeps());
     maybeDailyAnalytics().catch(e => console.error('Daily analytics failed:', e.message));
+    await runOwnJobs().catch(e => console.error('Scheduled work failed:', e.message));
     const wakeAt = await nextWakeAt();
     lastPushedWake = wakeAt;
     res.json({ ok: true, result, wakeAt });
@@ -2446,9 +2671,11 @@ async function deliverAfterCall(phone, message) {
       .catch(() => ({ rows: [] }))).rows[0]?.open === true
     : false;
   let delivery = null;
-  if (open && (message.mediaId
-    ? await sendWhatsAppDocument(phone, message.mediaId, message.filename, message.body)
-    : await sendTextMessage(phone, message.body))) {
+  const sendNow = () => (message.mediaId
+    ? sendWhatsAppDocument(phone, message.mediaId, message.filename, message.body)
+    : sendTextMessage(phone, message.body));
+  // One short retry covers a passing Meta error while the chat window is open.
+  if (open && (await sendNow() || (await new Promise(r => setTimeout(r, 2000)), await sendNow()))) {
     delivery = 'sent';
   } else if (message.template && message.templateName
     && await sendWhatsAppTemplate(phone, message.templateName, message.template, message.mediaId ? { id: message.mediaId, filename: message.filename } : null)) {
