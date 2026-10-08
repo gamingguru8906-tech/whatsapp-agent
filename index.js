@@ -96,7 +96,12 @@ if (DATABASE_URL) {
   });
   // Neon closes idle connections when it suspends; without this listener that error would crash the server.
   pool.on('error', e => console.error('Postgres idle connection error (recovered):', e.message));
-  pool.query(`
+} else {
+  console.warn('⚠️ No DATABASE_URL set — running without persistent CRM. Set DATABASE_URL env var for Neon PostgreSQL.');
+}
+
+async function migrateMainTables() {
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       phone TEXT PRIMARY KEY,
       is_customer BOOLEAN DEFAULT false,
@@ -179,15 +184,51 @@ if (DATABASE_URL) {
       accepted_at TIMESTAMPTZ,
       used_at TIMESTAMPTZ
     );
-  `).then(() => retireCustomerIds(pool))
-    .then(() => crm.migrate(pool))
-    .then(() => voiceAgent.migrate(pool))
-    .then(() => growth.migrate(pool))
-    .then(() => console.log('✅ PostgreSQL connected & table ready.'))
-    .catch(e => console.error('❌ PostgreSQL setup error:', e.message));
-} else {
-  console.warn('⚠️ No DATABASE_URL set — running without persistent CRM. Set DATABASE_URL env var for Neon PostgreSQL.');
+    CREATE TABLE IF NOT EXISTS wa_booking_retries (
+      phone TEXT PRIMARY KEY,
+      args JSONB NOT NULL,
+      hold_key TEXT NOT NULL,
+      attempts INTEGER NOT NULL DEFAULT 0,
+      next_at TIMESTAMPTZ NOT NULL,
+      started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      last_error TEXT
+    );
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS nudge_at TIMESTAMPTZ;
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS nudged_at TIMESTAMPTZ;
+    CREATE TABLE IF NOT EXISTS wa_inbound (
+      msg_id TEXT PRIMARY KEY,
+      phone TEXT NOT NULL,
+      payload JSONB NOT NULL,
+      received_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      claimed_at TIMESTAMPTZ,
+      started_at TIMESTAMPTZ,
+      done_at TIMESTAMPTZ,
+      attempts INTEGER NOT NULL DEFAULT 0
+    );
+  `);
 }
+
+// Tables are created (or upgraded) before any webhook, tick or job touches them. A database that is still waking
+// up (Neon) is retried instead of leaving the server running without its tables.
+let dbIsReady = false;
+const dbReady = pool ? (async () => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await migrateMainTables();
+      await retireCustomerIds(pool);
+      await crm.migrate(pool);
+      await voiceAgent.migrate(pool);
+      await growth.migrate(pool);
+      dbIsReady = true;
+      console.log('✅ PostgreSQL connected & table ready.');
+      return true;
+    } catch (e) {
+      console.error(`❌ PostgreSQL setup error (attempt ${attempt}/5):`, e.message);
+      if (attempt >= 5) return false;
+      await new Promise(r => setTimeout(r, attempt * 5000));
+    }
+  }
+})() : Promise.resolve(false);
 
 // Customers are tracked by invoice number only. The old customer IDs (same VA/FY/MM-NNN format) seed the
 // invoice counter so no invoice number repeats one already given out, then the columns are removed.
@@ -581,49 +622,76 @@ async function reserveCalendarSlot(slot, details) {
 
 // Errors worth retrying: Google Apps Script / Calendar, Razorpay or WhatsApp being slow or busy.
 const RETRYABLE_BOOKING_ERROR = /Apps Script|ECONNABORTED|ETIMEDOUT|ECONNRESET|EAI_AGAIN|timeout|socket hang up|status code (429|5\d\d)|retryable|busy|no calendar event|WhatsApp did not accept/i;
-const bookingRetries = new Map();
+// Seconds to wait before retry 1, 2, 3 and 4.
+const BOOKING_RETRY_WAITS = [30, 90, 180, 300];
 
-// Retries a failed booking quietly (30s, 1.5 min, 3 min, 5 min later). Stops as soon as a link goes out
-// some other way. Only if every retry fails is the owner asked to step in.
-function retryBookingInBackground(phone, args, holdKey, firstError) {
-  if (bookingRetries.has(phone)) return;
-  const startedAt = new Date();
-  bookingRetries.set(phone, startedAt);
-  (async () => {
-    let lastError = firstError;
-    try {
-      for (const wait of [30000, 90000, 180000, 300000]) {
-        await new Promise(resolve => setTimeout(resolve, wait));
-        if (pool) {
-          const already = await pool.query(`SELECT 1 FROM wa_payment_links WHERE phone=$1 AND created_at > $2
-            AND status IN ('request_created','paid','gateway_test_paid') LIMIT 1`, [phone, startedAt]).catch(() => ({ rows: [] }));
-          if (already.rows[0]) return;
-        }
-        try {
-          const user = (await getUser(phone)) || { phone };
-          await createBookingPaymentRequest(phone, args, user, { holdKey });
-          console.log(`✅ Payment link for +${phone} sent on a background retry.`);
-          if (sessions[phone]) sessions[phone].push({ role: 'model', parts: [{ text: 'Payment link aur invoice bhej diya hai. Payment abhi pending hai.' }] });
-          return;
-        } catch (e) {
-          lastError = e;
-          if (e.customerFixable) {
-            const slotGone = /time|slot|available|limit/i.test(e.message || '');
-            await sendCustomerText(phone, slotGone
-              ? 'Sorry ji, jo time humne decide kiya tha woh abhi available nahi raha. Aap koi aur time bata dijiye, main turant link bhejti hoon.'
-              : 'Ji, link bhejne se pehle ek detail confirm karni hai. Kya aap apni booking details ek baar phir bata sakte hain?');
-            return;
-          }
-          if (!RETRYABLE_BOOKING_ERROR.test(e.message || '')) break;
-          console.warn(`Background booking retry for +${phone} failed: ${e.message}`);
-        }
-      }
-      await sendCustomerText(phone, 'Ji, system mein thodi der lag rahi hai. Hamari team aapko 10-15 minute mein personally payment link bhejegi 🙏');
-      await notifyOwner(`⚠️ Payment link for +${phone} still not created after 4 automatic retries (${args.service_name || 'service'}, ${args.preferred_time_slot || 'time not set'}).\nLast error: ${lastError?.message || 'unknown'}\nThe customer was told the team will send it in 10-15 minutes. Please send it or reply to them.`, 'Payment link needs you');
-    } finally {
-      bookingRetries.delete(phone);
+// Retries a failed booking quietly (30s, 1.5 min, 3 min, 5 min later). The retry is saved in the database, so a
+// restart or Render going to sleep cannot lose it (the wake-up schedule includes it). Stops as soon as a link goes
+// out some other way. Only if every retry fails is the owner asked to step in.
+async function retryBookingInBackground(phone, args, holdKey, firstError) {
+  await pool.query(`INSERT INTO wa_booking_retries (phone, args, hold_key, next_at, last_error)
+    VALUES ($1, $2::jsonb, $3, NOW() + make_interval(secs => $4), $5) ON CONFLICT (phone) DO NOTHING`,
+    [phone, JSON.stringify(args || {}), holdKey, BOOKING_RETRY_WAITS[0], String(firstError?.message || '').slice(0, 500)]);
+}
+
+async function bookingRetryPending(phone) {
+  if (!pool) return false;
+  const r = await pool.query('SELECT 1 FROM wa_booking_retries WHERE phone=$1', [phone]).catch(() => ({ rows: [] }));
+  return r.rows.length > 0;
+}
+
+// Called by the scheduler. Each due retry is leased for 10 minutes while it runs, so a crash mid-retry is
+// picked up again later instead of being lost or run twice at once.
+let runningBookingRetries = false;
+async function runBookingRetries() {
+  if (!pool || runningBookingRetries) return;
+  runningBookingRetries = true;
+  try {
+    const due = await pool.query(`UPDATE wa_booking_retries SET attempts=attempts+1, next_at=NOW() + INTERVAL '10 minutes'
+      WHERE phone IN (SELECT phone FROM wa_booking_retries WHERE next_at <= NOW() ORDER BY next_at LIMIT 5)
+      RETURNING phone, args, hold_key, attempts, started_at, last_error`);
+    for (const row of due.rows) {
+      await runOneBookingRetry(row).catch(e => console.error(`Background booking retry for +${row.phone} crashed:`, e.message));
     }
-  })().catch(e => console.error('Background booking retry crashed:', e.message));
+  } catch (e) {
+    console.error('Booking retries failed:', e.message);
+  } finally {
+    runningBookingRetries = false;
+  }
+}
+
+async function runOneBookingRetry({ phone, args, hold_key: holdKey, attempts, started_at: startedAt, last_error: previousError }) {
+  const finish = () => pool.query('DELETE FROM wa_booking_retries WHERE phone=$1', [phone]);
+  const already = await pool.query(`SELECT 1 FROM wa_payment_links WHERE phone=$1 AND created_at > $2
+    AND status IN ('request_created','paid','gateway_test_paid') LIMIT 1`, [phone, startedAt]);
+  if (already.rows[0]) return finish();
+  let lastError = previousError || 'unknown';
+  try {
+    const user = (await getUser(phone)) || { phone };
+    await createBookingPaymentRequest(phone, args, user, { holdKey });
+    console.log(`✅ Payment link for +${phone} sent on a background retry.`);
+    if (sessions[phone]) sessions[phone].push({ role: 'model', parts: [{ text: 'Payment link aur invoice bhej diya hai. Payment abhi pending hai.' }] });
+    return finish();
+  } catch (e) {
+    lastError = e.message || 'unknown';
+    if (e.customerFixable) {
+      await finish();
+      const slotGone = /time|slot|available|limit/i.test(e.message || '');
+      await sendCustomerText(phone, slotGone
+        ? 'Sorry ji, jo time humne decide kiya tha woh abhi available nahi raha. Aap koi aur time bata dijiye, main turant link bhejti hoon.'
+        : 'Ji, link bhejne se pehle ek detail confirm karni hai. Kya aap apni booking details ek baar phir bata sakte hain?');
+      return;
+    }
+    if (RETRYABLE_BOOKING_ERROR.test(e.message || '') && attempts < BOOKING_RETRY_WAITS.length) {
+      console.warn(`Background booking retry for +${phone} failed: ${e.message}`);
+      await pool.query(`UPDATE wa_booking_retries SET next_at=NOW() + make_interval(secs => $2), last_error=$3 WHERE phone=$1`,
+        [phone, BOOKING_RETRY_WAITS[attempts], String(e.message || '').slice(0, 500)]);
+      return;
+    }
+  }
+  await finish();
+  await sendCustomerText(phone, 'Ji, system mein thodi der lag rahi hai. Hamari team aapko 10-15 minute mein personally payment link bhejegi 🙏');
+  await notifyOwner(`⚠️ Payment link for +${phone} still not created after ${attempts} automatic ${attempts === 1 ? 'retry' : 'retries'} (${args?.service_name || 'service'}, ${args?.preferred_time_slot || 'time not set'}).\nLast error: ${lastError}\nThe customer was told the team will send it in 10-15 minutes. Please send it or reply to them. If Google Calendar shows a tentative hold for this slot, delete it.`, 'Payment link needs you');
 }
 
 // Cancels an older unpaid link and its calendar hold. A network error is not taken as "already paid":
@@ -863,17 +931,12 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
         .catch(e => console.error('Discount offer update failed:', e.message));
     }
 
-    // One gentle nudge 2 hours later, only if this link is still the unpaid, current one.
-    if (delivery === 'sent') pendingPayments[refId] = setTimeout(async () => {
-      delete pendingPayments[refId];
-      try {
-        const row = pool ? (await pool.query('SELECT status FROM wa_payment_links WHERE payment_link_id=$1', [refId])).rows[0] : null;
-        if (row && row.status !== 'request_created') return;
-        await sendCustomerText(phone, `Hi ${firstNameOf(args.customer_name)} ji, bas check kar rahi thi ki aap appointment ke saath aage badhna chahenge? Payment link mein koi help chahiye ho toh bataiye.`);
-      } catch (e) {
-        console.error('Payment nudge failed:', e.message);
-      }
-    }, 2 * 60 * 60 * 1000);
+    // One gentle nudge 2 hours later, only if this link is still the unpaid, current one (see sendPaymentNudges).
+    // Saved in the database so a restart or Render sleeping does not lose it.
+    if (delivery === 'sent') {
+      await pool.query(`UPDATE wa_payment_links SET nudge_at=NOW() + INTERVAL '2 hours' WHERE payment_link_id=$1`, [refId])
+        .catch(e => console.error('Payment nudge scheduling failed:', e.message));
+    }
     return delivered;
   } catch (e) {
     if (delivered) {
@@ -1441,8 +1504,10 @@ async function fulfilPaidLink(event) {
 }
 
 // Runs fulfilPaidLink and records the outcome. A failure is retried by recoverFulfilments(); the owner hears once.
+let fulfilmentsRunning = 0;
 async function runFulfilment(event) {
   const linkId = event?.payload?.payment_link?.entity?.id;
+  fulfilmentsRunning++;
   try {
     await fulfilPaidLink(event);
   } catch (e) {
@@ -1452,6 +1517,8 @@ async function runFulfilment(event) {
       : null;
     if (linkId && pool) await pool.query(`UPDATE wa_payment_fulfillments SET status='failed', updated_at=NOW() WHERE payment_link_id=$1 AND status <> 'fulfilled'`, [linkId]).catch(() => {});
     if (previous !== 'failed') await notifyOwner(`Payment received; finishing the booking hit a problem: ${e.message}\nPayment link: ${linkId || 'unknown'}. Kamala retries automatically every few minutes; you will hear again only if it still fails.`, 'Payment fulfilment retrying').catch(() => {});
+  } finally {
+    fulfilmentsRunning--;
   }
 }
 
@@ -1494,6 +1561,7 @@ app.post('/razorpay-webhook', async (req, res) => {
   if (received.length !== expected.length || !crypto.timingSafeEqual(received, expected)) return res.sendStatus(400);
 
   try {
+    await dbReady;
     const event = req.body;
     if (event.event === 'payment_link.paid') {
       const pl = event.payload.payment_link.entity;
@@ -1598,11 +1666,14 @@ app.post('/webhook', async (req, res) => {
       for (const st of change.value?.statuses || []) statuses.push(st);
     }
   }
-  if (statuses.length) growth.recordStatuses(pool, statuses).catch(e => console.error('Status receipts failed:', e.message));
   if (!incoming.length) {
+    if (statuses.length) growth.recordStatuses(pool, statuses).catch(e => console.error('Status receipts failed:', e.message));
     console.log('📭 Webhook received but no messages (status update or echo).');
     return;
   }
+  // Right after a restart the tables may still be getting ready (Neon waking up); wait for that, briefly.
+  if (pool) await Promise.race([dbReady, new Promise(r => setTimeout(r, 20000))]);
+  if (statuses.length) growth.recordStatuses(pool, statuses).catch(e => console.error('Status receipts failed:', e.message));
   for (const msg of incoming) {
     // Meta redelivers messages (e.g. around cold starts): handle each message id once, before anything replies.
     if (msg.id) {
@@ -1611,15 +1682,75 @@ app.post('/webhook', async (req, res) => {
         continue;
       }
       processedMessageIds.set(msg.id, Date.now());
+      if (!(await saveInbound(msg))) {
+        console.log(`🔁 Message ${msg.id} was already received before a restart; not answered twice.`);
+        continue;
+      }
     }
-    enqueueForPhone(msg.from, () => handleInboundMessage(msg));
+    enqueueInbound(msg);
   }
 });
+
+// Every incoming message is saved before it is handled and marked done afterwards. If the server restarts or
+// crashes in between, replayInbound() answers it later instead of the customer being ignored.
+// Returns false when this message id was already saved (a redelivery after a restart).
+async function saveInbound(msg) {
+  if (!pool || !dbIsReady) return true;
+  try {
+    const r = await pool.query(`INSERT INTO wa_inbound (msg_id, phone, payload, claimed_at) VALUES ($1,$2,$3::jsonb,NOW())
+      ON CONFLICT (msg_id) DO NOTHING RETURNING msg_id`, [msg.id, msg.from, JSON.stringify(msg)]);
+    return r.rows.length > 0;
+  } catch (e) {
+    console.error('Saving the incoming message failed (answering it anyway):', e.message);
+    return true;
+  }
+}
+
+const inboundInFlight = new Set();
+function enqueueInbound(msg) {
+  const id = msg.id;
+  if (id) inboundInFlight.add(id);
+  enqueueForPhone(msg.from, async () => {
+    if (draining) return; // shutting down: left for the next server (see shutdownGracefully)
+    const tracked = id && pool && dbIsReady;
+    if (tracked) await pool.query('UPDATE wa_inbound SET started_at=NOW(), claimed_at=NOW() WHERE msg_id=$1', [id]).catch(() => {});
+    try {
+      await handleInboundMessage(msg);
+    } finally {
+      if (id) inboundInFlight.delete(id);
+      if (tracked) await pool.query('UPDATE wa_inbound SET done_at=NOW() WHERE msg_id=$1', [id]).catch(() => {});
+    }
+  });
+}
+
+// Answers messages that were saved but never finished (restart, crash). Each gets at most two more tries, and only
+// within 6 hours; one still being handled by a running server (claimed in the last 5 minutes) is left alone.
+let lastInboundCleanup = 0;
+async function replayInbound() {
+  if (!pool || draining) return;
+  if (Date.now() - lastInboundCleanup > 60 * 60 * 1000) {
+    lastInboundCleanup = Date.now();
+    await pool.query(`DELETE FROM wa_inbound WHERE received_at < NOW() - INTERVAL '7 days'`).catch(() => {});
+  }
+  const due = await pool.query(`UPDATE wa_inbound SET claimed_at=NOW(), attempts=attempts+1
+    WHERE msg_id IN (SELECT msg_id FROM wa_inbound WHERE done_at IS NULL AND attempts < 2
+      AND received_at > NOW() - INTERVAL '6 hours'
+      AND (claimed_at IS NULL OR claimed_at < NOW() - INTERVAL '5 minutes')
+      ORDER BY received_at LIMIT 20)
+    RETURNING msg_id, payload, received_at`);
+  for (const row of due.rows.sort((a, b) => new Date(a.received_at) - new Date(b.received_at))) {
+    if (inboundInFlight.has(row.msg_id)) continue; // this server is still on it
+    console.log(`♻️ Answering message ${row.msg_id} from +${row.payload?.from} that was cut off by a restart.`);
+    processedMessageIds.set(row.msg_id, Date.now());
+    enqueueInbound(row.payload);
+  }
+}
 
 // One person's messages are handled one at a time, in order. Two quick messages used to run in parallel,
 // which gave two replies and could break the chat history (e.g. a message landing mid-booking).
 const phoneQueues = new Map();
 const lastSeenAt = new Map();
+let draining = false; // set on shutdown (see shutdownGracefully)
 setInterval(() => {
   const cutoff = Date.now() - 2 * 60 * 60 * 1000;
   for (const [phone, at] of lastSeenAt) {
@@ -1651,8 +1782,13 @@ async function handleInboundMessage(msg) {
       lastTurnAt = saved.length ? saved[saved.length - 1].createdAt : null;
       sessions[from] = saved.map(({ role, parts }) => ({ role, parts }));
     }
-    if (pool) await pool.query(`INSERT INTO users (phone, last_inbound_at) VALUES ($1, NOW())
-      ON CONFLICT (phone) DO UPDATE SET last_inbound_at=NOW()`, [from]).catch(e => console.error('Inbound record failed:', e.message));
+    // previousInboundAt: when they last wrote before this message (null for a first message).
+    let previousInboundAt = null;
+    if (pool) previousInboundAt = (await pool.query(`WITH prev AS (SELECT last_inbound_at FROM users WHERE phone=$1)
+      INSERT INTO users (phone, last_inbound_at) VALUES ($1, NOW())
+      ON CONFLICT (phone) DO UPDATE SET last_inbound_at=NOW()
+      RETURNING (SELECT last_inbound_at FROM prev) AS previous`, [from])
+      .catch(e => { console.error('Inbound record failed:', e.message); return { rows: [] }; })).rows[0]?.previous || null;
     await growth.recordInbound(pool, from, { ref: tagged.ref, referral: msg.referral, text: inboundText }).catch(e => console.error('Lead source failed:', e.message));
     if (pool && from !== normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || '')) {
       // After Kamala has replied and saved any new details, refresh the lead score (and alert on hot leads).
@@ -1665,8 +1801,11 @@ async function handleInboundMessage(msg) {
       return;
     }
     if (/^yes$/i.test(inboundText) && pool) {
+      // A "yes" accepts the offer only as the reply to it: within 72 hours and with nothing else said in between.
       const pendingOffer = await pool.query(`SELECT source_payment_link_id FROM wa_discount_offers
-        WHERE phone=$1 AND status='offered' ORDER BY offered_at DESC LIMIT 1`, [from]);
+        WHERE phone=$1 AND status='offered' AND offered_at > NOW() - INTERVAL '72 hours'
+          AND ($2::timestamptz IS NULL OR offered_at > $2::timestamptz)
+        ORDER BY offered_at DESC LIMIT 1`, [from, previousInboundAt]);
       if (pendingOffer.rows[0]) {
         await pool.query(`UPDATE wa_discount_offers SET status='accepted',accepted_at=NOW()
           WHERE source_payment_link_id=$1 AND status='offered'`, [pendingOffer.rows[0].source_payment_link_id]);
@@ -2162,7 +2301,7 @@ ${crm.readingContext(dbUser)}`;
             await sendCustomerText(from, "Sorry ji, online booking abhi yahan se nahi ho pa rahi. Aap website se book kar sakte hain: https://veshannastro.co.in");
             return;
           }
-          if (bookingRetries.has(from)) {
+          if (await bookingRetryPending(from)) {
             respond({ status: 'pending', note: 'The payment link for this booking is already being prepared and will arrive in this chat shortly. Tell the customer that in one short line; do not create another.' });
             await followUp('Ji, aapka payment link ban raha hai, bas 1-2 minute mein yahin aa jayega 🙏');
             return;
@@ -2181,7 +2320,10 @@ ${crm.readingContext(dbUser)}`;
               console.error('Booking payment request failed (will retry in background):', e.message);
               respond({ status: 'pending', note: 'The link is being prepared and will arrive in this chat in a minute or two. It has already been told to the customer; do not repeat it or mention any problem.' });
               await sendCustomerText(from, "Ji, aapka slot hold kar rahi hoon. Payment link aur invoice 1-2 minute mein yahin aa jayenge 🙏");
-              retryBookingInBackground(from, args, holdKey, e);
+              await retryBookingInBackground(from, args, holdKey, e).catch(async saveError => {
+                console.error('Could not save the booking retry:', saveError.message);
+                await notifyOwner(`⚠️ Payment link for +${from} could not be created (${args.service_name || 'service'}, ${args.preferred_time_slot || 'time not set'}) and the automatic retry could not be saved: ${e.message}\nThe customer was told the link is coming. Please send it or reply to them.`, 'Payment link needs you');
+              });
             } else {
               console.error('Booking payment request failed:', e.message);
               respond({ status: "error", note: 'An internal problem stopped the payment link. The team has been told.' });
@@ -2577,8 +2719,117 @@ async function ownJobsNextDue() {
       SELECT NOW() + INTERVAL '2 minutes' AS t FROM wa_payment_fulfillments
         WHERE payload IS NOT NULL AND attempts < 6 AND status IN ('failed','processing')
       UNION ALL SELECT next_at FROM wa_calendar_cancels
+      UNION ALL SELECT next_at FROM wa_booking_retries
+      UNION ALL SELECT nudge_at FROM wa_payment_links
+        WHERE nudge_at IS NOT NULL AND nudged_at IS NULL AND status='request_created' AND nudge_at > NOW() - INTERVAL '6 hours'
+      UNION ALL SELECT COALESCE(claimed_at, received_at) + INTERVAL '5 minutes' FROM wa_inbound
+        WHERE done_at IS NULL AND attempts < 2 AND received_at > NOW() - INTERVAL '6 hours'
     ) due`).catch(() => ({ rows: [] }));
-  return r.rows[0]?.t ? new Date(r.rows[0].t) : null;
+  const times = r.rows[0]?.t ? [new Date(r.rows[0].t).getTime()] : [];
+  // The daily follow-up messages go out at 10:00 IST.
+  if (process.env.WA_FOLLOWUP_TEMPLATE) times.push(nextIstTime(DAILY_DRIP_HOUR).getTime());
+  return times.length ? new Date(Math.min(...times)) : null;
+}
+
+// Date (YYYY-MM-DD) and hour (0-23) right now in India.
+function istNow() {
+  const now = new Date();
+  return {
+    day: new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(now),
+    hour: Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', hourCycle: 'h23' }).format(now))
+  };
+}
+
+// The next time the clock in India shows hour:00 (India has no daylight saving: always UTC+5:30).
+function nextIstTime(hour) {
+  const offset = 5.5 * 60 * 60 * 1000;
+  const now = Date.now();
+  const ist = new Date(now + offset);
+  let target = Date.UTC(ist.getUTCFullYear(), ist.getUTCMonth(), ist.getUTCDate(), hour) - offset;
+  if (target <= now) target += 24 * 60 * 60 * 1000;
+  return new Date(target);
+}
+
+// Runs a job at most once per key (e.g. once a day), even across restarts.
+async function claimOnce(metaKey, value) {
+  const claimed = await pool.query(`INSERT INTO wa_meta (key,value) VALUES ($1,$2)
+    ON CONFLICT (key) DO UPDATE SET value=$2 WHERE wa_meta.value IS DISTINCT FROM $2 RETURNING key`, [metaKey, value]);
+  return claimed.rows.length > 0;
+}
+
+// The gentle "need help with the payment?" message, 2 hours after a link went out and only while it is unpaid.
+async function sendPaymentNudges() {
+  const due = await pool.query(`UPDATE wa_payment_links SET nudged_at=NOW()
+    WHERE payment_link_id IN (SELECT payment_link_id FROM wa_payment_links
+      WHERE nudge_at <= NOW() AND nudged_at IS NULL AND status='request_created' ORDER BY nudge_at LIMIT 20)
+    RETURNING payment_link_id, phone, customer_name, nudge_at`);
+  for (const row of due.rows) {
+    if (Date.now() - new Date(row.nudge_at).getTime() > 6 * 60 * 60 * 1000) continue; // too late to be helpful
+    // In the customer's queue, so it never lands in the middle of Kamala answering them.
+    enqueueForPhone(row.phone, async () => {
+      const link = (await pool.query('SELECT status FROM wa_payment_links WHERE payment_link_id=$1', [row.payment_link_id])).rows[0];
+      if (link?.status !== 'request_created') return;
+      const user = await getUser(row.phone);
+      if (!user || user.is_paused) return;
+      // WhatsApp only delivers a free-form message within 24 hours of the customer's last message.
+      if (!user.last_inbound_at || Date.now() - new Date(user.last_inbound_at).getTime() > (23 * 60 + 55) * 60 * 1000) return;
+      await sendCustomerText(row.phone, `Hi ${firstNameOf(row.customer_name)} ji, bas check kar rahi thi ki aap appointment ke saath aage badhna chahenge? Payment link mein koi help chahiye ho toh bataiye.`);
+    });
+  }
+}
+
+// A 10% retention offer, at most once an hour, sent only to opted-in customers and only via the approved WhatsApp
+// template (required outside Meta's 24-hour window). One offer per person in 60 days, only for their latest link,
+// and never to someone who booked again afterwards.
+let sendingOffers = false;
+async function maybeSendDiscountOffers() {
+  if (!process.env.WA_48H_DISCOUNT_TEMPLATE || sendingOffers) return;
+  const { day, hour } = istNow();
+  if (!(await claimOnce('discount_offer_hour', `${day}T${hour}`))) return;
+  sendingOffers = true;
+  try {
+    const eligible = await pool.query(`SELECT l.payment_link_id, l.phone
+      FROM wa_payment_links l JOIN users u ON u.phone=l.phone
+      WHERE l.status IN ('request_created','expired','gateway_test_expired')
+        AND l.created_at <= NOW() - INTERVAL '48 hours' AND l.created_at > NOW() - INTERVAL '14 days'
+        AND u.marketing_opt_in=true AND u.marketing_opt_out=false AND COALESCE(u.is_paused,false)=false
+        AND NOT EXISTS (SELECT 1 FROM wa_payment_links n WHERE n.phone=l.phone AND n.created_at > l.created_at)
+        AND NOT EXISTS (SELECT 1 FROM wa_discount_offers d WHERE d.source_payment_link_id=l.payment_link_id
+          OR (d.phone=l.phone AND d.offered_at > NOW() - INTERVAL '60 days'))
+      ORDER BY l.created_at ASC LIMIT 50`);
+    for (const row of eligible.rows) {
+      // Record the offer first, so a restart in between can never send it twice.
+      const recorded = await pool.query(`INSERT INTO wa_discount_offers (source_payment_link_id,phone,status)
+        VALUES ($1,$2,'offered') ON CONFLICT (source_payment_link_id) DO NOTHING RETURNING phone`, [row.payment_link_id, row.phone]);
+      if (!recorded.rows[0]) continue;
+      if (await sendDiscountTemplate(row.phone)) {
+        await pool.query(`UPDATE wa_payment_links SET status='discount10_offered',updated_at=NOW() WHERE payment_link_id=$1`, [row.payment_link_id]);
+      } else {
+        await pool.query(`DELETE FROM wa_discount_offers WHERE source_payment_link_id=$1 AND status='offered'`, [row.payment_link_id]);
+      }
+    }
+  } catch (error) {
+    console.error('48-hour opted-in follow-up failed:', error.message);
+  } finally {
+    sendingOffers = false;
+  }
+}
+
+// Daily follow-up messages (opted-in people only, approved template), once a day from 10:00 IST. The server is
+// woken for it (see ownJobsNextDue); if it only wakes later in the day it still runs, but not after 8 PM.
+const DAILY_DRIP_HOUR = 10;
+let runningDrip = false;
+async function maybeRunDailyDrip() {
+  if (!process.env.WA_FOLLOWUP_TEMPLATE || runningDrip) return;
+  const { day, hour } = istNow();
+  if (hour < DAILY_DRIP_HOUR || hour >= 20) return;
+  if (!(await claimOnce('daily_drip_date', day))) return;
+  runningDrip = true;
+  try {
+    await runDailyDrip();
+  } finally {
+    runningDrip = false;
+  }
 }
 
 async function nextWakeAt() {
@@ -2588,9 +2839,22 @@ async function nextWakeAt() {
   return new Date(next.getTime() - 5 * 60 * 1000).toISOString();
 }
 
+let ownJobsRunning = false;
 async function runOwnJobs() {
-  await recoverFulfilments();
-  await retryCalendarCancels();
+  if (!pool || ownJobsRunning || draining || !(await dbReady)) return;
+  ownJobsRunning = true;
+  try {
+    await replayInbound().catch(e => console.error('Inbound replay failed:', e.message));
+    await recoverFulfilments();
+    await retryCalendarCancels();
+    await sendPaymentNudges().catch(e => console.error('Payment nudges failed:', e.message));
+    await runBookingRetries();
+  } finally {
+    ownJobsRunning = false;
+  }
+  // These send many template messages with pauses in between; they run on their own and never overlap.
+  maybeSendDiscountOffers().catch(e => console.error('Discount offers failed:', e.message));
+  maybeRunDailyDrip().catch(e => console.error('❌ Drip campaign error:', e.message));
 }
 
 // Slots whose cancel failed earlier (Google busy) are freed here, with growing gaps; the owner hears after 6 tries.
@@ -2638,6 +2902,8 @@ async function maybeDailyAnalytics() {
 }
 
 async function runScheduledJobs() {
+  if (pool && !dbIsReady) return null; // tables not ready yet; the next minute tries again
+  if (draining) return null;
   maybeDailyAnalytics().catch(e => console.error('Daily analytics failed:', e.message));
   await runOwnJobs().catch(e => console.error('Scheduled work failed:', e.message));
   const result = await crm.runDueJobs(crmDeps());
@@ -2648,9 +2914,11 @@ async function runScheduledJobs() {
 app.post('/cron/tick', async (req, res) => {
   if (!secretsMatch(GOOGLE_APPS_SCRIPT_SECRET, req.body?.apiSecret)) return res.status(401).json({ ok: false });
   try {
+    await dbReady;
     const result = await crm.runDueJobs(crmDeps());
     maybeDailyAnalytics().catch(e => console.error('Daily analytics failed:', e.message));
-    await runOwnJobs().catch(e => console.error('Scheduled work failed:', e.message));
+    // Not awaited: a slow Google or Razorpay retry must not hold up Apps Script's wake-up call.
+    runOwnJobs().catch(e => console.error('Scheduled work failed:', e.message));
     const wakeAt = await nextWakeAt();
     lastPushedWake = wakeAt;
     res.json({ ok: true, result, wakeAt });
@@ -2761,6 +3029,30 @@ async function sendCallServiceLink({ phone, serviceName }) {
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+// Render stops the old server on every deploy and restart (SIGTERM, then a hard kill about 30 seconds later).
+// Finish the replies and payments in progress first; messages not started yet are handed to the next server.
+async function shutdownGracefully(signal) {
+  if (draining) return;
+  draining = true;
+  console.log(`${signal} received: finishing work in progress before exit.`);
+  server.close();
+  const deadline = Date.now() + 25000;
+  while ((phoneQueues.size || fulfilmentsRunning > 0) && Date.now() < deadline) {
+    await new Promise(r => setTimeout(r, 250));
+  }
+  if (pool && dbIsReady && inboundInFlight.size) {
+    // Not started here: let the next server answer them straight away instead of after the 5-minute wait.
+    await pool.query(`UPDATE wa_inbound SET claimed_at=NULL WHERE msg_id = ANY($1::text[]) AND started_at IS NULL AND done_at IS NULL`,
+      [[...inboundInFlight]]).catch(() => {});
+  }
+  console.log(phoneQueues.size || fulfilmentsRunning > 0 ? 'Exiting with work still running; it will be resumed after restart.' : 'All work finished; exiting.');
+  process.exit(0);
+}
+process.on('SIGTERM', () => { shutdownGracefully('SIGTERM'); });
+process.on('SIGINT', () => { shutdownGracefully('SIGINT'); });
+// Answer messages that a previous server left unfinished, once the tables are ready.
+dbReady.then(ready => { if (ready) setTimeout(() => runOwnJobs().catch(e => console.error('Startup jobs failed:', e.message)), 3000); });
+
 // Exotel's Voicebot applet streams calls to wss://<host>/voice/exotel?token=<VOICE_STREAM_TOKEN>.
 const appsScriptReady = Boolean(GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET);
 const phoneAgent = voiceAgent.attach(server, {
@@ -2796,31 +3088,11 @@ const cron = require('node-cron');
 // While awake, check every minute for due reminders, check-ins and follow-ups.
 cron.schedule('* * * * *', () => { runScheduledJobs().catch(e => console.error('Scheduled jobs failed:', e.message)); }, { timezone: 'Asia/Kolkata' });
 
-// A 10% retention message is sent only to opted-in customers and only via the
-// approved WhatsApp template required outside Meta's 24-hour service window.
-cron.schedule('0 * * * *', async () => {
-  if (!pool || !process.env.WA_48H_DISCOUNT_TEMPLATE) return;
-  try {
-    const eligible = await pool.query(`SELECT l.payment_link_id,l.phone
-      FROM wa_payment_links l JOIN users u ON u.phone=l.phone
-      WHERE l.status IN ('request_created','expired','gateway_test_expired') AND l.created_at <= NOW() - INTERVAL '48 hours'
-        AND u.marketing_opt_in=true AND u.marketing_opt_out=false
-        AND NOT EXISTS (SELECT 1 FROM wa_discount_offers d WHERE d.source_payment_link_id=l.payment_link_id)
-      ORDER BY l.created_at ASC LIMIT 50`);
-    for (const row of eligible.rows) {
-      if (await sendDiscountTemplate(row.phone)) {
-        await pool.query(`INSERT INTO wa_discount_offers (source_payment_link_id,phone,status)
-          VALUES ($1,$2,'offered') ON CONFLICT (source_payment_link_id) DO NOTHING`, [row.payment_link_id, row.phone]);
-        await pool.query(`UPDATE wa_payment_links SET status='discount10_offered',updated_at=NOW() WHERE payment_link_id=$1`, [row.payment_link_id]);
-      }
-    }
-  } catch (error) {
-    console.error('48-hour opted-in follow-up failed:', error.message);
-  }
-}, { timezone: 'Asia/Kolkata' });
+// The hourly 10% offer and the daily follow-ups run from runOwnJobs (maybeSendDiscountOffers, maybeRunDailyDrip),
+// so they survive restarts and run even if Render was asleep at the exact minute.
 
-// Runs daily at 10:00 AM IST
-cron.schedule('0 10 * * *', async () => {
+// Daily follow-up messages, once a day from 10:00 IST (see maybeRunDailyDrip).
+async function runDailyDrip() {
   if (!pool || !process.env.WA_FOLLOWUP_TEMPLATE) return;
   console.log("🚀 Running Daily Drip Campaigns...");
 
@@ -2905,6 +3177,4 @@ cron.schedule('0 10 * * *', async () => {
   } catch (e) {
     console.error('❌ Drip campaign error:', e.message);
   }
-}, {
-  timezone: "Asia/Kolkata"
-});
+}
