@@ -336,7 +336,8 @@ function Compare({ s }) {
 
 function Cta({ s, config, name }) {
   const num = (config.whatsappNumber || '').replace(/\D/g, '');
-  const text = encodeURIComponent(`Hi, I'm ${name}. I just got my free mobile numerology reading and would like to talk about it.`);
+  // "(Ref: WEB-NUMEROLOGY)" tags the lead's source in the WhatsApp bot's CRM (growth.js extractRef), which removes it from the text.
+  const text = encodeURIComponent(`Hi, I'm ${name}. I just got my free mobile numerology reading and would like to talk about it. (Ref: WEB-NUMEROLOGY)`);
   return (
     <section className="rounded-lg border-2 border-primary/25 bg-primary-soft p-6 text-center animate-rise">
       <h2 className="text-2xl font-bold">Want to go deeper?</h2>
