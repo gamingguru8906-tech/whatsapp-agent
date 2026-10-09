@@ -1,5 +1,7 @@
 # Cloudflare Worker for the free mobile-numerology site. Free plan.
 # Secrets (never in this file): npx wrangler secret put DATABASE_URL / SHEET_WEBAPP_URL / SHEET_SECRET / TURNSTILE_SECRET / OWNER_KEY
+# DATABASE_URL = Kamala's database (same value as on Render). SHEET_WEBAPP_URL = Kamala's Apps Script /exec URL.
+# SHEET_SECRET = the NUMEROLOGY_SHEET_SECRET from setupNumerologySheets (not Kamala's apiSecret).
 name = "veshannastro-numerology"
 main = "worker/index.js"
 compatibility_date = "2024-11-01"

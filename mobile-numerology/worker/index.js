@@ -1,4 +1,6 @@
 // Cloudflare Worker: serves the site (static assets in dist/), POST /api/reading and a scheduled Sheet catch-up.
+// Leads go to Kamala's database (DATABASE_URL, table numerology_leads) and to the "Numerology Leads" tab of
+// Kamala's CRM Sheet. The site's code stays separate from Kamala's; only the data is shared.
 // The rulebook runs here, so visitors only ever receive their own reading, never the rules.
 import { neon } from '@neondatabase/serverless';
 import { createEngine, publicView } from '../engine/core.js';
@@ -45,7 +47,7 @@ export async function handleReading(request, env, ctx, deps = {}) {
       .catch(e => console.error('Lead not saved:', e.message));
     if (ctx?.waitUntil) ctx.waitUntil(saving); else await saving;
   } else {
-    console.warn('DATABASE_URL is not set: the reading was shown but the lead was not stored.');
+    console.warn('DATABASE_URL (Kamala\'s database) is not set: the reading was shown but the lead was not stored.');
   }
 
   const owner = env.OWNER_KEY && request.headers.get('x-owner-key') === env.OWNER_KEY;

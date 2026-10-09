@@ -1,11 +1,14 @@
 // Server tests against a real Postgres (set TEST_DATABASE_URL; skipped when it is not set) and a fake Sheet
-// that behaves like apps-script/numerology-leads.gs: it refuses a key it already has.
+// that behaves like Kamala's Apps Script with apps-script/numerology-leads.gs added: it refuses a key it already
+// has, and anything without the numerology key gets Kamala's own "Unauthorized".
+// Every test starts with no numerology_leads table, as in Kamala's database before the first lead.
 import { test, before, beforeEach, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import pg from 'pg';
 import worker, { handleReading } from '../worker/index.js';
 import { flushUnsynced, dedupeKey } from '../worker/store.js';
+import { SCHEMA_STATEMENTS } from '../db/schema.js';
 
 const DB = process.env.TEST_DATABASE_URL;
 const skip = DB ? false : 'set TEST_DATABASE_URL to run the database tests';
@@ -18,9 +21,11 @@ function fakeSheet() {
   sheet.fetch = async (url, init) => {
     sheet.calls++;
     if (sheet.failNext > 0) { sheet.failNext--; throw new Error('network down'); }
-    if (sheet.loseNext > 0) { sheet.loseNext--; return new Response(JSON.stringify({ ok: true, service: 'numerology-leads' })); }
+    if (sheet.loseNext > 0) { sheet.loseNext--; return new Response(JSON.stringify({ ok: true, service: 'consultations-logger' })); }
     const body = JSON.parse(init.body);
-    if (body.secret !== 'sheet-secret') return new Response(JSON.stringify({ ok: false, error: 'unauthorised' }));
+    // The hook only takes target numerology_append_rows with the numerology key; anything else reaches Kamala's check.
+    if (sheet.hookMissing || body.target !== 'numerology_append_rows') return new Response(JSON.stringify({ ok: false, error: 'Unauthorized' }));
+    if (body.numerologySecret !== 'sheet-secret') return new Response(JSON.stringify({ ok: false, error: 'unauthorised' }));
     const results = {};
     for (const r of body.rows) { if (rows.has(r.key)) results[r.key] = 'exists'; else { rows.set(r.key, r); results[r.key] = 'added'; } }
     return new Response(JSON.stringify({ ok: true, results }));
@@ -34,19 +39,19 @@ const post = (body, headers = {}) => new Request('https://site.test/api/reading'
 let sheet;
 const submit = (body, extra = {}) => handleReading(post(body, extra.headers), { ...env, ...extra.env }, undefined,
   { run: extra.run ?? run, fetchImpl: sheet.fetch, sleep: async () => {}, year: 2026 });
-const count = async () => (await run('SELECT count(*)::int AS n FROM numerology_leads'))[0].n;
+const tableExists = async () => (await run("SELECT to_regclass('numerology_leads') IS NOT NULL AS t"))[0].t;
+const count = async () => (await tableExists()) ? (await run('SELECT count(*)::int AS n FROM numerology_leads'))[0].n : 0;
 
 before(async () => {
   if (!DB) return;
   client = new pg.Client({ connectionString: DB });
   await client.connect();
-  await client.query('DROP TABLE IF EXISTS numerology_leads');
-  await client.query(readFileSync(new URL('../db/schema.sql', import.meta.url), 'utf8'));
 });
-beforeEach(async () => { sheet = fakeSheet(); if (DB) await client.query('TRUNCATE numerology_leads'); });
+beforeEach(async () => { sheet = fakeSheet(); if (DB) await client.query('DROP TABLE IF EXISTS numerology_leads'); });
 after(async () => { if (client) await client.end(); });
 
-test('a new lead is stored once in the database and once in the Sheet, and the reading comes back', { skip }, async () => {
+test('a new lead creates the table in Kamala\'s database, is stored once there and once in the Sheet, and the reading comes back', { skip }, async () => {
+  assert.equal(await tableExists(), false);
   const res = await submit(form());
   assert.equal(res.status, 200);
   const body = await res.json();
@@ -88,7 +93,7 @@ test('a different planned number alone adds no row, and the first planned number
   assert.equal([...sheet.rows.values()][0].planned1, '9876500295');
 });
 
-test('ten identical submissions at the same moment give one row', { skip }, async () => {
+test('ten identical submissions at the same moment, before the table exists, give one table and one row', { skip }, async () => {
   const clients = await Promise.all(Array.from({ length: 10 }, async () => { const c = new pg.Client({ connectionString: DB }); await c.connect(); return c; }));
   try {
     await Promise.all(clients.map(c => submit(form(), { run: (t, p) => c.query(t, p).then(r => r.rows) })));
@@ -168,4 +173,29 @@ test('routes: config, unknown API path, wrong method', async () => {
   assert.deepEqual(await cfg.json(), { turnstileSiteKey: 'site', whatsappNumber: '919999999999' });
   assert.equal((await worker.fetch(new Request('https://site.test/api/nope'), {}, {})).status, 404);
   assert.equal((await worker.fetch(new Request('https://site.test/api/reading'), {}, {})).status, 405);
+});
+
+test('db/schema.sql and the statements the Worker runs are the same', () => {
+  const norm = t => t.split('\n').map(l => l.replace(/--.*$/, '').trim()).filter(Boolean).join(' ').replace(/\s+/g, ' ').replace(/;\s*/g, ';').trim();
+  const sql = norm(readFileSync(new URL('../db/schema.sql', import.meta.url), 'utf8'));
+  assert.equal(sql, norm(SCHEMA_STATEMENTS.map(s => s + ';').join('\n')));
+});
+
+test('the Sheet answers "Unauthorized" (doPost hook missing): no retries, the lead waits in the database with the reason', { skip }, async () => {
+  sheet.hookMissing = true;
+  await submit(form());
+  const [row] = await run('SELECT sheet_synced, sheet_error FROM numerology_leads');
+  assert.equal(row.sheet_synced, false);
+  assert.match(row.sheet_error, /Unauthorized/);
+  assert.equal(sheet.calls, 1);
+});
+
+test('the request to the Sheet carries the numerology key and target, never Kamala\'s apiSecret', { skip }, async () => {
+  let sent;
+  const spy = async (url, init) => { sent = JSON.parse(init.body); return sheet.fetch(url, init); };
+  await handleReading(post(form()), { ...env, GOOGLE_APPS_SCRIPT_SECRET: 'kamala-secret' }, undefined, { run, fetchImpl: spy, sleep: async () => {}, year: 2026 });
+  assert.equal(sent.target, 'numerology_append_rows');
+  assert.equal(sent.numerologySecret, 'sheet-secret');
+  assert.equal(sent.apiSecret, undefined);
+  assert.ok(!JSON.stringify(sent).includes('kamala-secret'));
 });

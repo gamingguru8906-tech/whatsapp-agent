@@ -1,7 +1,29 @@
-// Lead storage. Postgres (Neon) is the source of truth; the Google Sheet gets each new row once.
+// Lead storage. Kamala's Postgres database (Neon) is the source of truth, in its own `numerology_leads` table;
+// the "Numerology Leads" tab of Kamala's CRM Sheet gets each new row once.
 // `run(text, params)` executes one SQL statement and resolves the result rows, so the same code runs on
 // Neon's HTTP driver in production and on a local Postgres in tests.
 import { pushRows } from './sheet.js';
+import { SCHEMA_STATEMENTS } from '../db/schema.js';
+
+// The table creates itself the first time a lead arrives, so no manual SQL step is needed. Two first leads at the
+// same moment may both try; Postgres can then report the table (or its type) as already existing, which is fine.
+async function createSchema(run) {
+  for (const statement of SCHEMA_STATEMENTS) {
+    try { await run(statement, []); } catch (e) { if (!['42P07', '23505', '42710'].includes(e.code)) throw e; }
+  }
+}
+
+export function withSchema(run) {
+  return async (text, params) => {
+    try {
+      return await run(text, params);
+    } catch (e) {
+      if (e.code !== '42P01') throw e; // 42P01: table does not exist yet
+      await createSchema(run);
+      return run(text, params);
+    }
+  };
+}
 
 const clean = s => String(s ?? '').normalize('NFKC').toLowerCase()
   .replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
@@ -51,7 +73,8 @@ async function markFailed(run, keys, error) {
 
 // Called after the reading is sent. A repeat lead writes nothing anywhere.
 export async function saveLead(env, lead, deps) {
-  const { run, fetchImpl, sleep } = deps;
+  const { fetchImpl, sleep } = deps;
+  const run = withSchema(deps.run);
   let row;
   try {
     row = await insertLead(run, lead);
@@ -76,7 +99,8 @@ export async function saveLead(env, lead, deps) {
 // Scheduled catch-up: rows the Sheet has not confirmed yet (older than 2 minutes, so it never races the
 // push that follows a new lead). The Sheet's own key check makes a resend harmless.
 export async function flushUnsynced(env, deps, limit = 50) {
-  const { run, fetchImpl, sleep } = deps;
+  const { fetchImpl, sleep } = deps;
+  const run = withSchema(deps.run);
   const rows = await run(
     `SELECT ${COLUMNS} FROM numerology_leads
      WHERE NOT sheet_synced AND created_at < now() - interval '2 minutes'
