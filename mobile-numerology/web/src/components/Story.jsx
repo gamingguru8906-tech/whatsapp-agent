@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowLeftRight, Briefcase, Cake, CalendarDays, ChevronDown, ChevronRight, Circle, Gem, Grid3x3, Hash, Leaf,
+  Sparkles, ArrowLeftRight, Briefcase, Cake, CalendarDays, ChevronDown, ChevronRight, Circle, Gem, Grid3x3, Hash, Leaf,
   MessageCircle, PenLine, Search, ShieldCheck, Smartphone
 } from 'lucide-react';
 import VedicGrid from './VedicGrid.jsx';
+import { clarity } from '../../../engine/clarity.js';
 
 // Every numerology sentence here comes from the reading the engine returns (rule wording approved by the owner).
 // The page only adds headings, short "how this works" intros, navigation and layout.
@@ -14,13 +15,6 @@ const CAT = { theme: 'The year', do: 'Do', avoid: 'Avoid', money: 'Money', caree
 const CAT_ORDER = Object.keys(CAT);
 const AREA = { money: 'Money', career: 'Career', relationship: 'Love and marriage', family: 'Family', health: 'Health', mind: 'Peace of mind', education: 'Education', legal: 'Court and legal', government: 'Government', travel: 'Travel and abroad', home: 'Home', spiritual: 'Spiritual' };
 const dot = p => ({ positive: 'dot-good', negative: 'dot-care', mixed: 'dot-mixed' }[p] || 'dot-neutral');
-
-// Each chapter has its own jewel colour on its icon, so the long reading is easy to scan.
-const HUE = {
-  concern: '#E83E7B', decoded: '#7A1E3A', 'mobile-grid': '#9B3D8F', 'dob-grid': '#6B4FB3', career: '#12808A',
-  'year-ahead': '#E07B1A', name: '#3E54A3', 'if-kept': '#C46A0A', protection: '#1E8A5A', 'better-number': '#C2416B', compare: '#2B6CB0'
-};
-const hueOf = id => HUE[id] || HUE[id.replace(/-\d+$/, '')] || '#7A1E3A';
 
 // Points about what the visitor shared come first in every list.
 const concernFirst = (items, ids) => [...items.filter(x => ids.has(x.id)), ...items.filter(x => !ids.has(x.id))];
@@ -34,8 +28,7 @@ function Chapter({ id, icon: Icon, title, intro, children }) {
   return (
     <section id={`r-${id}`} className="scroll-mt-32">
       <div className="mb-3 flex items-center gap-3 px-1">
-        {Icon && <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] text-white shadow-[0_4px_10px_-4px_rgba(0,0,0,0.35)]"
-          style={{ background: `linear-gradient(145deg, ${hueOf(id)}, color-mix(in srgb, ${hueOf(id)} 70%, #2a0a14))` }}><Icon size={19} strokeWidth={2.2} aria-hidden="true" /></span>}
+        {Icon && <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-maroon-soft text-maroon"><Icon size={19} strokeWidth={2.1} aria-hidden="true" /></span>}
         <h2 className="t-section">{title}</h2>
       </div>
       {intro && <p className="mb-3 px-1 text-[15px] leading-snug text-muted-foreground">{intro}</p>}
@@ -139,11 +132,11 @@ function WaButton({ href, children = 'Ask us on WhatsApp', className = '' }) {
 function InlineCta({ href, title, text }) {
   if (!href) return null;
   return (
-    <div data-wa-cta className="flex flex-col gap-3 overflow-hidden rounded-[20px] border border-primary/15 bg-primary-soft px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+    <div data-wa-cta className="group-card flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
       <div className="flex items-start gap-3">
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-whatsapp text-white"><WaIcon size={19} /></span>
         <div>
-          <p className="t-headline text-maroon">{title}</p>
+          <p className="t-headline">{title}</p>
           <p className="text-[15px] leading-snug text-muted-foreground">{text}</p>
         </div>
       </div>
@@ -152,47 +145,78 @@ function InlineCta({ href, title, text }) {
   );
 }
 
-// ---------- At a glance ----------
+// ---------- Your answer (first thing they see) ----------
+// One plain verdict and three next steps, built by engine/clarity.js from the reading. The strongest colour on the
+// page is the one action that helps them most: the WhatsApp button.
 
-function Overview({ by, href, carePoints, mobile }) {
-  const concern = by('concern');
-  const protection = by('protection');
-  const mobileItems = [...by('decoded').pairs, ...by('mobile-grid').yogas];
-  const strengths = mobileItems.filter(x => x.good).length;
-  const total = Math.max(1, strengths + carePoints);
-  const top = concern.items.slice(0, 3);
-  const remedies = [protection.bracelet, protection.mani].filter(Boolean);
-  const more = concern.items.length > 3;
+function Answer({ a, href, onCompare }) {
+  const total = Math.max(1, a.strengths + a.carePoints);
+  const wa = a.change ? 'Get my number chosen' : 'Ask us on WhatsApp';
+  // Keep pair names like 5-6 together on one line.
+  const nb = t => t.replace(/(\d)-(\d)/g, '$1\u2011$2');
   return (
-    <section id="r-overview" className="group-card scroll-mt-32 shadow-soft">
-      <div className="blush-band flex flex-wrap items-center gap-6 px-5 pb-5 pt-6 sm:flex-nowrap sm:gap-8 sm:px-6">
-        <VedicGrid size="lg" counts={by('mobile-grid').counts} lightOrder={[...mobile].map(Number).filter(Boolean)} />
-        <div className="min-w-0 flex-1 basis-48">
-          <div className="flex gap-7">
-            <button type="button" onClick={() => jump('mobile-grid')} className="text-left">
-              <span className="block font-display text-[2.75rem] font-bold leading-none tabular-nums text-success-dark">{strengths}</span>
-              <span className="mt-1 block text-[15px] font-medium">{strengths === 1 ? 'strength' : 'strengths'}</span>
-            </button>
-            <button type="button" onClick={() => jump(carePoints ? 'if-kept' : 'decoded')} className="text-left">
-              <span className="block font-display text-[2.75rem] font-bold leading-none tabular-nums text-care-dark">{carePoints}</span>
-              <span className="mt-1 block text-[15px] font-medium">{carePoints === 1 ? 'needs care' : 'need care'}</span>
-            </button>
+    <section id="r-answer" className="group-card scroll-mt-32 shadow-soft">
+      <div className="border-t-[3px] border-t-primary px-5 pb-5 pt-6 sm:px-7 sm:pt-7">
+        <h2 className="font-display text-[1.75rem] font-bold leading-[1.12] tracking-[-0.015em] text-maroon sm:text-[2.125rem]">{a.headline}</h2>
+        <p className="mt-3 text-[17px] leading-[1.5] text-muted-foreground">{a.why}</p>
+        <div className="mt-5">
+          <div className="flex h-2 overflow-hidden rounded-full bg-muted" role="img" aria-label={`${a.strengths} strengths and ${a.carePoints} points that need care in your number`}>
+            <span className="bg-success" style={{ width: `${(a.strengths / total) * 100}%` }} />
+            <span className="bg-care" style={{ width: `${(a.carePoints / total) * 100}%` }} />
           </div>
-          <div className="mt-4 flex h-2 overflow-hidden rounded-full bg-muted" role="img" aria-label={`${strengths} strengths and ${carePoints} points that need care in your number`}>
-            <span className="bg-success" style={{ width: `${(strengths / total) * 100}%` }} />
-            <span className="bg-care" style={{ width: `${(carePoints / total) * 100}%` }} />
-          </div>
-          <p className="t-note mt-2">In your number's pairs and yogas. Each point that needs care has a remedy below.</p>
+          <p className="mt-2 flex gap-4 text-[14px] text-muted-foreground">
+            <span><span className="dot dot-good mr-1.5 mt-0 align-middle" aria-hidden="true" />{plural(a.strengths, 'strength', 'strengths')}</span>
+            <span><span className="dot dot-care mr-1.5 mt-0 align-middle" aria-hidden="true" />{a.carePoints} {a.carePoints === 1 ? 'needs' : 'need'} care</span>
+          </p>
         </div>
       </div>
 
-      <div className="rows border-t border-border/70">
-        <div className="row">
-          <p className="t-headline text-maroon">About what you shared</p>
-          <p className="mt-0.5 text-[15px] italic text-muted-foreground">“{concern.text}”</p>
-          {concern.areas.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5">{concern.areas.map(a => <span key={a} className="chip bg-primary-soft text-primary-dark">{AREA[a] || a}</span>)}</div>}
-          {!concern.areas.length && <p className="t-body mt-2">Thank you for sharing. Your full reading below covers every part of life your number touches.</p>}
-          {concern.areas.length > 0 && !top.length && <p className="t-body mt-2">Nothing in your number or birth date speaks directly to this. Your full reading continues below.</p>}
+      <div className="border-t border-border/70 px-5 py-5 sm:px-7">
+        <h3 className="text-[15px] font-semibold text-maroon">What to do next</h3>
+        <ol className="mt-3 grid gap-4">
+          {a.steps.map((st, i) => (
+            <li key={st.id} className="flex gap-3.5">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-[1.5px] border-maroon/40 text-[14px] font-semibold text-maroon">{i + 1}</span>
+              <div className="min-w-0 flex-1">
+                <p className="t-headline">{st.title}</p>
+                <p className="t-body mt-0.5 text-foreground/80">{nb(st.text)}</p>
+                {st.jump && (
+                  <button type="button" onClick={() => jump(st.jump)} className="mt-1 text-[15px] font-medium text-primary-dark">See your protection</button>
+                )}
+                {st.action === 'compare' && (
+                  <button type="button" onClick={onCompare} className="btn-plain mt-3 min-h-[44px] w-full whitespace-normal bg-card text-center text-[16px] leading-tight shadow-[0_0_0_1px_hsl(var(--border))] sm:w-auto">
+                    Check a new number
+                  </button>
+                )}
+                {st.action === 'whatsapp' && href && (
+                  <div data-wa-cta><WaButton href={href} className="mt-3 w-full whitespace-normal text-center leading-tight sm:w-auto">{wa}</WaButton></div>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+// ---------- Why: the points behind the answer ----------
+
+function Why({ by, mobile, area }) {
+  const concern = by('concern');
+  const top = concern.items.slice(0, 3);
+  const more = concern.items.length > 3;
+  return (
+    <Chapter id="why" icon={Sparkles} title="Why this answer" intro={`The parts of your reading that touch ${area}.`}>
+      <div className="group-card rows">
+        <div className="row flex flex-wrap items-center gap-5 py-5">
+          <VedicGrid size="lg" counts={by('mobile-grid').counts} lightOrder={[...mobile].map(Number).filter(Boolean)} />
+          <div className="min-w-0 flex-1 basis-40">
+            <p className="t-headline">“{concern.text}”</p>
+            {concern.areas.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5">{concern.areas.map(a => <span key={a} className="chip bg-muted text-foreground">{AREA[a] || a}</span>)}</div>}
+            {!concern.areas.length && <p className="mt-1 text-[15px] text-muted-foreground">No rule speaks to this directly, so your answer looks at your whole number.</p>}
+            {concern.areas.length > 0 && !top.length && <p className="mt-1 text-[15px] text-muted-foreground">Nothing in your number or birth date speaks directly to this, so your answer looks at your whole number.</p>}
+          </div>
         </div>
         {top.map(x => (
           <div key={`${x.id}${x.fromDob ? 'd' : ''}`} className="row flex gap-3">
@@ -215,22 +239,8 @@ function Overview({ by, href, carePoints, mobile }) {
             <ChevronRight size={20} aria-hidden="true" />
           </button>
         )}
-        {remedies.length > 0 && (
-          <button type="button" onClick={() => jump('protection')} className="row flex w-full items-center gap-3 text-left">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] text-white" style={{ background: HUE.protection }}><ShieldCheck size={19} aria-hidden="true" /></span>
-            <span className="min-w-0 flex-1">
-              <span className="t-headline block">Your protection</span>
-              <span className="block text-[15px] leading-snug text-muted-foreground">{remedies.join(', ')}{protection.screenSaver.length ? ', and a phone screen saver for you' : ''}</span>
-            </span>
-            <ChevronRight size={20} className="shrink-0 text-faint" aria-hidden="true" />
-          </button>
-        )}
-        <div data-wa-cta className="row flex flex-col gap-2.5 py-4 sm:flex-row">
-          {href && <WaButton href={href} className="sm:flex-1">Ask us about this on WhatsApp</WaButton>}
-          <button type="button" onClick={() => jump(more ? 'concern' : 'decoded')} className="btn-plain sm:flex-1">Read the full reading</button>
-        </div>
       </div>
-    </section>
+    </Chapter>
   );
 }
 
@@ -294,8 +304,8 @@ function StickyWhatsApp({ href }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => {
-      const overview = document.getElementById('r-overview');
-      const past = overview ? overview.getBoundingClientRect().bottom < 0 : false;
+      const answer = document.getElementById('r-answer');
+      const past = answer ? answer.getBoundingClientRect().bottom < 0 : false;
       // Hidden while another WhatsApp button is on screen, so two never show at once.
       const otherInView = [...document.querySelectorAll('[data-wa-cta]')].some(el => {
         const r = el.getBoundingClientRect();
@@ -438,13 +448,12 @@ function YearAhead({ s, nameNo, owner }) {
         ))}
       </div>
       <div className="group-card row flex items-center gap-4 py-4">
-        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full font-display text-[1.75rem] font-bold text-white shadow-[0_6px_14px_-6px_rgba(180,110,10,0.8)]"
-          style={{ background: 'linear-gradient(145deg, #F2C14E, #E07B1A)' }}>{y.number}</span>
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-maroon-soft font-display text-[1.75rem] font-bold text-maroon">{y.number}</span>
         <p className="t-body"><strong className="font-semibold text-maroon">{y.year} is personal year {y.number} for you.</strong>{nameNo ? <span className="text-muted-foreground"> Your name number is {nameNo}.</span> : null}</p>
       </div>
       {groups.map(([c, list]) => (
         <div key={c}>
-          <h3 className="mb-1.5 px-1 text-[13px] font-semibold" style={{ color: HUE['year-ahead'] }}>{CAT[c]}</h3>
+          <h3 className="mb-1.5 px-1 text-[13px] font-medium text-muted-foreground">{CAT[c]}</h3>
           <div className="group-card rows">
             {list.map(i => (
               <div key={i.id} className="row">
@@ -472,8 +481,7 @@ function NameNumber({ s }) {
   return (
     <Chapter id="name" icon={PenLine} title="Your name number" intro="The letters of your name, added by the Chaldean method and reduced to one digit.">
       <div className="group-card row flex items-center gap-4 py-4">
-        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full font-display text-[1.75rem] font-bold text-white"
-          style={{ background: `linear-gradient(145deg, #6F86D6, ${HUE.name})` }}>{s.number}</span>
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-maroon-soft font-display text-[1.75rem] font-bold text-maroon">{s.number}</span>
         <p className="t-body">Your name adds up to {s.total}, which reduces to <strong className="font-semibold">{s.number}</strong>. Look for “Your name” in your year ahead for what this means this year.</p>
       </div>
     </Chapter>
@@ -517,7 +525,7 @@ function Protection({ s }) {
       <div className="group-card rows">
         {rows.map(([Icon, t, v]) => (
           <div key={t} className="row flex gap-3">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-success-soft text-success-dark"><Icon size={18} aria-hidden="true" /></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-muted text-maroon"><Icon size={18} aria-hidden="true" /></span>
             <div className="min-w-0">
               <h3 className="t-headline">{t}</h3>
               <p className="t-body mt-0.5">{v}</p>
@@ -618,36 +626,39 @@ function Compare({ s }) {
 
 function Cta({ s, href }) {
   return (
-    <section id="r-cta-end" data-wa-cta className="maroon-band overflow-hidden rounded-[24px] px-6 py-9 text-center shadow-soft">
-      <h2 className="font-display text-[1.75rem] font-bold leading-tight text-white sm:text-[2rem]">Want to go deeper?</h2>
-      <p className="mx-auto mt-2 max-w-md text-[17px] text-white/80">Consult with us about your number, your remedies, or choosing a new number that suits your birth date.</p>
+    <section id="r-cta-end" data-wa-cta className="group-card px-6 py-9 text-center shadow-soft">
+      <h2 className="t-title">Want to go deeper?</h2>
+      <p className="mx-auto mt-2 max-w-md text-[17px] text-muted-foreground">Consult with us about your number, your remedies, or choosing a new number that suits your birth date.</p>
       {href
         ? <WaButton href={href} className="mt-6">Consult with us on WhatsApp</WaButton>
-        : <p className="mt-5 text-[15px] font-semibold text-white/80">WhatsApp contact coming soon.</p>}
-      {s.healthNote && <p className="mt-5 text-[13px] text-white/70">For any health concern mentioned in your reading, please also consult a doctor.</p>}
+        : <p className="mt-5 text-[15px] font-semibold text-muted-foreground">WhatsApp contact coming soon.</p>}
+      {s.healthNote && <p className="t-note mt-5">For any health concern mentioned in your reading, please also consult a doctor.</p>}
     </section>
   );
 }
 
 export default function Story({ result, config, onAgain }) {
-  const { input, numbers, sections } = result;
+  const { input, sections } = result;
   const by = id => sections.find(s => s.id === id);
   const owner = result.owner === true;
   const word = input.name.split(' ')[0];
   const first = word.charAt(0).toUpperCase() + word.slice(1);
   const rootRef = useRef(null);
   const href = whatsappLink(config, first, result.leadRef);
+  const answer = useMemo(() => clarity(result), [result]);
 
   const concern = by('concern');
   const ifKept = by('if-kept');
   const concernIds = useMemo(() => new Set(concern.items.map(i => i.id)), [concern]);
   const remedyFor = useMemo(() => Object.fromEntries(by('protection').yogaRemedies.map(r => [r.id, r.text])), [sections]);
-  const carePoints = ifKept ? ifKept.items.length : 0;
   const more = concern.items.length > 3;
+  // "Check a number before you buy it": the form keeps their details; it opens the compare switch for them.
+  const compare = () => window.dispatchEvent(new CustomEvent('nm:compare'));
 
-  // The order of the reading: the visitor's own question first, then the detail.
+  // The order of the reading: the answer first, then why, then the detail.
   const chapters = useMemo(() => [
-    { id: 'overview', label: 'At a glance' },
+    { id: 'answer', label: 'Your answer' },
+    { id: 'why', label: 'Why' },
     more && { id: 'concern', label: 'Your concern' },
     { id: 'decoded', label: 'Your number' },
     { id: 'mobile-grid', label: 'Number grid' },
@@ -661,36 +672,23 @@ export default function Story({ result, config, onAgain }) {
     by('compare') && { id: 'compare-0', label: 'Compare' }
   ].filter(Boolean), [sections]);
 
-  const stats = [['Birth number', numbers.birth], ['Destiny number', numbers.destiny], ['Personal year', numbers.personalYear], numbers.name ? ['Name number', numbers.name] : null].filter(Boolean);
-
   return (
     <div ref={rootRef} className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8 pb-20 sm:pb-0">
-      <div className="grid gap-4">
-        <div>
-          <p className="text-[15px] font-semibold text-primary">Your free reading</p>
-          <h2 className="t-title mt-1">{first}, here's what {fmt(input.mobile)} says</h2>
-        </div>
-        <div className={`maroon-band grid overflow-hidden rounded-[20px] shadow-soft ${stats.length === 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
-          {stats.map(([label, v], i) => (
-            <div key={label} className={`px-2 py-4 text-center ${i ? 'border-l border-white/15' : ''}`}>
-              <p className={`font-display text-[1.875rem] font-bold leading-none tabular-nums ${label === 'Personal year' ? 'text-[#F6CB5A]' : 'text-white'}`}>{v}</p>
-              <p className="mt-1.5 text-[12px] leading-tight text-white/75">{label}</p>
-            </div>
-          ))}
-        </div>
-        {owner && <p className="rounded-[12px] bg-accent-soft px-4 py-2.5 text-[14px] text-warning-dark">Owner view: each line shows the rule and source it came from, and every list is open.</p>}
+      <div>
+        <p className="text-[15px] font-medium text-muted-foreground">Your free reading for {fmt(input.mobile)}</p>
+        <h2 className="t-title mt-1">{first}, here's your answer</h2>
+        {owner && <p className="mt-3 rounded-[12px] bg-accent-soft px-4 py-2.5 text-[14px] text-warning-dark">Owner view: each line shows the rule and source it came from, and every list is open.</p>}
       </div>
 
+      <Answer a={answer} href={href} onCompare={compare} />
       <ChapterBar chapters={chapters} rootRef={rootRef} />
-
-      <Overview by={by} href={href} carePoints={carePoints} mobile={input.mobile} />
+      <Why by={by} mobile={input.mobile} area={answer.area} />
       {more && <Concern s={concern} owner={owner} />}
-      {more && <InlineCta href={href} title="Want guidance on this?" text="Ask us on WhatsApp. Your reading comes with you, so you won't need to explain it again." />}
       <Decoded s={by('decoded')} owner={owner} concernIds={concernIds} />
       <MobileGrid s={by('mobile-grid')} owner={owner} concernIds={concernIds} remedyFor={remedyFor} />
       <DobGrid s={by('dob-grid')} dob={input.dob} owner={owner} concernIds={concernIds} remedyFor={remedyFor} />
       {by('career') && <Career s={by('career')} owner={owner} />}
-      <YearAhead s={by('year-ahead')} nameNo={numbers.name} owner={owner} />
+      <YearAhead s={by('year-ahead')} nameNo={result.numbers.name} owner={owner} />
       {by('name') && <NameNumber s={by('name')} />}
       {ifKept && <IfKept s={ifKept} owner={owner} />}
       <Protection s={by('protection')} />

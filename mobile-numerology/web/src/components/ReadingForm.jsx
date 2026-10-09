@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import Turnstile from './Turnstile.jsx';
 
@@ -54,6 +54,20 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
   const [reset, setReset] = useState(0);
   const [local, setLocal] = useState({});
   const set = k => e => setF(s => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
+
+  // "Check a number before you buy it" from the reading: their details stay filled in; open the compare switch
+  // and put the cursor in the new-number box.
+  useEffect(() => {
+    const open = () => {
+      setPlanning(true);
+      setTimeout(() => {
+        document.getElementById('f-planning')?.closest('.group-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('f-planned-0')?.focus({ preventScroll: true });
+      }, 60);
+    };
+    window.addEventListener('nm:compare', open);
+    return () => window.removeEventListener('nm:compare', open);
+  }, []);
   const setD = k => e => setDob(s => ({ ...s, [k]: e.target.value }));
   const err = { ...errors, ...local };
 

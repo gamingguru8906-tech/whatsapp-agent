@@ -2,7 +2,9 @@
 // so that Kamala can answer the same person on WhatsApp. Built only from the reading itself: every line is the
 // rulebook's own wording (rule titles and story text), nothing is added or rephrased. Deterministic.
 
-const MAX_CHARS = 3500; // most important first, so a cut only ever drops the last lines
+import { clarity } from './clarity.js';
+
+const MAX_CHARS = 3800; // most important first, so a cut only ever drops the last lines
 
 const kindLabel = item => (item.kind === 'shotgun' ? `pair ${item.title}` : item.kind === 'yoga' ? `${item.title} yoga` : item.title);
 const goodText = item => item.good || '';
@@ -23,6 +25,12 @@ export function readingSummary(reading) {
   const out = [];
   const input = reading.input || {};
   out.push(`Mobile number read: ${input.mobile} (zeros skipped). Date of birth: ${input.dob}.`);
+  // The plain answer the page showed first (page wording built from the counts below, see engine/clarity.js).
+  const a = clarity(reading);
+  if (a) {
+    out.push(`Plain answer shown to them: ${a.headline} ${a.why}`);
+    out.push(`Next steps shown to them: ${a.steps.map((st, i) => `${i + 1}) ${st.title}: ${st.text}`).join(' ')}`);
+  }
 
   const concern = s.concern;
   if (concern) {

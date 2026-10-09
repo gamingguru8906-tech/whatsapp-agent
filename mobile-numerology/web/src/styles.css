@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 /*
- * Design: clear like an Apple app, warm like the brand.
- * - Off-white page, white grouped cards with hairline rows; maroon for titles and the strongest moments,
- *   Veshannastro pink for actions and the grid, blush tints where the reader should look, gold for the year ahead.
- * - Each chapter has its own jewel colour on its icon, so the long reading is easy to scan.
- * - Strength / needs care are small coloured dots and labels, never full coloured blocks.
+ * Design: clear like an Apple app, warm like the brand. Colour only where it moves someone to act.
+ * - Off-white page and white grouped cards with hairline rows; maroon only for titles and quiet icons.
+ * - Saturated colour is reserved: Veshannastro pink for the form's button and the grid (the brand moment),
+ *   WhatsApp green for the consultation button (the action that helps most), green/amber dots for strength and
+ *   needs care. Nothing else competes with them.
  * - League Spartan only for titles; the phone's own system font for reading. Light theme only.
  */
 :root {
@@ -91,9 +91,7 @@
 
   /* Buttons */
   .btn { @apply inline-flex min-h-[50px] items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-5 text-[17px] font-semibold no-underline transition-colors; }
-  .btn-primary { @apply btn text-primary-foreground shadow-[0_8px_20px_-8px_hsl(var(--primary)/0.7)];
-    background: linear-gradient(120deg, hsl(var(--primary)) 0%, hsl(var(--maroon)) 100%); }
-  .btn-primary:hover { background: linear-gradient(120deg, hsl(var(--primary-dark)) 0%, hsl(var(--maroon-dark)) 100%); }
+  .btn-primary { @apply btn bg-primary text-primary-foreground shadow-[0_8px_20px_-10px_hsl(var(--primary)/0.8)] hover:bg-primary-dark; }
   .btn-whatsapp { @apply btn bg-whatsapp text-white hover:bg-whatsapp-dark; }
   .btn-plain { @apply btn bg-muted text-foreground hover:bg-border/60; }
 }
@@ -109,13 +107,9 @@ summary::-webkit-details-marker { display: none; }
 /* Warm glow behind the hero: a blush wash top right, a gold wash bottom left. */
 .hero-glow {
   background:
-    radial-gradient(60% 65% at 95% 5%, hsl(337 88% 90%) 0%, transparent 72%),
-    radial-gradient(50% 55% at 0% 100%, hsl(41 88% 87%) 0%, transparent 70%),
-    radial-gradient(40% 40% at 45% 40%, hsl(342 60% 96%) 0%, transparent 80%),
+    radial-gradient(55% 60% at 95% 5%, hsl(337 80% 94%) 0%, transparent 72%),
     hsl(var(--background));
 }
-.maroon-band { background: linear-gradient(125deg, hsl(var(--maroon-dark)) 0%, hsl(var(--maroon)) 55%, hsl(338 70% 44%) 100%); color: #fff; }
-.blush-band { background: linear-gradient(160deg, hsl(var(--primary-soft)) 0%, hsl(var(--card)) 85%); }
 
 @layer utilities {
   .no-scrollbar { scrollbar-width: none; }

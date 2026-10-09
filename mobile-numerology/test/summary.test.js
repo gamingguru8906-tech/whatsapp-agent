@@ -12,6 +12,8 @@ const read = (mobile, dob, concern = 'Paisa nahi tikta', planned = []) =>
 test('summary carries the concern, what the reading showed for it, and the planned-number comparison', () => {
   const s = readingSummary(read('9811045672', '1988-10-29', 'Paisa nahi tikta', ['9876500295']));
   assert.match(s, /Their concern, in their words: "Paisa nahi tikta"/);
+  assert.match(s, /Plain answer shown to them: Your number is working against your money\./);
+  assert.match(s, /Next steps shown to them: 1\) Start your protection today: /);
   assert.match(s, /What the reading showed for this concern \(life areas: money\)/);
   assert.match(s, /pair 5-6 \/ 6-5: You may be unable to ask for money, and that is why money gets stuck\./);
   assert.match(s, /Personal year: 2026 = \d, 2027 = \d\./);
@@ -23,7 +25,7 @@ test('a concern the rules do not cover says so instead of guessing', () => {
   assert.match(readingSummary(read('9811045672', '1988-10-29', 'xyz qwerty')), /Nothing in their number or birth date speaks directly to this concern/);
 });
 
-test('2,000 random readings: at most 3,500 characters, and every point is text from the reading itself', () => {
+test('2,000 random readings: at most 3,800 characters, and every point is text from the reading itself', () => {
   let seed = 7;
   const rnd = n => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed % n; };
   for (let i = 0; i < 2000; i++) {
@@ -31,7 +33,7 @@ test('2,000 random readings: at most 3,500 characters, and every point is text f
     const dob = `${1950 + rnd(60)}-${String(1 + rnd(12)).padStart(2, '0')}-${String(1 + rnd(28)).padStart(2, '0')}`;
     const r = read(mobile, dob, ['job', 'shaadi', 'paisa', 'health', 'karza'][rnd(5)]);
     const s = readingSummary(r);
-    assert.ok(s.length <= 3500, `${s.length} characters`);
+    assert.ok(s.length <= 3800, `${s.length} characters`);
     const all = JSON.stringify(r);
     for (const l of s.split('\n').filter(x => x.startsWith('- '))) {
       const text = l.slice(l.indexOf(': ') + 2);

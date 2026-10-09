@@ -95,10 +95,10 @@ export default function App() {
         )}
       </main>
 
-      <footer className="maroon-band">
-        <div className="mx-auto grid max-w-5xl gap-3 px-5 py-9 text-[13px] leading-relaxed text-white/75">
-          <p className="font-display text-[19px] font-bold text-white">Veshannastro<span className="text-primary">.</span></p>
-          <p><strong className="font-semibold text-white">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods taught by experienced numerologists. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>
+      <footer className="border-t border-border/70 bg-card/60">
+        <div className="mx-auto grid max-w-5xl gap-3 px-5 py-9 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="font-display text-[19px] font-bold text-maroon">Veshannastro<span className="text-primary">.</span></p>
+          <p><strong className="font-semibold text-foreground">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods taught by experienced numerologists. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>
           <p>What we store: your name, mobile number, date of birth, what you shared, the numbers you checked, and whether you want WhatsApp updates. We use them to show your reading and, only if you agree, to contact you on WhatsApp. We never sell them.</p>
           <p>© {new Date().getFullYear()} Veshannastro</p>
         </div>
