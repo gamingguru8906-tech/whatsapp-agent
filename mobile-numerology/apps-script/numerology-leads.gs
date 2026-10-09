@@ -1,16 +1,16 @@
 /**
  * Veshannastro free mobile-numerology leads -> this Google Sheet.
  *
- * Setup (once):
- *   1. Create a new Google Sheet. Extensions > Apps Script. Paste this whole file. Save.
- *   2. Project Settings > Script Properties > add SHEET_SECRET = a long random string
- *      (the same value goes into Cloudflare as the SHEET_SECRET secret).
- *   3. Run setup() once from the editor (approve the permissions). It creates the Leads and Stats tabs.
- *   4. Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone.
- *      Copy the web app URL (ends in /exec) into Cloudflare as SHEET_WEBAPP_URL.
+ * Setup (once, about 5 minutes):
+ *   1. In the Sheet: Extensions > Apps Script. Delete what is there, paste this whole file, press Save.
+ *   2. Choose the function "setup" at the top and press Run. Approve the permissions (Advanced > Go to project).
+ *      It creates the Leads and Stats tabs and a secret key. Open View > Execution log (or the log panel) and copy
+ *      the line "SHEET_SECRET: ..." — that value goes into Cloudflare as SHEET_SECRET.
+ *   3. Deploy > New deployment > type Web app. Execute as: Me. Who has access: Anyone. Deploy.
+ *      Copy the web app URL (ends in /exec) — it goes into Cloudflare as SHEET_WEBAPP_URL.
  *
  * The site sends each new lead once; this script also refuses any Key it already has, so a resend after a
- * network hiccup can never create a duplicate row.
+ * network hiccup can never create a duplicate row. Requests without the secret are refused.
  */
 
 var LEADS = 'Leads';
@@ -80,8 +80,14 @@ function leadsSheet_() {
   return sheet;
 }
 
-/** Run once from the editor. */
+/** Run once from the editor. Safe to run again: it keeps existing leads and the existing secret. */
 function setup() {
+  var props = PropertiesService.getScriptProperties();
+  var secret = props.getProperty('SHEET_SECRET');
+  if (!secret) {
+    secret = (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, '');
+    props.setProperty('SHEET_SECRET', secret);
+  }
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = leadsSheet_();
   sheet.hideColumns(HEADERS.length); // Key: needed for the no-duplicates check, not for reading
@@ -102,6 +108,8 @@ function setup() {
   sheet.getRange('A2:A').setNumberFormat('yyyy-mm-dd hh:mm');
   ss.setSpreadsheetTimeZone('Asia/Kolkata');
   stats.autoResizeColumns(1, 5);
+  Logger.log('SHEET_SECRET: ' + secret);
+  Logger.log('Next: Deploy > New deployment > Web app (Execute as: Me, Who has access: Anyone), then copy the /exec URL.');
   return { ok: true };
 }
 

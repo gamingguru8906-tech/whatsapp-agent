@@ -9,13 +9,12 @@ Google Apps Script (your Sheet) and Cloudflare Turnstile (the spam check). Allow
    This is `DATABASE_URL`.
 
 ## 2. Google Sheet
-1. Create a new, empty Google Sheet (for example "Numerology leads").
-2. **Extensions > Apps Script**. Delete what is there, paste all of `apps-script/numerology-leads.gs`, and save.
-3. **Project Settings** (gear icon) **> Script Properties > Add**: name `SHEET_SECRET`, value a long random string
-   (for example 40 random letters and digits). Keep it; it is also `SHEET_SECRET` below.
-4. Back in the editor, choose the function `setup` and press **Run**. Approve the permissions. The **Leads** and **Stats**
-   tabs appear.
-5. **Deploy > New deployment > Web app**. Execute as: **Me**. Who has access: **Anyone**. Press **Deploy** and copy the
+Your Sheet: https://docs.google.com/spreadsheets/d/125Kom-5EdrnLsZigYUY8Rur7mSEY3CRX55UP4gZabp0/edit
+1. Open it. **Extensions > Apps Script**. Delete what is there, paste all of `apps-script/numerology-leads.gs`, and press **Save**.
+2. Choose the function **setup** at the top and press **Run**. Approve the permissions (Google may show "unverified app":
+   **Advanced > Go to project**; it is your own script). The **Leads** and **Stats** tabs appear.
+3. Open the **Execution log**. Copy the value after `SHEET_SECRET:`. This is `SHEET_SECRET`.
+4. **Deploy > New deployment > Web app**. Execute as: **Me**. Who has access: **Anyone**. Press **Deploy** and copy the
    URL ending in `/exec`. This is `SHEET_WEBAPP_URL`.
 
 ## 3. Cloudflare
