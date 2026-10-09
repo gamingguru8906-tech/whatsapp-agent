@@ -1,15 +1,18 @@
 # Going live (free)
 
-Everything runs on free plans: Cloudflare Workers (the site and its server), Kamala's database (Neon), Kamala's
-Google Sheet and Cloudflare Turnstile (the spam check). The site's code stays separate from Kamala's; it only writes
-its leads into Kamala's database and Sheet, and Kamala reads them back for you with `/numerology`. Allow about 30 minutes.
+**Live:** https://veshannastro-numerology.veshannastro.workers.dev (Cloudflare Workers, free plan).
+Everything runs on free plans: Cloudflare Workers (the site and its server), Cloudflare Hyperdrive (the link to the
+database), Kamala's database (Supabase) and Kamala's Google Sheet. The site's code stays separate from Kamala's; it
+only writes its leads into Kamala's database and Sheet, and Kamala reads them (WhatsApp replies and `/numerology`).
 
-## 1. Database: Kamala's database
-Nothing to create. The site uses the same database as Kamala and makes its own table (`numerology_leads`) the first
-time someone submits the form. It never touches Kamala's tables.
+Owner check at any time: `/api/health?key=OWNER_KEY` shows whether the database and Sheet are connected and how many
+leads are waiting for the Sheet (no lead details).
 
-1. Open Render > the WhatsApp bot service > **Environment**. Copy the value of `DATABASE_URL`
-   (starts with `postgresql://`). The site uses this same value as its `DATABASE_URL`.
+## 1. Database: Kamala's database (done)
+The Worker reaches Kamala's Supabase database through the Hyperdrive config **veshannastro-numerology-db**
+(binding `HYPERDRIVE` in `wrangler.toml`; Supabase session pooler, port 5432). The connection string is stored in
+Hyperdrive, not in this repo. The table `numerology_leads` was created on the first health check; it never touches
+Kamala's tables. If Kamala's database password changes, update it in Cloudflare > Hyperdrive > the config > Edit.
 
 ## 2. Google Sheet: Kamala's CRM spreadsheet
 Leads go to a new **Numerology Leads** tab (plus **Numerology Stats**) in Kamala's CRM spreadsheet:
@@ -47,8 +50,7 @@ From the `mobile-numerology` folder on a computer with Node.js 20+:
 ```bash
 npm install
 npx wrangler login                      # opens Cloudflare in the browser
-npx wrangler secret put DATABASE_URL    # Kamala's DATABASE_URL from Render (paste each value when asked)
-npx wrangler secret put SHEET_WEBAPP_URL # Kamala's Apps Script /exec URL
+npx wrangler secret put SHEET_WEBAPP_URL # Kamala's Apps Script /exec URL (paste each value when asked)
 npx wrangler secret put SHEET_SECRET     # NUMEROLOGY_SHEET_SECRET from step 2 (not Kamala's apiSecret)
 npx wrangler secret put TURNSTILE_SECRET
 npx wrangler secret put OWNER_KEY       # any long random string; opens the owner view
