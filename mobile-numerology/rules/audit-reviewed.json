@@ -1,0 +1,723 @@
+{
+  "about": "Words in the site wording that do not appear in the rule's source passage, each read by hand and accepted as paraphrase (spelling, word form, connecting words). Anything not listed here fails npm run audit.",
+  "words": {
+    "SG-21": [
+      "away",
+      "slip",
+      "tend"
+    ],
+    "SG-13": [
+      "person",
+      "well-educated"
+    ],
+    "SG-17": [
+      "government"
+    ],
+    "SG-18": [
+      "government-related",
+      "matters"
+    ],
+    "SG-19": [
+      "freedom-loving"
+    ],
+    "SG-23": [
+      "cannot"
+    ],
+    "SG-24": [
+      "success"
+    ],
+    "SG-25": [
+      "sciences",
+      "suits",
+      "travel"
+    ],
+    "SG-26": [
+      "possible",
+      "women"
+    ],
+    "SG-34": [
+      "stubbornness"
+    ],
+    "SG-35": [
+      "hand"
+    ],
+    "SG-39": [
+      "nature"
+    ],
+    "SG-45": [
+      "matters",
+      "unwell"
+    ],
+    "SG-46": [
+      "affairs",
+      "extramarital",
+      "orientation"
+    ],
+    "SG-48": [
+      "possible"
+    ],
+    "SG-49": [
+      "suits",
+      "uniform-type"
+    ],
+    "SG-58": [
+      "tendency"
+    ],
+    "SG-59": [
+      "spoil",
+      "straightforward",
+      "straightforwardness"
+    ],
+    "SG-67": [
+      "broad-leaved",
+      "pair",
+      "trees"
+    ],
+    "SG-69": [
+      "opposite"
+    ],
+    "SG-78": [
+      "nature"
+    ],
+    "SG-89": [
+      "argue"
+    ],
+    "YG-C-75": [
+      "alike",
+      "astrology",
+      "easily",
+      "suit"
+    ],
+    "YG-C-36": [
+      "educated",
+      "rises"
+    ],
+    "YG-C-31": [
+      "education",
+      "judges"
+    ],
+    "YG-C-19": [
+      "fire-related",
+      "self-confidence"
+    ],
+    "YG-C-17": [
+      "bringing",
+      "misunderstandings"
+    ],
+    "YG-C-62": [
+      "chance",
+      "possibly",
+      "willing"
+    ],
+    "YG-C-78": [
+      "matters",
+      "misfortune",
+      "nature"
+    ],
+    "YG-C-84": [
+      "accident-prone",
+      "habits",
+      "thorny",
+      "yoga"
+    ],
+    "YG-C-54": [
+      "continuous"
+    ],
+    "YG-C-95": [
+      "straightforward"
+    ],
+    "YG-C-28": [
+      "feelings",
+      "marry"
+    ],
+    "YG-C-67": [
+      "continuous",
+      "increase"
+    ],
+    "YG-H-24": [
+      "illness",
+      "possible"
+    ],
+    "YG-H-94": [
+      "disturbance",
+      "matters",
+      "restlessness",
+      "risk-taking",
+      "suits"
+    ],
+    "YG-H-65": [
+      "flour",
+      "like",
+      "mill",
+      "yoga"
+    ],
+    "YG-H-32": [
+      "arrogance",
+      "cannot",
+      "ego",
+      "yoga"
+    ],
+    "YG-H-85": [
+      "bhagyodaya",
+      "insurance-related"
+    ],
+    "YG-F-12": [
+      "possible"
+    ],
+    "YG-F-14": [
+      "chart",
+      "child-birth",
+      "especially",
+      "house",
+      "income-tax",
+      "notices",
+      "old-age"
+    ],
+    "YG-F-38": [
+      "dharmakarmadhipati"
+    ],
+    "YG-F-35": [
+      "better",
+      "father-in-law",
+      "favourable"
+    ],
+    "YG-F-98": [
+      "nature"
+    ],
+    "YG-F-25": [
+      "astrology",
+      "involvement",
+      "possible"
+    ],
+    "YG-F-64": [
+      "nature",
+      "possibly"
+    ],
+    "YG-F-69": [
+      "arise",
+      "because",
+      "disputes",
+      "marrying"
+    ],
+    "YG-T-964": [
+      "risk-taker"
+    ],
+    "YG-T-352": [
+      "helps"
+    ],
+    "YG-T-398": [
+      "him",
+      "nature",
+      "possible"
+    ],
+    "YG-P-675": [
+      "level",
+      "life",
+      "living",
+      "ultra-luxurious"
+    ],
+    "YG-P-954": [
+      "disputes",
+      "trades"
+    ],
+    "YG-P-362": [
+      "gynae",
+      "rises"
+    ],
+    "YG-P-178": [
+      "don't",
+      "intuition",
+      "tongue"
+    ],
+    "YG-D-374": [
+      "advised",
+      "sarp"
+    ],
+    "YG-D-972": [
+      "sarp",
+      "struggle"
+    ],
+    "YG-L-197": [
+      "foreign",
+      "inter-caste"
+    ],
+    "YG-L-175": [
+      "high-level",
+      "logical-minded",
+      "suiting"
+    ],
+    "YG-L-167": [
+      "affair",
+      "lifestyle",
+      "luxurious"
+    ],
+    "YG-L-317": [
+      "government"
+    ],
+    "YG-L-754": [
+      "debt-related"
+    ],
+    "YG-L-584": [
+      "possible"
+    ],
+    "YG-L-628": [
+      "because"
+    ],
+    "YG-Q-1658": [
+      "flexible"
+    ],
+    "PL-1": [
+      "farsighted",
+      "freedom-loving",
+      "group",
+      "large",
+      "nature",
+      "perform",
+      "politics",
+      "popularity",
+      "pressure",
+      "short-tempered",
+      "straightforward"
+    ],
+    "PL-2": [
+      "believed",
+      "change",
+      "eye",
+      "fluctuate",
+      "generosity",
+      "hard",
+      "intuition",
+      "often",
+      "speaking"
+    ],
+    "PL-3": [
+      "able",
+      "counsellor"
+    ],
+    "PL-4": [
+      "analyst",
+      "attract",
+      "away",
+      "birthplace",
+      "difficulty",
+      "events",
+      "hard-working",
+      "impulsiveness",
+      "keeping",
+      "overspending",
+      "promises",
+      "shadow",
+      "strong-built",
+      "stubbornness",
+      "sudden",
+      "weak"
+    ],
+    "PL-5": [
+      "aunt",
+      "bored",
+      "bounces",
+      "communicator",
+      "cool",
+      "doesn't",
+      "emotionally",
+      "first",
+      "midway",
+      "puts",
+      "settles",
+      "siblings"
+    ],
+    "PL-6": [
+      "attracted",
+      "brand-conscious",
+      "breaks",
+      "fond",
+      "possible",
+      "tendencies",
+      "wanting"
+    ],
+    "PL-7": [
+      "confusion",
+      "face",
+      "foreign",
+      "making",
+      "self-doubt"
+    ],
+    "PL-8": [
+      "face",
+      "hard-working",
+      "idle",
+      "neglect",
+      "never",
+      "sitting",
+      "soft-hearted",
+      "unable"
+    ],
+    "PL-9": [
+      "giving",
+      "hard",
+      "mood-driven",
+      "quick",
+      "rather",
+      "react",
+      "work"
+    ],
+    "RM-1": [
+      "falling",
+      "jasper",
+      "rays"
+    ],
+    "RM-2": [
+      "bracelet",
+      "sphatik"
+    ],
+    "RM-5": [
+      "snow-covered"
+    ],
+    "RM-6": [
+      "diamond-cut",
+      "love"
+    ],
+    "RM-7": [
+      "flying",
+      "meditation"
+    ],
+    "RM-9": [
+      "jasper"
+    ],
+    "PY1-T01-a": [
+      "clear",
+      "dark",
+      "new",
+      "phase",
+      "unappreciated"
+    ],
+    "PY1-T01-d": [
+      "away",
+      "feed",
+      "matters",
+      "prepare",
+      "sundays"
+    ],
+    "PY1-T01-e": [
+      "dress"
+    ],
+    "PY1-T01-h": [
+      "reputation"
+    ],
+    "PY1-T01-g": [
+      "example",
+      "officer",
+      "person"
+    ],
+    "PY1-T03-b": [
+      "slower"
+    ],
+    "PY1-T03-d": [
+      "don't",
+      "move",
+      "overcommit",
+      "overpromise"
+    ],
+    "PY1-T03-f": [
+      "decisions"
+    ],
+    "PY2-T01-a": [
+      "leans"
+    ],
+    "PY2-T01-c": [
+      "going"
+    ],
+    "PY2-T01-d": [
+      "approach",
+      "business",
+      "caring",
+      "lead"
+    ],
+    "PY2-T01-e": [
+      "favourable"
+    ],
+    "PY2-T03-a": [
+      "begin",
+      "giving",
+      "yourself"
+    ],
+    "PY2-T03-b": [
+      "child",
+      "favourable",
+      "planning"
+    ],
+    "PY2-T03-c": [
+      "instalments",
+      "keeping",
+      "mind"
+    ],
+    "PY2-T03-d": [
+      "right"
+    ],
+    "PY2-T03-e": [
+      "enough",
+      "especially",
+      "night"
+    ],
+    "PY3-T01-a": [
+      "begin",
+      "yourself"
+    ],
+    "PY3-T01-c": [
+      "avoid"
+    ],
+    "PY3-T01-d": [
+      "fit",
+      "next",
+      "raises",
+      "stay"
+    ],
+    "PY3-T03-a": [
+      "strong"
+    ],
+    "PY3-T03-b": [
+      "avoid",
+      "kind",
+      "words"
+    ],
+    "PY3-T03-d": [
+      "favourable"
+    ],
+    "PY3-T03-f": [
+      "gold-and-silver"
+    ],
+    "PY4-T01-b": [
+      "likely"
+    ],
+    "PY4-T01-c": [
+      "actually",
+      "arrives",
+      "don't"
+    ],
+    "PY4-T01-d": [
+      "licences",
+      "organised"
+    ],
+    "PY4-T01-e": [
+      "don't"
+    ],
+    "PY4-T01-f": [
+      "early"
+    ],
+    "PY4-T01-g": [
+      "favourable",
+      "sits"
+    ],
+    "PY4-T03-c": [
+      "apply"
+    ],
+    "PY4-T03-d": [
+      "avoid",
+      "choose"
+    ],
+    "PY4-T03-e": [
+      "schedule"
+    ],
+    "PY5-T01-b": [
+      "don't"
+    ],
+    "PY5-T01-c": [
+      "ask",
+      "introduce",
+      "possible",
+      "yourself"
+    ],
+    "PY5-T01-d": [
+      "healthy"
+    ],
+    "PY5-T03-a": [
+      "especially",
+      "favourable",
+      "higher",
+      "last",
+      "struggle",
+      "was"
+    ],
+    "PY5-T03-b": [
+      "leave",
+      "morning",
+      "plants"
+    ],
+    "PY5-T03-c": [
+      "digestion",
+      "eat",
+      "look",
+      "rather"
+    ],
+    "PY6-T01-b": [
+      "buy",
+      "income",
+      "instalments",
+      "prefer",
+      "rent"
+    ],
+    "PY6-T01-c": [
+      "refresh"
+    ],
+    "PY6-T01-h": [
+      "enough",
+      "reputation"
+    ],
+    "PY6-T01-f": [
+      "harder",
+      "next"
+    ],
+    "PY6-T03-a": [
+      "favourable",
+      "planning"
+    ],
+    "PY6-T03-b": [
+      "growth"
+    ],
+    "PY7-T01-c": [
+      "matters"
+    ],
+    "PY7-T01-d": [
+      "bathe"
+    ],
+    "PY7-T01-e": [
+      "talking",
+      "write"
+    ],
+    "PY7-T01-g": [
+      "harder",
+      "organised",
+      "remove"
+    ],
+    "PY7-T03-a": [
+      "yourself"
+    ],
+    "PY7-T03-b": [
+      "choose",
+      "meditation",
+      "something"
+    ],
+    "PY7-T03-c": [
+      "run"
+    ],
+    "PY7-T03-d": [
+      "favourable"
+    ],
+    "PY7-T03-e": [
+      "ease",
+      "evenings",
+      "walk"
+    ],
+    "PY7-T03-g": [
+      "grey"
+    ],
+    "PY8-T01-a": [
+      "angle",
+      "break",
+      "change",
+      "new",
+      "see",
+      "treat",
+      "work"
+    ],
+    "PY8-T01-d": [
+      "eat"
+    ],
+    "PY8-T01-e": [
+      "left",
+      "men",
+      "put",
+      "that's"
+    ],
+    "PY8-T01-f": [
+      "prepare"
+    ],
+    "PY8-T01-g": [
+      "avoid",
+      "favourable"
+    ],
+    "PY8-T01-h": [
+      "strengthen"
+    ],
+    "PY8-T03-a": [
+      "don't",
+      "restrained",
+      "stay"
+    ],
+    "PY8-T03-c": [
+      "extra",
+      "put"
+    ],
+    "PY8-T03-e": [
+      "focus",
+      "win"
+    ],
+    "PY8-T03-g": [
+      "grey"
+    ],
+    "PY9-T01-a": [
+      "don't",
+      "early"
+    ],
+    "PY9-T01-c": [
+      "exercise"
+    ],
+    "PY9-T01-d": [
+      "birth-number",
+      "play"
+    ],
+    "PY9-T01-j": [
+      "available",
+      "goals",
+      "set"
+    ],
+    "PY9-T01-f": [
+      "favourable"
+    ],
+    "PY9-T03-a": [
+      "change",
+      "exams"
+    ],
+    "PY9-T03-b": [
+      "green",
+      "live"
+    ],
+    "PY9-T03-d": [
+      "like",
+      "next",
+      "stay",
+      "were"
+    ],
+    "PY9-T03-e": [
+      "couples",
+      "pair"
+    ],
+    "PY9-T03-f": [
+      "grey"
+    ],
+    "PY9-T03-g": [
+      "gold-coloured"
+    ],
+    "PY9-T03-h": [
+      "can't"
+    ],
+    "PY-ALL-2": [
+      "meet"
+    ],
+    "PY-ALL-3": [
+      "moonrise"
+    ],
+    "PY-ALL-4": [
+      "regular"
+    ],
+    "PY-ALL-5": [
+      "improve",
+      "place"
+    ],
+    "PY-ALL-6": [
+      "begin",
+      "plan",
+      "wake"
+    ]
+  }
+}

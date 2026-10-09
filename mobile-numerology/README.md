@@ -7,4 +7,5 @@ Rule-based mobile-number reading. No AI at runtime: every line shown to a visito
 - `rules/` — the rulebook built from the sources (reviewed and approved by the owner)
 - `engine/` — pure, deterministic calculation (no dependencies)
 
-Plan and decisions: see `RULEBOOK_REVIEW.md` once generated.
+- `AUDIT.md` — how every rule is checked against the sources (`npm test` runs it)
+- `RULEBOOK_REVIEW.md` — the full rulebook as a table

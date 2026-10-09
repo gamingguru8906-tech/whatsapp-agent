@@ -3,164 +3,1163 @@
   "about": "Patterns on the Vedic grid 3 1 9 / 6 7 5 / 2 8 4. A yoga forms when every digit in `present` is in the number and every digit in `absent` is not (red X on the slide). Blank cells on the slide are ignored. The same rules are applied to the mobile grid and, separately, to the birth-date grid.",
   "source_file": "P01-srk-slides.md",
   "rules": [
-    { "id": "YG-C-75", "group": "Conjunction", "name": "Easy Money Yoga", "planets": "Ketu + Mercury", "present": [7, 5], "absent": [6], "ref": "Slide 13",
-      "quote": "EASY MONEY YOGA — MONEY WITH LUCK, Intelligent", "areas": ["money", "career", "relationship"],
-      "story": { "good": "Easy Money Yoga: money comes to you with luck. You are intelligent, a good writer and speaker (astrology and journalism suit you too), with an attractive look. Relationships, with friends and affairs alike, come easily, and people appreciate your work." } },
-    { "id": "YG-C-36", "group": "Conjunction", "name": "Don't Want to Marry", "planets": "Jupiter + Venus", "present": [3, 6], "absent": [2], "ref": "Slide 13",
-      "quote": "DON'T WANT TO MARRY — RISE OF DESTINY AFTER MARRIAGE", "areas": ["relationship", "education", "personality"],
-      "story": { "good": "Your destiny rises after marriage. You have a good social life and are highly generous, clever and well educated, with social and religious thoughts.", "trait": "You follow your own rules and regulations.", "care": "There can be a reluctance to marry." } },
-    { "id": "YG-C-31", "group": "Conjunction", "name": "Sun Jupiter", "planets": "Sun + Jupiter", "present": [3, 1], "absent": [9], "ref": "Slide 13",
-      "quote": "SUN JUPITER — WISE, LEARNED, WISDOM, LEADER, ASTROLOGER", "areas": ["career", "education"],
-      "story": { "good": "Wise, learned and a leader, with respect, reputation, education and intelligence. A combination for leaders, doctors, judges and astrologers (and for yoga). You achieve success by your own strength." } },
-    { "id": "YG-C-19", "group": "Conjunction", "name": "Sun Mars", "planets": "Sun + Mars", "present": [1, 9], "absent": [3], "ref": "Slide 14",
-      "quote": "SUN MARS — HIGH EDUCATION, AGGRESSIVE, SHORT-TEMPERED", "areas": ["education", "career", "personality"],
-      "story": { "good": "High education and self-confidence. A combination for leaders, surgeons, engineers and ministers, and fire-related work is good for you.", "care": "Can make you aggressive and short-tempered." } },
-    { "id": "YG-C-17", "group": "Conjunction", "name": "Sun Ketu", "planets": "Sun + Ketu", "present": [1, 7], "absent": [8], "ref": "Slide 14",
-      "quote": "SUN KETU — SUN IS ROD AND KETU IS FLAG, WHEN THEY MEET THEY FLY HIGH", "areas": ["government", "career", "money", "relationship", "family"],
-      "story": { "good": "The Sun is the rod and Ketu the flag, and when they meet they fly high. A combination for government jobs and the mystical sciences, bringing respect, name, fame and wealth.", "care": "Can bring dual marital relations, less domestic happiness and misunderstandings with your father." } },
-    { "id": "YG-C-62", "group": "Conjunction", "name": "Venus Moon", "planets": "Venus + Moon", "present": [6, 2], "absent": [3], "ref": "Slide 14",
-      "quote": "VENUS MOON — VERY CREATIVE AND ATTRACTIVE", "areas": ["relationship", "health", "education", "personality"],
-      "story": { "good": "Very creative and attractive, a lover of art and music.", "care": "Can make you prone to affairs, possibly with two marriages, and willing to do anything for luxury. May bring hindrance in education and a chance of diabetes or urinary diseases." } },
-    { "id": "YG-C-78", "group": "Conjunction", "name": "Ketu Saturn", "planets": "Ketu + Saturn", "present": [7, 8], "absent": [1], "ref": "Slide 15",
-      "quote": "KETU SATURN — MISS-FORTUNE [ LIFE, PARENTS, ACCIDENT, MARRIAGE]", "areas": ["family", "relationship", "health", "mind"], "sensitive": true,
-      "story": { "care": "Can bring misfortune in matters of life, parents, accidents and marriage, a pessimistic outlook, family disturbance and a less fulfilling sexual life." } },
-    { "id": "YG-C-84", "group": "Conjunction", "name": "Saturn Rahu", "planets": "Saturn + Rahu", "present": [8, 4], "absent": [2], "ref": "Slide 15",
-      "quote": "SATURN RAHU — ONLY PLANNING NO EXECUTION", "areas": ["career", "health"], "sensitive": true,
-      "story": { "care": "Lots of planning but little execution. Can make you accident-prone, given to imaginary worries, with chronic disease, bad habits and a weaker sexual life. Thorny trees nearby are linked with this yoga." } },
-    { "id": "YG-C-54", "group": "Conjunction", "name": "Mercury Rahu", "planets": "Mercury + Rahu", "present": [5, 4], "absent": [9], "ref": "Slide 15",
-      "quote": "MERCURY RAHU — BANDHAN YOG", "areas": ["legal", "government", "health", "personality"],
-      "story": { "good": "Intelligent, wise and clever.", "trait": "You need continuous change in life.", "care": "Forms Bandhan Yog, which can bring loss in government work, weak eyesight, disease and litigation (your own or others')." } },
-    { "id": "YG-C-95", "group": "Conjunction", "name": "Mars Mercury (Intelligent Yoga)", "planets": "Mars + Mercury", "present": [9, 5], "absent": [4], "ref": "Slide 16",
-      "quote": "MARS MERCURY — INTELLIGENT YOGA", "areas": ["career", "personality"],
-      "story": { "good": "Intelligent Yoga: you are physically active, and business suits you.", "trait": "You are straightforward.", "care": "You may speak in a bitter manner and sometimes disturb your own work." } },
-    { "id": "YG-C-28", "group": "Conjunction", "name": "Moon Saturn (Depression Yoga)", "planets": "Moon + Saturn", "present": [2, 8], "absent": [4], "ref": "Slide 16",
-      "quote": "MOON SATURN — DEPRESSION YOGA", "areas": ["mind", "family", "home"],
-      "story": { "care": "Depression Yoga: feelings of fear and negative thoughts. May show up as leakage in the house and living away from water.", "trait": "Two sisters of the same family may marry into the same family." } },
-    { "id": "YG-C-67", "group": "Conjunction", "name": "Venus Ketu", "planets": "Venus + Ketu", "present": [6, 7], "absent": [5], "ref": "Slide 16",
-      "quote": "VENUS KETU — ART AND MUSIC LOVER, Gets luxury", "areas": ["relationship", "spiritual", "personality"],
-      "story": { "good": "A lover of art and music who gets luxury, and spiritual too.", "care": "Can bring more than one affair or a second marriage." },
+    {
+      "id": "YG-C-75",
+      "group": "Conjunction",
+      "name": "Easy Money Yoga",
+      "planets": "Ketu + Mercury",
+      "present": [
+        7,
+        5
+      ],
+      "absent": [
+        6
+      ],
+      "ref": "Slide 13",
+      "quote": "EASY MONEY YOGA — MONEY WITH LUCK, Intelligent",
+      "areas": [
+        "money",
+        "career",
+        "relationship"
+      ],
+      "story": {
+        "good": "Easy Money Yoga: money comes to you with luck. You are intelligent, a good writer and speaker (astrology and journalism suit you too), with an attractive look. Relationships, with friends and affairs alike, come easily, and people appreciate your work."
+      }
+    },
+    {
+      "id": "YG-C-36",
+      "group": "Conjunction",
+      "name": "Don't Want to Marry",
+      "planets": "Jupiter + Venus",
+      "present": [
+        3,
+        6
+      ],
+      "absent": [
+        2
+      ],
+      "ref": "Slide 13",
+      "quote": "DON'T WANT TO MARRY — RISE OF DESTINY AFTER MARRIAGE",
+      "areas": [
+        "relationship",
+        "education",
+        "personality"
+      ],
+      "story": {
+        "good": "Your destiny rises after marriage. You have a good social life and are highly generous, clever and well educated, with social and religious thoughts.",
+        "trait": "You follow your own rules and regulations.",
+        "care": "You may not want to marry."
+      }
+    },
+    {
+      "id": "YG-C-31",
+      "group": "Conjunction",
+      "name": "Sun Jupiter",
+      "planets": "Sun + Jupiter",
+      "present": [
+        3,
+        1
+      ],
+      "absent": [
+        9
+      ],
+      "ref": "Slide 13",
+      "quote": "SUN JUPITER — WISE, LEARNED, WISDOM, LEADER, ASTROLOGER",
+      "areas": [
+        "career",
+        "education"
+      ],
+      "story": {
+        "good": "Wise, learned and a leader, with respect, reputation, education and intelligence. A combination for leaders, doctors, judges and astrologers (and for yoga). You achieve success by your own strength."
+      }
+    },
+    {
+      "id": "YG-C-19",
+      "group": "Conjunction",
+      "name": "Sun Mars",
+      "planets": "Sun + Mars",
+      "present": [
+        1,
+        9
+      ],
+      "absent": [
+        3
+      ],
+      "ref": "Slide 14",
+      "quote": "SUN MARS — HIGH EDUCATION, AGGRESSIVE, SHORT-TEMPERED",
+      "areas": [
+        "education",
+        "career",
+        "personality"
+      ],
+      "story": {
+        "good": "High education and self-confidence. A combination for leaders, surgeons, engineers and ministers, and fire-related work is good for you.",
+        "care": "Can make you aggressive and short-tempered."
+      }
+    },
+    {
+      "id": "YG-C-17",
+      "group": "Conjunction",
+      "name": "Sun Ketu",
+      "planets": "Sun + Ketu",
+      "present": [
+        1,
+        7
+      ],
+      "absent": [
+        8
+      ],
+      "ref": "Slide 14",
+      "quote": "SUN KETU — SUN IS ROD AND KETU IS FLAG, WHEN THEY MEET THEY FLY HIGH",
+      "areas": [
+        "government",
+        "career",
+        "money",
+        "relationship",
+        "family"
+      ],
+      "story": {
+        "good": "The Sun is the rod and Ketu the flag, and when they meet they fly high. A combination for government jobs and the mystical sciences, bringing respect, name, fame and wealth.",
+        "care": "Can bring dual marital relations, less domestic happiness and misunderstandings with your father."
+      }
+    },
+    {
+      "id": "YG-C-62",
+      "group": "Conjunction",
+      "name": "Venus Moon",
+      "planets": "Venus + Moon",
+      "present": [
+        6,
+        2
+      ],
+      "absent": [
+        3
+      ],
+      "ref": "Slide 14",
+      "quote": "VENUS MOON — VERY CREATIVE AND ATTRACTIVE",
+      "areas": [
+        "relationship",
+        "health",
+        "education",
+        "personality"
+      ],
+      "story": {
+        "good": "Very creative and attractive, a lover of art and music.",
+        "care": "Can make you prone to affairs, possibly with two marriages, and willing to do anything for luxury. May bring hindrance in education and a chance of diabetes or urinary diseases."
+      }
+    },
+    {
+      "id": "YG-C-78",
+      "group": "Conjunction",
+      "name": "Ketu Saturn",
+      "planets": "Ketu + Saturn",
+      "present": [
+        7,
+        8
+      ],
+      "absent": [
+        1
+      ],
+      "ref": "Slide 15",
+      "quote": "KETU SATURN — MISS-FORTUNE [ LIFE, PARENTS, ACCIDENT, MARRIAGE]",
+      "areas": [
+        "family",
+        "relationship",
+        "health",
+        "mind"
+      ],
+      "sensitive": true,
+      "story": {
+        "care": "Can bring misfortune in matters of life, parents, accidents and marriage, a pessimistic nature, family disturbance and a lack of good sexual life."
+      }
+    },
+    {
+      "id": "YG-C-84",
+      "group": "Conjunction",
+      "name": "Saturn Rahu",
+      "planets": "Saturn + Rahu",
+      "present": [
+        8,
+        4
+      ],
+      "absent": [
+        2
+      ],
+      "ref": "Slide 15",
+      "quote": "SATURN RAHU — ONLY PLANNING NO EXECUTION",
+      "areas": [
+        "career",
+        "health"
+      ],
+      "sensitive": true,
+      "story": {
+        "care": "Only planning, no execution. Accident-prone, imaginary, with chronic disease, bad habits and a lack of sexual life. Thorny trees nearby are linked with this yoga."
+      }
+    },
+    {
+      "id": "YG-C-54",
+      "group": "Conjunction",
+      "name": "Mercury Rahu",
+      "planets": "Mercury + Rahu",
+      "present": [
+        5,
+        4
+      ],
+      "absent": [
+        9
+      ],
+      "ref": "Slide 15",
+      "quote": "MERCURY RAHU — BANDHAN YOG",
+      "areas": [
+        "legal",
+        "government",
+        "health",
+        "personality"
+      ],
+      "story": {
+        "good": "Intelligent, wise and clever.",
+        "trait": "You need continuous change in life.",
+        "care": "Forms Bandhan Yog, which can bring loss in government work, weak eyesight, disease and litigation (your own or others')."
+      }
+    },
+    {
+      "id": "YG-C-95",
+      "group": "Conjunction",
+      "name": "Mars Mercury (Intelligent Yoga)",
+      "planets": "Mars + Mercury",
+      "present": [
+        9,
+        5
+      ],
+      "absent": [
+        4
+      ],
+      "ref": "Slide 16",
+      "quote": "MARS MERCURY — INTELLIGENT YOGA",
+      "areas": [
+        "career",
+        "personality"
+      ],
+      "story": {
+        "good": "Intelligent Yoga: you are physically active, and business suits you.",
+        "trait": "You are straightforward.",
+        "care": "You may speak in a bitter manner and sometimes disturb your own work."
+      }
+    },
+    {
+      "id": "YG-C-28",
+      "group": "Conjunction",
+      "name": "Moon Saturn (Depression Yoga)",
+      "planets": "Moon + Saturn",
+      "present": [
+        2,
+        8
+      ],
+      "absent": [
+        4
+      ],
+      "ref": "Slide 16",
+      "quote": "MOON SATURN — DEPRESSION YOGA",
+      "areas": [
+        "mind",
+        "family",
+        "home"
+      ],
+      "story": {
+        "care": "Depression Yoga: feelings of fear and negative thoughts. Linked with leakage in the house, and with being away from water.",
+        "trait": "Two sisters of the same family may marry into the same family."
+      }
+    },
+    {
+      "id": "YG-C-67",
+      "group": "Conjunction",
+      "name": "Venus Ketu",
+      "planets": "Venus + Ketu",
+      "present": [
+        6,
+        7
+      ],
+      "absent": [
+        5
+      ],
+      "ref": "Slide 16",
+      "quote": "VENUS KETU — ART AND MUSIC LOVER, Gets luxury",
+      "areas": [
+        "relationship",
+        "spiritual",
+        "personality"
+      ],
+      "story": {
+        "good": "A lover of art and music who gets luxury, and spiritual too.",
+        "care": "Can bring more than one affair or a second marriage."
+      },
       "multiples": [
-        { "digit": 6, "min": 2, "quote": "MULTIPLE 6 CONTINUOS FIGHT'S", "care": "With more than one 6, there can be continuous fights." },
-        { "digit": 7, "min": 2, "quote": "MULTIPLE 7 INCREAS IN INSTABILITY AND ATTRACTION BOTH", "care": "With more than one 7, both instability and attraction increase." }
-      ] },
-
-    { "id": "YG-H-18", "group": "Hostile", "name": "Sun Saturn", "planets": "Sun + Saturn", "present": [1, 8], "absent": [7], "ref": "Slide 17",
-      "quote": "SUN SATURN — OBSTACLES, DISRESPECT", "areas": ["career", "government", "family", "health"],
-      "story": { "care": "Can bring obstacles and disrespect, loss of a government job, family disturbances, health issues for your father, and differences with your father or boss." } },
-    { "id": "YG-H-24", "group": "Hostile", "name": "Moon Rahu", "planets": "Moon + Rahu", "present": [2, 4], "absent": [8], "ref": "Slide 17",
-      "quote": "MOON RAHU — WEAK EYESIGHT AND MENTAL DISEASES", "areas": ["mind", "health", "family"], "sensitive": true,
-      "story": { "care": "Linked with weak eyesight and mental illness, an inferiority complex, family struggle, possible eye and heart problems, more anxiety, worry and fear, and unrealistic expectations." } },
-    { "id": "YG-H-94", "group": "Hostile", "name": "Mars Rahu", "planets": "Mars + Rahu", "present": [9, 4], "absent": [5], "ref": "Slide 17",
-      "quote": "MARS RAHU — STRONG BANDHAN YOG", "areas": ["legal", "mind", "career", "money"],
-      "story": { "good": "Suits lawyers, doctors and the police, and money comes through hard work.", "care": "A strong Bandhan Yog: mental disturbance, court or hospital matters, restlessness and risk-taking." },
-      "remedy": { "quote": "TAKE FOOD IN KITCHEN", "text": "Take your food in the kitchen." },
-      "review_note": "'TAKE FOOD IN KITCHEN' is listed among the effects; I read it as a remedy (eat in the kitchen). Please confirm." },
-    { "id": "YG-H-39", "group": "Hostile", "name": "Jupiter Mars", "planets": "Jupiter + Mars", "present": [3, 9], "absent": [1], "ref": "Slide 18",
-      "quote": "JUPITER MARS — MORE WORK LESS GAINS", "areas": ["career", "spiritual"],
-      "story": { "good": "A combination of doctor and leader. Meditation Yog and pilgrimages; intelligent and learned, with wisdom.", "care": "More work, less gains." } },
-    { "id": "YG-H-65", "group": "Hostile", "name": "Venus Mercury", "planets": "Venus + Mercury", "present": [6, 5], "absent": [7], "ref": "Slide 18",
-      "quote": "VENUS MERCURY — HIGHER EDUCATION, HURDLES", "areas": ["education", "family", "career", "relationship"],
-      "story": { "good": "Higher education and a very creative, artistic mind, like authors, musicians, actors and writers. Points to love marriage.", "care": "Hurdles, and family conflict.", "trait": "A flour mill nearby is linked with this yoga." } },
-    { "id": "YG-H-32", "group": "Hostile", "name": "Jupiter Moon", "planets": "Jupiter + Moon", "present": [3, 2], "absent": [6], "ref": "Slide 18",
-      "quote": "JUPITER MOON — DISTURBANCE IN EDUCATION", "areas": ["education", "family", "personality"],
-      "story": { "good": "Gaj Kesari Yog and creativity. You may have many enemies, but they cannot harm you.", "care": "Disturbance in education, ego and arrogance, and less happiness from children.", "trait": "Lemon trees nearby are linked with this yoga." } },
-    { "id": "YG-H-85", "group": "Hostile", "name": "Saturn Mercury", "planets": "Saturn + Mercury", "present": [8, 5], "absent": [1, 9, 7, 4], "ref": "Slide 19",
-      "quote": "SATURN MERCURY — SHARP MEMORY, MANAGEMENT, GOOD FINANCE", "areas": ["money", "career", "family", "health"],
-      "story": { "good": "Sharp memory, management skill and good finance; suits finance and insurance work. Your fortune rises (bhagyodaya) after 35.", "care": "Can make you selfish, is inauspicious for your father, and may bring skin problems." } },
-
-    { "id": "YG-F-12", "group": "Fourth aspect", "name": "Sun Moon (4th aspect)", "planets": "Sun + Moon", "present": [1, 2], "absent": [3, 6], "ref": "Slide 20",
-      "quote": "SUN MOON (4th Aspect) — Ek baar life me zero face karenge", "areas": ["money", "health", "family", "mind"],
-      "story": { "care": "You may face a 'zero' once in life. Can bring hidden enemies, debts and health issues, possible family disturbance, and ups and downs." } },
-    { "id": "YG-F-14", "group": "Fourth aspect", "name": "Sun Rahu (4th aspect)", "planets": "Sun + Rahu", "present": [1, 4], "absent": [9, 7, 5, 8], "ref": "Slide 20",
-      "quote": "SUN RAHU (4th Aspect) — PITRA DOSHA, Notice of Income Tax, Health issue, Debt issue", "areas": ["money", "health", "relationship", "family", "legal"],
-      "story": { "care": "Pitra dosha: income-tax notices, health and debt issues, marriage issues, physical or financial problems, and child-birth issues, especially if Rahu is in the 5th or 9th house of the birth chart." },
-      "remedy": { "quote": "STRENGTHEN SUN, RAHU MANI & JAAP, SERVE CROWS, AMAVASYA REMEDY, DO SEVA IN OLD AGE HOME OR ELDERS OF FAMILY", "text": "Strengthen the Sun; do Rahu mani and jaap; serve crows; do the Amavasya remedy; and do seva in an old-age home or for the elders of your family." } },
-    { "id": "YG-F-38", "group": "Fourth aspect", "name": "Jupiter Saturn (4th aspect)", "planets": "Jupiter + Saturn", "present": [3, 8], "absent": [1, 6, 7, 2], "ref": "Slide 20",
-      "quote": "JUPITER SATURN (4th Aspecct) — DHARAMKARAMADHIPATI YOGA", "areas": ["career"],
-      "story": { "good": "Dharmakarmadhipati Yoga: you achieve your goals after struggle. A good advisor and counsellor, you can be a judge or astrologer." } },
-    { "id": "YG-F-35", "group": "Fourth aspect", "name": "Jupiter Mercury (4th aspect)", "planets": "Jupiter + Mercury", "present": [3, 5], "absent": [1, 9], "ref": "Slide 21",
-      "quote": "JUPITER MERCURY (4th Aspect) — Sharp memory", "areas": ["money", "education", "travel", "family"],
-      "story": { "good": "Sharp memory, and good for studies abroad.", "care": "A lack of money even in good economic conditions. Your native place is not favourable, so you do better away from it, and your father-in-law may have breathing problems." } },
-    { "id": "YG-F-98", "group": "Fourth aspect", "name": "Mars Saturn (4th aspect)", "planets": "Mars + Saturn", "present": [9, 8], "absent": [1, 7, 5, 4], "ref": "Slide 21",
-      "quote": "MARS SATURN (4th Aspect) — EARTHQUAKE YOGA", "areas": ["career", "family", "personality"],
-      "story": { "good": "You can be a good advocate, engineer or doctor.", "care": "Earthquake Yoga: an argumentative nature, ups and downs in life, and differences with your brother." } },
-    { "id": "YG-F-25", "group": "Fourth aspect", "name": "Moon Mercury (4th aspect)", "planets": "Moon + Mercury", "present": [2, 5], "absent": [8, 4], "ref": "Slide 21",
-      "quote": "MOON MERCURY (4th Aspect) — Sharp memory, International tours", "areas": ["travel", "career", "health", "money"],
-      "story": { "good": "Sharp memory and international tours; occult science, astrology and tantra.", "care": "Urine and bone issues, and possible involvement in a financial scam." } },
-    { "id": "YG-F-64", "group": "Fourth aspect", "name": "Venus Rahu (4th aspect)", "planets": "Venus + Rahu", "present": [6, 4], "absent": [2, 8], "ref": "Slide 22",
-      "quote": "VENUS RAHU (4th Aspect) — Urinary infection, Sexual problem, Skin disease", "areas": ["health", "relationship"], "sensitive": true,
-      "story": { "care": "Linked with urinary infection, sexual problems, skin disease, piles and sperm issues, a casanova nature, a possibly criminal mind, and problems in love life." } },
-    { "id": "YG-F-69", "group": "Fourth aspect", "name": "Venus Mars (4th aspect)", "planets": "Venus + Mars", "present": [6, 9], "absent": [3, 1], "ref": "Slide 22",
-      "quote": "VENUS MARS (4th Aspect) — Love marriage", "areas": ["relationship", "family"],
-      "story": { "good": "Love marriage, and you are a good planner.", "care": "Differences with your brother because of your wife, and affairs with other women. Marrying late is suggested, otherwise disputes may arise." } },
-
-    { "id": "YG-T-964", "group": "Triangular", "name": "Venus Mars Rahu", "planets": "Venus + Mars + Rahu", "present": [9, 6, 4], "absent": [], "ref": "Slide 23",
-      "quote": "VENUS MARS RAHU — Connected with crimes", "areas": ["legal", "relationship"], "sensitive": true,
-      "story": { "trait": "You are a risk-taker.", "care": "Connected with crime-related matters and uncordial relations; two marriages, relationships and affairs." },
-      "review_note": "The slide's example (Kiran Bedi) is not shown on the site." },
-    { "id": "YG-T-124", "group": "Triangular", "name": "Sun Moon Rahu", "planets": "Sun + Moon + Rahu", "present": [1, 2, 4], "absent": [], "ref": "Slide 23",
-      "quote": "SUN MOON RAHU — Connected with crimes", "areas": ["legal", "money", "health", "family", "government"], "sensitive": true,
-      "story": { "care": "Connected with crime-related matters; debts, diseases and enemies; family disturbances and ups and downs; obstruction in government work; and either no sister or differences with her." } },
-    { "id": "YG-T-352", "group": "Triangular", "name": "Jupiter Moon Mercury", "planets": "Jupiter + Moon + Mercury", "present": [3, 5, 2], "absent": [], "ref": "Slide 23",
-      "quote": "JUPITER MOON MERCURY — Sharp mind, Foreign travel", "areas": ["travel", "money", "home"],
-      "story": { "good": "A sharp mind and foreign travel.", "care": "Financial scams and shortcut methods, and less happiness from your own property. Staying away from your native place helps you progress." } },
-    { "id": "YG-T-398", "group": "Triangular", "name": "Jupiter Mars Saturn", "planets": "Jupiter + Mars + Saturn", "present": [3, 9, 8], "absent": [], "ref": "Slide 24",
-      "quote": "JUPITER MARS SATURN — HURDLES IN EDUCATION, FAMILY ISSUES", "areas": ["education", "family", "career"],
-      "story": { "good": "You can be a judge or lawyer.", "care": "Hurdles in education, family issues, either no brother or differences with him, an argumentative nature, and possible disturbance in the family." } },
-
-    { "id": "YG-P-319", "group": "Plane", "name": "Jupiter Sun Mars", "planets": "Jupiter + Sun + Mars", "present": [3, 1, 9], "absent": [], "ref": "Slide 25",
-      "quote": "JUPITER SUN MARS — STRONG PERSONALITY, AGGRESSIVE", "areas": ["personality", "relationship", "career"],
-      "story": { "good": "A strong, courageous personality, educated and respected, and a sports-person.", "care": "Can make you aggressive, and brings delay in marriage." } },
-    { "id": "YG-P-675", "group": "Plane", "name": "Venus Ketu Mercury (Raj Yog)", "planets": "Venus + Ketu + Mercury", "present": [6, 7, 5], "absent": [], "ref": "Slide 25",
-      "quote": "VENUS KETU MERCURY (RAJ YOG) — ULTRA LUXURIOUS", "areas": ["money", "home", "family", "career", "relationship"],
-      "story": { "good": "Raj Yog: an ultra-luxurious life, a big house, family growth and a high level of living. A lover of music and art, a good speaker and writer, with love and romance, and a good businessman." } },
-    { "id": "YG-P-954", "group": "Plane", "name": "Mars Mercury Rahu", "planets": "Mars + Mercury + Rahu", "present": [9, 5, 4], "absent": [], "ref": "Slide 25",
-      "quote": "MARS MERCURY RAHU — QUICK DECISION AND ACTIONS", "areas": ["career", "home", "personality"],
-      "story": { "good": "Quick decisions and actions; a multitasker.", "care": "Jack of all trades, master of none; outspoken; property disputes." } },
-    { "id": "YG-P-362", "group": "Plane", "name": "Jupiter Venus Moon", "planets": "Jupiter + Venus + Moon", "present": [3, 6, 2], "absent": [], "ref": "Slide 26",
-      "quote": "JUPITER VENUS MOON — DON'T WANT TO MARRY, RISE OF DESTINY AFTER MARRIAGE", "areas": ["relationship", "education", "health", "travel"], "sensitive": true,
-      "story": { "good": "Your destiny rises after marriage. You are attractive, a music lover, with good education.", "care": "A reluctance to marry, and gynaecological problems or low sperm. Staying away from your native place is suggested." } },
-    { "id": "YG-P-284", "group": "Plane", "name": "Moon Saturn Rahu", "planets": "Moon + Saturn + Rahu", "present": [2, 8, 4], "absent": [], "ref": "Slide 26",
-      "quote": "MOON SATURN RAHU — AWAY FROM BIRTHPLACE, MAJOR UP'S AND DOWN'S LIFE", "areas": ["mind", "health", "travel"], "sensitive": true,
-      "story": { "care": "Life away from your birthplace, with major ups and downs. Little control over speech when angry; negative thoughts, addiction and chronic disease. The source also links this yoga with a risk of death by accident." },
-      "review_note": "The slide's example (Rajiv Gandhi, 20/8/1944) is not shown on the site; it is used as a test." },
-    { "id": "YG-P-178", "group": "Plane", "name": "Sun Ketu Saturn", "planets": "Sun + Ketu + Saturn", "present": [1, 7, 8], "absent": [], "ref": "Slide 26",
-      "quote": "SUN KETU SATURN — STRONG INTUTION POWER, BLACK TOUNGE", "areas": ["career", "money", "personality"],
-      "story": { "good": "Strong intuition, knowledge of technical work and more than one source of income. You may be a social worker, politician or philanthropist.", "care": "A sharp ('black') tongue. You help others but don't get the same in return." } },
-
-    { "id": "YG-D-374", "group": "Diagonal", "name": "Jupiter Ketu Rahu (Kaal Sarp Dosh Yoga)", "planets": "Jupiter + Ketu + Rahu", "present": [3, 7, 4], "absent": [], "ref": "Slide 27",
-      "quote": "JUPITER KETU RAHU (KAAL SHARP DOSH YOGA) — SUCCESSIVE KAAL SHARP DOSHA YOGA", "areas": ["education", "career"],
-      "story": { "good": "You can reach a top position.", "care": "Kaal Sarp Dosh Yoga: hurdles in education. Don't be proud or arrogant about your success." },
-      "remedy": { "quote": "RAHU REMEDIES", "text": "Rahu remedies are advised." } },
-    { "id": "YG-D-972", "group": "Diagonal", "name": "Moon Ketu Mars (Kaal Sarp Dosh Yoga)", "planets": "Moon + Ketu + Mars", "present": [9, 7, 2], "absent": [], "ref": "Slide 27",
-      "quote": "MOON KETU MARS (KAAL SHARP DOSH YOGA) — STRUGGLED LIFE, AWAY FROM FAMILY", "areas": ["family", "health"],
-      "story": { "good": "Courageous.", "care": "Kaal Sarp Dosh Yoga: a life of struggle, away from family, with family disturbance, joint pains and urinary diseases." } },
-
-    { "id": "YG-L-197", "group": "L shape", "name": "Sun Mars Ketu", "planets": "Sun + Mars + Ketu", "present": [1, 9, 7], "absent": [], "ref": "Slide 28",
-      "quote": "SUN MARS KETU — MARRIAGE DELAY, INTERCASTE MARRIAGE", "areas": ["relationship", "travel"],
-      "story": { "good": "Fortunate, with foreign travel.", "trait": "Points to an inter-caste marriage.", "care": "Delay in marriage (a late marriage) and Manglik." } },
-    { "id": "YG-L-175", "group": "L shape", "name": "Sun Ketu Mercury", "planets": "Sun + Ketu + Mercury", "present": [1, 7, 5], "absent": [], "ref": "Slide 28",
-      "quote": "SUN KETU MERCURY — Sharp mind and high Level Thoughts", "areas": ["career", "personality"],
-      "story": { "good": "A sharp mind with high-level thoughts, logical-minded, suiting a teacher or astrologer." } },
-    { "id": "YG-L-167", "group": "L shape", "name": "Sun Ketu Venus", "planets": "Sun + Ketu + Venus", "present": [1, 6, 7], "absent": [], "ref": "Slide 28",
-      "quote": "SUN KETU VENUS — Music Lover / Luxury Life Style", "areas": ["relationship", "personality"],
-      "story": { "good": "A music lover with a luxurious lifestyle.", "care": "More than one love affair and marriage, with ups and downs." } },
-    { "id": "YG-L-317", "group": "L shape", "name": "Jupiter Sun Ketu", "planets": "Jupiter + Sun + Ketu", "present": [3, 1, 7], "absent": [], "ref": "Slide 29",
-      "quote": "JUPITER SUN KETU — Govt. Job / Abroad Tours", "areas": ["government", "career", "travel", "education"],
-      "story": { "good": "A government job and tours abroad. You can be a teacher, judge, advocate or astrologer, educated and respected." } },
-    { "id": "YG-L-754", "group": "L shape", "name": "Ketu Mercury Rahu (Bondage Yoga)", "planets": "Ketu + Mercury + Rahu", "present": [7, 5, 4], "absent": [], "ref": "Slide 29",
-      "quote": "KETU MERCURY RAHU — Debt Related issues and Defamation", "areas": ["money", "legal"],
-      "story": { "care": "Bondage Yoga: debt-related issues and defamation, and a life of struggle." } },
-    { "id": "YG-L-584", "group": "L shape", "name": "Mercury Rahu Saturn (Bondage Yoga)", "planets": "Mercury + Rahu + Saturn", "present": [5, 8, 4], "absent": [], "ref": "Slide 29",
-      "quote": "MERCURY RAHU SATURN — Addiction / Bondage Yoga", "areas": ["health", "money", "mind"], "sensitive": true,
-      "story": { "care": "Bondage Yoga: addiction, a weaker sexual life, and fear of loss." } },
-    { "id": "YG-L-628", "group": "L shape", "name": "Venus Moon Saturn", "planets": "Venus + Moon + Saturn", "present": [6, 2, 8], "absent": [], "ref": "Slide 30",
-      "quote": "VENUS MOON SATURN — Family Trouble due to Opposite Sex", "areas": ["family", "money", "education", "relationship"],
-      "story": { "good": "You have good money.", "care": "Family trouble because of the opposite sex, obstruction in education, and obstacles." } },
-
-    { "id": "YG-Q-1658", "group": "Four digit", "name": "Sun Venus Saturn Mercury (Raj Yog)", "planets": "Sun + Venus + Saturn + Mercury", "present": [1, 6, 5, 8], "absent": [], "ref": "Slide 31",
-      "quote": "SUN VENUS SATURN MERCURY (RAJ YOG) — INTELLIGENT AND COURAGEOUS", "areas": ["career", "personality", "travel"],
-      "story": { "good": "Raj Yog: intelligent, courageous and flexible, with name and fame in your country and abroad." },
-      "review_note": "The slide's example (Sania Mirza) is not shown on the site; her birth date is used as a test." }
+        {
+          "digit": 6,
+          "min": 2,
+          "quote": "MULTIPLE 6 CONTINUOS FIGHT'S",
+          "care": "With more than one 6, there can be continuous fights."
+        },
+        {
+          "digit": 7,
+          "min": 2,
+          "quote": "MULTIPLE 7 INCREAS IN INSTABILITY AND ATTRACTION BOTH",
+          "care": "With more than one 7, both instability and attraction increase."
+        }
+      ]
+    },
+    {
+      "id": "YG-H-18",
+      "group": "Hostile",
+      "name": "Sun Saturn",
+      "planets": "Sun + Saturn",
+      "present": [
+        1,
+        8
+      ],
+      "absent": [
+        7
+      ],
+      "ref": "Slide 17",
+      "quote": "SUN SATURN — OBSTACLES, DISRESPECT",
+      "areas": [
+        "career",
+        "government",
+        "family",
+        "health"
+      ],
+      "story": {
+        "care": "Can bring obstacles and disrespect, loss of a government job, family disturbances, health issues for your father, and differences with your father or boss."
+      }
+    },
+    {
+      "id": "YG-H-24",
+      "group": "Hostile",
+      "name": "Moon Rahu",
+      "planets": "Moon + Rahu",
+      "present": [
+        2,
+        4
+      ],
+      "absent": [
+        8
+      ],
+      "ref": "Slide 17",
+      "quote": "MOON RAHU — WEAK EYESIGHT AND MENTAL DISEASES",
+      "areas": [
+        "mind",
+        "health",
+        "family"
+      ],
+      "sensitive": true,
+      "story": {
+        "care": "Linked with weak eyesight and mental illness, an inferiority complex, family struggle, possible eye and heart problems, more anxiety, worry and fear, and unrealistic expectations."
+      }
+    },
+    {
+      "id": "YG-H-94",
+      "group": "Hostile",
+      "name": "Mars Rahu",
+      "planets": "Mars + Rahu",
+      "present": [
+        9,
+        4
+      ],
+      "absent": [
+        5
+      ],
+      "ref": "Slide 17",
+      "quote": "MARS RAHU — STRONG BANDHAN YOG",
+      "areas": [
+        "legal",
+        "mind",
+        "career",
+        "money"
+      ],
+      "story": {
+        "good": "Suits lawyers, doctors and the police, and money comes through hard work.",
+        "care": "A strong Bandhan Yog: mental disturbance, court or hospital matters, restlessness and risk-taking."
+      },
+      "remedy": {
+        "quote": "TAKE FOOD IN KITCHEN",
+        "text": "Take your food in the kitchen."
+      }
+    },
+    {
+      "id": "YG-H-39",
+      "group": "Hostile",
+      "name": "Jupiter Mars",
+      "planets": "Jupiter + Mars",
+      "present": [
+        3,
+        9
+      ],
+      "absent": [
+        1
+      ],
+      "ref": "Slide 18",
+      "quote": "JUPITER MARS — MORE WORK LESS GAINS",
+      "areas": [
+        "career",
+        "spiritual"
+      ],
+      "story": {
+        "good": "A combination of doctor and leader. Meditation Yog and pilgrimages; intelligent and learned, with wisdom.",
+        "care": "More work, less gains."
+      }
+    },
+    {
+      "id": "YG-H-65",
+      "group": "Hostile",
+      "name": "Venus Mercury",
+      "planets": "Venus + Mercury",
+      "present": [
+        6,
+        5
+      ],
+      "absent": [
+        7
+      ],
+      "ref": "Slide 18",
+      "quote": "VENUS MERCURY — HIGHER EDUCATION, HURDLES",
+      "areas": [
+        "education",
+        "family",
+        "career",
+        "relationship"
+      ],
+      "story": {
+        "good": "Higher education and a very creative, artistic mind, like authors, musicians, actors and writers. Points to love marriage.",
+        "care": "Hurdles, and family conflict.",
+        "trait": "A flour mill nearby is linked with this yoga."
+      }
+    },
+    {
+      "id": "YG-H-32",
+      "group": "Hostile",
+      "name": "Jupiter Moon",
+      "planets": "Jupiter + Moon",
+      "present": [
+        3,
+        2
+      ],
+      "absent": [
+        6
+      ],
+      "ref": "Slide 18",
+      "quote": "JUPITER MOON — DISTURBANCE IN EDUCATION",
+      "areas": [
+        "education",
+        "family",
+        "personality"
+      ],
+      "story": {
+        "good": "Gaj Kesari Yog and creativity. You may have many enemies, but they cannot harm you.",
+        "care": "Disturbance in education, ego and arrogance, and less happiness from children.",
+        "trait": "Lemon trees nearby are linked with this yoga."
+      }
+    },
+    {
+      "id": "YG-H-85",
+      "group": "Hostile",
+      "name": "Saturn Mercury",
+      "planets": "Saturn + Mercury",
+      "present": [
+        8,
+        5
+      ],
+      "absent": [
+        1,
+        9,
+        7,
+        4
+      ],
+      "ref": "Slide 19",
+      "quote": "SATURN MERCURY — SHARP MEMORY, MANAGEMENT, GOOD FINANCE",
+      "areas": [
+        "money",
+        "career",
+        "family",
+        "health"
+      ],
+      "story": {
+        "good": "Sharp memory, management and good finance; finance and insurance-related work. Bhagyodaya after 35 years.",
+        "care": "Can make you selfish, is inauspicious for your father, and may bring skin problems."
+      }
+    },
+    {
+      "id": "YG-F-12",
+      "group": "Fourth aspect",
+      "name": "Sun Moon (4th aspect)",
+      "planets": "Sun + Moon",
+      "present": [
+        1,
+        2
+      ],
+      "absent": [
+        3,
+        6
+      ],
+      "ref": "Slide 20",
+      "quote": "SUN MOON (4th Aspect) — Ek baar life me zero face karenge",
+      "areas": [
+        "money",
+        "health",
+        "family",
+        "mind"
+      ],
+      "story": {
+        "care": "You may face a 'zero' once in life. Can bring hidden enemies, debts and health issues, possible family disturbance, and ups and downs."
+      }
+    },
+    {
+      "id": "YG-F-14",
+      "group": "Fourth aspect",
+      "name": "Sun Rahu (4th aspect)",
+      "planets": "Sun + Rahu",
+      "present": [
+        1,
+        4
+      ],
+      "absent": [
+        9,
+        7,
+        5,
+        8
+      ],
+      "ref": "Slide 20",
+      "quote": "SUN RAHU (4th Aspect) — PITRA DOSHA, Notice of Income Tax, Health issue, Debt issue",
+      "areas": [
+        "money",
+        "health",
+        "relationship",
+        "family",
+        "legal"
+      ],
+      "story": {
+        "care": "Pitra dosha: income-tax notices, health and debt issues, marriage issues, physical or financial problems, and child-birth issues, especially if Rahu is in the 5th or 9th house of the birth chart."
+      },
+      "remedy": {
+        "quote": "STRENGTHEN SUN, RAHU MANI & JAAP, SERVE CROWS, AMAVASYA REMEDY, DO SEVA IN OLD AGE HOME OR ELDERS OF FAMILY",
+        "text": "Strengthen the Sun; do Rahu mani and jaap; serve crows; do the Amavasya remedy; and do seva in an old-age home or for the elders of your family."
+      }
+    },
+    {
+      "id": "YG-F-38",
+      "group": "Fourth aspect",
+      "name": "Jupiter Saturn (4th aspect)",
+      "planets": "Jupiter + Saturn",
+      "present": [
+        3,
+        8
+      ],
+      "absent": [
+        1,
+        6,
+        7,
+        2
+      ],
+      "ref": "Slide 20",
+      "quote": "JUPITER SATURN (4th Aspecct) — DHARAMKARAMADHIPATI YOGA",
+      "areas": [
+        "career"
+      ],
+      "story": {
+        "good": "Dharmakarmadhipati Yoga: you achieve your goals after struggle. A good advisor and counsellor, you can be a judge or astrologer."
+      }
+    },
+    {
+      "id": "YG-F-35",
+      "group": "Fourth aspect",
+      "name": "Jupiter Mercury (4th aspect)",
+      "planets": "Jupiter + Mercury",
+      "present": [
+        3,
+        5
+      ],
+      "absent": [
+        1,
+        9
+      ],
+      "ref": "Slide 21",
+      "quote": "JUPITER MERCURY (4th Aspect) — Sharp memory",
+      "areas": [
+        "money",
+        "education",
+        "travel",
+        "family"
+      ],
+      "story": {
+        "good": "Sharp memory, and good for studies abroad.",
+        "care": "A lack of money even in good economic conditions. Your native place is not favourable, so you do better away from it, and your father-in-law may have breathing problems."
+      }
+    },
+    {
+      "id": "YG-F-98",
+      "group": "Fourth aspect",
+      "name": "Mars Saturn (4th aspect)",
+      "planets": "Mars + Saturn",
+      "present": [
+        9,
+        8
+      ],
+      "absent": [
+        1,
+        7,
+        5,
+        4
+      ],
+      "ref": "Slide 21",
+      "quote": "MARS SATURN (4th Aspect) — EARTHQUAKE YOGA",
+      "areas": [
+        "career",
+        "family",
+        "personality"
+      ],
+      "story": {
+        "good": "You can be a good advocate, engineer or doctor.",
+        "care": "Earthquake Yoga: an argumentative nature, ups and downs in life, and differences with your brother."
+      }
+    },
+    {
+      "id": "YG-F-25",
+      "group": "Fourth aspect",
+      "name": "Moon Mercury (4th aspect)",
+      "planets": "Moon + Mercury",
+      "present": [
+        2,
+        5
+      ],
+      "absent": [
+        8,
+        4
+      ],
+      "ref": "Slide 21",
+      "quote": "MOON MERCURY (4th Aspect) — Sharp memory, International tours",
+      "areas": [
+        "travel",
+        "career",
+        "health",
+        "money"
+      ],
+      "story": {
+        "good": "Sharp memory and international tours; occult science, astrology and tantra.",
+        "care": "Urine and bone issues, and possible involvement in a financial scam."
+      }
+    },
+    {
+      "id": "YG-F-64",
+      "group": "Fourth aspect",
+      "name": "Venus Rahu (4th aspect)",
+      "planets": "Venus + Rahu",
+      "present": [
+        6,
+        4
+      ],
+      "absent": [
+        2,
+        8
+      ],
+      "ref": "Slide 22",
+      "quote": "VENUS RAHU (4th Aspect) — Urinary infection, Sexual problem, Skin disease",
+      "areas": [
+        "health",
+        "relationship"
+      ],
+      "sensitive": true,
+      "story": {
+        "care": "Linked with urinary infection, sexual problems, skin disease, piles and sperm issues, a casanova nature, a possibly criminal mind, and problems in love life."
+      }
+    },
+    {
+      "id": "YG-F-69",
+      "group": "Fourth aspect",
+      "name": "Venus Mars (4th aspect)",
+      "planets": "Venus + Mars",
+      "present": [
+        6,
+        9
+      ],
+      "absent": [
+        3,
+        1
+      ],
+      "ref": "Slide 22",
+      "quote": "VENUS MARS (4th Aspect) — Love marriage",
+      "areas": [
+        "relationship",
+        "family"
+      ],
+      "story": {
+        "good": "Love marriage, and you are a good planner.",
+        "care": "Differences with your brother because of your wife, and affairs with other women. Marrying late is suggested, otherwise disputes may arise."
+      }
+    },
+    {
+      "id": "YG-T-964",
+      "group": "Triangular",
+      "name": "Venus Mars Rahu",
+      "planets": "Venus + Mars + Rahu",
+      "present": [
+        9,
+        6,
+        4
+      ],
+      "absent": [],
+      "ref": "Slide 23",
+      "quote": "VENUS MARS RAHU — Connected with crimes",
+      "areas": [
+        "legal",
+        "relationship"
+      ],
+      "sensitive": true,
+      "story": {
+        "trait": "You are a risk-taker.",
+        "care": "Connected with crimes and uncordial relations; two marriages, relationships and affairs."
+      },
+      "review_note": "The slide's example (Kiran Bedi) is not shown on the site."
+    },
+    {
+      "id": "YG-T-124",
+      "group": "Triangular",
+      "name": "Sun Moon Rahu",
+      "planets": "Sun + Moon + Rahu",
+      "present": [
+        1,
+        2,
+        4
+      ],
+      "absent": [],
+      "ref": "Slide 23",
+      "quote": "SUN MOON RAHU — Connected with crimes",
+      "areas": [
+        "legal",
+        "money",
+        "health",
+        "family",
+        "government"
+      ],
+      "sensitive": true,
+      "story": {
+        "care": "Connected with crimes; debts, diseases and enemies; family disturbances and ups and downs; obstruction in government work; and either no sister or differences with her."
+      }
+    },
+    {
+      "id": "YG-T-352",
+      "group": "Triangular",
+      "name": "Jupiter Moon Mercury",
+      "planets": "Jupiter + Moon + Mercury",
+      "present": [
+        3,
+        5,
+        2
+      ],
+      "absent": [],
+      "ref": "Slide 23",
+      "quote": "JUPITER MOON MERCURY — Sharp mind, Foreign travel",
+      "areas": [
+        "travel",
+        "money",
+        "home"
+      ],
+      "story": {
+        "good": "A sharp mind and foreign travel.",
+        "care": "Financial scams and shortcut methods, and less happiness from your own property. Staying away from your native place helps you progress."
+      }
+    },
+    {
+      "id": "YG-T-398",
+      "group": "Triangular",
+      "name": "Jupiter Mars Saturn",
+      "planets": "Jupiter + Mars + Saturn",
+      "present": [
+        3,
+        9,
+        8
+      ],
+      "absent": [],
+      "ref": "Slide 24",
+      "quote": "JUPITER MARS SATURN — HURDLES IN EDUCATION, FAMILY ISSUES",
+      "areas": [
+        "education",
+        "family",
+        "career"
+      ],
+      "story": {
+        "good": "You can be a judge or lawyer.",
+        "care": "Hurdles in education, family issues, either no brother or differences with him, an argumentative nature, and possible disturbance in the family."
+      }
+    },
+    {
+      "id": "YG-P-319",
+      "group": "Plane",
+      "name": "Jupiter Sun Mars",
+      "planets": "Jupiter + Sun + Mars",
+      "present": [
+        3,
+        1,
+        9
+      ],
+      "absent": [],
+      "ref": "Slide 25",
+      "quote": "JUPITER SUN MARS — STRONG PERSONALITY, AGGRESSIVE",
+      "areas": [
+        "personality",
+        "relationship",
+        "career"
+      ],
+      "story": {
+        "good": "A strong, courageous personality, educated and respected, and a sports-person.",
+        "care": "Can make you aggressive, and brings delay in marriage."
+      }
+    },
+    {
+      "id": "YG-P-675",
+      "group": "Plane",
+      "name": "Venus Ketu Mercury (Raj Yog)",
+      "planets": "Venus + Ketu + Mercury",
+      "present": [
+        6,
+        7,
+        5
+      ],
+      "absent": [],
+      "ref": "Slide 25",
+      "quote": "VENUS KETU MERCURY (RAJ YOG) — ULTRA LUXURIOUS",
+      "areas": [
+        "money",
+        "home",
+        "family",
+        "career",
+        "relationship"
+      ],
+      "story": {
+        "good": "Raj Yog: an ultra-luxurious life, a big house, family growth and a high level of living. A lover of music and art, a good speaker and writer, with love and romance, and a good businessman."
+      }
+    },
+    {
+      "id": "YG-P-954",
+      "group": "Plane",
+      "name": "Mars Mercury Rahu",
+      "planets": "Mars + Mercury + Rahu",
+      "present": [
+        9,
+        5,
+        4
+      ],
+      "absent": [],
+      "ref": "Slide 25",
+      "quote": "MARS MERCURY RAHU — QUICK DECISION AND ACTIONS",
+      "areas": [
+        "career",
+        "home",
+        "personality"
+      ],
+      "story": {
+        "good": "Quick decisions and actions; a multitasker.",
+        "care": "Jack of all trades, master of none; outspoken; property disputes."
+      }
+    },
+    {
+      "id": "YG-P-362",
+      "group": "Plane",
+      "name": "Jupiter Venus Moon",
+      "planets": "Jupiter + Venus + Moon",
+      "present": [
+        3,
+        6,
+        2
+      ],
+      "absent": [],
+      "ref": "Slide 26",
+      "quote": "JUPITER VENUS MOON — DON'T WANT TO MARRY, RISE OF DESTINY AFTER MARRIAGE",
+      "areas": [
+        "relationship",
+        "education",
+        "health",
+        "travel"
+      ],
+      "sensitive": true,
+      "story": {
+        "good": "Your destiny rises after marriage. You are attractive, a music lover, with good education.",
+        "care": "You may not want to marry. Problems related to gynae, or lack of sperm. Staying away from your native place is suggested."
+      }
+    },
+    {
+      "id": "YG-P-284",
+      "group": "Plane",
+      "name": "Moon Saturn Rahu",
+      "planets": "Moon + Saturn + Rahu",
+      "present": [
+        2,
+        8,
+        4
+      ],
+      "absent": [],
+      "ref": "Slide 26",
+      "quote": "MOON SATURN RAHU — AWAY FROM BIRTHPLACE, MAJOR UP'S AND DOWN'S LIFE",
+      "areas": [
+        "mind",
+        "health",
+        "travel"
+      ],
+      "sensitive": true,
+      "story": {
+        "care": "Away from your birthplace, with major ups and downs in life. No control over speech when aggressive. Chances of death by accident. Negative thoughts, addiction and chronic disease."
+      },
+      "review_note": "The slide's example (Rajiv Gandhi, 20/8/1944) is not shown on the site; it is used as a test."
+    },
+    {
+      "id": "YG-P-178",
+      "group": "Plane",
+      "name": "Sun Ketu Saturn",
+      "planets": "Sun + Ketu + Saturn",
+      "present": [
+        1,
+        7,
+        8
+      ],
+      "absent": [],
+      "ref": "Slide 26",
+      "quote": "SUN KETU SATURN — STRONG INTUTION POWER, BLACK TOUNGE",
+      "areas": [
+        "career",
+        "money",
+        "personality"
+      ],
+      "story": {
+        "good": "Strong intuition power, knowledge of technical work and more than one source of income. You may be a social worker, politician or philanthropist.",
+        "care": "A black tongue. You are helpful but don't get the same in return."
+      }
+    },
+    {
+      "id": "YG-D-374",
+      "group": "Diagonal",
+      "name": "Jupiter Ketu Rahu (Kaal Sarp Dosh Yoga)",
+      "planets": "Jupiter + Ketu + Rahu",
+      "present": [
+        3,
+        7,
+        4
+      ],
+      "absent": [],
+      "ref": "Slide 27",
+      "quote": "JUPITER KETU RAHU (KAAL SHARP DOSH YOGA) — SUCCESSIVE KAAL SHARP DOSHA YOGA",
+      "areas": [
+        "education",
+        "career"
+      ],
+      "story": {
+        "good": "You can reach a top position.",
+        "care": "Kaal Sarp Dosh Yoga: hurdles in education. Don't be proud or arrogant about your success."
+      },
+      "remedy": {
+        "quote": "RAHU REMEDIES",
+        "text": "Rahu remedies are advised."
+      }
+    },
+    {
+      "id": "YG-D-972",
+      "group": "Diagonal",
+      "name": "Moon Ketu Mars (Kaal Sarp Dosh Yoga)",
+      "planets": "Moon + Ketu + Mars",
+      "present": [
+        9,
+        7,
+        2
+      ],
+      "absent": [],
+      "ref": "Slide 27",
+      "quote": "MOON KETU MARS (KAAL SHARP DOSH YOGA) — STRUGGLED LIFE, AWAY FROM FAMILY",
+      "areas": [
+        "family",
+        "health"
+      ],
+      "story": {
+        "good": "Courageous.",
+        "care": "Kaal Sarp Dosh Yoga: a life of struggle, away from family, with family disturbance, joint pains and urinary diseases."
+      }
+    },
+    {
+      "id": "YG-L-197",
+      "group": "L shape",
+      "name": "Sun Mars Ketu",
+      "planets": "Sun + Mars + Ketu",
+      "present": [
+        1,
+        9,
+        7
+      ],
+      "absent": [],
+      "ref": "Slide 28",
+      "quote": "SUN MARS KETU — MARRIAGE DELAY, INTERCASTE MARRIAGE",
+      "areas": [
+        "relationship",
+        "travel"
+      ],
+      "story": {
+        "good": "Fortunate, with foreign travel.",
+        "trait": "Points to an inter-caste marriage.",
+        "care": "Delay in marriage (a late marriage) and Manglik."
+      }
+    },
+    {
+      "id": "YG-L-175",
+      "group": "L shape",
+      "name": "Sun Ketu Mercury",
+      "planets": "Sun + Ketu + Mercury",
+      "present": [
+        1,
+        7,
+        5
+      ],
+      "absent": [],
+      "ref": "Slide 28",
+      "quote": "SUN KETU MERCURY — Sharp mind and high Level Thoughts",
+      "areas": [
+        "career",
+        "personality"
+      ],
+      "story": {
+        "good": "A sharp mind with high-level thoughts, logical-minded, suiting a teacher or astrologer."
+      }
+    },
+    {
+      "id": "YG-L-167",
+      "group": "L shape",
+      "name": "Sun Ketu Venus",
+      "planets": "Sun + Ketu + Venus",
+      "present": [
+        1,
+        6,
+        7
+      ],
+      "absent": [],
+      "ref": "Slide 28",
+      "quote": "SUN KETU VENUS — Music Lover / Luxury Life Style",
+      "areas": [
+        "relationship",
+        "personality"
+      ],
+      "story": {
+        "good": "A music lover with a luxurious lifestyle.",
+        "care": "More than one love affair and marriage, with ups and downs."
+      }
+    },
+    {
+      "id": "YG-L-317",
+      "group": "L shape",
+      "name": "Jupiter Sun Ketu",
+      "planets": "Jupiter + Sun + Ketu",
+      "present": [
+        3,
+        1,
+        7
+      ],
+      "absent": [],
+      "ref": "Slide 29",
+      "quote": "JUPITER SUN KETU — Govt. Job / Abroad Tours",
+      "areas": [
+        "government",
+        "career",
+        "travel",
+        "education"
+      ],
+      "story": {
+        "good": "A government job and tours abroad. You can be a teacher, judge, advocate or astrologer, educated and respected."
+      }
+    },
+    {
+      "id": "YG-L-754",
+      "group": "L shape",
+      "name": "Ketu Mercury Rahu (Bondage Yoga)",
+      "planets": "Ketu + Mercury + Rahu",
+      "present": [
+        7,
+        5,
+        4
+      ],
+      "absent": [],
+      "ref": "Slide 29",
+      "quote": "KETU MERCURY RAHU — Debt Related issues and Defamation",
+      "areas": [
+        "money",
+        "legal"
+      ],
+      "story": {
+        "care": "Bondage Yoga: debt-related issues and defamation, and a life of struggle."
+      }
+    },
+    {
+      "id": "YG-L-584",
+      "group": "L shape",
+      "name": "Mercury Rahu Saturn (Bondage Yoga)",
+      "planets": "Mercury + Rahu + Saturn",
+      "present": [
+        5,
+        8,
+        4
+      ],
+      "absent": [],
+      "ref": "Slide 29",
+      "quote": "MERCURY RAHU SATURN — Addiction / Bondage Yoga",
+      "areas": [
+        "health",
+        "money",
+        "mind"
+      ],
+      "sensitive": true,
+      "story": {
+        "care": "Bondage Yoga: addiction, a possible lack of sexual life, and fear of loss."
+      }
+    },
+    {
+      "id": "YG-L-628",
+      "group": "L shape",
+      "name": "Venus Moon Saturn",
+      "planets": "Venus + Moon + Saturn",
+      "present": [
+        6,
+        2,
+        8
+      ],
+      "absent": [],
+      "ref": "Slide 30",
+      "quote": "VENUS MOON SATURN — Family Trouble due to Opposite Sex",
+      "areas": [
+        "family",
+        "money",
+        "education",
+        "relationship"
+      ],
+      "story": {
+        "good": "You have good money.",
+        "care": "Family trouble because of the opposite sex, obstruction in education, and obstacles."
+      }
+    },
+    {
+      "id": "YG-Q-1658",
+      "group": "Four digit",
+      "name": "Sun Venus Saturn Mercury (Raj Yog)",
+      "planets": "Sun + Venus + Saturn + Mercury",
+      "present": [
+        1,
+        6,
+        5,
+        8
+      ],
+      "absent": [],
+      "ref": "Slide 31",
+      "quote": "SUN VENUS SATURN MERCURY (RAJ YOG) — INTELLIGENT AND COURAGEOUS",
+      "areas": [
+        "career",
+        "personality",
+        "travel"
+      ],
+      "story": {
+        "good": "Raj Yog: intelligent, courageous and flexible, with name and fame in your country and abroad."
+      },
+      "review_note": "The slide's example (Sania Mirza) is not shown on the site; her birth date is used as a test."
+    }
   ]
 }

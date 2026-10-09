@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { baseRulebook } from '../engine/rulebook.js';
+import review from '../rules/review.json' with { type: 'json' };
 import { polarity } from '../engine/core.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -14,6 +15,7 @@ const engineSource = read('engine/core.js').replace(/^export /gm, '');
 const safeJson = JSON.stringify(baseRulebook).replace(/</g, '\\u003c');
 const html = read('review/template.html')
   .replace('/*__RULEBOOK__*/null', () => safeJson)
+  .replace('/*__REVIEW__*/null', () => JSON.stringify(review).replace(/</g, '\\u003c'))
   .replace('/*__ENGINE__*/', () => engineSource);
 writeFileSync(join(root, 'review/index.html'), html);
 

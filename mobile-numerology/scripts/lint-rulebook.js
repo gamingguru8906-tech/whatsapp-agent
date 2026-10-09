@@ -102,12 +102,15 @@ for (let y = 1; y <= 9; y++) {
   for (const it of items) {
     addId(it.id, `personal year ${y}`); pyIds.add(it.id);
     if (!py.sources[it.src]) fail(`${it.id}: unknown source ${it.src}`);
-    else checkQuote(it.id, py.sources[it.src], it.quote);
+    else { checkQuote(it.id, py.sources[it.src], it.quote); for (const q of it.also || []) checkQuote(`${it.id} (also)`, py.sources[it.src], q); }
     if (!it.text) fail(`${it.id}: no text`);
     if (it.conflict && !conflictIds.has(it.conflict)) fail(`${it.id}: unknown conflict ${it.conflict}`);
   }
 }
-for (const it of py.for_everyone) { addId(it.id, 'personal year (everyone)'); checkQuote(it.id, py.sources[it.src], it.quote); }
+for (const it of py.for_everyone) {
+  addId(it.id, 'personal year (everyone)');
+  if (!py.sources[it.src]) fail(`${it.id}: unknown source ${it.src}`); else checkQuote(it.id, py.sources[it.src], it.quote);
+}
 for (const c of conflicts.conflicts) {
   for (const s of c.sides) if (!pyIds.has(s)) fail(`${c.id}: side ${s} does not exist`);
   for (const o of c.options) for (const s of o.show) if (!pyIds.has(s)) fail(`${c.id}/${o.key}: ${s} does not exist`);

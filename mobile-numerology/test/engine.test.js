@@ -18,6 +18,18 @@ test('rulebook passes the source check', () => {
   execFileSync(process.execPath, [script], { stdio: 'pipe' });
 });
 
+test('source audit: nothing added beyond the sources, nothing on the slides missed', () => {
+  const script = fileURLToPath(new URL('../scripts/audit-sources.js', import.meta.url));
+  execFileSync(process.execPath, [script], { stdio: 'pipe' });
+});
+
+test('a tip tied to a life area shows only for that concern', () => {
+  const tips = concern => engine.reading({ ...base, concern }).sections.find(s => s.id === 'year-ahead').forEveryone.map(i => i.id);
+  assert.ok(tips('business not working').includes('PY-ALL-5'));
+  assert.ok(!tips('marriage delay').includes('PY-ALL-5'));
+  assert.ok(tips('marriage delay').includes('PY-ALL-1'));
+});
+
 // ---- Golden tests taken from the sources ----
 test('P01 example: Rajiv Gandhi 20/8/1944 has Moon-Saturn-Rahu (2-8-4) on the birth grid', () => {
   const y = engine.yogasFor(gridCounts(dobDigits(dob('1944-08-20'))));

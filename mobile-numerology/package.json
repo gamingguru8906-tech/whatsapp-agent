@@ -8,6 +8,7 @@
     "lint:rules": "node scripts/lint-rulebook.js",
     "lint:rules:strict": "node scripts/lint-rulebook.js --strict",
     "review": "node scripts/build-review.js",
+    "audit": "node scripts/audit-sources.js",
     "test": "node --test test/*.test.js"
   },
   "engines": {

@@ -298,7 +298,7 @@ export function createEngine(rulebook) {
     sections.push({ id: 'concern', text: concern, matchedWords: words, areas,
       items: areas.length ? [...mobileItems, ...dobYogas.map(y => ({ ...y, fromDob: true }))].filter(touches) : [] });
     if (cur.professions.length) sections.push({ id: 'career', professions: cur.professions });
-    sections.push({ id: 'year-ahead', years: yearAhead(dob.value, year, nameNo), forEveryone: py.for_everyone.map(i => ({ id: i.id, text: i.text })) });
+    sections.push({ id: 'year-ahead', years: yearAhead(dob.value, year, nameNo), forEveryone: py.for_everyone.filter(i => !i.areas || i.areas.some(a => wanted.has(a))).map(i => ({ id: i.id, text: i.text })) });
     if (nameNo) sections.push({ id: 'name', ...nameNo, method: 'Chaldean' });
     const ifKept = mobileItems.filter(x => x.care);
     if (ifKept.length) sections.push({ id: 'if-kept', items: ifKept.map(x => ({ id: x.id, title: x.title, kind: x.kind, text: x.care, areas: x.areas, forConcern: touches(x) })) });

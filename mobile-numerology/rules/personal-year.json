@@ -1,161 +1,1011 @@
 {
   "kind": "personal_year",
   "about": "Personal Year = day of birth + month of birth + digit-sum of the target year, reduced fully to 1-9 (birth year not used; 11 and 22 reduce further). The story shows the current calendar year and the next one. Items come from two speakers: T01 and T03.",
-  "sources": { "T01": "T01-personal-year-a.md", "T03": "T03-personal-year-b.md" },
+  "sources": {
+    "T01": "T01-personal-year-a.md",
+    "T03": "T03-personal-year-b.md",
+    "T02": "T02-power-yantra-loshu.md"
+  },
   "method": [
-    { "id": "PY-METHOD-T01", "src": "T01", "quote": "add the day of birth, the month of birth, and the digits of the year being considered, reducing the result to a single digit" },
-    { "id": "PY-METHOD-T03", "src": "T03", "quote": "The speaker says not to include the birth year." },
-    { "id": "PY-METHOD-T03-11", "src": "T03", "quote": "18 + 11 + 9 = 38, then 3 + 8 = 11, then 1 + 1 = 2" }
+    {
+      "id": "PY-METHOD-T01",
+      "src": "T01",
+      "quote": "add the day of birth, the month of birth, and the digits of the year being considered, reducing the result to a single digit"
+    },
+    {
+      "id": "PY-METHOD-T03",
+      "src": "T03",
+      "quote": "The speaker says not to include the birth year."
+    },
+    {
+      "id": "PY-METHOD-T03-11",
+      "src": "T03",
+      "quote": "18 + 11 + 9 = 38, then 3 + 8 = 11, then 1 + 1 = 2"
+    }
   ],
   "years": {
     "1": [
-      { "id": "PY1-T01-a", "src": "T01", "cat": "theme", "quote": "progress may feel slow at first, and a person may feel stuck or underappreciated before opportunities become clearer", "text": "A new beginning after a dark phase. Progress may feel slow at first, and you may feel stuck or unappreciated before opportunities become clear." },
-      { "id": "PY1-T01-b", "src": "T01", "cat": "do", "quote": "build a morning routine and make use of morning sunlight", "text": "Build a morning routine and make use of the morning sunlight." },
-      { "id": "PY1-T01-c", "src": "T01", "cat": "remedy", "quote": "keeping a rising-sun image in the work area", "text": "Keep a rising-sun image in your work area." },
-      { "id": "PY1-T01-d", "src": "T01", "cat": "do", "quote": "recommends feeding people on Sundays", "text": "Feed people on Sundays (a community meal, a shared meal, or food you prepare and give away). Generosity matters this year." },
-      { "id": "PY1-T01-e", "src": "T01", "cat": "do", "quote": "For the second half of the year, the speaker advises dressing impressively", "text": "In the second half of the year, dress impressively." },
-      { "id": "PY1-T01-f", "src": "T01", "cat": "do", "quote": "recommends respecting senior colleagues or business contacts", "text": "Respect elders, your father, and senior colleagues or business contacts." },
-      { "id": "PY1-T01-g", "src": "T01", "cat": "career", "quote": "bringing a senior person—such as a retired military officer—into a position in the business", "text": "If your business is struggling, bring a senior person (for example, a retired military officer) into a position in it." },
-      { "id": "PY1-T03-a", "src": "T03", "cat": "theme", "quote": "associates personal year 1 with sunrise, visibility, name, and fame", "text": "A year of sunrise, visibility, name and fame." },
-      { "id": "PY1-T03-b", "src": "T03", "cat": "theme", "quote": "followed by stronger momentum after March or April", "text": "A slower start, then stronger momentum after March or April. The middle of the year is especially good for important plans." },
-      { "id": "PY1-T03-c", "src": "T03", "cat": "remedy", "quote": "spend a few minutes watching the sunrise", "text": "Spend a few minutes watching the sunrise." },
-      { "id": "PY1-T03-d", "src": "T03", "cat": "avoid", "quote": "not overcommitting, overpromising, or making large purchases early in the year", "text": "Don't overcommit, overpromise or make large purchases early in the year; move those plans to the second half." },
-      { "id": "PY1-T03-e", "src": "T03", "cat": "colours", "quote": "names yellow and orange as favorable colors", "text": "Yellow and orange." },
-      { "id": "PY1-T03-f", "src": "T03", "cat": "accessories", "quote": "recommends a golden watch", "text": "A golden watch." }
+      {
+        "id": "PY1-T01-a",
+        "src": "T01",
+        "cat": "theme",
+        "quote": "progress may feel slow at first, and a person may feel stuck or underappreciated before opportunities become clearer",
+        "text": "A new beginning after a dark phase. Progress may feel slow at first, and you may feel stuck or unappreciated before opportunities become clear."
+      },
+      {
+        "id": "PY1-T01-b",
+        "src": "T01",
+        "cat": "do",
+        "quote": "build a morning routine and make use of morning sunlight",
+        "text": "Build a morning routine and make use of the morning sunlight."
+      },
+      {
+        "id": "PY1-T01-c",
+        "src": "T01",
+        "cat": "remedy",
+        "quote": "keeping a rising-sun image in the work area",
+        "text": "Keep a rising-sun image in your work area."
+      },
+      {
+        "id": "PY1-T01-d",
+        "src": "T01",
+        "cat": "do",
+        "quote": "recommends feeding people on Sundays",
+        "text": "Feed people on Sundays (a community meal, a shared meal, or food you prepare and give away). Generosity matters this year."
+      },
+      {
+        "id": "PY1-T01-e",
+        "src": "T01",
+        "cat": "do",
+        "quote": "For the second half of the year, the speaker advises dressing impressively",
+        "text": "In the second half of the year, dress impressively."
+      },
+      {
+        "id": "PY1-T01-f",
+        "src": "T01",
+        "cat": "do",
+        "quote": "recommends respecting senior colleagues or business contacts",
+        "text": "Respect elders, your father, and senior colleagues or business contacts."
+      },
+      {
+        "id": "PY1-T01-h",
+        "src": "T01",
+        "cat": "theme",
+        "quote": "a poorly placed Sun could be associated with reputational problems or job loss",
+        "text": "A poorly placed Sun can be linked with reputation problems or job loss. Conflict with elders or your father is a sign of an unbalanced Sun."
+      },
+      {
+        "id": "PY1-T01-g",
+        "src": "T01",
+        "cat": "career",
+        "quote": "bringing a senior person—such as a retired military officer—into a position in the business",
+        "text": "If your business is struggling, bring a senior person (for example, a retired military officer) into a position in it."
+      },
+      {
+        "id": "PY1-T03-a",
+        "src": "T03",
+        "cat": "theme",
+        "quote": "associates personal year 1 with sunrise, visibility, name, and fame",
+        "text": "A year of sunrise, visibility, name and fame."
+      },
+      {
+        "id": "PY1-T03-b",
+        "src": "T03",
+        "cat": "theme",
+        "quote": "followed by stronger momentum after March or April",
+        "text": "A slower start, then stronger momentum after March or April. The middle of the year is especially good for important plans."
+      },
+      {
+        "id": "PY1-T03-c",
+        "src": "T03",
+        "cat": "remedy",
+        "quote": "spend a few minutes watching the sunrise",
+        "text": "Spend a few minutes watching the sunrise."
+      },
+      {
+        "id": "PY1-T03-d",
+        "src": "T03",
+        "cat": "avoid",
+        "quote": "not overcommitting, overpromising, or making large purchases early in the year",
+        "text": "Don't overcommit, overpromise or make large purchases early in the year; move those plans to the second half."
+      },
+      {
+        "id": "PY1-T03-e",
+        "src": "T03",
+        "cat": "colours",
+        "quote": "names yellow and orange as favorable colors",
+        "text": "Yellow and orange."
+      },
+      {
+        "id": "PY1-T03-f",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "recommends a golden watch",
+        "text": "A golden watch. A watch is a reminder of timing and decisions: choosing the right time to act is what makes an action lucky."
+      }
     ],
     "2": [
-      { "id": "PY2-T01-a", "src": "T01", "cat": "theme", "quote": "associates year two with the Moon and the mind", "text": "A Moon year: the mind leans towards comfort, so a steady routine helps you most." },
-      { "id": "PY2-T01-b", "src": "T01", "cat": "do", "quote": "follow a fixed routine: show up even when motivation is low, go to the office rather than defaulting to working from home, and maintain a proper work station", "text": "Follow a fixed routine: show up even when motivation is low, go to the office rather than working from home, and keep a proper work station." },
-      { "id": "PY2-T01-c", "src": "T01", "cat": "do", "quote": "supporting a child’s education through school fees or books", "text": "Help someone going through hardship, especially by supporting a child's education with school fees or books." },
-      { "id": "PY2-T01-d", "src": "T01", "cat": "career", "quote": "eating with more junior colleagues or team members about once a week", "text": "If you lead a team or business, eat with junior colleagues about once a week and take a caring, mother-like approach." },
-      { "id": "PY2-T01-e", "src": "T01", "cat": "money", "quote": "year two may be a favorable time for property investment if one can afford it; if not, they suggest investing in silver instead", "text": "A favourable time for property investment if you can afford it; if not, invest in silver." },
-      { "id": "PY2-T03-a", "src": "T03", "cat": "do", "quote": "looking at oneself in the mirror and offering oneself a compliment", "text": "Begin the day by looking in the mirror and giving yourself a compliment." },
-      { "id": "PY2-T03-b", "src": "T03", "cat": "relationship", "quote": "favorable for marriage and for people considering conception", "text": "Favourable for marriage and for those planning a child." },
-      { "id": "PY2-T03-c", "src": "T03", "cat": "money", "quote": "also for buying property or building a home", "text": "Good for buying property or building a home (keeping down payments and instalments in mind)." },
-      { "id": "PY2-T03-d", "src": "T03", "cat": "do", "quote": "getting advice from suitable people before moving forward", "text": "Take advice from the right people before moving forward." },
-      { "id": "PY2-T03-e", "src": "T03", "cat": "health", "quote": "emphasizes adequate sleep", "text": "Get enough sleep, especially before exams or presentations. Keep the day for work and the night for sleep." },
-      { "id": "PY2-T03-f", "src": "T03", "cat": "colours", "quote": "white, light blue, and pink", "text": "White, light blue and pink." },
-      { "id": "PY2-T03-g", "src": "T03", "cat": "accessories", "quote": "silver watch with a white or blue dial", "text": "A silver watch with a white or blue dial." }
+      {
+        "id": "PY2-T01-a",
+        "src": "T01",
+        "cat": "theme",
+        "quote": "associates year two with the Moon and the mind",
+        "text": "A Moon year: the mind leans towards comfort and away from discipline."
+      },
+      {
+        "id": "PY2-T01-b",
+        "src": "T01",
+        "cat": "do",
+        "quote": "follow a fixed routine: show up even when motivation is low, go to the office rather than defaulting to working from home, and maintain a proper work station",
+        "text": "Follow a fixed routine: show up even when motivation is low, go to the office rather than working from home, and keep a proper work station."
+      },
+      {
+        "id": "PY2-T01-c",
+        "src": "T01",
+        "cat": "do",
+        "quote": "supporting a child’s education through school fees or books",
+        "text": "Help someone going through hardship, especially by supporting a child's education with school fees or books. The help and happiness you give return as happiness."
+      },
+      {
+        "id": "PY2-T01-d",
+        "src": "T01",
+        "cat": "career",
+        "quote": "eating with more junior colleagues or team members about once a week",
+        "text": "If you lead a team or business, eat with junior colleagues about once a week and take a caring, mother-like approach."
+      },
+      {
+        "id": "PY2-T01-e",
+        "src": "T01",
+        "cat": "money",
+        "quote": "year two may be a favorable time for property investment if one can afford it; if not, they suggest investing in silver instead",
+        "text": "A favourable time for property investment if you can afford it; if not, invest in silver."
+      },
+      {
+        "id": "PY2-T03-a",
+        "src": "T03",
+        "cat": "do",
+        "quote": "looking at oneself in the mirror and offering oneself a compliment",
+        "text": "Begin the day by looking in the mirror and giving yourself a compliment. It is not self-obsession: it is self-love, and it builds confidence."
+      },
+      {
+        "id": "PY2-T03-b",
+        "src": "T03",
+        "cat": "relationship",
+        "quote": "favorable for marriage and for people considering conception",
+        "text": "Favourable for marriage and for those planning a child."
+      },
+      {
+        "id": "PY2-T03-c",
+        "src": "T03",
+        "cat": "money",
+        "quote": "also for buying property or building a home",
+        "text": "Good for buying property or building a home. Take a leap of faith while keeping down payments and instalments in mind, and develop connections and seek support."
+      },
+      {
+        "id": "PY2-T03-d",
+        "src": "T03",
+        "cat": "do",
+        "quote": "getting advice from suitable people before moving forward",
+        "text": "Take advice from the right people before moving forward."
+      },
+      {
+        "id": "PY2-T03-e",
+        "src": "T03",
+        "cat": "health",
+        "quote": "emphasizes adequate sleep",
+        "text": "Get enough sleep, especially before exams or presentations. Keep the day for work and the night for sleep."
+      },
+      {
+        "id": "PY2-T03-f",
+        "src": "T03",
+        "cat": "colours",
+        "quote": "white, light blue, and pink",
+        "text": "White, light blue and pink."
+      },
+      {
+        "id": "PY2-T03-g",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "silver watch with a white or blue dial",
+        "text": "A silver watch with a white or blue dial."
+      }
     ],
     "3": [
-      { "id": "PY3-T01-a", "src": "T01", "cat": "do", "quote": "compliment oneself, learn an idea, share it with three people, and start the day cheerfully", "text": "Start the day with Beauty, Knowledge and Laughter: compliment yourself, learn one idea, share it with three people, and begin cheerfully." },
-      { "id": "PY3-T01-b", "src": "T01", "cat": "theme", "quote": "potentially fortunate period for advancement, public recognition, or business growth", "text": "A potentially fortunate year for advancement, public recognition or business growth." },
-      { "id": "PY3-T01-c", "src": "T01", "cat": "avoid", "quote": "repeatedly complaining about one’s work may reinforce dissatisfaction", "text": "Avoid repeatedly complaining about your work." },
-      { "id": "PY3-T01-d", "src": "T01", "cat": "do", "quote": "learning a skill that increases professional value, and maintaining physical fitness", "text": "Study something new, learn a skill that raises your professional value, and stay fit. This prepares you for next year." },
-      { "id": "PY3-T03-a", "src": "T03", "cat": "theme", "quote": "opportunities for promotion and profit", "text": "Opportunities for promotion and profit, especially through sales, speaking with people and strong presentations." },
-      { "id": "PY3-T03-b", "src": "T03", "cat": "avoid", "quote": "warns against insults, gossip, and speaking badly about others", "text": "Avoid insults, gossip and speaking badly about others. Be kind with words." },
-      { "id": "PY3-T03-c", "src": "T03", "cat": "remedy", "quote": "spending about 10 minutes between 5 p.m. and 9 p.m. reciting prayers", "text": "Spend about 10 minutes between 5 p.m. and 9 p.m. reciting prayers or devotional songs, loud enough to hear your own voice." },
-      { "id": "PY3-T03-d", "src": "T03", "cat": "career", "quote": "favorable for job changes, promotions, and visa-related plans", "text": "Favourable for job changes, promotions and visa-related plans." },
-      { "id": "PY3-T03-e", "src": "T03", "cat": "colours", "quote": "yellow, light blue, and silver", "text": "Yellow, light blue and silver." },
-      { "id": "PY3-T03-f", "src": "T03", "cat": "accessories", "quote": "gold or combinations of gold and silver", "text": "Gold, or gold-and-silver combinations: watches, bracelets or chains." }
+      {
+        "id": "PY3-T01-a",
+        "src": "T01",
+        "cat": "do",
+        "quote": "compliment oneself, learn an idea, share it with three people, and start the day cheerfully",
+        "text": "Start the day with Beauty, Knowledge and Laughter: compliment yourself, learn one idea, share it with three people, and begin cheerfully."
+      },
+      {
+        "id": "PY3-T01-b",
+        "src": "T01",
+        "cat": "theme",
+        "quote": "potentially fortunate period for advancement, public recognition, or business growth",
+        "text": "A potentially fortunate year for advancement, public recognition or business growth."
+      },
+      {
+        "id": "PY3-T01-c",
+        "src": "T01",
+        "cat": "avoid",
+        "quote": "repeatedly complaining about one’s work may reinforce dissatisfaction",
+        "text": "Avoid repeatedly complaining about your work."
+      },
+      {
+        "id": "PY3-T01-d",
+        "src": "T01",
+        "cat": "do",
+        "quote": "learning a skill that increases professional value, and maintaining physical fitness",
+        "text": "Study something new, learn a skill that raises your professional value, and stay fit. Next year reflects what you do this year: neglecting fitness may be followed by illness, and not building skills may leave you feeling behind."
+      },
+      {
+        "id": "PY3-T03-a",
+        "src": "T03",
+        "cat": "theme",
+        "quote": "opportunities for promotion and profit",
+        "text": "Opportunities for promotion and profit, especially through sales, speaking with people and strong presentations."
+      },
+      {
+        "id": "PY3-T03-b",
+        "src": "T03",
+        "cat": "avoid",
+        "quote": "warns against insults, gossip, and speaking badly about others",
+        "text": "Avoid insults, gossip and speaking badly about others. Be kind with words."
+      },
+      {
+        "id": "PY3-T03-c",
+        "src": "T03",
+        "cat": "remedy",
+        "quote": "spending about 10 minutes between 5 p.m. and 9 p.m. reciting prayers",
+        "text": "Spend about 10 minutes between 5 p.m. and 9 p.m. reciting prayers or devotional songs, loud enough to hear your own voice."
+      },
+      {
+        "id": "PY3-T03-d",
+        "src": "T03",
+        "cat": "career",
+        "quote": "favorable for job changes, promotions, and visa-related plans",
+        "text": "Favourable for job changes, promotions and visa-related plans."
+      },
+      {
+        "id": "PY3-T03-e",
+        "src": "T03",
+        "cat": "colours",
+        "quote": "yellow, light blue, and silver",
+        "text": "Yellow, light blue and silver."
+      },
+      {
+        "id": "PY3-T03-f",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "gold or combinations of gold and silver",
+        "text": "Gold, or gold-and-silver combinations: watches, bracelets or chains."
+      }
     ],
     "4": [
-      { "id": "PY4-T01-a", "src": "T01", "cat": "do", "quote": "focus on letting go rather than clinging to things", "text": "Focus on letting go rather than clinging to things." },
-      { "id": "PY4-T01-b", "src": "T01", "cat": "career", "quote": "strengthening relationships and working bonds with teammates, stakeholders, vendors, and suppliers", "text": "Strengthen your bonds with teammates, stakeholders, vendors and suppliers, so you are less likely to be misunderstood." },
-      { "id": "PY4-T01-c", "src": "T01", "cat": "money", "quote": "avoid taking large loans and to be careful with credit cards", "text": "Avoid large loans and be careful with credit cards. Don't spend money before it actually arrives." },
-      { "id": "PY4-T01-d", "src": "T01", "cat": "do", "quote": "keeping one’s surroundings and records organized", "text": "Keep your surroundings and records organised: papers, insurance, licences, degrees, emails and chats." },
-      { "id": "PY4-T01-e", "src": "T01", "cat": "avoid", "quote": "warns against withdrawing socially during year four", "text": "Don't withdraw socially. Attend seminars, webinars, meetings and professional gatherings." },
-      { "id": "PY4-T01-f", "src": "T01", "cat": "do", "quote": "starting half an hour early", "text": "Add extra time to your work, for example by starting half an hour early." },
-      { "id": "PY4-T01-g", "src": "T01", "cat": "chart", "quote": "results may depend on its placement in a birth chart", "text": "Rahu's placement in your birth chart shapes this year; a full chart reading needs your time and place of birth." },
-      { "id": "PY4-T03-a", "src": "T03", "cat": "do", "quote": "begin learning early in the year", "text": "Begin learning early in the year: a certification, growing your business, a cooking course or personal finance." },
-      { "id": "PY4-T03-b", "src": "T03", "cat": "remedy", "quote": "make the bed neatly each morning", "text": "The 'golden remedy': make your bed neatly every morning with clean, fresh bedding." },
-      { "id": "PY4-T03-c", "src": "T03", "cat": "remedy", "quote": "oud, rose, or cedar", "text": "Use fragrances such as oud, rose or cedar, carry a piece of cinnamon, and apply a sandalwood mark on your forehead." },
-      { "id": "PY4-T03-d", "src": "T03", "cat": "money", "quote": "advises against risky investments", "text": "Avoid risky investments; choose security." },
-      { "id": "PY4-T03-e", "src": "T03", "cat": "do", "quote": "adding half an hour to one’s work or study schedule", "text": "Add half an hour to your work or study schedule." },
-      { "id": "PY4-T03-f", "src": "T03", "cat": "accessories", "quote": "steel watch with a blue dial", "text": "A steel watch with a blue dial." }
+      {
+        "id": "PY4-T01-a",
+        "src": "T01",
+        "cat": "do",
+        "quote": "focus on letting go rather than clinging to things",
+        "text": "Focus on letting go rather than clinging to things."
+      },
+      {
+        "id": "PY4-T01-b",
+        "src": "T01",
+        "cat": "career",
+        "quote": "strengthening relationships and working bonds with teammates, stakeholders, vendors, and suppliers",
+        "text": "Strengthen your bonds with teammates, stakeholders, vendors and suppliers, so you are less likely to be misunderstood."
+      },
+      {
+        "id": "PY4-T01-c",
+        "src": "T01",
+        "cat": "money",
+        "quote": "avoid taking large loans and to be careful with credit cards",
+        "text": "Avoid large loans and be careful with credit cards. Don't spend money before it actually arrives."
+      },
+      {
+        "id": "PY4-T01-d",
+        "src": "T01",
+        "cat": "do",
+        "quote": "keeping one’s surroundings and records organized",
+        "text": "Keep your surroundings and records organised: papers, insurance, licences, degrees, emails and chats."
+      },
+      {
+        "id": "PY4-T01-e",
+        "src": "T01",
+        "cat": "avoid",
+        "quote": "warns against withdrawing socially during year four",
+        "text": "Don't withdraw socially. Attend seminars, webinars, meetings and professional gatherings."
+      },
+      {
+        "id": "PY4-T01-f",
+        "src": "T01",
+        "cat": "do",
+        "quote": "starting half an hour early",
+        "text": "Add extra time to your work, for example by starting half an hour early."
+      },
+      {
+        "id": "PY4-T01-g",
+        "src": "T01",
+        "cat": "chart",
+        "quote": "results may depend on its placement in a birth chart",
+        "text": "Results this year may depend on where Rahu sits in your birth chart: the first and fifth houses are favourable, while the twelfth house, or the Shatabhisha and Swati nakshatras, can bring difficulty. Know your birth chart, nakshatra and Moon sign, and ask an astrologer."
+      },
+      {
+        "id": "PY4-T03-a",
+        "src": "T03",
+        "cat": "do",
+        "quote": "begin learning early in the year",
+        "text": "Begin learning early in the year: a certification, growing your business, a cooking course or personal finance."
+      },
+      {
+        "id": "PY4-T03-b",
+        "src": "T03",
+        "cat": "remedy",
+        "quote": "make the bed neatly each morning",
+        "text": "The 'golden remedy': make your bed neatly every morning with clean, fresh bedding."
+      },
+      {
+        "id": "PY4-T03-c",
+        "src": "T03",
+        "cat": "remedy",
+        "quote": "oud, rose, or cedar",
+        "text": "Use fragrances such as oud, rose or cedar, carry a piece of cinnamon, and apply a sandalwood mark on your forehead."
+      },
+      {
+        "id": "PY4-T03-d",
+        "src": "T03",
+        "cat": "money",
+        "quote": "advises against risky investments",
+        "text": "Avoid risky investments; choose security."
+      },
+      {
+        "id": "PY4-T03-e",
+        "src": "T03",
+        "cat": "do",
+        "quote": "adding half an hour to one’s work or study schedule",
+        "text": "Add half an hour to your work or study schedule."
+      },
+      {
+        "id": "PY4-T03-f",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "steel watch with a blue dial",
+        "text": "A steel watch with a blue dial."
+      }
     ],
     "5": [
-      { "id": "PY5-T01-a", "src": "T01", "cat": "theme", "quote": "describes year five as a “breath of fresh air” after a difficult period", "text": "A breath of fresh air after a difficult period, with an urge to do something new." },
-      { "id": "PY5-T01-b", "src": "T01", "cat": "avoid", "quote": "rather than rushing into a partnership", "text": "Don't rush into a partnership. Use the skills and experience of earlier years." },
-      { "id": "PY5-T01-c", "src": "T01", "cat": "do", "quote": "actively expanding one’s network", "text": "Actively expand your network: meet new people and introduce yourself confidently." },
-      { "id": "PY5-T01-d", "src": "T01", "cat": "remedy", "quote": "lighting a ghee lamp by a tulsi plant each day", "text": "Keep plants and greenery healthy, and light a ghee lamp by a tulsi plant every day." },
-      { "id": "PY5-T01-e", "src": "T01", "cat": "remedy", "quote": "putting water in a green glass bottle, leaving it in sunlight for one to two hours, and drinking it daily", "text": "If you feel stuck: keep water in a green glass bottle in sunlight for one to two hours and drink it daily." },
-      { "id": "PY5-T03-a", "src": "T03", "cat": "theme", "quote": "favorable for promotion, increased income, and growth", "text": "Favourable for promotion, higher income and growth, especially if last year was a struggle." },
-      { "id": "PY5-T03-b", "src": "T03", "cat": "remedy", "quote": "leaving home with a tulsi leaf or green cardamom in the mouth", "text": "Care for a tulsi or other plants each morning, and leave home with a tulsi leaf or green cardamom in your mouth." },
-      { "id": "PY5-T03-c", "src": "T03", "cat": "health", "quote": "warns of possible digestive problems", "text": "Look after your digestion: eat home-cooked food rather than too much restaurant food." },
-      { "id": "PY5-T03-d", "src": "T03", "cat": "do", "quote": "walking 5 kilometres a day", "text": "For strong results, walk 5 km a day: 2.5 km in the morning and 2.5 km in the evening." },
-      { "id": "PY5-T03-e", "src": "T03", "cat": "travel", "quote": "may suit people who want to travel or pursue further studies", "text": "Suits travel and further studies." },
-      { "id": "PY5-T03-f", "src": "T03", "cat": "do", "quote": "meeting people cheerfully rather than angrily", "text": "Meet people cheerfully, not angrily." },
-      { "id": "PY5-T03-g", "src": "T03", "cat": "money", "quote": "may consider trading or the stock market", "text": "Trading or the stock market may be considered, but the decision is yours; do your own research." },
-      { "id": "PY5-T03-h", "src": "T03", "cat": "colours", "quote": "he recommends green, including a green watch dial or wallet", "text": "Green, including a green wallet." },
-      { "id": "PY5-T03-i", "src": "T03", "cat": "accessories", "quote": "specifically suggests a metal watch with a green dial", "text": "A metal watch with a green dial." }
+      {
+        "id": "PY5-T01-a",
+        "src": "T01",
+        "cat": "theme",
+        "quote": "describes year five as a “breath of fresh air” after a difficult period",
+        "text": "A breath of fresh air after a difficult period, with an urge to do something new."
+      },
+      {
+        "id": "PY5-T01-b",
+        "src": "T01",
+        "cat": "avoid",
+        "quote": "rather than rushing into a partnership",
+        "text": "Don't rush into a partnership. Use the skills and experience of earlier years."
+      },
+      {
+        "id": "PY5-T01-c",
+        "src": "T01",
+        "cat": "do",
+        "quote": "actively expanding one’s network",
+        "text": "Actively expand your network. Ask yourself how many people know you and how many you know, because a very small circle may limit results. Meet new people, introduce yourself confidently, and treat conversations as possible sources of results or referrals."
+      },
+      {
+        "id": "PY5-T01-d",
+        "src": "T01",
+        "cat": "remedy",
+        "quote": "lighting a ghee lamp by a tulsi plant each day",
+        "text": "Keep plants and greenery healthy, and light a ghee lamp by a tulsi plant every day."
+      },
+      {
+        "id": "PY5-T01-e",
+        "src": "T01",
+        "cat": "remedy",
+        "quote": "putting water in a green glass bottle, leaving it in sunlight for one to two hours, and drinking it daily",
+        "text": "If you feel stuck: keep water in a green glass bottle in sunlight for one to two hours and drink it daily."
+      },
+      {
+        "id": "PY5-T03-a",
+        "src": "T03",
+        "cat": "theme",
+        "quote": "favorable for promotion, increased income, and growth",
+        "text": "Favourable for promotion, higher income and growth, especially if last year was a struggle."
+      },
+      {
+        "id": "PY5-T03-b",
+        "src": "T03",
+        "cat": "remedy",
+        "quote": "leaving home with a tulsi leaf or green cardamom in the mouth",
+        "text": "Care for a tulsi or other plants each morning, and leave home with a tulsi leaf or green cardamom in your mouth."
+      },
+      {
+        "id": "PY5-T03-c",
+        "src": "T03",
+        "cat": "health",
+        "quote": "warns of possible digestive problems",
+        "text": "Look after your digestion: eat home-cooked food rather than too much restaurant food."
+      },
+      {
+        "id": "PY5-T03-d",
+        "src": "T03",
+        "cat": "do",
+        "quote": "walking 5 kilometres a day",
+        "text": "For strong results, walk 5 km a day: 2.5 km in the morning and 2.5 km in the evening."
+      },
+      {
+        "id": "PY5-T03-e",
+        "src": "T03",
+        "cat": "travel",
+        "quote": "may suit people who want to travel or pursue further studies",
+        "text": "Suits travel and further studies."
+      },
+      {
+        "id": "PY5-T03-f",
+        "src": "T03",
+        "cat": "do",
+        "quote": "meeting people cheerfully rather than angrily",
+        "text": "Meet people cheerfully, not angrily."
+      },
+      {
+        "id": "PY5-T03-g",
+        "src": "T03",
+        "cat": "money",
+        "quote": "may consider trading or the stock market",
+        "text": "Trading or the stock market may be considered, but the decision is yours; do your own research."
+      },
+      {
+        "id": "PY5-T03-h",
+        "src": "T03",
+        "cat": "colours",
+        "quote": "he recommends green, including a green watch dial or wallet",
+        "text": "Green, including a green wallet."
+      },
+      {
+        "id": "PY5-T03-i",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "specifically suggests a metal watch with a green dial",
+        "text": "A metal watch with a green dial."
+      }
     ],
     "6": [
-      { "id": "PY6-T01-a", "src": "T01", "cat": "money", "quote": "watch their spending and manage cash flow carefully", "text": "Watch your spending and manage cash flow carefully; expenses may rise." },
-      { "id": "PY6-T01-b", "src": "T01", "cat": "avoid", "quote": "avoid unnecessary purchases", "text": "Avoid unnecessary purchases. If you buy on instalments, prefer things that grow in value or earn income, such as gold or a home you can rent out." },
-      { "id": "PY6-T01-c", "src": "T01", "cat": "do", "quote": "updating the wardrobe and discarding clothes that are no longer wanted", "text": "Refresh your wardrobe and let go of clothes you no longer want." },
-      { "id": "PY6-T01-d", "src": "T01", "cat": "relationship", "quote": "potentially bringing progress such as marriage or having a baby", "text": "May bring progress such as marriage or a baby." },
-      { "id": "PY6-T01-e", "src": "T01", "cat": "career", "quote": "seeking a change of role or workplace", "text": "Growth may come from a change of role or workplace, or from asking for more responsibility. Business owners: focus on sales, marketing and visibility." },
-      { "id": "PY6-T01-f", "src": "T01", "cat": "health", "quote": "focus on health, food, and exercise", "text": "Focus on health, food and exercise; neglect could make the next two years harder." },
-      { "id": "PY6-T01-g", "src": "T01", "cat": "crystal", "quote": "recommends a black obsidian bracelet as protection from surrounding negativity", "text": "A black obsidian bracelet for protection from negativity around you (men on the right hand, women on the left)." },
-      { "id": "PY6-T03-a", "src": "T03", "cat": "relationship", "quote": "favorable for marriage, pregnancy attempts, finding love, and students", "text": "Favourable for marriage, planning a pregnancy, finding love, and for students." },
-      { "id": "PY6-T03-b", "src": "T03", "cat": "career", "quote": "better results are more likely in the second half of the year", "text": "A job change or income growth is more likely in the second half of the year." },
-      { "id": "PY6-T03-c", "src": "T03", "cat": "money", "quote": "Money is described as potentially arriving and going quickly", "text": "Money may come and go quickly: spend thoughtfully, book profits, and increase savings and investments as your income grows." },
-      { "id": "PY6-T03-d", "src": "T03", "cat": "money", "quote": "investing in metals such as gold or silver early in the year", "text": "Invest in gold or silver early in the year (or digitally, through ETFs)." },
-      { "id": "PY6-T03-e", "src": "T03", "cat": "do", "quote": "Keep nearby children happy through small gifts or treats", "text": "Keep the children around you happy with small gifts or treats." },
-      { "id": "PY6-T03-f", "src": "T03", "cat": "health", "quote": "Pay attention to eye strain and possible changes in vision", "text": "Watch for eye strain and changes in vision." },
-      { "id": "PY6-T03-g", "src": "T03", "cat": "colours", "quote": "White, peach, pink, and green are recommended", "text": "White, peach, pink and green, with white and pink flowers at home." },
-      { "id": "PY6-T03-h", "src": "T03", "cat": "accessories", "quote": "the speaker recommends a metal watch with a green dial, and also mentions silver-and-gold combinations", "text": "A metal watch with a green dial, or silver-and-gold combinations. Women may wear diamond earrings (lab-grown is fine)." },
-      { "id": "PY6-T03-i", "src": "T03", "cat": "avoid", "quote": "Avoid misunderstandings and impulsive reactions early in the year", "text": "Avoid misunderstandings and impulsive reactions early in the year." }
+      {
+        "id": "PY6-T01-a",
+        "src": "T01",
+        "cat": "money",
+        "quote": "watch their spending and manage cash flow carefully",
+        "text": "Watch your spending and manage cash flow carefully; expenses may rise."
+      },
+      {
+        "id": "PY6-T01-b",
+        "src": "T01",
+        "cat": "avoid",
+        "quote": "avoid unnecessary purchases",
+        "text": "Avoid unnecessary purchases. If you buy on instalments, prefer things that grow in value or earn income, such as gold or a home you can rent out."
+      },
+      {
+        "id": "PY6-T01-c",
+        "src": "T01",
+        "cat": "do",
+        "quote": "updating the wardrobe and discarding clothes that are no longer wanted",
+        "text": "Refresh your wardrobe and let go of clothes you no longer want."
+      },
+      {
+        "id": "PY6-T01-d",
+        "src": "T01",
+        "cat": "relationship",
+        "quote": "potentially bringing progress such as marriage or having a baby",
+        "text": "May bring progress such as marriage or a baby."
+      },
+      {
+        "id": "PY6-T01-h",
+        "src": "T01",
+        "cat": "relationship",
+        "quote": "associates a “negative Venus” with reputational or personal difficulties",
+        "text": "A \"negative Venus\" can bring reputation or personal difficulties. Its signs: frequent negative thoughts, low confidence in your body, unwanted sexual thoughts or fantasies, and spending even when you know the money is not enough."
+      },
+      {
+        "id": "PY6-T01-e",
+        "src": "T01",
+        "cat": "career",
+        "quote": "seeking a change of role or workplace",
+        "text": "Growth may come from a change of role or workplace, or from asking for more responsibility. Business owners: focus on sales, marketing and visibility."
+      },
+      {
+        "id": "PY6-T01-f",
+        "src": "T01",
+        "cat": "health",
+        "quote": "focus on health, food, and exercise",
+        "text": "Focus on health, food and exercise; neglect could make the next two years harder."
+      },
+      {
+        "id": "PY6-T01-g",
+        "src": "T01",
+        "cat": "crystal",
+        "quote": "recommends a black obsidian bracelet as protection from surrounding negativity",
+        "text": "A black obsidian bracelet for protection from negativity around you (men on the right hand, women on the left)."
+      },
+      {
+        "id": "PY6-T03-a",
+        "src": "T03",
+        "cat": "relationship",
+        "quote": "favorable for marriage, pregnancy attempts, finding love, and students",
+        "text": "Favourable for marriage, planning a pregnancy, finding love, and for students."
+      },
+      {
+        "id": "PY6-T03-b",
+        "src": "T03",
+        "cat": "career",
+        "quote": "better results are more likely in the second half of the year",
+        "text": "A job change or income growth is more likely in the second half of the year."
+      },
+      {
+        "id": "PY6-T03-c",
+        "src": "T03",
+        "cat": "money",
+        "quote": "Money is described as potentially arriving and going quickly",
+        "text": "Money may come and go quickly: spend thoughtfully, book profits, and increase savings and investments as your income grows."
+      },
+      {
+        "id": "PY6-T03-d",
+        "src": "T03",
+        "cat": "money",
+        "quote": "investing in metals such as gold or silver early in the year",
+        "text": "Invest in gold or silver early in the year (or digitally, through ETFs)."
+      },
+      {
+        "id": "PY6-T03-e",
+        "src": "T03",
+        "cat": "do",
+        "quote": "Keep nearby children happy through small gifts or treats",
+        "text": "Keep the children around you happy with small gifts or treats."
+      },
+      {
+        "id": "PY6-T03-f",
+        "src": "T03",
+        "cat": "health",
+        "quote": "Pay attention to eye strain and possible changes in vision",
+        "text": "Watch for eye strain and changes in vision."
+      },
+      {
+        "id": "PY6-T03-g",
+        "src": "T03",
+        "cat": "colours",
+        "quote": "White, peach, pink, and green are recommended",
+        "text": "White, peach, pink and green, with white and pink flowers at home."
+      },
+      {
+        "id": "PY6-T03-h",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "the speaker recommends a metal watch with a green dial, and also mentions silver-and-gold combinations",
+        "text": "A metal watch with a green dial, or silver-and-gold combinations; a watch with a stone or diamond if affordable. Women may wear diamond earrings, including lab-grown diamonds."
+      },
+      {
+        "id": "PY6-T03-i",
+        "src": "T03",
+        "cat": "avoid",
+        "quote": "Avoid misunderstandings and impulsive reactions early in the year",
+        "text": "Avoid misunderstandings and impulsive reactions early in the year."
+      }
     ],
     "7": [
-      { "id": "PY7-T01-a", "src": "T01", "cat": "theme", "quote": "a period for introspection and new learning", "text": "A year for introspection and new learning; confidence may dip a little." },
-      { "id": "PY7-T01-b", "src": "T01", "cat": "do", "quote": "start learning something early in the year", "text": "Start learning something early in the year." },
-      { "id": "PY7-T01-c", "src": "T01", "cat": "do", "quote": "building a habit of going to the gym", "text": "Build a gym habit; what matters most is showing up regularly." },
-      { "id": "PY7-T01-d", "src": "T01", "cat": "remedy", "quote": "bathing with a pinch of turmeric and drinking water in which a piece of cinnamon has soaked overnight in a silver cup", "text": "Bathe with a pinch of turmeric, and drink water in which a piece of cinnamon has soaked overnight in a silver cup (for allergies, frequent illness or low energy). Please also consult a doctor." },
-      { "id": "PY7-T01-e", "src": "T01", "cat": "do", "quote": "writing down plans and instructions instead of relying on verbal communication", "text": "Write plans and instructions down, and meet in person for important matters rather than talking by phone." },
-      { "id": "PY7-T01-f", "src": "T01", "cat": "remedy", "quote": "drawing the Ketu yantra and Mercury yantra in a notebook every day", "text": "If you feel stuck, draw the Ketu yantra and the Mercury yantra in a notebook every day." },
-      { "id": "PY7-T01-g", "src": "T01", "cat": "name", "name_numbers": [4, 8], "quote": "especially difficult for people whose name number is 4 or 8", "text": "This year can be harder if your name number is 4 or 8. Keep the kitchen clean and organised, and remove expired food." },
-      { "id": "PY7-T03-a", "src": "T03", "cat": "theme", "quote": "a year for fulfilling personal wishes", "text": "A year for fulfilling personal wishes, if you deliberately make time for yourself." },
-      { "id": "PY7-T03-b", "src": "T03", "cat": "do", "quote": "devote one hour each morning to a personally chosen activity", "text": "Give one hour each morning to something you choose: reading, walking, quiet thinking or meditation." },
-      { "id": "PY7-T03-c", "src": "T03", "cat": "career", "quote": "double-check emails and, for business owners, accounts", "text": "Study your work more deeply, and double-check emails (and accounts, if you run a business)." },
-      { "id": "PY7-T03-d", "src": "T03", "cat": "education", "quote": "favorable for education, certifications, and courses", "text": "Favourable for education, certifications and courses." },
-      { "id": "PY7-T03-e", "src": "T03", "cat": "do", "quote": "Wednesday is mentioned as a good day to network", "text": "Go out in the evenings (a walk, a café or friends). Wednesday is a good day to network." },
-      { "id": "PY7-T03-f", "src": "T03", "cat": "health", "quote": "checking vitamin D and B12 levels and getting blood work early in the year", "text": "Pay attention to hormonal health (cycles and thyroid; for men, weight gain). Check vitamin D and B12 and get blood work early in the year." },
-      { "id": "PY7-T03-g", "src": "T03", "cat": "colours", "quote": "yellow, white, gray, silver, and shades of pink", "text": "Yellow, white, grey, silver and shades of pink." },
-      { "id": "PY7-T03-h", "src": "T03", "cat": "money", "quote": "Seek advice from a good investment adviser before investing", "text": "Buy gold or other metals early in the year, and take a good investment adviser's advice before investing." },
-      { "id": "PY7-T03-i", "src": "T03", "cat": "accessories", "quote": "a gold, white-gold, or silver-and-gold bangle or metal watch", "text": "A gold, white-gold or silver-and-gold bangle or metal watch." }
+      {
+        "id": "PY7-T01-a",
+        "src": "T01",
+        "cat": "theme",
+        "quote": "a period for introspection and new learning",
+        "text": "A year for introspection and new learning; confidence can fall."
+      },
+      {
+        "id": "PY7-T01-b",
+        "src": "T01",
+        "cat": "do",
+        "quote": "start learning something early in the year",
+        "text": "Start learning something early in the year."
+      },
+      {
+        "id": "PY7-T01-c",
+        "src": "T01",
+        "cat": "do",
+        "quote": "building a habit of going to the gym",
+        "text": "Build a gym habit; what matters most is showing up regularly."
+      },
+      {
+        "id": "PY7-T01-d",
+        "src": "T01",
+        "cat": "remedy",
+        "quote": "bathing with a pinch of turmeric and drinking water in which a piece of cinnamon has soaked overnight in a silver cup",
+        "text": "Bathe with a pinch of turmeric, and drink water in which a piece of cinnamon has soaked overnight in a silver cup. These are given for allergies, frequent illness or low energy, even when a doctor says things are fine."
+      },
+      {
+        "id": "PY7-T01-e",
+        "src": "T01",
+        "cat": "do",
+        "quote": "writing down plans and instructions instead of relying on verbal communication",
+        "text": "Write plans and instructions down, and meet in person for important matters rather than talking by phone."
+      },
+      {
+        "id": "PY7-T01-f",
+        "src": "T01",
+        "cat": "remedy",
+        "quote": "drawing the Ketu yantra and Mercury yantra in a notebook every day",
+        "text": "If you feel stuck, draw the Ketu yantra and the Mercury yantra in a notebook every day."
+      },
+      {
+        "id": "PY7-T01-g",
+        "src": "T01",
+        "cat": "name",
+        "name_numbers": [
+          4,
+          8
+        ],
+        "quote": "especially difficult for people whose name number is 4 or 8",
+        "text": "This year can be harder if your name number is 4 or 8. Keep the kitchen clean and organised, and remove expired food."
+      },
+      {
+        "id": "PY7-T03-a",
+        "src": "T03",
+        "cat": "theme",
+        "quote": "a year for fulfilling personal wishes",
+        "text": "A year for fulfilling personal wishes, if you deliberately make time for yourself."
+      },
+      {
+        "id": "PY7-T03-b",
+        "src": "T03",
+        "cat": "do",
+        "quote": "devote one hour each morning to a personally chosen activity",
+        "text": "Give one hour each morning to something you choose: reading, walking, quiet thinking or meditation."
+      },
+      {
+        "id": "PY7-T03-c",
+        "src": "T03",
+        "cat": "career",
+        "quote": "double-check emails and, for business owners, accounts",
+        "text": "Study your work more deeply, and double-check emails (and accounts, if you run a business)."
+      },
+      {
+        "id": "PY7-T03-d",
+        "src": "T03",
+        "cat": "education",
+        "quote": "favorable for education, certifications, and courses",
+        "text": "Favourable for education, certifications and courses."
+      },
+      {
+        "id": "PY7-T03-e",
+        "src": "T03",
+        "cat": "do",
+        "quote": "Wednesday is mentioned as a good day to network",
+        "text": "Go out in the evenings: a walk, a café or meeting friends. Wednesday is a good day to network. Evening outings ease stress and anxiety, and staying active outside the house makes the year more rewarding.",
+        "also": [
+          "The speaker links evening outings to easing stress and anxiety, and says that staying active outside the house may help make the year more rewarding."
+        ]
+      },
+      {
+        "id": "PY7-T03-f",
+        "src": "T03",
+        "cat": "health",
+        "quote": "checking vitamin D and B12 levels and getting blood work early in the year",
+        "text": "Pay attention to hormonal health (cycles and thyroid; for men, weight gain). Check vitamin D and B12 and get blood work early in the year."
+      },
+      {
+        "id": "PY7-T03-g",
+        "src": "T03",
+        "cat": "colours",
+        "quote": "yellow, white, gray, silver, and shades of pink",
+        "text": "Yellow, white, grey, silver and shades of pink."
+      },
+      {
+        "id": "PY7-T03-h",
+        "src": "T03",
+        "cat": "money",
+        "quote": "Seek advice from a good investment adviser before investing",
+        "text": "Buy gold or other metals early in the year, and take a good investment adviser's advice before investing."
+      },
+      {
+        "id": "PY7-T03-i",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "a gold, white-gold, or silver-and-gold bangle or metal watch",
+        "text": "A gold, white-gold or silver-and-gold bangle or metal watch."
+      }
     ],
     "8": [
-      { "id": "PY8-T01-a", "src": "T01", "cat": "theme", "conflict": "CF-PY8-OUTLOOK", "quote": "may bring job loss or a sudden interruption in income", "text": "There may be a sudden change at work or a break in income. If it comes, treat it as a chance to see things from a new angle." },
-      { "id": "PY8-T01-b", "src": "T01", "cat": "remedy", "quote": "drawing the Mercury yantra daily with a green pen and lighting a ghee lamp for Tulsi", "text": "Draw the Mercury yantra daily with a green pen and light a ghee lamp for Tulsi." },
-      { "id": "PY8-T01-c", "src": "T01", "cat": "name", "quote": "checking whether one’s commonly used name aligns with one’s date of birth", "text": "Check whether the name you commonly use aligns with your date of birth." },
-      { "id": "PY8-T01-d", "src": "T01", "cat": "avoid", "quote": "give up alcohol, smoking, and non-vegetarian food for the year", "text": "Try to give up alcohol, smoking and non-vegetarian food this year, and eat simple, sattvic food." },
-      { "id": "PY8-T01-e", "src": "T01", "cat": "crystal", "quote": "recommends a black rutile quartz bracelet", "text": "A black rutile quartz bracelet (women on the left hand, men on the right). If that's not possible, carry five cloves in a small cloth pouch, replace them every Friday, and put the old cloves in soil." },
-      { "id": "PY8-T01-f", "src": "T01", "cat": "career", "quote": "preparing machinery and the work area for possible equipment failures or hazards", "text": "Business owners: prepare machinery and the work area for possible equipment failures or hazards." },
-      { "id": "PY8-T01-g", "src": "T01", "cat": "money", "quote": "favorable for buying land, but advises against borrowing money, pledging gold, or taking on debt", "text": "Favourable for buying land, but avoid borrowing, pledging gold or taking on debt." },
-      { "id": "PY8-T01-h", "src": "T01", "cat": "health", "quote": "recommends exercises such as squats and lunges", "text": "Strengthen your legs with squats and lunges." },
-      { "id": "PY8-T03-a", "src": "T03", "cat": "theme", "conflict": "CF-PY8-OUTLOOK", "quote": "describes opportunities to earn money", "text": "Opportunities to earn money, if you stay restrained: don't let others provoke you, and avoid reacting impulsively." },
-      { "id": "PY8-T03-b", "src": "T03", "cat": "do", "quote": "five minutes of pranayama", "text": "Do five minutes of pranayama after waking." },
-      { "id": "PY8-T03-c", "src": "T03", "cat": "career", "quote": "either arriving half an hour earlier or staying half an hour later", "text": "Put in half an hour extra at work. Be a team player and spend time with junior colleagues." },
-      { "id": "PY8-T03-d", "src": "T03", "cat": "home", "quote": "Keep the area outside the home or apartment clean and well lit", "text": "Keep the area outside your home clean and well lit." },
-      { "id": "PY8-T03-e", "src": "T03", "cat": "theme", "quote": "“winning the day”", "text": "The year may feel mixed, with some delays. Focus on what needs doing each day: win the day." },
-      { "id": "PY8-T03-f", "src": "T03", "cat": "accessories", "quote": "drinking water kept overnight in a silver glass", "text": "A silver watch with a white or blue dial, or a silver bangle or chain. Drink water kept overnight in a silver glass." },
-      { "id": "PY8-T03-g", "src": "T03", "cat": "colours", "quote": "Recommended colors are black, blue, white, gray, and green", "text": "Black, blue, white, grey and green." }
+      {
+        "id": "PY8-T01-a",
+        "src": "T01",
+        "cat": "theme",
+        "conflict": "CF-PY8-OUTLOOK",
+        "quote": "may bring job loss or a sudden interruption in income",
+        "text": "There may be a sudden change at work or a break in income. If it comes, treat it as a chance to see things from a new angle."
+      },
+      {
+        "id": "PY8-T01-b",
+        "src": "T01",
+        "cat": "remedy",
+        "quote": "drawing the Mercury yantra daily with a green pen and lighting a ghee lamp for Tulsi",
+        "text": "Draw the Mercury yantra daily with a green pen and light a ghee lamp for Tulsi."
+      },
+      {
+        "id": "PY8-T01-c",
+        "src": "T01",
+        "cat": "name",
+        "quote": "checking whether one’s commonly used name aligns with one’s date of birth",
+        "text": "Check whether the name you commonly use aligns with your date of birth."
+      },
+      {
+        "id": "PY8-T01-d",
+        "src": "T01",
+        "cat": "avoid",
+        "quote": "give up alcohol, smoking, and non-vegetarian food for the year",
+        "text": "Try to give up alcohol, smoking and non-vegetarian food this year, and eat simple, sattvic food."
+      },
+      {
+        "id": "PY8-T01-e",
+        "src": "T01",
+        "cat": "crystal",
+        "quote": "recommends a black rutile quartz bracelet",
+        "text": "A black rutile quartz bracelet (women on the left hand, men on the right). If that's not possible, carry five cloves in a small cloth pouch, replace them every Friday, and put the old cloves in soil."
+      },
+      {
+        "id": "PY8-T01-f",
+        "src": "T01",
+        "cat": "career",
+        "quote": "preparing machinery and the work area for possible equipment failures or hazards",
+        "text": "Business owners: prepare machinery and the work area for possible equipment failures or hazards."
+      },
+      {
+        "id": "PY8-T01-g",
+        "src": "T01",
+        "cat": "money",
+        "quote": "favorable for buying land, but advises against borrowing money, pledging gold, or taking on debt",
+        "text": "Favourable for buying land, but avoid borrowing, pledging gold or taking on debt."
+      },
+      {
+        "id": "PY8-T01-h",
+        "src": "T01",
+        "cat": "health",
+        "quote": "recommends exercises such as squats and lunges",
+        "text": "Strengthen your legs with squats and lunges."
+      },
+      {
+        "id": "PY8-T03-a",
+        "src": "T03",
+        "cat": "theme",
+        "conflict": "CF-PY8-OUTLOOK",
+        "quote": "describes opportunities to earn money",
+        "text": "Opportunities to earn money, if you stay restrained: don't let others provoke you, and avoid reacting impulsively."
+      },
+      {
+        "id": "PY8-T03-b",
+        "src": "T03",
+        "cat": "do",
+        "quote": "five minutes of pranayama",
+        "text": "Do five minutes of pranayama after waking."
+      },
+      {
+        "id": "PY8-T03-c",
+        "src": "T03",
+        "cat": "career",
+        "quote": "either arriving half an hour earlier or staying half an hour later",
+        "text": "Put in half an hour extra at work. Be a team player and spend time with junior colleagues."
+      },
+      {
+        "id": "PY8-T03-d",
+        "src": "T03",
+        "cat": "home",
+        "quote": "Keep the area outside the home or apartment clean and well lit",
+        "text": "Keep the area outside your home clean and well lit."
+      },
+      {
+        "id": "PY8-T03-e",
+        "src": "T03",
+        "cat": "theme",
+        "quote": "“winning the day”",
+        "text": "The year may feel mixed, with some delays. Focus on what needs doing each day: win the day."
+      },
+      {
+        "id": "PY8-T03-f",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "drinking water kept overnight in a silver glass",
+        "text": "A silver watch with a white or blue dial, or a silver bangle or chain. Drink water kept overnight in a silver glass."
+      },
+      {
+        "id": "PY8-T03-g",
+        "src": "T03",
+        "cat": "colours",
+        "quote": "Recommended colors are black, blue, white, gray, and green",
+        "text": "Black, blue, white, grey and green."
+      }
     ],
     "9": [
-      { "id": "PY9-T01-a", "src": "T01", "cat": "do", "quote": "be patient and avoid rushing through eating, conversations, driving, or work", "text": "Be patient: don't rush through eating, conversations, driving or work. Start preparing half an hour early and take a five-minute break every hour." },
-      { "id": "PY9-T01-b", "src": "T01", "cat": "do", "quote": "working outside the home rather than working from home", "text": "Work outside the home rather than from home." },
-      { "id": "PY9-T01-c", "src": "T01", "cat": "health", "quote": "drinking water from a copper bottle", "text": "Exercise, limit very spicy food, and drink water from a copper bottle." },
-      { "id": "PY9-T01-d", "src": "T01", "cat": "remedy", "quote": "drawing a Mars yantra alongside the yantra associated with one’s birth number", "text": "Draw a Mars yantra alongside your birth-number yantra, light a lamp or candle at home morning and evening, and play a sport such as badminton, tennis, table tennis or squash." },
-      { "id": "PY9-T01-e", "src": "T01", "cat": "do", "quote": "so that no one goes to sleep hungry", "text": "Help younger people, and feed someone so that no one goes to sleep hungry." },
-      { "id": "PY9-T01-f", "src": "T01", "cat": "career", "quote": "favorable for going abroad, changing jobs, or expanding a business by opening a new branch", "text": "Favourable for going abroad, changing jobs or opening a new branch." },
-      { "id": "PY9-T01-g", "src": "T01", "cat": "colours", "conflict": "CF-PY9-BLACK", "quote": "advises avoiding black and favoring sun-related shades such as yellow and orange", "text": "Yellow and orange; avoid black." },
-      { "id": "PY9-T01-h", "src": "T01", "cat": "do", "quote": "eating jaggery after meals", "text": "Eat jaggery after meals." },
-      { "id": "PY9-T01-i", "src": "T01", "cat": "name", "name_numbers": [4, 8], "quote": "avoiding a name number of 4 or 8", "text": "Avoid a name number of 4 or 8 this year." },
-      { "id": "PY9-T03-a", "src": "T03", "cat": "theme", "quote": "a chance to pursue major changes", "text": "A chance for major change: moving home, going abroad, transforming your lifestyle or health, preparing for government exams, or buying a home. Stay calm, and control your thoughts and actions." },
-      { "id": "PY9-T03-b", "src": "T03", "cat": "remedy", "quote": "walking barefoot in nature for 10–15 minutes in the morning", "text": "Walk barefoot in nature for 10–15 minutes in the morning (on a green balcony if you live in a flat)." },
-      { "id": "PY9-T03-c", "src": "T03", "cat": "remedy", "quote": "spending time near a river, sea, or other substantial source of water early in the year", "text": "Spend time near a river or the sea early in the year." },
-      { "id": "PY9-T03-d", "src": "T03", "cat": "career", "quote": "urges single-tasking", "text": "Single-task: finish one task before taking the next call, and return calls afterwards." },
-      { "id": "PY9-T03-e", "src": "T03", "cat": "relationship", "quote": "may consider ending it", "text": "If you have truly tried and a relationship still isn't working, it may be time to let it go. Happy couples can progress together and plan investments as a pair." },
-      { "id": "PY9-T03-f", "src": "T03", "cat": "colours", "conflict": "CF-PY9-BLACK", "quote": "Saffron, white, light blue, light gray, and black are recommended", "text": "Saffron, white, light blue, light grey and black." },
-      { "id": "PY9-T03-g", "src": "T03", "cat": "accessories", "quote": "a red thread, a gold-colored watch with a gold dial, and investing in gold", "text": "A red thread, a gold-coloured watch with a gold dial, and investing in gold." },
-      { "id": "PY9-T03-h", "src": "T03", "cat": "health", "quote": "lifting iron dumbbells", "text": "If you can't go outdoors, lift iron dumbbells." }
+      {
+        "id": "PY9-T01-a",
+        "src": "T01",
+        "cat": "do",
+        "quote": "be patient and avoid rushing through eating, conversations, driving, or work",
+        "text": "Be patient: don't rush through eating, conversations, driving or work. Start preparing half an hour early and take a five-minute break every hour."
+      },
+      {
+        "id": "PY9-T01-b",
+        "src": "T01",
+        "cat": "do",
+        "quote": "working outside the home rather than working from home",
+        "text": "Work outside the home rather than from home."
+      },
+      {
+        "id": "PY9-T01-c",
+        "src": "T01",
+        "cat": "health",
+        "quote": "drinking water from a copper bottle",
+        "text": "Exercise, limit very spicy food, and drink water from a copper bottle."
+      },
+      {
+        "id": "PY9-T01-d",
+        "src": "T01",
+        "cat": "remedy",
+        "quote": "drawing a Mars yantra alongside the yantra associated with one’s birth number",
+        "text": "Draw a Mars yantra alongside your birth-number yantra, light a lamp or candle at home morning and evening, and play a sport such as badminton, tennis, table tennis or squash."
+      },
+      {
+        "id": "PY9-T01-e",
+        "src": "T01",
+        "cat": "do",
+        "quote": "so that no one goes to sleep hungry",
+        "text": "Help younger people, and feed someone so that no one goes to sleep hungry."
+      },
+      {
+        "id": "PY9-T01-j",
+        "src": "T01",
+        "cat": "health",
+        "quote": "If sports facilities are unavailable, the speaker suggests setting measurable physical goals",
+        "text": "If sports facilities are not available, set measurable physical goals, such as improving your time on a route or a weight-loss target."
+      },
+      {
+        "id": "PY9-T01-f",
+        "src": "T01",
+        "cat": "career",
+        "quote": "favorable for going abroad, changing jobs, or expanding a business by opening a new branch",
+        "text": "Favourable for going abroad, changing jobs or opening a new branch."
+      },
+      {
+        "id": "PY9-T01-g",
+        "src": "T01",
+        "cat": "colours",
+        "conflict": "CF-PY9-BLACK",
+        "quote": "advises avoiding black and favoring sun-related shades such as yellow and orange",
+        "text": "Yellow and orange; avoid black."
+      },
+      {
+        "id": "PY9-T01-h",
+        "src": "T01",
+        "cat": "do",
+        "quote": "eating jaggery after meals",
+        "text": "Eat jaggery after meals."
+      },
+      {
+        "id": "PY9-T01-i",
+        "src": "T01",
+        "cat": "name",
+        "name_numbers": [
+          4,
+          8
+        ],
+        "quote": "avoiding a name number of 4 or 8",
+        "text": "Avoid a name number of 4 or 8 this year."
+      },
+      {
+        "id": "PY9-T03-a",
+        "src": "T03",
+        "cat": "theme",
+        "quote": "a chance to pursue major changes",
+        "text": "A chance for major change: moving home, going abroad, transforming your lifestyle or health, preparing for government exams, or buying a home. Stay calm, and control your thoughts and actions."
+      },
+      {
+        "id": "PY9-T03-b",
+        "src": "T03",
+        "cat": "remedy",
+        "quote": "walking barefoot in nature for 10–15 minutes in the morning",
+        "text": "Walk barefoot in nature for 10–15 minutes in the morning (on a green balcony if you live in a flat)."
+      },
+      {
+        "id": "PY9-T03-c",
+        "src": "T03",
+        "cat": "remedy",
+        "quote": "spending time near a river, sea, or other substantial source of water early in the year",
+        "text": "Spend time near a river or the sea early in the year."
+      },
+      {
+        "id": "PY9-T03-d",
+        "src": "T03",
+        "cat": "career",
+        "quote": "urges single-tasking",
+        "text": "Single-task: finish an email or task before taking the next call, and return calls afterwards. Like Hanuman carrying the mountain despite obstacles, stay with the task you were given."
+      },
+      {
+        "id": "PY9-T03-e",
+        "src": "T03",
+        "cat": "relationship",
+        "quote": "may consider ending it",
+        "text": "If you have tried to repair a relationship and believe it is no longer working, you may consider ending it. Happy couples can progress together and plan investments as a pair."
+      },
+      {
+        "id": "PY9-T03-f",
+        "src": "T03",
+        "cat": "colours",
+        "conflict": "CF-PY9-BLACK",
+        "quote": "Saffron, white, light blue, light gray, and black are recommended",
+        "text": "Saffron, white, light blue, light grey and black."
+      },
+      {
+        "id": "PY9-T03-g",
+        "src": "T03",
+        "cat": "accessories",
+        "quote": "a red thread, a gold-colored watch with a gold dial, and investing in gold",
+        "text": "A red thread, a gold-coloured watch with a gold dial, and investing in gold."
+      },
+      {
+        "id": "PY9-T03-h",
+        "src": "T03",
+        "cat": "health",
+        "quote": "lifting iron dumbbells",
+        "text": "If you can't go outdoors, lift iron dumbbells."
+      }
     ]
   },
   "for_everyone": [
-    { "id": "PY-ALL-1", "src": "T03", "quote": "On Tuesdays, avoid eating after sunset.", "text": "On Tuesdays, avoid eating after sunset." },
-    { "id": "PY-ALL-2", "src": "T03", "quote": "Seek blessings from older people.", "text": "Seek blessings from older people, including the elders you meet in daily life." },
-    { "id": "PY-ALL-3", "src": "T03", "quote": "Play devotional recitations in the evening.", "text": "In the evening, between sunset and moonrise, play a bhajan, the Hanuman Chalisa or another recitation at home for 10–15 minutes." }
+    {
+      "id": "PY-ALL-1",
+      "src": "T03",
+      "quote": "On Tuesdays, avoid eating after sunset.",
+      "text": "On Tuesdays, avoid eating after sunset."
+    },
+    {
+      "id": "PY-ALL-2",
+      "src": "T03",
+      "quote": "Seek blessings from older people.",
+      "text": "Seek blessings from older people, including the elders you meet in daily life."
+    },
+    {
+      "id": "PY-ALL-3",
+      "src": "T03",
+      "quote": "Play devotional recitations in the evening.",
+      "text": "In the evening, between sunset and moonrise, play a bhajan, the Hanuman Chalisa or another recitation at home for 10–15 minutes."
+    },
+    {
+      "id": "PY-ALL-4",
+      "src": "T01",
+      "quote": "says that use and practice matter more than changing official documents",
+      "text": "With remedies and name changes, regular use and practice matter more than changing official documents."
+    },
+    {
+      "id": "PY-ALL-5",
+      "src": "T01",
+      "areas": [
+        "career"
+      ],
+      "quote": "For improving a business, the speaker recommends working in a well-lit area on a clean street and avoiding basements and speculative work.",
+      "text": "To improve a business, work from a well-lit place on a clean street, and avoid basements and speculative work."
+    },
+    {
+      "id": "PY-ALL-6",
+      "src": "T02",
+      "quote": "waking early and beginning the day positively, planning the day effectively, and developing mastery in one skill",
+      "text": "Wake early and begin the day positively, plan your day well, and develop mastery in one skill."
+    },
+    {
+      "id": "PY-ALL-7",
+      "src": "T02",
+      "quote": "The speaker advises viewers to listen to others, speak kindly, be honest, and avoid rudeness.",
+      "text": "Listen to others, speak kindly, be honest, and avoid rudeness."
+    }
   ]
 }

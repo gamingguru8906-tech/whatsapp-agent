@@ -3,23 +3,104 @@
   "about": "Meaning of each digit 1-9 and its planet. Shown for the digits present in the mobile number (and used to name the yogas).",
   "source_file": "P01-srk-slides.md",
   "rules": [
-    { "id": "PL-1", "digit": 1, "planet": "Sun", "ref": "Slide 1", "quote": "LEADERSHIP QUALITY / ROYAL, confident, good in management",
-      "story": { "trait": "Leadership and a royal, confident nature, good in management. Straightforward, independent, farsighted, freedom-loving, ambitious and good in friendship, an innovator and pioneer. Can also be dominating, egoistic, stubborn or short-tempered, and may not perform well under pressure.", "signifies": "Father, government, MNCs, politics, popularity in a large group." } },
-    { "id": "PL-2", "digit": 2, "planet": "Moon", "ref": "Slide 1", "quote": "VECILLATING MIND/ FLUCTUATING , emotional ,creative ,sentimental",
-      "story": { "trait": "Emotional, creative and sentimental, with a helping nature, a soft way of speaking, the best intuition, generosity and a good eye for photography. The mind can fluctuate: decisions may be hard, moods change often, patience can be short, support and motivation from others are needed, and false things may be believed easily.", "signifies": "Mother, emotion, water." } },
-    { "id": "PL-3", "digit": 3, "planet": "Jupiter", "ref": "Slide 2", "quote": "ALWAYS HUNGRY FOR KNOWLEDGE ,knowledgeable, guru, advisor , hardship in childhood",
-      "story": { "trait": "Always hungry for knowledge: a guru, advisor, very good counsellor, teacher and leader. Confident, disciplined, attached to family, a good speaker, charitable and good in management, able to say no to addiction and respectful to all. Childhood may have had hardship.", "signifies": "Guru, mentor, finance, right judgement." } },
-    { "id": "PL-4", "digit": 4, "planet": "Rahu", "ref": "Slide 2", "quote": "ALWAYS IN CONTROVERSY , suddenness, hard working, stubborn",
-      "story": { "trait": "Hard-working, strong-built, an excellent planner and analyst, a very good friend, an explorer and researcher who travels a lot. Can attract controversy and sudden events, with ego, stubbornness, impulsiveness, harsh decisions, mood swings, difficulty keeping promises, weak execution, overspending, quarrels between son and father, and life away from the birthplace.", "signifies": "A shadow planet linked with eclipse, cat and cancer." } },
-    { "id": "PL-5", "digit": 5, "planet": "Mercury", "ref": "Slide 3", "quote": "GOOD IN FINANCE / CALCULATIVE , explorers, reserve , logical",
-      "story": { "trait": "Good in finance, calculative and logical. Intelligent, entertaining, a good communicator, a born businessman (a side business even if in a job), with fruitful and foreign journeys. Adjustable, doesn't keep grudges, mostly satisfied and always bounces back. Can be lazy, carefree, slow in decisions and emotionally cool, may start well but get bored midway, settles late, puts money first, and gets no gain from siblings.", "signifies": "Sister, maternal uncle, aunt (bua), daughter." } },
-    { "id": "PL-6", "digit": 6, "planet": "Venus", "ref": "Slide 3", "quote": "TRULY FAMILY PEOPLE ,ALWAYS READY TO HELP FAMILY MEMBERS",
-      "story": { "trait": "Truly family people, always ready to help family members. Highly romantic and diplomatic, with an attractive aura; imaginative trendsetters, brand-conscious, fashionable food lovers and pet lovers. Can be jealous, always wanting more, fond of showing off, a bit harsh in speech, attracted to the opposite sex, with breaks in education and possible extramarital tendencies.", "signifies": "Luxury, love, sexual life, married woman, private parts." } },
-    { "id": "PL-7", "digit": 7, "planet": "Ketu", "ref": "Slide 4", "quote": "TRUST EASILTY / SELF DOUBT, deep thinkers & researchers, positive",
-      "story": { "trait": "Deep thinkers and researchers: positive, stable and lucky, with work done easily. Studious, secretive, highly spiritual and religious, making independent decisions; foreign travel suits you. Trusts easily, can have self-doubt, low confidence and confusion, and may face emotional setbacks; points to love marriage.", "signifies": "Flag, joints, dog, broad leaves, spirituality." } },
-    { "id": "PL-8", "digit": 8, "planet": "Saturn", "ref": "Slide 4", "quote": "BEST MONEY HANDLER, LOGICAL, down to earth, can't see people crying",
-      "story": { "trait": "The best money handler: logical, down to earth, trustworthy, hard-working, a justice believer, spiritual and soft-hearted, unable to see people cry, never sitting idle. Can be stubborn and egoistic, feel isolated without recognition, neglect health and fitness, and may face a 'zero' once in life.", "signifies": "Judge, labour, delay, struggle, obstacle, sadness, old age, iron, cement." } },
-    { "id": "PL-9", "digit": 9, "planet": "Mars", "ref": "Slide 5", "quote": "PERSONALITY LIKE HUMANITARIAN (DANVEER KARAN)",
-      "story": { "trait": "A humanitarian personality like Danveer Karan: generous, religious, confident, energetic, a true warrior who gets success through hard work and would rather die than accept defeat, giving everything for loved ones. Can be mood-driven, restless, argumentative and quick to react.", "signifies": "Brother, blood, group leader, army, police, fire, bravery, energy, bitter taste, masala." } }
+    {
+      "id": "PL-1",
+      "digit": 1,
+      "planet": "Sun",
+      "ref": "Slide 1",
+      "quote": "LEADERSHIP QUALITY / ROYAL, confident, good in management",
+      "story": {
+        "trait": "Leadership and a royal, confident nature, good in management. Straightforward, independent, farsighted, freedom-loving, ambitious and good in friendship, an innovator and pioneer. Can also be dominating, egoistic, stubborn or short-tempered, and may not perform well under pressure.",
+        "signifies": "Father, government, MNCs, politics, popularity in a large group."
+      }
+    },
+    {
+      "id": "PL-2",
+      "digit": 2,
+      "planet": "Moon",
+      "ref": "Slide 1",
+      "quote": "VECILLATING MIND/ FLUCTUATING , emotional ,creative ,sentimental",
+      "story": {
+        "trait": "Emotional, creative and sentimental, with a helping nature, a soft way of speaking, the best intuition, generosity and a good eye for photography. The mind can fluctuate: decisions may be hard, moods change often, patience can be short, support and motivation from others are needed, and false things may be believed easily.",
+        "signifies": "Mother, emotion, water."
+      }
+    },
+    {
+      "id": "PL-3",
+      "digit": 3,
+      "planet": "Jupiter",
+      "ref": "Slide 2",
+      "quote": "ALWAYS HUNGRY FOR KNOWLEDGE ,knowledgeable, guru, advisor , hardship in childhood",
+      "story": {
+        "trait": "Always hungry for knowledge: a guru, advisor, very good counsellor, teacher and leader. Confident, disciplined, attached to family, a good speaker, charitable and good in management, able to say no to addiction, and gives respect to people of low class. Childhood may have had hardship.",
+        "signifies": "Guru, mentor, finance, right judgement."
+      }
+    },
+    {
+      "id": "PL-4",
+      "digit": 4,
+      "planet": "Rahu",
+      "ref": "Slide 2",
+      "quote": "ALWAYS IN CONTROVERSY , suddenness, hard working, stubborn",
+      "story": {
+        "trait": "Hard-working, strong-built, an excellent planner and analyst, a very good friend, an explorer and researcher who travels a lot. Can attract controversy and sudden events, with ego, stubbornness, impulsiveness, harsh decisions, mood swings, difficulty keeping promises, weak execution, overspending, quarrels between son and father, and life away from the birthplace.",
+        "signifies": "A shadow planet linked with eclipse, cat and cancer."
+      }
+    },
+    {
+      "id": "PL-5",
+      "digit": 5,
+      "planet": "Mercury",
+      "ref": "Slide 3",
+      "quote": "GOOD IN FINANCE / CALCULATIVE , explorers, reserve , logical",
+      "story": {
+        "trait": "Good in finance, calculative and logical. Intelligent, entertaining, a good communicator, a born businessman (a side business even if in a job), with fruitful and foreign journeys. Adjustable, doesn't keep grudges, mostly satisfied and always bounces back. Can be lazy, carefree, slow in decisions and emotionally cool, may start well but get bored midway, settles late, puts money first, and gets no gain from siblings.",
+        "signifies": "Sister, maternal uncle, aunt (bua), daughter."
+      }
+    },
+    {
+      "id": "PL-6",
+      "digit": 6,
+      "planet": "Venus",
+      "ref": "Slide 3",
+      "quote": "TRULY FAMILY PEOPLE ,ALWAYS READY TO HELP FAMILY MEMBERS",
+      "story": {
+        "trait": "Truly family people, always ready to help family members. Highly romantic and diplomatic, with an attractive aura; imaginative trendsetters, brand-conscious, fashionable food lovers and pet lovers. Can be jealous, always wanting more, fond of showing off, a bit harsh in speech, attracted to the opposite sex, with breaks in education and possible extramarital tendencies.",
+        "signifies": "Luxury, love, sexual life, married woman, private parts."
+      }
+    },
+    {
+      "id": "PL-7",
+      "digit": 7,
+      "planet": "Ketu",
+      "ref": "Slide 4",
+      "quote": "TRUST EASILTY / SELF DOUBT, deep thinkers & researchers, positive",
+      "story": {
+        "trait": "Deep thinkers and researchers: positive, stable and lucky, with work done easily. Studious, secretive, highly spiritual and religious, making independent decisions; foreign travel suits you. Trusts easily, can have self-doubt, low confidence and confusion, and may face emotional setbacks; points to love marriage.",
+        "signifies": "Flag, joints, dog, broad leaves, spirituality."
+      }
+    },
+    {
+      "id": "PL-8",
+      "digit": 8,
+      "planet": "Saturn",
+      "ref": "Slide 4",
+      "quote": "BEST MONEY HANDLER, LOGICAL, down to earth, can't see people crying",
+      "story": {
+        "trait": "The best money handler: logical, down to earth, trustworthy, hard-working, a justice believer, spiritual and soft-hearted, unable to see people cry, never sitting idle. Can be stubborn and egoistic, feel isolated without recognition, neglect health and fitness, and may face a 'zero' once in life.",
+        "signifies": "Judge, labour, delay, struggle, obstacle, sadness, old age, iron, cement."
+      }
+    },
+    {
+      "id": "PL-9",
+      "digit": 9,
+      "planet": "Mars",
+      "ref": "Slide 5",
+      "quote": "PERSONALITY LIKE HUMANITARIAN (DANVEER KARAN)",
+      "story": {
+        "trait": "A humanitarian personality like Danveer Karan: generous, religious, confident, energetic, a true warrior who gets success through hard work and would rather die than accept defeat, giving everything for loved ones. Can be mood-driven, restless, argumentative and quick to react.",
+        "signifies": "Brother, blood, group leader, army, police, fire, bravery, energy, bitter taste, masala."
+      }
+    }
   ]
 }

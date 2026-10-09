@@ -226,6 +226,7 @@ details > summary { cursor: pointer; font-weight: 600; }
       <div><strong>Edit</strong><span class="muted">Change what visitors read. Saving an edit also approves it.</span></div>
       <div><strong>Flag</strong><span class="muted">Something is wrong or unclear. Add a note and I'll fix it.</span></div>
     </div>
+    <p class="muted" id="approved-note" hidden></p>
     <p class="notice" id="readonly-note" hidden>Saving isn't available in this view, so you can read and try numbers but your choices won't be recorded. Open the page from claude.ai while signed in to save them.</p>
   </section>
 
@@ -269,7 +270,8 @@ details > summary { cursor: pointer; font-weight: 600; }
   </section>
 </main>
 
-<script>const RULEBOOK = /*__RULEBOOK__*/null;</script>
+<script>const RULEBOOK = /*__RULEBOOK__*/null;
+const REVIEW = /*__REVIEW__*/null;</script>
 <script>const Engine = (() => {
 /*__ENGINE__*/
 return { createEngine, publicView, polarity, GRID, normaliseMobile, personalYear };
@@ -310,15 +312,15 @@ return { createEngine, publicView, polarity, GRID, normaliseMobile, personalYear
 
   // ---------- Saved decisions ----------
   let decisions = new Map();   // id -> {status: approved|edited|flagged, edit?, note?}
-  let conflictChoice = new Map(); // conflict id -> option key
-  let confirmChoice = new Map();  // method step id -> {choice: yes|no, note}
+  let conflictChoice = new Map(Object.entries((REVIEW && REVIEW.conflicts) || {})); // conflict id -> option key
+  let confirmChoice = new Map(Object.entries((REVIEW && REVIEW.confirmed) || {}).filter(([, v]) => v).map(([k]) => [k, { choice: 'yes' }]));  // method step id -> {choice: yes|no, note}
   let db = null;
   let canWrite = false;
   const inflight = new Set();
   let filter = 'all';
   let query = '';
 
-  const statusOf = id => decisions.get(id)?.status || 'pending';
+  const statusOf = id => decisions.get(id)?.status || (REVIEW && REVIEW.approved && REVIEW.approved[id] ? 'approved' : 'pending');
   const STATUS_TEXT = { pending: 'To review', approved: 'Approved', edited: 'Edited', flagged: 'Flagged' };
 
   async function write(col, id, data) {
@@ -699,6 +701,7 @@ return { createEngine, publicView, polarity, GRID, normaliseMobile, personalYear
   $('#try-form').addEventListener('submit', e => { e.preventDefault(); runPreview(); });
 
   // ---------- Boot ----------
+  if (REVIEW && REVIEW.approved_note) { const n = $('#approved-note'); n.textContent = `Recorded approval: ${REVIEW.approved_note}`; n.hidden = false; }
   buildGroups();
   renderDecisions();
   updateGroups();
@@ -730,8 +733,8 @@ return { createEngine, publicView, polarity, GRID, normaliseMobile, personalYear
       apply.after(ids);
     }, () => { db = null; setSave(); });
     sub('decisions', { get: () => decisions, set: m => { decisions = m; }, after: ids => changed(ids) });
-    sub('conflicts', { get: () => conflictChoice, set: m => { conflictChoice = new Map([...m].map(([k, v]) => [k, v.choice])); }, after: () => { renderDecisions(); updateGroups(); clearTimeout(previewTimer); previewTimer = setTimeout(runPreview, 400); } });
-    sub('confirms', { get: () => confirmChoice, set: m => { confirmChoice = m; }, after: () => { renderDecisions(); updateGroups(); } });
+    sub('conflicts', { get: () => conflictChoice, set: m => { conflictChoice = new Map([...Object.entries((REVIEW && REVIEW.conflicts) || {}), ...[...m].map(([k, v]) => [k, v.choice])]); }, after: () => { renderDecisions(); updateGroups(); clearTimeout(previewTimer); previewTimer = setTimeout(runPreview, 400); } });
+    sub('confirms', { get: () => confirmChoice, set: m => { confirmChoice = new Map([...Object.entries((REVIEW && REVIEW.confirmed) || {}).filter(([, v]) => v).map(([k]) => [k, { choice: 'yes' }]), ...m]); }, after: () => { renderDecisions(); updateGroups(); } });
     for (const it of items) refreshCard(it.id);
     renderDecisions();
     updateGroups();
