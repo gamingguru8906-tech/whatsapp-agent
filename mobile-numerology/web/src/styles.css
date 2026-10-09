@@ -33,6 +33,10 @@
   --warning: 32 95% 44%;
   --warning-soft: 48 96% 89%;
   --warning-dark: 26 84% 31%;
+  /* "Needs care": a calm amber instead of alarm red, so a reading reads as guidance, not a warning. */
+  --care: 30 85% 55%;
+  --care-soft: 32 100% 96%;
+  --care-dark: 24 72% 33%;
 }
 
 @layer base {
@@ -53,11 +57,16 @@
   .section-title { @apply text-xl font-bold leading-tight sm:text-2xl; }
   .section-intro { @apply mt-1.5 text-[15px] text-muted-foreground; }
   .item { @apply rounded-lg px-4 py-3; }
-  .item-good { @apply bg-success-soft; }
-  .item-care { @apply bg-danger-soft; }
-  .item-mixed { @apply bg-warning-soft; }
+  .item-good { @apply border-l-[3px] border-l-success/70 bg-success-soft; }
+  .item-care { @apply border-l-[3px] border-l-care bg-care-soft; }
+  .item-mixed { @apply border-l-[3px] border-l-accent bg-accent-soft; }
   .item-neutral { @apply bg-muted; }
   .digit { @apply grid h-11 w-9 place-items-center rounded-md bg-primary-soft text-lg font-semibold tabular-nums text-primary-dark sm:h-12 sm:w-10 sm:text-xl; }
+}
+
+@layer utilities {
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

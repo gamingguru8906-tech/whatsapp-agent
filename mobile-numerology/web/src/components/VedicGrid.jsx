@@ -14,7 +14,7 @@ export default function VedicGrid({ counts, present = [], absent = [], size = 'm
         const n = counts?.[d] ?? 0;
         return (
           <span key={d} className={`relative grid ${cell} place-items-center rounded-md font-semibold tabular-nums ${
-            on ? 'bg-primary text-primary-foreground' : off ? 'bg-danger-soft text-danger-dark' : 'bg-muted text-faint'}`}>
+            on ? 'bg-primary text-primary-foreground' : off ? 'bg-care-soft text-care-dark' : 'bg-muted text-faint'}`}>
             {off ? <s className="decoration-2">{d}</s> : d}
             {n > 1 && size !== 'sm' && <sup className="absolute right-1 top-1 text-[10px] leading-none">×{n}</sup>}
           </span>

@@ -18,7 +18,8 @@ export default {
         accent: { DEFAULT: v('accent'), foreground: v('accent-foreground'), soft: v('accent-soft') },
         success: { DEFAULT: v('success'), soft: v('success-soft'), dark: v('success-dark') },
         danger: { DEFAULT: v('danger'), soft: v('danger-soft'), dark: v('danger-dark') },
-        warning: { DEFAULT: v('warning'), soft: v('warning-soft'), dark: v('warning-dark') }
+        warning: { DEFAULT: v('warning'), soft: v('warning-soft'), dark: v('warning-dark') },
+        care: { DEFAULT: v('care'), soft: v('care-soft'), dark: v('care-dark') }
       },
       borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
       fontFamily: { sans: ['"League Spartan"', '"League Spartan Fallback"', 'system-ui', 'sans-serif'] },
