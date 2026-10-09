@@ -1,0 +1,26 @@
+# Cloudflare Worker for the free mobile-numerology site. Free plan.
+# Secrets (never in this file): npx wrangler secret put DATABASE_URL / SHEET_WEBAPP_URL / SHEET_SECRET / TURNSTILE_SECRET / OWNER_KEY
+name = "veshannastro-numerology"
+main = "worker/index.js"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+# Every 10 minutes: send any lead the Google Sheet has not confirmed yet.
+[triggers]
+crons = ["*/10 * * * *"]
+
+[vars]
+# Public values. Set them in the Cloudflare dashboard (Settings > Variables) or here.
+TURNSTILE_SITE_KEY = ""
+WHATSAPP_NUMBER = ""
+
+# 10 readings per minute per IP address.
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1001"
+simple = { limit = 10, period = 60 }
