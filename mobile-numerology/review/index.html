@@ -1,0 +1,1064 @@
+<title>Veshannastro Rulebook Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=League+Spartan:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap">
+<style>
+/* Layout: a working ledger. Sticky progress bar, then decisions that block launch, then every rule as a card
+   (source quote beside the site wording) in one readable column. Brand tokens are the owner's own site tokens. */
+:root {
+  --bg: hsl(0 0% 100%);
+  --fg: hsl(222.2 84% 4.9%);
+  --card: hsl(0 0% 100%);
+  --muted: hsl(210 40% 96.1%);
+  --muted-fg: hsl(215.4 16.3% 46.9%);
+  --faint: hsl(215 20% 65%);
+  --border: hsl(214.3 31.8% 91.4%);
+  --primary: hsl(340 80% 55%);
+  --primary-fg: hsl(210 40% 98%);
+  --primary-soft: hsl(338 60% 96%);
+  --primary-dark: hsl(338 73% 45%);
+  --accent: hsl(45 90% 60%);
+  --accent-soft: hsl(46 80% 93%);
+  --success: hsl(142 71% 36%);
+  --success-soft: hsl(152 47% 93%);
+  --success-dark: hsl(142 72% 29%);
+  --danger: hsl(0 72% 51%);
+  --danger-soft: hsl(0 93% 94%);
+  --danger-dark: hsl(0 74% 42%);
+  --warning: hsl(32 95% 44%);
+  --warning-soft: hsl(48 96% 89%);
+  --warning-dark: hsl(26 84% 31%);
+  --shadow: 0 1px 2px hsl(222 40% 10% / 0.06), 0 4px 16px hsl(222 40% 10% / 0.05);
+  --radius: 0.8rem;
+  --font-ui: "League Spartan", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-quote: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: hsl(224 30% 8%); --fg: hsl(210 40% 96%); --card: hsl(224 26% 11%); --muted: hsl(222 22% 16%);
+    --muted-fg: hsl(215 20% 68%); --faint: hsl(215 14% 46%); --border: hsl(222 18% 22%);
+    --primary: hsl(340 82% 64%); --primary-fg: hsl(224 30% 8%); --primary-soft: hsl(338 40% 18%); --primary-dark: hsl(338 85% 78%);
+    --accent: hsl(45 90% 62%); --accent-soft: hsl(45 40% 16%);
+    --success: hsl(142 60% 50%); --success-soft: hsl(150 35% 14%); --success-dark: hsl(142 65% 72%);
+    --danger: hsl(0 80% 64%); --danger-soft: hsl(0 45% 16%); --danger-dark: hsl(0 85% 80%);
+    --warning: hsl(32 92% 58%); --warning-soft: hsl(36 50% 15%); --warning-dark: hsl(38 92% 74%);
+    --shadow: 0 1px 2px hsl(0 0% 0% / 0.4); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: hsl(224 30% 8%); --fg: hsl(210 40% 96%); --card: hsl(224 26% 11%); --muted: hsl(222 22% 16%);
+  --muted-fg: hsl(215 20% 68%); --faint: hsl(215 14% 46%); --border: hsl(222 18% 22%);
+  --primary: hsl(340 82% 64%); --primary-fg: hsl(224 30% 8%); --primary-soft: hsl(338 40% 18%); --primary-dark: hsl(338 85% 78%);
+  --accent: hsl(45 90% 62%); --accent-soft: hsl(45 40% 16%);
+  --success: hsl(142 60% 50%); --success-soft: hsl(150 35% 14%); --success-dark: hsl(142 65% 72%);
+  --danger: hsl(0 80% 64%); --danger-soft: hsl(0 45% 16%); --danger-dark: hsl(0 85% 80%);
+  --warning: hsl(32 92% 58%); --warning-soft: hsl(36 50% 15%); --warning-dark: hsl(38 92% 74%);
+  --shadow: 0 1px 2px hsl(0 0% 0% / 0.4); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 860px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; font-weight: 700; }
+h3 { font-size: 1.08rem; font-weight: 600; }
+p { margin: 0; }
+.muted { color: var(--muted-fg); }
+.eyebrow { font-size: 0.74rem; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 600; color: var(--primary-dark); }
+.mono { font-family: var(--font-mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* Sticky progress bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+.bar-inner { max-width: 860px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.brand { font-weight: 700; letter-spacing: 0.01em; }
+.brand b { color: var(--primary); }
+.meter { flex: 1 1 180px; min-width: 0; display: grid; gap: 4px; }
+.meter-track { height: 8px; border-radius: 99px; background: var(--muted); overflow: hidden; display: flex; }
+.meter-track span { display: block; height: 100%; }
+.meter-label { font-size: 0.82rem; color: var(--muted-fg); font-variant-numeric: tabular-nums; }
+.save-state { font-size: 0.8rem; padding: 3px 9px; border-radius: 99px; background: var(--muted); color: var(--muted-fg); white-space: nowrap; }
+.save-state.on { background: var(--success-soft); color: var(--success-dark); }
+.save-state.off { background: var(--warning-soft); color: var(--warning-dark); }
+
+section.block { margin-top: 36px; display: grid; gap: 14px; }
+.intro { margin-top: 28px; display: grid; gap: 12px; }
+.intro p { max-width: 66ch; }
+.howto { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.howto div { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 4px; background: var(--card); }
+.howto strong { font-weight: 600; }
+.notice { border-radius: var(--radius); padding: 12px 14px; background: var(--warning-soft); color: var(--warning-dark); }
+
+/* Chips */
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.03em; padding: 2px 8px; border-radius: 99px; background: var(--muted); color: var(--muted-fg); white-space: nowrap; }
+.chip.good { background: var(--success-soft); color: var(--success-dark); }
+.chip.care { background: var(--danger-soft); color: var(--danger-dark); }
+.chip.mixed { background: var(--warning-soft); color: var(--warning-dark); }
+.chip.brand { background: var(--primary-soft); color: var(--primary-dark); }
+.chip.gold { background: var(--accent-soft); color: var(--warning-dark); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Cards */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.card.approved { border-color: color-mix(in srgb, var(--success) 45%, var(--border)); }
+.card.edited { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }
+.card.flagged { border-color: color-mix(in srgb, var(--danger) 55%, var(--border)); }
+.card-head { display: flex; gap: 12px; align-items: flex-start; }
+.card-title { flex: 1; min-width: 0; display: grid; gap: 4px; justify-items: start; }
+.card-title h3 { justify-self: stretch; }
+[id] { scroll-margin-top: 96px; }
+.status { font-size: 0.75rem; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--muted); color: var(--muted-fg); white-space: nowrap; }
+.status.approved { background: var(--success-soft); color: var(--success-dark); }
+.status.edited { background: var(--primary-soft); color: var(--primary-dark); }
+.status.flagged { background: var(--danger-soft); color: var(--danger-dark); }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+.quote { font-family: var(--font-quote); font-size: 0.98rem; line-height: 1.5; padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; min-width: 0; overflow-wrap: anywhere; }
+.quote .src { display: block; font-family: var(--font-ui); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--warning-dark); margin-bottom: 4px; }
+.site { display: grid; gap: 6px; min-width: 0; }
+.site .lbl { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-fg); }
+.line { padding: 8px 10px; border-radius: 8px; font-size: 0.95rem; }
+.line.good { background: var(--success-soft); color: var(--success-dark); }
+.line.care { background: var(--danger-soft); color: var(--danger-dark); }
+.line.trait { background: var(--muted); }
+.line.plain { background: var(--primary-soft); }
+.line b { font-weight: 600; }
+.note { font-size: 0.88rem; padding: 8px 10px; border-radius: 8px; border: 1px dashed var(--warning); color: var(--warning-dark); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { border: 1px solid var(--border); background: var(--card); border-radius: 99px; padding: 6px 14px; font-weight: 600; font-size: 0.88rem; }
+.btn:hover { border-color: var(--primary); }
+.btn.primary { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
+.btn.ok { background: var(--success); color: var(--primary-fg); border-color: var(--success); }
+.btn.ghost { background: transparent; }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.edit-box { display: grid; gap: 8px; }
+.edit-box label { display: grid; gap: 4px; font-size: 0.8rem; font-weight: 600; color: var(--muted-fg); }
+textarea, input[type="text"], input[type="tel"], input[type="date"], input[type="search"] { width: 100%; border: 1px solid var(--border); background: var(--bg); border-radius: 10px; padding: 9px 11px; font-size: 0.95rem; }
+textarea { min-height: 70px; resize: vertical; font-family: var(--font-ui); line-height: 1.45; }
+
+/* Digits and the Vedic grid */
+.digits { display: flex; gap: 4px; flex-wrap: wrap; }
+.dg { font-family: var(--font-mono); font-size: 1.05rem; width: 1.9em; height: 2.2em; display: grid; place-items: center; border-radius: 7px; background: var(--primary-soft); color: var(--primary-dark); font-variant-numeric: tabular-nums; }
+.dg.zero { background: transparent; color: var(--faint); text-decoration: line-through; }
+.dg.sep { width: auto; background: transparent; color: var(--muted-fg); font-family: var(--font-ui); padding: 0 2px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 2.1em); grid-auto-rows: 2.1em; gap: 3px; font-family: var(--font-mono); flex: none; }
+.grid3 span { display: grid; place-items: center; border-radius: 6px; font-size: 0.92rem; background: var(--muted); color: var(--faint); position: relative; }
+.grid3 span.on { background: var(--primary); color: var(--primary-fg); font-weight: 600; }
+.grid3 span.off { background: var(--danger-soft); color: var(--danger-dark); }
+.grid3 span.off::after { content: ""; position: absolute; inset: 22% 22%; background: linear-gradient(45deg, transparent 46%, currentColor 46% 54%, transparent 54%), linear-gradient(-45deg, transparent 46%, currentColor 46% 54%, transparent 54%); opacity: 0.8; }
+.grid3.big { grid-template-columns: repeat(3, 3em); grid-auto-rows: 3em; }
+.grid3 span sup { position: absolute; top: 3px; right: 5px; font-size: 0.62rem; }
+.pair { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); flex: none; }
+.pair .dg { width: 2.1em; height: 2.1em; }
+
+/* Group nav + filters */
+.groupnav { display: flex; gap: 6px; flex-wrap: wrap; }
+.groupnav a { text-decoration: none; color: var(--fg); border: 1px solid var(--border); padding: 5px 11px; border-radius: 99px; font-size: 0.86rem; font-weight: 500; background: var(--card); }
+.groupnav a span { color: var(--muted-fg); font-variant-numeric: tabular-nums; margin-left: 4px; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 99px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 6px 12px; font-size: 0.86rem; font-weight: 600; color: var(--muted-fg); }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.filters input[type="search"] { flex: 1 1 200px; width: auto; border-radius: 99px; }
+.group-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--border); }
+.group-head .sub { font-size: 0.88rem; color: var(--muted-fg); }
+.list { display: grid; gap: 12px; }
+.empty { color: var(--muted-fg); font-size: 0.92rem; padding: 6px 2px; }
+
+/* Conflicts + confirmations */
+.options { display: grid; gap: 8px; }
+.opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; cursor: pointer; background: var(--bg); }
+.opt input { margin-top: 4px; accent-color: var(--primary); }
+.opt.sel { border-color: var(--primary); background: var(--primary-soft); }
+.opt small { display: block; color: var(--muted-fg); font-size: 0.85rem; }
+.ch-table { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+.ch-table div { border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; font-family: var(--font-mono); font-size: 0.82rem; }
+.ch-table b { color: var(--primary-dark); margin-right: 6px; }
+
+/* Try a number */
+.try-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.try-form label { display: grid; gap: 4px; font-size: 0.82rem; font-weight: 600; color: var(--muted-fg); min-width: 0; }
+.try-form .wide { grid-column: 1 / -1; }
+@media (max-width: 560px) { .try-form { grid-template-columns: 1fr; } }
+.story { display: grid; gap: 16px; }
+.st-sec { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; display: grid; gap: 10px; background: var(--card); min-width: 0; }
+.st-sec h3 { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.st-item { display: grid; gap: 4px; padding: 8px 10px; border-radius: 8px; background: var(--muted); min-width: 0; }
+.st-item .t { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; font-weight: 600; }
+.st-item.good { background: var(--success-soft); }
+.st-item.care { background: var(--danger-soft); }
+.st-item.mixed { background: var(--warning-soft); }
+.rid { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted-fg); font-weight: 500; }
+.row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; font-size: 0.94rem; }
+.kv dt { color: var(--muted-fg); }
+.kv dd { margin: 0; min-width: 0; }
+.cmp-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.cmp-counts div { border-radius: 8px; padding: 8px 10px; background: var(--muted); font-size: 0.86rem; }
+.cmp-counts b { display: block; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.cmp-counts .g { background: var(--success-soft); color: var(--success-dark); }
+.cmp-counts .c { background: var(--danger-soft); color: var(--danger-dark); }
+details > summary { cursor: pointer; font-weight: 600; }
+@media (prefers-reduced-motion: no-preference) { .card, .opt { transition: border-color 0.2s ease, background-color 0.2s ease; } }
+</style>
+
+<div class="bar">
+  <div class="bar-inner">
+    <div class="brand">Veshannastro <b>·</b> Rulebook</div>
+    <div class="meter">
+      <div class="meter-track" aria-hidden="true"><span id="m-ok" style="background:var(--success)"></span><span id="m-ed" style="background:var(--primary)"></span><span id="m-fl" style="background:var(--danger)"></span></div>
+      <div class="meter-label" id="meter-label">Loading…</div>
+    </div>
+    <span class="save-state" id="save-state">Connecting…</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Free mobile-numerology tool · sign-off before launch</div>
+    <h1>Check every rule before it goes live</h1>
+    <p>Each card shows the numerologist's own words on the left and what visitors will read on the right. Nothing reaches the public site until you approve it here. Your choices save automatically, and I build the site from them.</p>
+    <div class="howto">
+      <div><strong>Approve</strong><span class="muted">The wording is right and can go live.</span></div>
+      <div><strong>Edit</strong><span class="muted">Change what visitors read. Saving an edit also approves it.</span></div>
+      <div><strong>Flag</strong><span class="muted">Something is wrong or unclear. Add a note and I'll fix it.</span></div>
+    </div>
+    <p class="notice" id="readonly-note" hidden>Saving isn't available in this view, so you can read and try numbers but your choices won't be recorded. Open the page from claude.ai while signed in to save them.</p>
+  </section>
+
+  <section class="block" id="try">
+    <div class="eyebrow">Live preview</div>
+    <h2>Try any number</h2>
+    <p class="muted">This runs the same calculation the site will use, with your edits and choices applied. The example below is made up. The grey codes show which rule produced each line; visitors won't see them.</p>
+    <form class="try-form" id="try-form" novalidate>
+      <label>Name<input id="t-name" type="text" autocomplete="off" value="Rahul Sharma (example)"></label>
+      <label>Mobile number<input id="t-mobile" type="tel" autocomplete="off" value="98110 45672"></label>
+      <label>Date of birth<input id="t-dob" type="date" value="1988-10-29"></label>
+      <label>Numbers they plan to buy (optional, up to 3, comma separated)<input id="t-planned" type="text" autocomplete="off" value="98765 00295"></label>
+      <label class="wide">What they're worried about<input id="t-concern" type="text" autocomplete="off" value="Paisa nahi tikta, loan bhi hai"></label>
+      <div class="actions wide"><button class="btn primary" type="submit">Show the reading</button><span class="muted" id="try-msg"></span></div>
+    </form>
+    <div class="story" id="story"></div>
+  </section>
+
+  <section class="block" id="decide">
+    <div class="eyebrow">Needed before launch</div>
+    <h2>Your decisions</h2>
+    <p class="muted">Two places where the transcripts disagree, and four calculation choices I made that the sources don't spell out.</p>
+    <div class="list" id="conflicts"></div>
+    <div class="list" id="confirms"></div>
+  </section>
+
+  <section class="block" id="rules">
+    <div class="eyebrow">The rulebook</div>
+    <h2>All rules</h2>
+    <nav class="groupnav" id="groupnav" aria-label="Rule groups"></nav>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Show">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="pending" aria-pressed="false">To review</button>
+        <button type="button" data-f="flagged" aria-pressed="false">Flagged</button>
+        <button type="button" data-f="edited" aria-pressed="false">Edited</button>
+      </div>
+      <input type="search" id="q" placeholder="Search words, digits or a rule code" aria-label="Search rules">
+    </div>
+    <div id="groups"></div>
+  </section>
+</main>
+
+<script>const RULEBOOK = {"shotgun":{"kind":"shotgun","about":"Consecutive digit pairs in the 10-digit mobile number (zeros skipped). 1-2 and 2-1 are different rules; every other pair reads the same in both orders. Same-digit pairs have no rule.","source_file":"P01-srk-slides.md","rules":[{"id":"SG-12","pair":"12","ordered":true,"ref":"Slide 7","quote":"1- 2 — Attraction on face, Brilliance face","areas":["personality"],"story":{"good":"Brings attraction and brilliance to your face."}},{"id":"SG-21","pair":"21","ordered":true,"ref":"Slide 7","quote":"2 -1 — Wastage of Money","areas":["money"],"story":{"care":"Money may tend to slip away."}},{"id":"SG-13","pair":"13","ref":"Slide 7","quote":"1- 3 / 3-1 — Educated / Good Advisor","areas":["education","career"],"story":{"good":"Points to a well-educated person and a good advisor."}},{"id":"SG-14","pair":"14","ref":"Slide 7","quote":"1- 4 / 4-1 — Loan Liability and Health Issues","areas":["money","health"],"story":{"care":"Can bring loan liabilities and some health issues."}},{"id":"SG-15","pair":"15","ref":"Slide 7","quote":"1 -5 / 5-1 — Budh-Aditya Yoga / Shubha Yoga / Benefits from Father","areas":["family","career"],"story":{"good":"Forms Budh-Aditya Yoga, a shubh (auspicious) yoga, and brings benefits from your father."}},{"id":"SG-16","pair":"16","ref":"Slide 7","quote":"1-6 / 6-1 — No income at the time of Speaking / Spouse health may suffer","areas":["money","relationship","health"],"story":{"care":"There may be phases with no income, and your spouse's health may need care."},"review_note":"Source wording 'No income at the time of Speaking' is unclear; rendered as 'phases with no income'. Please confirm the meaning."},{"id":"SG-17","pair":"17","ref":"Slide 8","quote":"1-7 / 7-1 — Raj yog, Govt Related, International Tours, Someone in the family or the person Famous / In Govt. / in MNC's","areas":["career","government","travel"],"story":{"good":"A Raj Yog that links you with government work and international tours. You, or someone in your family, may be famous, in government or in a multinational company."}},{"id":"SG-18","pair":"18","ref":"Slide 8","quote":"1-8 / 8-1 — Spouse health issues / Government related issues","areas":["relationship","health","government"],"story":{"care":"Your spouse's health may need care, and government-related matters may bring issues."}},{"id":"SG-19","pair":"19","ref":"Slide 8","quote":"1-9 / 9-1 — Freedom loving","areas":["personality"],"story":{"trait":"You are freedom-loving."}},{"id":"SG-23","pair":"23","ref":"Slide 8","quote":"2-3 / 3-2 — Lack of Response from the Child / Enemies can not harm.","areas":["family"],"story":{"good":"Enemies cannot harm you.","care":"Your child may not respond to you as much as you hope."}},{"id":"SG-24","pair":"24","ref":"Slide 8","quote":"2-4 / 4-2 — Having Negative Thoughts or Fear. If Patience then successful other wise not","areas":["mind","career"],"story":{"good":"With patience, you succeed.","care":"Negative thoughts or fear can creep in, and without patience success becomes harder."}},{"id":"SG-25","pair":"25","ref":"Slide 9","quote":"2-5 / 5-2 — Air Travelling is Good / Good for Astrology or Occult Science.","areas":["travel","career"],"story":{"good":"Air travel is good for you, and it suits astrology or the occult sciences."}},{"id":"SG-26","pair":"26","ref":"Slide 9","quote":"2-6 / 6-2 — Obstruction in Education / Affairs / May be Sperm issues / Attraction towards Female","areas":["education","relationship","health"],"sensitive":true,"story":{"care":"May bring obstruction in education, affairs, possible sperm-related issues, and strong attraction towards women."}},{"id":"SG-27","pair":"27","ref":"Slide 9","quote":"2-7 / 7-2 — Joint Pain","areas":["health"],"story":{"care":"May bring joint pain."}},{"id":"SG-28","pair":"28","ref":"Slide 9","quote":"2-8 / 8-2 — Leakage on the wall / Negative Thoughts / Habits if avoided then good money","areas":["home","mind","money"],"story":{"good":"If you keep your habits in check, good money comes.","care":"Can show up as leakage in a wall at home, and as negative thoughts."}},{"id":"SG-29","pair":"29","ref":"Slide 9","quote":"2-9 / 9-2 — Lakshmi Yoga","areas":["money"],"story":{"good":"Forms Lakshmi Yoga."}},{"id":"SG-34","pair":"34","ref":"Slide 9","quote":"3-4 / 4-3 — Stubborn/ Heart problem/ Paralysis","areas":["personality","health"],"sensitive":true,"story":{"care":"Can make you stubborn. This pair is linked with heart problems and paralysis, so your health needs care."}},{"id":"SG-35","pair":"35","ref":"Slide 10","quote":"3-5 / 5-3 — Intelligent but in spite of having Money, They feel the lack of Money.","areas":["money","personality"],"story":{"good":"You are intelligent.","care":"Even with money in hand, you may still feel a lack of money."}},{"id":"SG-36","pair":"36","ref":"Slide 10","quote":"3-6 / 6-3 — Having Rules and Regulations","areas":["personality"],"story":{"trait":"You live by your own rules and regulations."}},{"id":"SG-37","pair":"37","ref":"Slide 10","quote":"3-7 / 7-3 — High Education","areas":["education"],"story":{"good":"Points to high education."}},{"id":"SG-38","pair":"38","ref":"Slide 10","quote":"3-8 / 8-3 — Good Consultant / Judge","areas":["career"],"story":{"good":"Makes a good consultant or judge."}},{"id":"SG-39","pair":"39","ref":"Slide 10","quote":"3-9 / 9-3 — Intelligence and active","areas":["personality"],"story":{"good":"Brings intelligence and an active nature."}},{"id":"SG-45","pair":"45","ref":"Slide 10","quote":"4-5 / 5-4 — Bandhan Yoga / Court / Hospital. Sister and daughter may be ill or bad","areas":["legal","health","family"],"story":{"care":"Forms Bandhan Yoga (a yoga of bondage). Court or hospital matters may come up, and a sister or daughter may face illness or difficulty."}},{"id":"SG-46","pair":"46","ref":"Slide 11","quote":"4-6 / 6 4 — Urine Infection / Piles / Extra Marital / Sensitive Skin / Patch on Skin / Gay / Lesbian","areas":["health","relationship"],"sensitive":true,"story":{"care":"Linked with urinary infection, piles, sensitive skin or skin patches, and extramarital involvement. The source also lists same-sex attraction (gay / lesbian) under this pair."},"review_note":"Kept per your decision C6. My recommendation is still to drop only the 'Gay / Lesbian' item: on a public site it reads as calling sexual orientation a defect. Tick 'drop orientation item' in review if you agree."},{"id":"SG-47","pair":"47","ref":"Slide 11","quote":"4-7 / 7-4 — One who can adjust and manage the things clearly.","areas":["personality"],"story":{"good":"You can adjust and manage things clearly."}},{"id":"SG-48","pair":"48","ref":"Slide 11","quote":"4-8 / 8-4 — Chronic Disease / Addiction / May lack Sexual Life.","areas":["health"],"sensitive":true,"story":{"care":"Linked with chronic disease, addiction and a weaker sexual life."}},{"id":"SG-49","pair":"49","ref":"Slide 11","quote":"4-9 / 9-4 — Risk factor involvement / Uniform type work","areas":["career"],"story":{"good":"Suits uniform-type work.","care":"Brings involvement with risk."}},{"id":"SG-56","pair":"56","ref":"Slide 11","quote":"5-6 / 6-5 — Unable to ask for money that's why money get stuck.","areas":["money"],"story":{"care":"You may hesitate to ask for money you are owed, so money gets stuck."}},{"id":"SG-57","pair":"57","ref":"Slide 11","quote":"5-7 / 7-5 — Good consultant / Good Astrologer / Good Writer","areas":["career"],"story":{"good":"Makes a good consultant, astrologer or writer."}},{"id":"SG-58","pair":"58","ref":"Slide 11","quote":"5-8 / 8-5 — Finance sector involvement / Big talks on money","areas":["career","money"],"story":{"good":"Involvement with the finance sector.","care":"A tendency to talk big about money."}},{"id":"SG-59","pair":"59","ref":"Slide 12","quote":"5-9 / 9-5 — Straight forward / May result in Bad Relation because of this","areas":["personality","relationship"],"story":{"trait":"You are straightforward.","care":"This straightforwardness may spoil some relations."}},{"id":"SG-67","pair":"67","ref":"Slide 12","quote":"6-7/7-6 — Music lover / Luxury lover, Love Romance, Broad leaves tree","areas":["personality","relationship"],"story":{"good":"A lover of music, luxury, love and romance. Broad-leaved trees are linked with this pair."}},{"id":"SG-68","pair":"68","ref":"Slide 12","quote":"6-8 / 8-6 — Major Organ Transplant & Heart Surgery","areas":["health"],"sensitive":true,"story":{"care":"This pair is linked with major organ transplant and heart surgery, so your health needs care."}},{"id":"SG-69","pair":"69","ref":"Slide 12","quote":"6-9 / 9-6 — Other Sex Involvement / Good Planner / Lover","areas":["relationship","personality"],"story":{"good":"A good planner and a lover.","care":"Possible involvement with the opposite sex outside your commitment."}},{"id":"SG-78","pair":"78","ref":"Slide 12","quote":"7-8 / 8-7 — Healer / Spiritual but may get depressed","areas":["spiritual","career","mind"],"story":{"good":"A healer, spiritual by nature.","care":"You may feel low or depressed at times."}},{"id":"SG-79","pair":"79","ref":"Slide 12","quote":"7-9 / 9-7 — Joint pain / family Turmoil","areas":["health","family"],"story":{"care":"May bring joint pain and turmoil in the family."}},{"id":"SG-89","pair":"89","ref":"Slide 12","quote":"8-9 / 9-8 — Argumentative for what he feels right / Good Lawyer","areas":["personality","career"],"story":{"good":"Makes a good lawyer.","care":"You may argue hard for what you feel is right."}}]},"yogas":{"kind":"yoga","about":"Patterns on the Vedic grid 3 1 9 / 6 7 5 / 2 8 4. A yoga forms when every digit in `present` is in the number and every digit in `absent` is not (red X on the slide). Blank cells on the slide are ignored. The same rules are applied to the mobile grid and, separately, to the birth-date grid.","source_file":"P01-srk-slides.md","rules":[{"id":"YG-C-75","group":"Conjunction","name":"Easy Money Yoga","planets":"Ketu + Mercury","present":[7,5],"absent":[6],"ref":"Slide 13","quote":"EASY MONEY YOGA — MONEY WITH LUCK, Intelligent","areas":["money","career","relationship"],"story":{"good":"Easy Money Yoga: money comes to you with luck. You are intelligent, a good writer and speaker (astrology and journalism suit you too), with an attractive look. Relationships, with friends and affairs alike, come easily, and people appreciate your work."}},{"id":"YG-C-36","group":"Conjunction","name":"Don't Want to Marry","planets":"Jupiter + Venus","present":[3,6],"absent":[2],"ref":"Slide 13","quote":"DON'T WANT TO MARRY — RISE OF DESTINY AFTER MARRIAGE","areas":["relationship","education","personality"],"story":{"good":"Your destiny rises after marriage. You have a good social life and are highly generous, clever and well educated, with social and religious thoughts.","trait":"You follow your own rules and regulations.","care":"There can be a reluctance to marry."}},{"id":"YG-C-31","group":"Conjunction","name":"Sun Jupiter","planets":"Sun + Jupiter","present":[3,1],"absent":[9],"ref":"Slide 13","quote":"SUN JUPITER — WISE, LEARNED, WISDOM, LEADER, ASTROLOGER","areas":["career","education"],"story":{"good":"Wise, learned and a leader, with respect, reputation, education and intelligence. A combination for leaders, doctors, judges and astrologers (and for yoga). You achieve success by your own strength."}},{"id":"YG-C-19","group":"Conjunction","name":"Sun Mars","planets":"Sun + Mars","present":[1,9],"absent":[3],"ref":"Slide 14","quote":"SUN MARS — HIGH EDUCATION, AGGRESSIVE, SHORT-TEMPERED","areas":["education","career","personality"],"story":{"good":"High education and self-confidence. A combination for leaders, surgeons, engineers and ministers, and fire-related work is good for you.","care":"Can make you aggressive and short-tempered."}},{"id":"YG-C-17","group":"Conjunction","name":"Sun Ketu","planets":"Sun + Ketu","present":[1,7],"absent":[8],"ref":"Slide 14","quote":"SUN KETU — SUN IS ROD AND KETU IS FLAG, WHEN THEY MEET THEY FLY HIGH","areas":["government","career","money","relationship","family"],"story":{"good":"The Sun is the rod and Ketu the flag, and when they meet they fly high. A combination for government jobs and the mystical sciences, bringing respect, name, fame and wealth.","care":"Can bring dual marital relations, less domestic happiness and misunderstandings with your father."}},{"id":"YG-C-62","group":"Conjunction","name":"Venus Moon","planets":"Venus + Moon","present":[6,2],"absent":[3],"ref":"Slide 14","quote":"VENUS MOON — VERY CREATIVE AND ATTRACTIVE","areas":["relationship","health","education","personality"],"story":{"good":"Very creative and attractive, a lover of art and music.","care":"Can make you prone to affairs, possibly with two marriages, and willing to do anything for luxury. May bring hindrance in education and a chance of diabetes or urinary diseases."}},{"id":"YG-C-78","group":"Conjunction","name":"Ketu Saturn","planets":"Ketu + Saturn","present":[7,8],"absent":[1],"ref":"Slide 15","quote":"KETU SATURN — MISS-FORTUNE [ LIFE, PARENTS, ACCIDENT, MARRIAGE]","areas":["family","relationship","health","mind"],"sensitive":true,"story":{"care":"Can bring misfortune in matters of life, parents, accidents and marriage, a pessimistic outlook, family disturbance and a less fulfilling sexual life."}},{"id":"YG-C-84","group":"Conjunction","name":"Saturn Rahu","planets":"Saturn + Rahu","present":[8,4],"absent":[2],"ref":"Slide 15","quote":"SATURN RAHU — ONLY PLANNING NO EXECUTION","areas":["career","health"],"sensitive":true,"story":{"care":"Lots of planning but little execution. Can make you accident-prone, given to imaginary worries, with chronic disease, bad habits and a weaker sexual life. Thorny trees nearby are linked with this yoga."}},{"id":"YG-C-54","group":"Conjunction","name":"Mercury Rahu","planets":"Mercury + Rahu","present":[5,4],"absent":[9],"ref":"Slide 15","quote":"MERCURY RAHU — BANDHAN YOG","areas":["legal","government","health","personality"],"story":{"good":"Intelligent, wise and clever.","trait":"You need continuous change in life.","care":"Forms Bandhan Yog, which can bring loss in government work, weak eyesight, disease and litigation (your own or others')."}},{"id":"YG-C-95","group":"Conjunction","name":"Mars Mercury (Intelligent Yoga)","planets":"Mars + Mercury","present":[9,5],"absent":[4],"ref":"Slide 16","quote":"MARS MERCURY — INTELLIGENT YOGA","areas":["career","personality"],"story":{"good":"Intelligent Yoga: you are physically active, and business suits you.","trait":"You are straightforward.","care":"You may speak in a bitter manner and sometimes disturb your own work."}},{"id":"YG-C-28","group":"Conjunction","name":"Moon Saturn (Depression Yoga)","planets":"Moon + Saturn","present":[2,8],"absent":[4],"ref":"Slide 16","quote":"MOON SATURN — DEPRESSION YOGA","areas":["mind","family","home"],"story":{"care":"Depression Yoga: feelings of fear and negative thoughts. May show up as leakage in the house and living away from water.","trait":"Two sisters of the same family may marry into the same family."}},{"id":"YG-C-67","group":"Conjunction","name":"Venus Ketu","planets":"Venus + Ketu","present":[6,7],"absent":[5],"ref":"Slide 16","quote":"VENUS KETU — ART AND MUSIC LOVER, Gets luxury","areas":["relationship","spiritual","personality"],"story":{"good":"A lover of art and music who gets luxury, and spiritual too.","care":"Can bring more than one affair or a second marriage."},"multiples":[{"digit":6,"min":2,"quote":"MULTIPLE 6 CONTINUOS FIGHT'S","care":"With more than one 6, there can be continuous fights."},{"digit":7,"min":2,"quote":"MULTIPLE 7 INCREAS IN INSTABILITY AND ATTRACTION BOTH","care":"With more than one 7, both instability and attraction increase."}]},{"id":"YG-H-18","group":"Hostile","name":"Sun Saturn","planets":"Sun + Saturn","present":[1,8],"absent":[7],"ref":"Slide 17","quote":"SUN SATURN — OBSTACLES, DISRESPECT","areas":["career","government","family","health"],"story":{"care":"Can bring obstacles and disrespect, loss of a government job, family disturbances, health issues for your father, and differences with your father or boss."}},{"id":"YG-H-24","group":"Hostile","name":"Moon Rahu","planets":"Moon + Rahu","present":[2,4],"absent":[8],"ref":"Slide 17","quote":"MOON RAHU — WEAK EYESIGHT AND MENTAL DISEASES","areas":["mind","health","family"],"sensitive":true,"story":{"care":"Linked with weak eyesight and mental illness, an inferiority complex, family struggle, possible eye and heart problems, more anxiety, worry and fear, and unrealistic expectations."}},{"id":"YG-H-94","group":"Hostile","name":"Mars Rahu","planets":"Mars + Rahu","present":[9,4],"absent":[5],"ref":"Slide 17","quote":"MARS RAHU — STRONG BANDHAN YOG","areas":["legal","mind","career","money"],"story":{"good":"Suits lawyers, doctors and the police, and money comes through hard work.","care":"A strong Bandhan Yog: mental disturbance, court or hospital matters, restlessness and risk-taking."},"remedy":{"quote":"TAKE FOOD IN KITCHEN","text":"Take your food in the kitchen."},"review_note":"'TAKE FOOD IN KITCHEN' is listed among the effects; I read it as a remedy (eat in the kitchen). Please confirm."},{"id":"YG-H-39","group":"Hostile","name":"Jupiter Mars","planets":"Jupiter + Mars","present":[3,9],"absent":[1],"ref":"Slide 18","quote":"JUPITER MARS — MORE WORK LESS GAINS","areas":["career","spiritual"],"story":{"good":"A combination of doctor and leader. Meditation Yog and pilgrimages; intelligent and learned, with wisdom.","care":"More work, less gains."}},{"id":"YG-H-65","group":"Hostile","name":"Venus Mercury","planets":"Venus + Mercury","present":[6,5],"absent":[7],"ref":"Slide 18","quote":"VENUS MERCURY — HIGHER EDUCATION, HURDLES","areas":["education","family","career","relationship"],"story":{"good":"Higher education and a very creative, artistic mind, like authors, musicians, actors and writers. Points to love marriage.","care":"Hurdles, and family conflict.","trait":"A flour mill nearby is linked with this yoga."}},{"id":"YG-H-32","group":"Hostile","name":"Jupiter Moon","planets":"Jupiter + Moon","present":[3,2],"absent":[6],"ref":"Slide 18","quote":"JUPITER MOON — DISTURBANCE IN EDUCATION","areas":["education","family","personality"],"story":{"good":"Gaj Kesari Yog and creativity. You may have many enemies, but they cannot harm you.","care":"Disturbance in education, ego and arrogance, and less happiness from children.","trait":"Lemon trees nearby are linked with this yoga."}},{"id":"YG-H-85","group":"Hostile","name":"Saturn Mercury","planets":"Saturn + Mercury","present":[8,5],"absent":[1,9,7,4],"ref":"Slide 19","quote":"SATURN MERCURY — SHARP MEMORY, MANAGEMENT, GOOD FINANCE","areas":["money","career","family","health"],"story":{"good":"Sharp memory, management skill and good finance; suits finance and insurance work. Your fortune rises (bhagyodaya) after 35.","care":"Can make you selfish, is inauspicious for your father, and may bring skin problems."}},{"id":"YG-F-12","group":"Fourth aspect","name":"Sun Moon (4th aspect)","planets":"Sun + Moon","present":[1,2],"absent":[3,6],"ref":"Slide 20","quote":"SUN MOON (4th Aspect) — Ek baar life me zero face karenge","areas":["money","health","family","mind"],"story":{"care":"You may face a 'zero' once in life. Can bring hidden enemies, debts and health issues, possible family disturbance, and ups and downs."}},{"id":"YG-F-14","group":"Fourth aspect","name":"Sun Rahu (4th aspect)","planets":"Sun + Rahu","present":[1,4],"absent":[9,7,5,8],"ref":"Slide 20","quote":"SUN RAHU (4th Aspect) — PITRA DOSHA, Notice of Income Tax, Health issue, Debt issue","areas":["money","health","relationship","family","legal"],"story":{"care":"Pitra dosha: income-tax notices, health and debt issues, marriage issues, physical or financial problems, and child-birth issues, especially if Rahu is in the 5th or 9th house of the birth chart."},"remedy":{"quote":"STRENGTHEN SUN, RAHU MANI & JAAP, SERVE CROWS, AMAVASYA REMEDY, DO SEVA IN OLD AGE HOME OR ELDERS OF FAMILY","text":"Strengthen the Sun; do Rahu mani and jaap; serve crows; do the Amavasya remedy; and do seva in an old-age home or for the elders of your family."}},{"id":"YG-F-38","group":"Fourth aspect","name":"Jupiter Saturn (4th aspect)","planets":"Jupiter + Saturn","present":[3,8],"absent":[1,6,7,2],"ref":"Slide 20","quote":"JUPITER SATURN (4th Aspecct) — DHARAMKARAMADHIPATI YOGA","areas":["career"],"story":{"good":"Dharmakarmadhipati Yoga: you achieve your goals after struggle. A good advisor and counsellor, you can be a judge or astrologer."}},{"id":"YG-F-35","group":"Fourth aspect","name":"Jupiter Mercury (4th aspect)","planets":"Jupiter + Mercury","present":[3,5],"absent":[1,9],"ref":"Slide 21","quote":"JUPITER MERCURY (4th Aspect) — Sharp memory","areas":["money","education","travel","family"],"story":{"good":"Sharp memory, and good for studies abroad.","care":"A lack of money even in good economic conditions. Your native place is not favourable, so you do better away from it, and your father-in-law may have breathing problems."}},{"id":"YG-F-98","group":"Fourth aspect","name":"Mars Saturn (4th aspect)","planets":"Mars + Saturn","present":[9,8],"absent":[1,7,5,4],"ref":"Slide 21","quote":"MARS SATURN (4th Aspect) — EARTHQUAKE YOGA","areas":["career","family","personality"],"story":{"good":"You can be a good advocate, engineer or doctor.","care":"Earthquake Yoga: an argumentative nature, ups and downs in life, and differences with your brother."}},{"id":"YG-F-25","group":"Fourth aspect","name":"Moon Mercury (4th aspect)","planets":"Moon + Mercury","present":[2,5],"absent":[8,4],"ref":"Slide 21","quote":"MOON MERCURY (4th Aspect) — Sharp memory, International tours","areas":["travel","career","health","money"],"story":{"good":"Sharp memory and international tours; occult science, astrology and tantra.","care":"Urine and bone issues, and possible involvement in a financial scam."}},{"id":"YG-F-64","group":"Fourth aspect","name":"Venus Rahu (4th aspect)","planets":"Venus + Rahu","present":[6,4],"absent":[2,8],"ref":"Slide 22","quote":"VENUS RAHU (4th Aspect) — Urinary infection, Sexual problem, Skin disease","areas":["health","relationship"],"sensitive":true,"story":{"care":"Linked with urinary infection, sexual problems, skin disease, piles and sperm issues, a casanova nature, a possibly criminal mind, and problems in love life."}},{"id":"YG-F-69","group":"Fourth aspect","name":"Venus Mars (4th aspect)","planets":"Venus + Mars","present":[6,9],"absent":[3,1],"ref":"Slide 22","quote":"VENUS MARS (4th Aspect) — Love marriage","areas":["relationship","family"],"story":{"good":"Love marriage, and you are a good planner.","care":"Differences with your brother because of your wife, and affairs with other women. Marrying late is suggested, otherwise disputes may arise."}},{"id":"YG-T-964","group":"Triangular","name":"Venus Mars Rahu","planets":"Venus + Mars + Rahu","present":[9,6,4],"absent":[],"ref":"Slide 23","quote":"VENUS MARS RAHU — Connected with crimes","areas":["legal","relationship"],"sensitive":true,"story":{"trait":"You are a risk-taker.","care":"Connected with crime-related matters and uncordial relations; two marriages, relationships and affairs."},"review_note":"The slide's example (Kiran Bedi) is not shown on the site."},{"id":"YG-T-124","group":"Triangular","name":"Sun Moon Rahu","planets":"Sun + Moon + Rahu","present":[1,2,4],"absent":[],"ref":"Slide 23","quote":"SUN MOON RAHU — Connected with crimes","areas":["legal","money","health","family","government"],"sensitive":true,"story":{"care":"Connected with crime-related matters; debts, diseases and enemies; family disturbances and ups and downs; obstruction in government work; and either no sister or differences with her."}},{"id":"YG-T-352","group":"Triangular","name":"Jupiter Moon Mercury","planets":"Jupiter + Moon + Mercury","present":[3,5,2],"absent":[],"ref":"Slide 23","quote":"JUPITER MOON MERCURY — Sharp mind, Foreign travel","areas":["travel","money","home"],"story":{"good":"A sharp mind and foreign travel.","care":"Financial scams and shortcut methods, and less happiness from your own property. Staying away from your native place helps you progress."}},{"id":"YG-T-398","group":"Triangular","name":"Jupiter Mars Saturn","planets":"Jupiter + Mars + Saturn","present":[3,9,8],"absent":[],"ref":"Slide 24","quote":"JUPITER MARS SATURN — HURDLES IN EDUCATION, FAMILY ISSUES","areas":["education","family","career"],"story":{"good":"You can be a judge or lawyer.","care":"Hurdles in education, family issues, either no brother or differences with him, an argumentative nature, and possible disturbance in the family."}},{"id":"YG-P-319","group":"Plane","name":"Jupiter Sun Mars","planets":"Jupiter + Sun + Mars","present":[3,1,9],"absent":[],"ref":"Slide 25","quote":"JUPITER SUN MARS — STRONG PERSONALITY, AGGRESSIVE","areas":["personality","relationship","career"],"story":{"good":"A strong, courageous personality, educated and respected, and a sports-person.","care":"Can make you aggressive, and brings delay in marriage."}},{"id":"YG-P-675","group":"Plane","name":"Venus Ketu Mercury (Raj Yog)","planets":"Venus + Ketu + Mercury","present":[6,7,5],"absent":[],"ref":"Slide 25","quote":"VENUS KETU MERCURY (RAJ YOG) — ULTRA LUXURIOUS","areas":["money","home","family","career","relationship"],"story":{"good":"Raj Yog: an ultra-luxurious life, a big house, family growth and a high level of living. A lover of music and art, a good speaker and writer, with love and romance, and a good businessman."}},{"id":"YG-P-954","group":"Plane","name":"Mars Mercury Rahu","planets":"Mars + Mercury + Rahu","present":[9,5,4],"absent":[],"ref":"Slide 25","quote":"MARS MERCURY RAHU — QUICK DECISION AND ACTIONS","areas":["career","home","personality"],"story":{"good":"Quick decisions and actions; a multitasker.","care":"Jack of all trades, master of none; outspoken; property disputes."}},{"id":"YG-P-362","group":"Plane","name":"Jupiter Venus Moon","planets":"Jupiter + Venus + Moon","present":[3,6,2],"absent":[],"ref":"Slide 26","quote":"JUPITER VENUS MOON — DON'T WANT TO MARRY, RISE OF DESTINY AFTER MARRIAGE","areas":["relationship","education","health","travel"],"sensitive":true,"story":{"good":"Your destiny rises after marriage. You are attractive, a music lover, with good education.","care":"A reluctance to marry, and gynaecological problems or low sperm. Staying away from your native place is suggested."}},{"id":"YG-P-284","group":"Plane","name":"Moon Saturn Rahu","planets":"Moon + Saturn + Rahu","present":[2,8,4],"absent":[],"ref":"Slide 26","quote":"MOON SATURN RAHU — AWAY FROM BIRTHPLACE, MAJOR UP'S AND DOWN'S LIFE","areas":["mind","health","travel"],"sensitive":true,"story":{"care":"Life away from your birthplace, with major ups and downs. Little control over speech when angry; negative thoughts, addiction and chronic disease. The source also links this yoga with a risk of death by accident."},"review_note":"The slide's example (Rajiv Gandhi, 20/8/1944) is not shown on the site; it is used as a test."},{"id":"YG-P-178","group":"Plane","name":"Sun Ketu Saturn","planets":"Sun + Ketu + Saturn","present":[1,7,8],"absent":[],"ref":"Slide 26","quote":"SUN KETU SATURN — STRONG INTUTION POWER, BLACK TOUNGE","areas":["career","money","personality"],"story":{"good":"Strong intuition, knowledge of technical work and more than one source of income. You may be a social worker, politician or philanthropist.","care":"A sharp ('black') tongue. You help others but don't get the same in return."}},{"id":"YG-D-374","group":"Diagonal","name":"Jupiter Ketu Rahu (Kaal Sarp Dosh Yoga)","planets":"Jupiter + Ketu + Rahu","present":[3,7,4],"absent":[],"ref":"Slide 27","quote":"JUPITER KETU RAHU (KAAL SHARP DOSH YOGA) — SUCCESSIVE KAAL SHARP DOSHA YOGA","areas":["education","career"],"story":{"good":"You can reach a top position.","care":"Kaal Sarp Dosh Yoga: hurdles in education. Don't be proud or arrogant about your success."},"remedy":{"quote":"RAHU REMEDIES","text":"Rahu remedies are advised."}},{"id":"YG-D-972","group":"Diagonal","name":"Moon Ketu Mars (Kaal Sarp Dosh Yoga)","planets":"Moon + Ketu + Mars","present":[9,7,2],"absent":[],"ref":"Slide 27","quote":"MOON KETU MARS (KAAL SHARP DOSH YOGA) — STRUGGLED LIFE, AWAY FROM FAMILY","areas":["family","health"],"story":{"good":"Courageous.","care":"Kaal Sarp Dosh Yoga: a life of struggle, away from family, with family disturbance, joint pains and urinary diseases."}},{"id":"YG-L-197","group":"L shape","name":"Sun Mars Ketu","planets":"Sun + Mars + Ketu","present":[1,9,7],"absent":[],"ref":"Slide 28","quote":"SUN MARS KETU — MARRIAGE DELAY, INTERCASTE MARRIAGE","areas":["relationship","travel"],"story":{"good":"Fortunate, with foreign travel.","trait":"Points to an inter-caste marriage.","care":"Delay in marriage (a late marriage) and Manglik."}},{"id":"YG-L-175","group":"L shape","name":"Sun Ketu Mercury","planets":"Sun + Ketu + Mercury","present":[1,7,5],"absent":[],"ref":"Slide 28","quote":"SUN KETU MERCURY — Sharp mind and high Level Thoughts","areas":["career","personality"],"story":{"good":"A sharp mind with high-level thoughts, logical-minded, suiting a teacher or astrologer."}},{"id":"YG-L-167","group":"L shape","name":"Sun Ketu Venus","planets":"Sun + Ketu + Venus","present":[1,6,7],"absent":[],"ref":"Slide 28","quote":"SUN KETU VENUS — Music Lover / Luxury Life Style","areas":["relationship","personality"],"story":{"good":"A music lover with a luxurious lifestyle.","care":"More than one love affair and marriage, with ups and downs."}},{"id":"YG-L-317","group":"L shape","name":"Jupiter Sun Ketu","planets":"Jupiter + Sun + Ketu","present":[3,1,7],"absent":[],"ref":"Slide 29","quote":"JUPITER SUN KETU — Govt. Job / Abroad Tours","areas":["government","career","travel","education"],"story":{"good":"A government job and tours abroad. You can be a teacher, judge, advocate or astrologer, educated and respected."}},{"id":"YG-L-754","group":"L shape","name":"Ketu Mercury Rahu (Bondage Yoga)","planets":"Ketu + Mercury + Rahu","present":[7,5,4],"absent":[],"ref":"Slide 29","quote":"KETU MERCURY RAHU — Debt Related issues and Defamation","areas":["money","legal"],"story":{"care":"Bondage Yoga: debt-related issues and defamation, and a life of struggle."}},{"id":"YG-L-584","group":"L shape","name":"Mercury Rahu Saturn (Bondage Yoga)","planets":"Mercury + Rahu + Saturn","present":[5,8,4],"absent":[],"ref":"Slide 29","quote":"MERCURY RAHU SATURN — Addiction / Bondage Yoga","areas":["health","money","mind"],"sensitive":true,"story":{"care":"Bondage Yoga: addiction, a weaker sexual life, and fear of loss."}},{"id":"YG-L-628","group":"L shape","name":"Venus Moon Saturn","planets":"Venus + Moon + Saturn","present":[6,2,8],"absent":[],"ref":"Slide 30","quote":"VENUS MOON SATURN — Family Trouble due to Opposite Sex","areas":["family","money","education","relationship"],"story":{"good":"You have good money.","care":"Family trouble because of the opposite sex, obstruction in education, and obstacles."}},{"id":"YG-Q-1658","group":"Four digit","name":"Sun Venus Saturn Mercury (Raj Yog)","planets":"Sun + Venus + Saturn + Mercury","present":[1,6,5,8],"absent":[],"ref":"Slide 31","quote":"SUN VENUS SATURN MERCURY (RAJ YOG) — INTELLIGENT AND COURAGEOUS","areas":["career","personality","travel"],"story":{"good":"Raj Yog: intelligent, courageous and flexible, with name and fame in your country and abroad."},"review_note":"The slide's example (Sania Mirza) is not shown on the site; her birth date is used as a test."}]},"planets":{"kind":"planet","about":"Meaning of each digit 1-9 and its planet. Shown for the digits present in the mobile number (and used to name the yogas).","source_file":"P01-srk-slides.md","rules":[{"id":"PL-1","digit":1,"planet":"Sun","ref":"Slide 1","quote":"LEADERSHIP QUALITY / ROYAL, confident, good in management","story":{"trait":"Leadership and a royal, confident nature, good in management. Straightforward, independent, farsighted, freedom-loving, ambitious and good in friendship, an innovator and pioneer. Can also be dominating, egoistic, stubborn or short-tempered, and may not perform well under pressure.","signifies":"Father, government, MNCs, politics, popularity in a large group."}},{"id":"PL-2","digit":2,"planet":"Moon","ref":"Slide 1","quote":"VECILLATING MIND/ FLUCTUATING , emotional ,creative ,sentimental","story":{"trait":"Emotional, creative and sentimental, with a helping nature, a soft way of speaking, the best intuition, generosity and a good eye for photography. The mind can fluctuate: decisions may be hard, moods change often, patience can be short, support and motivation from others are needed, and false things may be believed easily.","signifies":"Mother, emotion, water."}},{"id":"PL-3","digit":3,"planet":"Jupiter","ref":"Slide 2","quote":"ALWAYS HUNGRY FOR KNOWLEDGE ,knowledgeable, guru, advisor , hardship in childhood","story":{"trait":"Always hungry for knowledge: a guru, advisor, very good counsellor, teacher and leader. Confident, disciplined, attached to family, a good speaker, charitable and good in management, able to say no to addiction and respectful to all. Childhood may have had hardship.","signifies":"Guru, mentor, finance, right judgement."}},{"id":"PL-4","digit":4,"planet":"Rahu","ref":"Slide 2","quote":"ALWAYS IN CONTROVERSY , suddenness, hard working, stubborn","story":{"trait":"Hard-working, strong-built, an excellent planner and analyst, a very good friend, an explorer and researcher who travels a lot. Can attract controversy and sudden events, with ego, stubbornness, impulsiveness, harsh decisions, mood swings, difficulty keeping promises, weak execution, overspending, quarrels between son and father, and life away from the birthplace.","signifies":"A shadow planet linked with eclipse, cat and cancer."}},{"id":"PL-5","digit":5,"planet":"Mercury","ref":"Slide 3","quote":"GOOD IN FINANCE / CALCULATIVE , explorers, reserve , logical","story":{"trait":"Good in finance, calculative and logical. Intelligent, entertaining, a good communicator, a born businessman (a side business even if in a job), with fruitful and foreign journeys. Adjustable, doesn't keep grudges, mostly satisfied and always bounces back. Can be lazy, carefree, slow in decisions and emotionally cool, may start well but get bored midway, settles late, puts money first, and gets no gain from siblings.","signifies":"Sister, maternal uncle, aunt (bua), daughter."}},{"id":"PL-6","digit":6,"planet":"Venus","ref":"Slide 3","quote":"TRULY FAMILY PEOPLE ,ALWAYS READY TO HELP FAMILY MEMBERS","story":{"trait":"Truly family people, always ready to help family members. Highly romantic and diplomatic, with an attractive aura; imaginative trendsetters, brand-conscious, fashionable food lovers and pet lovers. Can be jealous, always wanting more, fond of showing off, a bit harsh in speech, attracted to the opposite sex, with breaks in education and possible extramarital tendencies.","signifies":"Luxury, love, sexual life, married woman, private parts."}},{"id":"PL-7","digit":7,"planet":"Ketu","ref":"Slide 4","quote":"TRUST EASILTY / SELF DOUBT, deep thinkers & researchers, positive","story":{"trait":"Deep thinkers and researchers: positive, stable and lucky, with work done easily. Studious, secretive, highly spiritual and religious, making independent decisions; foreign travel suits you. Trusts easily, can have self-doubt, low confidence and confusion, and may face emotional setbacks; points to love marriage.","signifies":"Flag, joints, dog, broad leaves, spirituality."}},{"id":"PL-8","digit":8,"planet":"Saturn","ref":"Slide 4","quote":"BEST MONEY HANDLER, LOGICAL, down to earth, can't see people crying","story":{"trait":"The best money handler: logical, down to earth, trustworthy, hard-working, a justice believer, spiritual and soft-hearted, unable to see people cry, never sitting idle. Can be stubborn and egoistic, feel isolated without recognition, neglect health and fitness, and may face a 'zero' once in life.","signifies":"Judge, labour, delay, struggle, obstacle, sadness, old age, iron, cement."}},{"id":"PL-9","digit":9,"planet":"Mars","ref":"Slide 5","quote":"PERSONALITY LIKE HUMANITARIAN (DANVEER KARAN)","story":{"trait":"A humanitarian personality like Danveer Karan: generous, religious, confident, energetic, a true warrior who gets success through hard work and would rather die than accept defeat, giving everything for loved ones. Can be mood-driven, restless, argumentative and quick to react.","signifies":"Brother, blood, group leader, army, police, fire, bravery, energy, bitter taste, masala."}}]},"professions":{"kind":"profession","about":"Profession codes from slide 32, matched on the 10-digit mobile number with zeros skipped. Code syntax: a 2- or 3-digit code = those digits side by side, in either order (forward or reverse); a single digit = present anywhere; '+' joins terms that must all match (e.g. '3+7' = 3 AND 7 anywhere; '3+75' = a 3 anywhere AND 7,5 side by side).","source_file":"P01-srk-slides.md","rules":[{"id":"PR-DOCTOR","field":"Doctor","codes":["19","3+7"],"ref":"Slide 32","quote":"DOCTOR – 19 / 3 AND 7","areas":["career","health"]},{"id":"PR-ENGINEER","field":"Engineer","codes":["19","3+75"],"ref":"Slide 32","quote":"ENGINEER – 19 / 3 AND 75","areas":["career"]},{"id":"PR-MEDIA","field":"Media / glamour industry","codes":["6","17","67"],"ref":"Slide 32","quote":"Media / glamour industry – 6 / 17 / 67","areas":["career"]},{"id":"PR-TEACHER","field":"Teacher","codes":["31","75"],"ref":"Slide 32","quote":"Teacher – 31/ 75","areas":["career","education"]},{"id":"PR-ACCOUNTS","field":"Accounts / banking","codes":["85","75"],"ref":"Slide 32","quote":"Accounts / banking – 85 / 75","areas":["career","money"]},{"id":"PR-LAWYER","field":"Lawyer","codes":["98","31","17"],"ref":"Slide 32","quote":"Lawyer – 98 / 31 / 17","areas":["career","legal"]},{"id":"PR-JUDGE","field":"Judge","codes":["38","17","31"],"ref":"Slide 32","quote":"Judge – 38 / 17 / 31","areas":["career","legal"]},{"id":"PR-LEADER","field":"Leader / politician","codes":["19","4","31"],"ref":"Slide 32","quote":"Leader /politician – 19 / 4 / 31","areas":["career","government"]},{"id":"PR-UNIFORM","field":"Army / police / fire","codes":["19","94"],"ref":"Slide 32","quote":"Army /police / fire – 19 / 94","areas":["career","government"]},{"id":"PR-OCCULT","field":"Occult","codes":["371","75","25"],"ref":"Slide 32","quote":"Occult – 371 / 75 / 25","areas":["career","spiritual"]},{"id":"PR-CONSULTANT","field":"Consultant","codes":["38","37"],"ref":"Slide 32","quote":"CONSULTANT – 38 / 37","areas":["career"]},{"id":"PR-HOSPITAL-COURT","field":"Working in a hospital / court","codes":["54","13","17","9"],"ref":"Slide 32","quote":"Working in the hospital / court – 54 / 13 / 17 / 9","areas":["career","health","legal"]},{"id":"PR-IRON","field":"Iron / chemical / construction work","codes":["8"],"ref":"Slide 32","quote":"Work of Iron / Chemical / Construction – Can take '8' in mobile number","areas":["career"]},{"id":"PR-HEALER","field":"Healer (any type)","codes":["17","8"],"ref":"Slide 32","quote":"Healer ( any type ) – 17/ 8","areas":["career","spiritual"]}]},"remedies":{"kind":"remedy","about":"Mobile-numerology remedy by birth number (day of birth reduced to 1-9): phone screen saver, bracelet and mani. Birth number 4 and 8 point to the destiny number's screen saver; 'friendly number' is not defined in the sources, so it is not used.","source_file":"P01-srk-slides.md","rules":[{"id":"RM-1","birth_number":1,"ref":"Slide 33","quote":"Rising Sun , Beautiful Blooming Flowers With Sun's RaysFalling On Them","screen_saver":"A rising sun, or beautiful blooming flowers with the sun's rays falling on them.","bracelet":"Red jasper or red aventurine bracelet","mani":"Suryamani","bracelet_quote":"Red jaspar / Red aventurine Bracelet, SURYAMANI"},{"id":"RM-2","birth_number":2,"ref":"Slide 33","quote":"Use Moon Scattering Light All Around With Soothing Atmosphere","screen_saver":"The moon scattering light all around in a soothing atmosphere; a beautiful picture showing love and cheerful vibes; twin birds or leaves; a couple's picture; a meditative Buddha.","bracelet":"Moon howlite bracelet (or sphatik)","mani":"Chandramani","bracelet_quote":"Moon Howlite braclet / Sephatic, CHANDRAMANI","review_note":"'Moon Howlite braclet / Sephatic' shown as 'Moon howlite bracelet (or sphatik)'. Please confirm 'Sephatic' means sphatik."},{"id":"RM-3","birth_number":3,"ref":"Slide 33","quote":"Blooming Yellow Flowers Can Also Use Guru's picture","screen_saver":"Blooming yellow flowers, or your Guru's picture; Lord Vishnu or Maa Saraswati too.","bracelet":"Yellow citrine bracelet","mani":"Brihaspati mani","bracelet_quote":"Yellow Citrine Bracelet, BRIHASPATI MANI"},{"id":"RM-4","birth_number":4,"ref":"Slide 33","quote":"Use The Screen Saver Of Your Destiny Number or Your Friendly Number","screen_saver_from":"destiny","bracelet":"Tiger eye bracelet","mani":"Rahumani","bracelet_quote":"Tiger eye Bracelet, RAHUMANI"},{"id":"RM-5","birth_number":5,"ref":"Slide 34","quote":"Use Greenery , Being Earth Element Can also use Rock Crystal","screen_saver":"Greenery, a rock crystal, or snow-covered mountains.","bracelet":"Green aventurine bracelet","mani":"Budhmani","bracelet_quote":"Green Aventurine Bracelet, BUDHMANI"},{"id":"RM-6","birth_number":6,"ref":"Slide 34","quote":"You Can Use Luxurious Atmosphere That You Crave For","screen_saver":"A luxurious atmosphere you love: chimes in metallic shades, golden or pinkish idols, currency and diamonds, or Maa Lakshmi showering coins.","bracelet":"Opal bracelet or diamond-cut crystal bracelet","mani":"Shukramani","bracelet_quote":"Opal Bracelet, Diamond cut Crystal Bracelet, SHUKRAMANI"},{"id":"RM-7","birth_number":7,"ref":"Slide 34","quote":"Something Spiritual / Saint / Sage / Aeroplane In Upward Direction","screen_saver":"Something spiritual: a saint or sage, an aeroplane flying upward, or Buddha in meditation.","bracelet":"7 chakra bracelet","mani":"Ketumani","bracelet_quote":"7 chakra Bracelet, KETUMANI"},{"id":"RM-8","birth_number":8,"ref":"Slide 34","quote":"Follow Your Destiny Number Or Beautiful Village Picture . Smooth Road With Greenery","screen_saver_from":"destiny","screen_saver":"A beautiful village picture, or a smooth road with greenery.","bracelet":"Amethyst bracelet","mani":"Shanimani","bracelet_quote":"Amethyst Bracelet, SHANIMANI"},{"id":"RM-9","birth_number":9,"ref":"Slide 34","quote":"In Red Frame Lord Hanuman Ji , Red Flower , Red Rose (Blooming)","screen_saver":"Lord Hanuman Ji in a red frame, a red flower, or a blooming red rose.","bracelet":"Red jasper or red aventurine bracelet","mani":"Mangalmani","bracelet_quote":"Red Jaspar / Red Aventurine Bracelet, MANGALMANI"}]},"personalYear":{"kind":"personal_year","about":"Personal Year = day of birth + month of birth + digit-sum of the target year, reduced fully to 1-9 (birth year not used; 11 and 22 reduce further). The story shows the current calendar year and the next one. Items come from two speakers: T01 and T03.","sources":{"T01":"T01-personal-year-a.md","T03":"T03-personal-year-b.md"},"method":[{"id":"PY-METHOD-T01","src":"T01","quote":"add the day of birth, the month of birth, and the digits of the year being considered, reducing the result to a single digit"},{"id":"PY-METHOD-T03","src":"T03","quote":"The speaker says not to include the birth year."},{"id":"PY-METHOD-T03-11","src":"T03","quote":"18 + 11 + 9 = 38, then 3 + 8 = 11, then 1 + 1 = 2"}],"years":{"1":[{"id":"PY1-T01-a","src":"T01","cat":"theme","quote":"progress may feel slow at first, and a person may feel stuck or underappreciated before opportunities become clearer","text":"A new beginning after a dark phase. Progress may feel slow at first, and you may feel stuck or unappreciated before opportunities become clear."},{"id":"PY1-T01-b","src":"T01","cat":"do","quote":"build a morning routine and make use of morning sunlight","text":"Build a morning routine and make use of the morning sunlight."},{"id":"PY1-T01-c","src":"T01","cat":"remedy","quote":"keeping a rising-sun image in the work area","text":"Keep a rising-sun image in your work area."},{"id":"PY1-T01-d","src":"T01","cat":"do","quote":"recommends feeding people on Sundays","text":"Feed people on Sundays (a community meal, a shared meal, or food you prepare and give away). Generosity matters this year."},{"id":"PY1-T01-e","src":"T01","cat":"do","quote":"For the second half of the year, the speaker advises dressing impressively","text":"In the second half of the year, dress impressively."},{"id":"PY1-T01-f","src":"T01","cat":"do","quote":"recommends respecting senior colleagues or business contacts","text":"Respect elders, your father, and senior colleagues or business contacts."},{"id":"PY1-T01-g","src":"T01","cat":"career","quote":"bringing a senior person—such as a retired military officer—into a position in the business","text":"If your business is struggling, bring a senior person (for example, a retired military officer) into a position in it."},{"id":"PY1-T03-a","src":"T03","cat":"theme","quote":"associates personal year 1 with sunrise, visibility, name, and fame","text":"A year of sunrise, visibility, name and fame."},{"id":"PY1-T03-b","src":"T03","cat":"theme","quote":"followed by stronger momentum after March or April","text":"A slower start, then stronger momentum after March or April. The middle of the year is especially good for important plans."},{"id":"PY1-T03-c","src":"T03","cat":"remedy","quote":"spend a few minutes watching the sunrise","text":"Spend a few minutes watching the sunrise."},{"id":"PY1-T03-d","src":"T03","cat":"avoid","quote":"not overcommitting, overpromising, or making large purchases early in the year","text":"Don't overcommit, overpromise or make large purchases early in the year; move those plans to the second half."},{"id":"PY1-T03-e","src":"T03","cat":"colours","quote":"names yellow and orange as favorable colors","text":"Yellow and orange."},{"id":"PY1-T03-f","src":"T03","cat":"accessories","quote":"recommends a golden watch","text":"A golden watch."}],"2":[{"id":"PY2-T01-a","src":"T01","cat":"theme","quote":"associates year two with the Moon and the mind","text":"A Moon year: the mind leans towards comfort, so a steady routine helps you most."},{"id":"PY2-T01-b","src":"T01","cat":"do","quote":"follow a fixed routine: show up even when motivation is low, go to the office rather than defaulting to working from home, and maintain a proper work station","text":"Follow a fixed routine: show up even when motivation is low, go to the office rather than working from home, and keep a proper work station."},{"id":"PY2-T01-c","src":"T01","cat":"do","quote":"supporting a child’s education through school fees or books","text":"Help someone going through hardship, especially by supporting a child's education with school fees or books."},{"id":"PY2-T01-d","src":"T01","cat":"career","quote":"eating with more junior colleagues or team members about once a week","text":"If you lead a team or business, eat with junior colleagues about once a week and take a caring, mother-like approach."},{"id":"PY2-T01-e","src":"T01","cat":"money","quote":"year two may be a favorable time for property investment if one can afford it; if not, they suggest investing in silver instead","text":"A favourable time for property investment if you can afford it; if not, invest in silver."},{"id":"PY2-T03-a","src":"T03","cat":"do","quote":"looking at oneself in the mirror and offering oneself a compliment","text":"Begin the day by looking in the mirror and giving yourself a compliment."},{"id":"PY2-T03-b","src":"T03","cat":"relationship","quote":"favorable for marriage and for people considering conception","text":"Favourable for marriage and for those planning a child."},{"id":"PY2-T03-c","src":"T03","cat":"money","quote":"also for buying property or building a home","text":"Good for buying property or building a home (keeping down payments and instalments in mind)."},{"id":"PY2-T03-d","src":"T03","cat":"do","quote":"getting advice from suitable people before moving forward","text":"Take advice from the right people before moving forward."},{"id":"PY2-T03-e","src":"T03","cat":"health","quote":"emphasizes adequate sleep","text":"Get enough sleep, especially before exams or presentations. Keep the day for work and the night for sleep."},{"id":"PY2-T03-f","src":"T03","cat":"colours","quote":"white, light blue, and pink","text":"White, light blue and pink."},{"id":"PY2-T03-g","src":"T03","cat":"accessories","quote":"silver watch with a white or blue dial","text":"A silver watch with a white or blue dial."}],"3":[{"id":"PY3-T01-a","src":"T01","cat":"do","quote":"compliment oneself, learn an idea, share it with three people, and start the day cheerfully","text":"Start the day with Beauty, Knowledge and Laughter: compliment yourself, learn one idea, share it with three people, and begin cheerfully."},{"id":"PY3-T01-b","src":"T01","cat":"theme","quote":"potentially fortunate period for advancement, public recognition, or business growth","text":"A potentially fortunate year for advancement, public recognition or business growth."},{"id":"PY3-T01-c","src":"T01","cat":"avoid","quote":"repeatedly complaining about one’s work may reinforce dissatisfaction","text":"Avoid repeatedly complaining about your work."},{"id":"PY3-T01-d","src":"T01","cat":"do","quote":"learning a skill that increases professional value, and maintaining physical fitness","text":"Study something new, learn a skill that raises your professional value, and stay fit. This prepares you for next year."},{"id":"PY3-T03-a","src":"T03","cat":"theme","quote":"opportunities for promotion and profit","text":"Opportunities for promotion and profit, especially through sales, speaking with people and strong presentations."},{"id":"PY3-T03-b","src":"T03","cat":"avoid","quote":"warns against insults, gossip, and speaking badly about others","text":"Avoid insults, gossip and speaking badly about others. Be kind with words."},{"id":"PY3-T03-c","src":"T03","cat":"remedy","quote":"spending about 10 minutes between 5 p.m. and 9 p.m. reciting prayers","text":"Spend about 10 minutes between 5 p.m. and 9 p.m. reciting prayers or devotional songs, loud enough to hear your own voice."},{"id":"PY3-T03-d","src":"T03","cat":"career","quote":"favorable for job changes, promotions, and visa-related plans","text":"Favourable for job changes, promotions and visa-related plans."},{"id":"PY3-T03-e","src":"T03","cat":"colours","quote":"yellow, light blue, and silver","text":"Yellow, light blue and silver."},{"id":"PY3-T03-f","src":"T03","cat":"accessories","quote":"gold or combinations of gold and silver","text":"Gold, or gold-and-silver combinations: watches, bracelets or chains."}],"4":[{"id":"PY4-T01-a","src":"T01","cat":"do","quote":"focus on letting go rather than clinging to things","text":"Focus on letting go rather than clinging to things."},{"id":"PY4-T01-b","src":"T01","cat":"career","quote":"strengthening relationships and working bonds with teammates, stakeholders, vendors, and suppliers","text":"Strengthen your bonds with teammates, stakeholders, vendors and suppliers, so you are less likely to be misunderstood."},{"id":"PY4-T01-c","src":"T01","cat":"money","quote":"avoid taking large loans and to be careful with credit cards","text":"Avoid large loans and be careful with credit cards. Don't spend money before it actually arrives."},{"id":"PY4-T01-d","src":"T01","cat":"do","quote":"keeping one’s surroundings and records organized","text":"Keep your surroundings and records organised: papers, insurance, licences, degrees, emails and chats."},{"id":"PY4-T01-e","src":"T01","cat":"avoid","quote":"warns against withdrawing socially during year four","text":"Don't withdraw socially. Attend seminars, webinars, meetings and professional gatherings."},{"id":"PY4-T01-f","src":"T01","cat":"do","quote":"starting half an hour early","text":"Add extra time to your work, for example by starting half an hour early."},{"id":"PY4-T01-g","src":"T01","cat":"chart","quote":"results may depend on its placement in a birth chart","text":"Rahu's placement in your birth chart shapes this year; a full chart reading needs your time and place of birth."},{"id":"PY4-T03-a","src":"T03","cat":"do","quote":"begin learning early in the year","text":"Begin learning early in the year: a certification, growing your business, a cooking course or personal finance."},{"id":"PY4-T03-b","src":"T03","cat":"remedy","quote":"make the bed neatly each morning","text":"The 'golden remedy': make your bed neatly every morning with clean, fresh bedding."},{"id":"PY4-T03-c","src":"T03","cat":"remedy","quote":"oud, rose, or cedar","text":"Use fragrances such as oud, rose or cedar, carry a piece of cinnamon, and apply a sandalwood mark on your forehead."},{"id":"PY4-T03-d","src":"T03","cat":"money","quote":"advises against risky investments","text":"Avoid risky investments; choose security."},{"id":"PY4-T03-e","src":"T03","cat":"do","quote":"adding half an hour to one’s work or study schedule","text":"Add half an hour to your work or study schedule."},{"id":"PY4-T03-f","src":"T03","cat":"accessories","quote":"steel watch with a blue dial","text":"A steel watch with a blue dial."}],"5":[{"id":"PY5-T01-a","src":"T01","cat":"theme","quote":"describes year five as a “breath of fresh air” after a difficult period","text":"A breath of fresh air after a difficult period, with an urge to do something new."},{"id":"PY5-T01-b","src":"T01","cat":"avoid","quote":"rather than rushing into a partnership","text":"Don't rush into a partnership. Use the skills and experience of earlier years."},{"id":"PY5-T01-c","src":"T01","cat":"do","quote":"actively expanding one’s network","text":"Actively expand your network: meet new people and introduce yourself confidently."},{"id":"PY5-T01-d","src":"T01","cat":"remedy","quote":"lighting a ghee lamp by a tulsi plant each day","text":"Keep plants and greenery healthy, and light a ghee lamp by a tulsi plant every day."},{"id":"PY5-T01-e","src":"T01","cat":"remedy","quote":"putting water in a green glass bottle, leaving it in sunlight for one to two hours, and drinking it daily","text":"If you feel stuck: keep water in a green glass bottle in sunlight for one to two hours and drink it daily."},{"id":"PY5-T03-a","src":"T03","cat":"theme","quote":"favorable for promotion, increased income, and growth","text":"Favourable for promotion, higher income and growth, especially if last year was a struggle."},{"id":"PY5-T03-b","src":"T03","cat":"remedy","quote":"leaving home with a tulsi leaf or green cardamom in the mouth","text":"Care for a tulsi or other plants each morning, and leave home with a tulsi leaf or green cardamom in your mouth."},{"id":"PY5-T03-c","src":"T03","cat":"health","quote":"warns of possible digestive problems","text":"Look after your digestion: eat home-cooked food rather than too much restaurant food."},{"id":"PY5-T03-d","src":"T03","cat":"do","quote":"walking 5 kilometres a day","text":"For strong results, walk 5 km a day: 2.5 km in the morning and 2.5 km in the evening."},{"id":"PY5-T03-e","src":"T03","cat":"travel","quote":"may suit people who want to travel or pursue further studies","text":"Suits travel and further studies."},{"id":"PY5-T03-f","src":"T03","cat":"do","quote":"meeting people cheerfully rather than angrily","text":"Meet people cheerfully, not angrily."},{"id":"PY5-T03-g","src":"T03","cat":"money","quote":"may consider trading or the stock market","text":"Trading or the stock market may be considered, but the decision is yours; do your own research."},{"id":"PY5-T03-h","src":"T03","cat":"colours","quote":"he recommends green, including a green watch dial or wallet","text":"Green, including a green wallet."},{"id":"PY5-T03-i","src":"T03","cat":"accessories","quote":"specifically suggests a metal watch with a green dial","text":"A metal watch with a green dial."}],"6":[{"id":"PY6-T01-a","src":"T01","cat":"money","quote":"watch their spending and manage cash flow carefully","text":"Watch your spending and manage cash flow carefully; expenses may rise."},{"id":"PY6-T01-b","src":"T01","cat":"avoid","quote":"avoid unnecessary purchases","text":"Avoid unnecessary purchases. If you buy on instalments, prefer things that grow in value or earn income, such as gold or a home you can rent out."},{"id":"PY6-T01-c","src":"T01","cat":"do","quote":"updating the wardrobe and discarding clothes that are no longer wanted","text":"Refresh your wardrobe and let go of clothes you no longer want."},{"id":"PY6-T01-d","src":"T01","cat":"relationship","quote":"potentially bringing progress such as marriage or having a baby","text":"May bring progress such as marriage or a baby."},{"id":"PY6-T01-e","src":"T01","cat":"career","quote":"seeking a change of role or workplace","text":"Growth may come from a change of role or workplace, or from asking for more responsibility. Business owners: focus on sales, marketing and visibility."},{"id":"PY6-T01-f","src":"T01","cat":"health","quote":"focus on health, food, and exercise","text":"Focus on health, food and exercise; neglect could make the next two years harder."},{"id":"PY6-T01-g","src":"T01","cat":"crystal","quote":"recommends a black obsidian bracelet as protection from surrounding negativity","text":"A black obsidian bracelet for protection from negativity around you (men on the right hand, women on the left)."},{"id":"PY6-T03-a","src":"T03","cat":"relationship","quote":"favorable for marriage, pregnancy attempts, finding love, and students","text":"Favourable for marriage, planning a pregnancy, finding love, and for students."},{"id":"PY6-T03-b","src":"T03","cat":"career","quote":"better results are more likely in the second half of the year","text":"A job change or income growth is more likely in the second half of the year."},{"id":"PY6-T03-c","src":"T03","cat":"money","quote":"Money is described as potentially arriving and going quickly","text":"Money may come and go quickly: spend thoughtfully, book profits, and increase savings and investments as your income grows."},{"id":"PY6-T03-d","src":"T03","cat":"money","quote":"investing in metals such as gold or silver early in the year","text":"Invest in gold or silver early in the year (or digitally, through ETFs)."},{"id":"PY6-T03-e","src":"T03","cat":"do","quote":"Keep nearby children happy through small gifts or treats","text":"Keep the children around you happy with small gifts or treats."},{"id":"PY6-T03-f","src":"T03","cat":"health","quote":"Pay attention to eye strain and possible changes in vision","text":"Watch for eye strain and changes in vision."},{"id":"PY6-T03-g","src":"T03","cat":"colours","quote":"White, peach, pink, and green are recommended","text":"White, peach, pink and green, with white and pink flowers at home."},{"id":"PY6-T03-h","src":"T03","cat":"accessories","quote":"the speaker recommends a metal watch with a green dial, and also mentions silver-and-gold combinations","text":"A metal watch with a green dial, or silver-and-gold combinations. Women may wear diamond earrings (lab-grown is fine)."},{"id":"PY6-T03-i","src":"T03","cat":"avoid","quote":"Avoid misunderstandings and impulsive reactions early in the year","text":"Avoid misunderstandings and impulsive reactions early in the year."}],"7":[{"id":"PY7-T01-a","src":"T01","cat":"theme","quote":"a period for introspection and new learning","text":"A year for introspection and new learning; confidence may dip a little."},{"id":"PY7-T01-b","src":"T01","cat":"do","quote":"start learning something early in the year","text":"Start learning something early in the year."},{"id":"PY7-T01-c","src":"T01","cat":"do","quote":"building a habit of going to the gym","text":"Build a gym habit; what matters most is showing up regularly."},{"id":"PY7-T01-d","src":"T01","cat":"remedy","quote":"bathing with a pinch of turmeric and drinking water in which a piece of cinnamon has soaked overnight in a silver cup","text":"Bathe with a pinch of turmeric, and drink water in which a piece of cinnamon has soaked overnight in a silver cup (for allergies, frequent illness or low energy). Please also consult a doctor."},{"id":"PY7-T01-e","src":"T01","cat":"do","quote":"writing down plans and instructions instead of relying on verbal communication","text":"Write plans and instructions down, and meet in person for important matters rather than talking by phone."},{"id":"PY7-T01-f","src":"T01","cat":"remedy","quote":"drawing the Ketu yantra and Mercury yantra in a notebook every day","text":"If you feel stuck, draw the Ketu yantra and the Mercury yantra in a notebook every day."},{"id":"PY7-T01-g","src":"T01","cat":"name","name_numbers":[4,8],"quote":"especially difficult for people whose name number is 4 or 8","text":"This year can be harder if your name number is 4 or 8. Keep the kitchen clean and organised, and remove expired food."},{"id":"PY7-T03-a","src":"T03","cat":"theme","quote":"a year for fulfilling personal wishes","text":"A year for fulfilling personal wishes, if you deliberately make time for yourself."},{"id":"PY7-T03-b","src":"T03","cat":"do","quote":"devote one hour each morning to a personally chosen activity","text":"Give one hour each morning to something you choose: reading, walking, quiet thinking or meditation."},{"id":"PY7-T03-c","src":"T03","cat":"career","quote":"double-check emails and, for business owners, accounts","text":"Study your work more deeply, and double-check emails (and accounts, if you run a business)."},{"id":"PY7-T03-d","src":"T03","cat":"education","quote":"favorable for education, certifications, and courses","text":"Favourable for education, certifications and courses."},{"id":"PY7-T03-e","src":"T03","cat":"do","quote":"Wednesday is mentioned as a good day to network","text":"Go out in the evenings (a walk, a café or friends). Wednesday is a good day to network."},{"id":"PY7-T03-f","src":"T03","cat":"health","quote":"checking vitamin D and B12 levels and getting blood work early in the year","text":"Pay attention to hormonal health (cycles and thyroid; for men, weight gain). Check vitamin D and B12 and get blood work early in the year."},{"id":"PY7-T03-g","src":"T03","cat":"colours","quote":"yellow, white, gray, silver, and shades of pink","text":"Yellow, white, grey, silver and shades of pink."},{"id":"PY7-T03-h","src":"T03","cat":"money","quote":"Seek advice from a good investment adviser before investing","text":"Buy gold or other metals early in the year, and take a good investment adviser's advice before investing."},{"id":"PY7-T03-i","src":"T03","cat":"accessories","quote":"a gold, white-gold, or silver-and-gold bangle or metal watch","text":"A gold, white-gold or silver-and-gold bangle or metal watch."}],"8":[{"id":"PY8-T01-a","src":"T01","cat":"theme","conflict":"CF-PY8-OUTLOOK","quote":"may bring job loss or a sudden interruption in income","text":"There may be a sudden change at work or a break in income. If it comes, treat it as a chance to see things from a new angle."},{"id":"PY8-T01-b","src":"T01","cat":"remedy","quote":"drawing the Mercury yantra daily with a green pen and lighting a ghee lamp for Tulsi","text":"Draw the Mercury yantra daily with a green pen and light a ghee lamp for Tulsi."},{"id":"PY8-T01-c","src":"T01","cat":"name","quote":"checking whether one’s commonly used name aligns with one’s date of birth","text":"Check whether the name you commonly use aligns with your date of birth."},{"id":"PY8-T01-d","src":"T01","cat":"avoid","quote":"give up alcohol, smoking, and non-vegetarian food for the year","text":"Try to give up alcohol, smoking and non-vegetarian food this year, and eat simple, sattvic food."},{"id":"PY8-T01-e","src":"T01","cat":"crystal","quote":"recommends a black rutile quartz bracelet","text":"A black rutile quartz bracelet (women on the left hand, men on the right). If that's not possible, carry five cloves in a small cloth pouch, replace them every Friday, and put the old cloves in soil."},{"id":"PY8-T01-f","src":"T01","cat":"career","quote":"preparing machinery and the work area for possible equipment failures or hazards","text":"Business owners: prepare machinery and the work area for possible equipment failures or hazards."},{"id":"PY8-T01-g","src":"T01","cat":"money","quote":"favorable for buying land, but advises against borrowing money, pledging gold, or taking on debt","text":"Favourable for buying land, but avoid borrowing, pledging gold or taking on debt."},{"id":"PY8-T01-h","src":"T01","cat":"health","quote":"recommends exercises such as squats and lunges","text":"Strengthen your legs with squats and lunges."},{"id":"PY8-T03-a","src":"T03","cat":"theme","conflict":"CF-PY8-OUTLOOK","quote":"describes opportunities to earn money","text":"Opportunities to earn money, if you stay restrained: don't let others provoke you, and avoid reacting impulsively."},{"id":"PY8-T03-b","src":"T03","cat":"do","quote":"five minutes of pranayama","text":"Do five minutes of pranayama after waking."},{"id":"PY8-T03-c","src":"T03","cat":"career","quote":"either arriving half an hour earlier or staying half an hour later","text":"Put in half an hour extra at work. Be a team player and spend time with junior colleagues."},{"id":"PY8-T03-d","src":"T03","cat":"home","quote":"Keep the area outside the home or apartment clean and well lit","text":"Keep the area outside your home clean and well lit."},{"id":"PY8-T03-e","src":"T03","cat":"theme","quote":"“winning the day”","text":"The year may feel mixed, with some delays. Focus on what needs doing each day: win the day."},{"id":"PY8-T03-f","src":"T03","cat":"accessories","quote":"drinking water kept overnight in a silver glass","text":"A silver watch with a white or blue dial, or a silver bangle or chain. Drink water kept overnight in a silver glass."},{"id":"PY8-T03-g","src":"T03","cat":"colours","quote":"Recommended colors are black, blue, white, gray, and green","text":"Black, blue, white, grey and green."}],"9":[{"id":"PY9-T01-a","src":"T01","cat":"do","quote":"be patient and avoid rushing through eating, conversations, driving, or work","text":"Be patient: don't rush through eating, conversations, driving or work. Start preparing half an hour early and take a five-minute break every hour."},{"id":"PY9-T01-b","src":"T01","cat":"do","quote":"working outside the home rather than working from home","text":"Work outside the home rather than from home."},{"id":"PY9-T01-c","src":"T01","cat":"health","quote":"drinking water from a copper bottle","text":"Exercise, limit very spicy food, and drink water from a copper bottle."},{"id":"PY9-T01-d","src":"T01","cat":"remedy","quote":"drawing a Mars yantra alongside the yantra associated with one’s birth number","text":"Draw a Mars yantra alongside your birth-number yantra, light a lamp or candle at home morning and evening, and play a sport such as badminton, tennis, table tennis or squash."},{"id":"PY9-T01-e","src":"T01","cat":"do","quote":"so that no one goes to sleep hungry","text":"Help younger people, and feed someone so that no one goes to sleep hungry."},{"id":"PY9-T01-f","src":"T01","cat":"career","quote":"favorable for going abroad, changing jobs, or expanding a business by opening a new branch","text":"Favourable for going abroad, changing jobs or opening a new branch."},{"id":"PY9-T01-g","src":"T01","cat":"colours","conflict":"CF-PY9-BLACK","quote":"advises avoiding black and favoring sun-related shades such as yellow and orange","text":"Yellow and orange; avoid black."},{"id":"PY9-T01-h","src":"T01","cat":"do","quote":"eating jaggery after meals","text":"Eat jaggery after meals."},{"id":"PY9-T01-i","src":"T01","cat":"name","name_numbers":[4,8],"quote":"avoiding a name number of 4 or 8","text":"Avoid a name number of 4 or 8 this year."},{"id":"PY9-T03-a","src":"T03","cat":"theme","quote":"a chance to pursue major changes","text":"A chance for major change: moving home, going abroad, transforming your lifestyle or health, preparing for government exams, or buying a home. Stay calm, and control your thoughts and actions."},{"id":"PY9-T03-b","src":"T03","cat":"remedy","quote":"walking barefoot in nature for 10–15 minutes in the morning","text":"Walk barefoot in nature for 10–15 minutes in the morning (on a green balcony if you live in a flat)."},{"id":"PY9-T03-c","src":"T03","cat":"remedy","quote":"spending time near a river, sea, or other substantial source of water early in the year","text":"Spend time near a river or the sea early in the year."},{"id":"PY9-T03-d","src":"T03","cat":"career","quote":"urges single-tasking","text":"Single-task: finish one task before taking the next call, and return calls afterwards."},{"id":"PY9-T03-e","src":"T03","cat":"relationship","quote":"may consider ending it","text":"If you have truly tried and a relationship still isn't working, it may be time to let it go. Happy couples can progress together and plan investments as a pair."},{"id":"PY9-T03-f","src":"T03","cat":"colours","conflict":"CF-PY9-BLACK","quote":"Saffron, white, light blue, light gray, and black are recommended","text":"Saffron, white, light blue, light grey and black."},{"id":"PY9-T03-g","src":"T03","cat":"accessories","quote":"a red thread, a gold-colored watch with a gold dial, and investing in gold","text":"A red thread, a gold-coloured watch with a gold dial, and investing in gold."},{"id":"PY9-T03-h","src":"T03","cat":"health","quote":"lifting iron dumbbells","text":"If you can't go outdoors, lift iron dumbbells."}]},"for_everyone":[{"id":"PY-ALL-1","src":"T03","quote":"On Tuesdays, avoid eating after sunset.","text":"On Tuesdays, avoid eating after sunset."},{"id":"PY-ALL-2","src":"T03","quote":"Seek blessings from older people.","text":"Seek blessings from older people, including the elders you meet in daily life."},{"id":"PY-ALL-3","src":"T03","quote":"Play devotional recitations in the evening.","text":"In the evening, between sunset and moonrise, play a bhajan, the Hanuman Chalisa or another recitation at home for 10–15 minutes."}]},"conflicts":{"kind":"conflict","about":"Places where the sources disagree. Nothing tagged with an undecided conflict is shown on the site until the owner picks an option.","conflicts":[{"id":"CF-PY9-BLACK","topic":"Personal Year 9 colours: is black good or bad?","sides":["PY9-T01-g","PY9-T03-f"],"options":[{"key":"t01","label":"Avoid black (T01)","show":["PY9-T01-g"],"text":"Yellow and orange; avoid black."},{"key":"t03","label":"Black is fine (T03)","show":["PY9-T03-f"],"text":"Saffron, white, light blue, light grey and black."},{"key":"neither","label":"Leave black out","show":[],"text":"Yellow, orange, saffron, white, light blue and light grey."}],"decision":null},{"id":"CF-PY8-OUTLOOK","topic":"Personal Year 8 outlook: job-loss risk (T01) or earning opportunities (T03)?","sides":["PY8-T01-a","PY8-T03-a"],"options":[{"key":"both","label":"Show both, gently (recommended)","show":["PY8-T01-a","PY8-T03-a"]},{"key":"t01","label":"Only T01 (caution)","show":["PY8-T01-a"]},{"key":"t03","label":"Only T03 (opportunity)","show":["PY8-T03-a"]}],"decision":null}]},"method":{"kind":"method","about":"How numbers are calculated. Each step cites a source line or an owner decision (C1-C8, taken in chat on 2026-10-08/09).","grid":{"layout":[[3,1,9],[6,7,5],[2,8,4]],"src":"P01","file":"P01-srk-slides.md","ref":"Slide 6","quote":"VEDIC NUMEROLOGY GRID"},"steps":[{"id":"M-MOBILE-10","decision":"C4","text":"Only the 10-digit mobile number is read. A leading +91, 91 or 0 is removed first. The number must start with 6, 7, 8 or 9."},{"id":"M-ZERO","decision":"C2","text":"Zero is skipped: 8-0-5 is read as 8-5, and 0 never goes on a grid."},{"id":"M-REPEAT","decision":"C3","text":"Repeated digits only matter where a source says so (multiple 6 / multiple 7 on Venus-Ketu). A same-digit pair such as 9-9 has no meaning."},{"id":"M-TWO-GRIDS","decision":"C1","text":"Two separate grids: the birth-date grid (all digits of DD MM YYYY, zeros skipped) and the mobile grid. Yogas are read on each. A planned number changes only the mobile grid."},{"id":"M-X-ABSENT","decision":"reading of P01 slides 13-31","text":"On a yoga diagram, a red digit must be present, a red X must be absent, and a blank cell is ignored.","confirm":true},{"id":"M-PROFESSION-CODES","decision":"C5","text":"A 2- or 3-digit profession code matches when those digits are side by side in either order (19 or 91; 371 or 173). 'X AND Y' and single digits match anywhere in the number.","confirm":true},{"id":"M-BIRTH-NUMBER","src":"T01","file":"T01-personal-year-a.md","quote":"The speaker identifies a birth number of nine and a destiny number of three","text":"Birth number (mulank) = day of birth reduced to one digit. Destiny number (bhagyank) = all digits of the full date of birth added and reduced to one digit. Inferred from T01's example (18 September 2001 → birth 9, destiny 3).","confirm":true},{"id":"M-PERSONAL-YEAR","src":"T01","file":"T01-personal-year-a.md","quote":"add the day of birth, the month of birth, and the digits of the year being considered, reducing the result to a single digit","text":"Personal year = day + month + digit-sum of the year, reduced fully to one digit (11 → 2, 22 → 4). The calendar year is used: the story shows this year and next year."},{"id":"M-NAME-CHALDEAN","decision":"C8","text":"Name number = sum of the Chaldean values of all letters in the name, reduced to one digit. No source gives the letter table, so the standard Chaldean table below is used; please confirm it.","confirm":true}],"chaldean":{"1":"A I J Q Y","2":"B K R","3":"C G L S","4":"D M T","5":"E H N X","6":"U V W","7":"O Z","8":"F P"}},"keywords":{"kind":"concern_keywords","about":"Maps words in the visitor's free-text concern to life areas used by the rules. Whole-word, case-insensitive. Multi-word phrases are matched as phrases. If nothing matches, all rules are shown and the visitor's own words are echoed.","areas":{"money":["money","paisa","paise","paisa nahi","finance","financial","income","salary","debt","debts","loan","loans","karza","karz","emi","savings","wealth","dhan","payment","payments","profit","loss","losses","kamai","udhaar","udhar"],"career":["career","job","jobs","naukri","work","promotion","business","vyapar","vyapaar","dhandha","startup","office","boss","interview","profession","growth","kaam"],"relationship":["marriage","shaadi","shadi","vivah","love","relationship","partner","spouse","husband","wife","pati","patni","girlfriend","boyfriend","divorce","affair","breakup","rishta","engagement"],"family":["family","parivar","parents","father","papa","mother","maa","mummy","children","child","kids","son","daughter","beta","beti","brother","sister","bhai","behen","in-laws","sasural"],"health":["health","sehat","disease","illness","sick","bimari","pain","hospital","surgery","doctor","medical"],"mind":["stress","tension","anxiety","depression","fear","darr","negative","worry","worried","peace","sukoon","sleep","mental","confidence","overthinking"],"education":["study","studies","padhai","exam","exams","education","college","school","degree"],"legal":["court","case","legal","police","litigation","dispute","kanoon","lawyer"],"government":["government","sarkari","govt","upsc","ssc"],"travel":["abroad","foreign","videsh","travel","visa","canada","usa","uk","dubai","settle"],"home":["home","house","ghar","property","flat","land","makaan"],"spiritual":["spiritual","god","puja","meditation","bhakti"]},"chips":["Money is not staying with me","Career growth / job","Business not working","Marriage delay","Relationship problems","Debt and loans","Health worries","Stress and anxiety","Planning to buy a new number"]}};</script>
+<script>const Engine = (() => {
+// Deterministic mobile-numerology engine. No AI, no I/O, no dependencies: the same input always gives
+// the same output, and every story line carries the id of the rule it came from.
+// createEngine(rulebook) -> { reading, normaliseMobile, parseDob, ... }
+
+const GRID = [[3, 1, 9], [6, 7, 5], [2, 8, 4]];
+const MAX_PLANNED = 3;
+
+function digitSum(n) {
+  return String(n).split('').reduce((s, c) => s + Number(c), 0);
+}
+
+// Reduce to a single digit 1-9 (11 and 22 are reduced too, as in the sources' examples).
+function reduce(n) {
+  let v = Math.abs(Math.trunc(n));
+  while (v > 9) v = digitSum(v);
+  return v;
+}
+
+function normaliseMobile(input) {
+  let d = String(input ?? '').replace(/\D/g, '');
+  if (d.length === 12 && d.startsWith('91')) d = d.slice(2);
+  else if (d.length === 11 && d.startsWith('0')) d = d.slice(1);
+  else if (d.length === 13 && d.startsWith('091')) d = d.slice(3);
+  if (!/^[6-9]\d{9}$/.test(d)) return { ok: false, error: 'Please enter a valid 10-digit Indian mobile number.' };
+  return { ok: true, value: d };
+}
+
+function parseDob(input, today = new Date()) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(input ?? '').trim());
+  if (!m) return { ok: false, error: 'Please enter your date of birth.' };
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const date = new Date(Date.UTC(y, mo - 1, d));
+  if (date.getUTCFullYear() !== y || date.getUTCMonth() !== mo - 1 || date.getUTCDate() !== d) {
+    return { ok: false, error: 'That date of birth does not exist.' };
+  }
+  if (y < 1900 || date > today) return { ok: false, error: 'Please check the year of birth.' };
+  return { ok: true, value: { y, m: mo, d, iso: m[0] } };
+}
+
+// Digits as read for the grid and the pairs: zeros are skipped (owner decision C2).
+const digitsNoZero = str => String(str).split('').map(Number).filter(n => n > 0);
+
+function gridCounts(digits) {
+  const c = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+  for (const n of digits) if (n >= 1 && n <= 9) c[n]++;
+  return c;
+}
+
+const dobDigits = dob => digitsNoZero(
+  `${String(dob.d).padStart(2, '0')}${String(dob.m).padStart(2, '0')}${dob.y}`);
+
+const birthNumber = dob => reduce(dob.d);
+const destinyNumber = dob => reduce(digitSum(`${dob.d}${dob.m}${dob.y}`));
+const personalYear = (dob, year) => reduce(dob.d + dob.m + digitSum(year));
+
+function nameNumber(name, chaldean) {
+  const value = {};
+  for (const [num, letters] of Object.entries(chaldean)) for (const l of letters.split(' ')) value[l] = Number(num);
+  const letters = String(name ?? '').toUpperCase().replace(/[^A-Z]/g, '');
+  if (!letters) return null;
+  const total = [...letters].reduce((s, l) => s + value[l], 0);
+  return { total, number: reduce(total) };
+}
+
+// Polarity follows from which story parts a rule has: good and care = mixed.
+function polarity(story = {}) {
+  if (story.good && story.care) return 'mixed';
+  if (story.good) return 'positive';
+  if (story.care) return 'negative';
+  return 'neutral';
+}
+
+const pairKey = (a, b) => (a === 1 && b === 2) || (a === 2 && b === 1) ? `${a}${b}` : `${Math.min(a, b)}${Math.max(a, b)}`;
+
+function containsRun(seq, run) {
+  const s = seq.join('');
+  return s.includes(run) || s.includes([...run].reverse().join(''));
+}
+
+// Profession code: '19' side by side either order; '371' in a row either direction; '6' anywhere; '3+75' = all terms.
+function codeMatches(code, seq, counts) {
+  return code.split('+').every(t => t.length === 1 ? counts[Number(t)] > 0 : containsRun(seq, t));
+}
+
+function concernAreas(text, keywords) {
+  const t = ` ${String(text ?? '').toLowerCase().replace(/[^a-z0-9ऀ-ॿ\s-]/g, ' ').replace(/\s+/g, ' ')} `;
+  const areas = new Set();
+  const words = [];
+  for (const [area, list] of Object.entries(keywords.areas)) {
+    for (const w of list) {
+      if (t.includes(` ${w} `)) { areas.add(area); words.push(w); }
+    }
+  }
+  return { areas: [...areas], words: [...new Set(words)] };
+}
+
+function createEngine(rulebook) {
+  const { shotgun, yogas, planets, professions, remedies, personalYear: py, conflicts, method, keywords } = rulebook;
+  const shotgunByPair = new Map(shotgun.rules.map(r => [r.ordered ? r.pair : [...r.pair].sort().join(''), r]));
+  const planetByDigit = new Map(planets.rules.map(r => [r.digit, r]));
+  const remedyByBirth = new Map(remedies.rules.map(r => [r.birth_number, r]));
+  const pyItem = new Map(Object.values(py.years).flat().map(i => [i.id, i]));
+  const decided = new Map(conflicts.conflicts.map(c => [c.id, c]));
+
+  const item = (r, kind, extra = {}) => ({
+    id: r.id, kind, title: extra.title ?? r.name ?? r.field, areas: r.areas ?? [],
+    polarity: polarity(r.story), ...(r.story ?? {}), ...extra,
+    source: { file: r.source_file, ref: r.ref, quote: r.quote }
+  });
+
+  function shotgunFor(seq) {
+    const counts = new Map();
+    for (let i = 0; i + 1 < seq.length; i++) {
+      const [a, b] = [seq[i], seq[i + 1]];
+      if (a === b) continue;
+      const key = pairKey(a, b);
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    return [...counts].map(([key, count]) => {
+      const r = shotgunByPair.get(key);
+      const title = r.ordered ? `${key[0]}-${key[1]}` : `${key[0]}-${key[1]} / ${key[1]}-${key[0]}`;
+      return item({ ...r, source_file: shotgun.source_file }, 'shotgun', { title, pair: key, count });
+    }).sort((x, y) => x.id.localeCompare(y.id));
+  }
+
+  function yogasFor(counts) {
+    return yogas.rules
+      .filter(r => r.present.every(d => counts[d] > 0) && r.absent.every(d => counts[d] === 0))
+      .map(r => {
+        const extraCare = (r.multiples ?? []).filter(m => counts[m.digit] >= m.min).map(m => m.care);
+        const story = { ...r.story };
+        if (extraCare.length) story.care = [story.care, ...extraCare].filter(Boolean).join(' ');
+        return item({ ...r, story, source_file: yogas.source_file }, 'yoga', {
+          group: r.group, planets: r.planets, present: r.present, absent: r.absent,
+          remedy: r.remedy?.text, pattern: describePattern(r)
+        });
+      });
+  }
+
+  function professionsFor(seq, counts) {
+    return professions.rules
+      .map(r => ({ r, codes: r.codes.filter(c => codeMatches(c, seq, counts)) }))
+      .filter(x => x.codes.length)
+      .map(({ r, codes }) => ({
+        id: r.id, kind: 'profession', title: r.field, areas: r.areas, polarity: 'positive',
+        good: `Your number carries ${codes.map(c => c.replace('+', ' and ')).join(', ')}, a combination linked with ${r.field.toLowerCase()}.`,
+        codes, source: { file: professions.source_file, ref: r.ref, quote: r.quote }
+      }));
+  }
+
+  function mobileFeatures(mobile) {
+    const seq = digitsNoZero(mobile);
+    const counts = gridCounts(seq);
+    return { mobile, seq, counts, pairs: shotgunFor(seq), yogas: yogasFor(counts), professions: professionsFor(seq, counts) };
+  }
+
+  const describePattern = r => {
+    const has = r.present.join(', ');
+    const without = r.absent.length ? ` without ${r.absent.join(', ')}` : '';
+    return `${has}${without}`;
+  };
+
+  const planetsFor = counts => Object.entries(counts).filter(([, c]) => c > 0).map(([d, c]) => {
+    const r = planetByDigit.get(Number(d));
+    return { id: r.id, kind: 'planet', digit: r.digit, planet: r.planet, count: c, trait: r.story.trait, signifies: r.story.signifies,
+      source: { file: planets.source_file, ref: r.ref, quote: r.quote } };
+  });
+
+  function yearAhead(dob, year, nameNo) {
+    return [year, year + 1].map(y => {
+      const n = personalYear(dob, y);
+      const items = (py.years[n] ?? []).filter(it => {
+        if (!it.conflict) return true;
+        const c = decided.get(it.conflict);
+        const opt = c?.decision && c.options.find(o => o.key === c.decision);
+        return opt ? opt.show.includes(it.id) : false; // undecided conflicts are never shown
+      }).map(it => ({
+        id: it.id, cat: it.cat, text: it.text,
+        appliesToName: it.name_numbers && nameNo ? it.name_numbers.includes(nameNo.number) : undefined,
+        source: { file: py.sources[it.src], quote: it.quote }
+      }));
+      for (const c of conflicts.conflicts) {
+        const opt = c.decision && c.options.find(o => o.key === c.decision);
+        // An option that shows neither side carries its own agreed text (e.g. "leave black out").
+        if (opt?.text && !opt.show.length && c.sides.some(s => (py.years[n] ?? []).includes(pyItem.get(s)))) {
+          items.push({ id: `${c.id}:${opt.key}`, cat: pyItem.get(c.sides[0]).cat, text: opt.text, source: { conflict: c.id } });
+        }
+      }
+      return { year: y, number: n, items: dedupeById(items) };
+    });
+  }
+
+  const dedupeById = list => [...new Map(list.map(i => [i.id, i])).values()];
+
+  function protection(dob, mobileYogas, dobYogas) {
+    const b = birthNumber(dob);
+    const dest = destinyNumber(dob);
+    const r = remedyByBirth.get(b);
+    const savers = [];
+    if (r.screen_saver_from === 'destiny') {
+      const dr = remedyByBirth.get(dest);
+      if (dest !== b && dr?.screen_saver) savers.push(`For your destiny number ${dest}: ${dr.screen_saver}`);
+    }
+    if (r.screen_saver) savers.push(r.screen_saver);
+    const yogaRemedies = dedupeById([...mobileYogas, ...dobYogas].filter(y => y.remedy))
+      .map(y => ({ id: y.id, title: y.title, text: y.remedy }));
+    return {
+      birthNumber: b, destinyNumber: dest,
+      screenSaver: savers, bracelet: r.bracelet, mani: r.mani,
+      yogaRemedies, source: { file: remedies.source_file, ref: r.ref, quote: r.quote }
+    };
+  }
+
+  // Patterns for a better number, built only from the rulebook (owner decision: patterns, never sample numbers).
+  function betterNumber(current, areas) {
+    const avoid = [...current.pairs, ...current.yogas].filter(x => x.care)
+      .map(x => ({ id: x.id, title: x.title, pattern: x.kind === 'shotgun' ? `${x.title} side by side` : x.pattern, why: x.care }));
+    const wanted = new Set(areas);
+    const pure = [
+      ...shotgun.rules.filter(r => r.story.good && !r.story.care).map(r => ({ r, kind: 'shotgun' })),
+      ...yogas.rules.filter(r => r.story.good && !r.story.care).map(r => ({ r, kind: 'yoga' }))
+    ];
+    const ranked = pure
+      .map(({ r, kind }) => ({ r, kind, hits: (r.areas ?? []).filter(a => wanted.has(a)).length }))
+      .filter(x => !wanted.size || x.hits > 0)
+      .sort((a, b) => b.hits - a.hits || a.r.id.localeCompare(b.r.id));
+    const have = new Set([...current.pairs, ...current.yogas].map(x => x.id));
+    const lookFor = ranked.map(({ r, kind }) => ({
+      id: r.id, have: have.has(r.id), title: kind === 'shotgun' ? (r.ordered ? `${r.pair[0]}-${r.pair[1]}` : `${r.pair[0]}-${r.pair[1]} / ${r.pair[1]}-${r.pair[0]}`) : r.name,
+      pattern: kind === 'shotgun' ? 'these two digits side by side' : `digits ${describePattern(r)}`,
+      why: r.story.good, areas: r.areas
+    }));
+    return { avoid, lookFor };
+  }
+
+  function compare(cur, plan, areas) {
+    const all = f => [...f.pairs, ...f.yogas];
+    const ids = list => new Set(list.map(x => x.id));
+    const careC = all(cur).filter(x => x.care), careP = all(plan).filter(x => x.care);
+    const goodC = all(cur).filter(x => x.good), goodP = all(plan).filter(x => x.good);
+    const [cC, cP, gC, gP] = [careC, careP, goodC, goodP].map(ids);
+    const brief = x => ({ id: x.id, title: x.title, kind: x.kind, areas: x.areas });
+    const lists = {
+      problemsRemoved: careC.filter(x => !cP.has(x.id)).map(x => ({ ...brief(x), text: x.care })),
+      problemsAdded: careP.filter(x => !cC.has(x.id)).map(x => ({ ...brief(x), text: x.care })),
+      problemsStay: careC.filter(x => cP.has(x.id)).map(x => ({ ...brief(x), text: x.care })),
+      strengthsGained: goodP.filter(x => !gC.has(x.id)).map(x => ({ ...brief(x), text: x.good })),
+      strengthsLost: goodC.filter(x => !gP.has(x.id)).map(x => ({ ...brief(x), text: x.good })),
+      strengthsKept: goodC.filter(x => gP.has(x.id)).map(x => ({ ...brief(x), text: x.good })),
+      professionsGained: plan.professions.filter(p => !cur.professions.some(q => q.id === p.id)).map(p => p.title),
+      professionsLost: cur.professions.filter(p => !plan.professions.some(q => q.id === p.id)).map(p => p.title)
+    };
+    const wanted = new Set(areas);
+    const forConcern = wanted.size ? Object.fromEntries(Object.entries(lists)
+      .filter(([k]) => !k.startsWith('professions'))
+      .map(([k, v]) => [k, v.filter(x => x.areas.some(a => wanted.has(a)))])) : null;
+    const counts = Object.fromEntries(Object.entries(lists).map(([k, v]) => [k, v.length]));
+    return { planned: plan.mobile, lists, forConcern, counts };
+  }
+
+  function reading(input) {
+    const year = input.year;
+    const errors = {};
+    const name = String(input.name ?? '').trim().replace(/\s+/g, ' ');
+    if (name.length < 2 || name.length > 80) errors.name = 'Please enter your name.';
+    const mob = normaliseMobile(input.mobile);
+    if (!mob.ok) errors.mobile = mob.error;
+    const dob = parseDob(input.dob, input.today ?? new Date());
+    if (!dob.ok) errors.dob = dob.error;
+    const concern = String(input.concern ?? '').trim().replace(/\s+/g, ' ');
+    if (concern.length < 2 || concern.length > 300) errors.concern = 'Please tell us what you are worried about.';
+    const planned = [];
+    const rawPlanned = (input.planned ?? []).filter(p => String(p ?? '').trim());
+    if (rawPlanned.length > MAX_PLANNED) errors.planned = `You can compare up to ${MAX_PLANNED} numbers.`;
+    for (const p of rawPlanned.slice(0, MAX_PLANNED)) {
+      const n = normaliseMobile(p);
+      if (!n.ok) { errors.planned = 'Please check the number(s) you plan to buy.'; break; }
+      if (mob.ok && n.value === mob.value) { errors.planned = 'The planned number is the same as your current number.'; break; }
+      if (!planned.includes(n.value)) planned.push(n.value);
+    }
+    if (!Number.isInteger(year)) errors.year = 'year is required';
+    if (Object.keys(errors).length) return { ok: false, errors };
+
+    const cur = mobileFeatures(mob.value);
+    const dobCounts = gridCounts(dobDigits(dob.value));
+    const dobYogas = yogasFor(dobCounts);
+    const { areas, words } = concernAreas(concern, keywords);
+    const nameNo = nameNumber(name, method.chaldean);
+    const wanted = new Set(areas);
+    const touches = x => x.areas?.some(a => wanted.has(a));
+    const mobileItems = [...cur.pairs, ...cur.yogas];
+    const showsHealth = wanted.has('health') || mobileItems.some(x => x.areas.includes('health') && x.care);
+
+    const sections = [];
+    sections.push({ id: 'decoded', mobile: cur.mobile, zeros: [...cur.mobile].map((c, i) => c === '0' ? i : -1).filter(i => i >= 0), pairs: cur.pairs });
+    sections.push({ id: 'mobile-grid', counts: cur.counts, planets: planetsFor(cur.counts), yogas: cur.yogas });
+    sections.push({ id: 'dob-grid', counts: dobCounts, yogas: dobYogas });
+    sections.push({ id: 'concern', text: concern, matchedWords: words, areas,
+      items: areas.length ? [...mobileItems, ...dobYogas.map(y => ({ ...y, fromDob: true }))].filter(touches) : [] });
+    if (cur.professions.length) sections.push({ id: 'career', professions: cur.professions });
+    sections.push({ id: 'year-ahead', years: yearAhead(dob.value, year, nameNo), forEveryone: py.for_everyone.map(i => ({ id: i.id, text: i.text })) });
+    if (nameNo) sections.push({ id: 'name', ...nameNo, method: 'Chaldean' });
+    const ifKept = mobileItems.filter(x => x.care);
+    if (ifKept.length) sections.push({ id: 'if-kept', items: ifKept.map(x => ({ id: x.id, title: x.title, kind: x.kind, text: x.care, areas: x.areas, forConcern: touches(x) })) });
+    sections.push({ id: 'protection', ...protection(dob.value, cur.yogas, dobYogas) });
+    sections.push({ id: 'better-number', ...betterNumber(cur, areas) });
+    if (planned.length) sections.push({ id: 'compare', current: cur.mobile, comparisons: planned.map(p => compare(cur, mobileFeatures(p), areas)) });
+    sections.push({ id: 'cta', healthNote: showsHealth });
+
+    return {
+      ok: true,
+      input: { name, mobile: mob.value, dob: dob.value.iso, concern, planned, year },
+      numbers: { birth: birthNumber(dob.value), destiny: destinyNumber(dob.value), personalYear: personalYear(dob.value, year), name: nameNo?.number ?? null },
+      sections
+    };
+  }
+
+  return { reading, mobileFeatures, yogasFor, shotgunFor, compare, concernAreas: t => concernAreas(t, keywords) };
+}
+
+// Removes source references (quotes, slide refs) so the public site never exposes the rulebook text.
+function publicView(result) {
+  return JSON.parse(JSON.stringify(result, (k, v) => (k === 'source' ? undefined : v)));
+}
+
+return { createEngine, publicView, polarity, GRID, normaliseMobile, personalYear };
+})();</script>
+<script>
+(() => {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const el = (tag, attrs = {}, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v;
+      else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? '' : v);
+    }
+    for (const c of kids.flat()) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+    return n;
+  };
+  const SRC = { 'P01-srk-slides.md': 'P01 · SRK PDF', 'T01-personal-year-a.md': 'T01 · Transcript 1', 'T03-personal-year-b.md': 'T03 · Transcript 3' };
+  const AREA = { money: 'Money', career: 'Career', relationship: 'Love & marriage', family: 'Family', health: 'Health', mind: 'Mind', education: 'Education', legal: 'Court & legal', government: 'Government', travel: 'Travel & abroad', home: 'Home', spiritual: 'Spiritual', personality: 'Personality' };
+  const CAT = { theme: 'The year', do: 'Do', avoid: 'Avoid', money: 'Money', career: 'Work', relationship: 'Love & marriage', health: 'Health', colours: 'Colours', accessories: 'Wear', remedy: 'Remedy', crystal: 'Crystal', name: 'Name', home: 'Home', education: 'Study', travel: 'Travel', chart: 'Birth chart' };
+  const POL = { positive: ['good', 'Good'], negative: ['care', 'Needs care'], mixed: ['mixed', 'Mixed'], neutral: ['', 'Trait'] };
+
+  // ---------- Build one review list from every rule file ----------
+  const B = RULEBOOK;
+  const items = [];
+  const add = (group, groupKey, it) => items.push({ group, groupKey, ...it });
+  for (const r of B.shotgun.rules) add('Shot-gun pairs', 'sg', { id: r.id, kind: 'shotgun', rule: r, title: r.ordered ? `${r.pair[0]} then ${r.pair[1]}` : `${r.pair[0]}-${r.pair[1]} / ${r.pair[1]}-${r.pair[0]}`, file: B.shotgun.source_file, ref: r.ref, quote: r.quote, fields: ['good', 'care', 'trait'] });
+  for (const r of B.yogas.rules) add('Grid yogas', 'yg', { id: r.id, kind: 'yoga', rule: r, title: r.name, sub: `${r.group} · ${r.planets}`, file: B.yogas.source_file, ref: r.ref, quote: r.quote, fields: ['good', 'care', 'trait'] });
+  for (const r of B.planets.rules) add('Digits & planets', 'pl', { id: r.id, kind: 'planet', rule: r, title: `${r.digit} · ${r.planet}`, file: B.planets.source_file, ref: r.ref, quote: r.quote, fields: ['trait', 'signifies'] });
+  for (const r of B.professions.rules) add('Professions', 'pr', { id: r.id, kind: 'profession', rule: r, title: r.field, file: B.professions.source_file, ref: r.ref, quote: r.quote, fields: [] });
+  for (const r of B.remedies.rules) add('Remedies by birth number', 'rm', { id: r.id, kind: 'remedy', rule: r, title: `Birth number ${r.birth_number}`, file: B.remedies.source_file, ref: r.ref, quote: `${r.quote} · ${r.bracelet_quote}`, fields: ['screen_saver', 'bracelet', 'mani'] });
+  for (const m of B.personalYear.method) add('Personal year: method', 'pym', { id: m.id, kind: 'method', rule: m, title: 'How the personal year is worked out', file: B.personalYear.sources[m.src], quote: m.quote, fields: [] });
+  for (let y = 1; y <= 9; y++) for (const it of B.personalYear.years[y]) add(`Personal year ${y}`, `py${y}`, { id: it.id, kind: 'py', rule: it, title: `${CAT[it.cat] || it.cat}`, sub: it.src === 'T01' ? 'Speaker in transcript 1' : 'Speaker in transcript 3', file: B.personalYear.sources[it.src], quote: it.quote, fields: ['text'], conflict: it.conflict });
+  for (const it of B.personalYear.for_everyone) add('Personal year: for everyone', 'pya', { id: it.id, kind: 'py', rule: it, title: 'For every year', file: B.personalYear.sources[it.src], quote: it.quote, fields: ['text'] });
+  const byId = new Map(items.map(i => [i.id, i]));
+  const groups = [...new Map(items.map(i => [i.groupKey, i.group]))];
+
+  // ---------- Saved decisions ----------
+  let decisions = new Map();   // id -> {status: approved|edited|flagged, edit?, note?}
+  let conflictChoice = new Map(); // conflict id -> option key
+  let confirmChoice = new Map();  // method step id -> {choice: yes|no, note}
+  let db = null;
+  let canWrite = false;
+  const inflight = new Set();
+  let filter = 'all';
+  let query = '';
+
+  const statusOf = id => decisions.get(id)?.status || 'pending';
+  const STATUS_TEXT = { pending: 'To review', approved: 'Approved', edited: 'Edited', flagged: 'Flagged' };
+
+  async function write(col, id, data) {
+    if (!db || !canWrite) return false;
+    const key = `${col}/${id}`;
+    if (inflight.has(key)) return false;
+    inflight.add(key);
+    try { await db.collection(col).doc(id).set({ ...data, at: new Date().toISOString() }); return true; }
+    catch (e) {
+      if (e && e.code === 'invalid_argument') { canWrite = false; setSave(); }
+      flash(`Couldn't save (${e && e.code ? e.code : 'error'}). Please try again.`);
+      return false;
+    } finally { inflight.delete(key); }
+  }
+  let flashTimer;
+  function flash(msg) { const s = $('#save-state'); s.textContent = msg; clearTimeout(flashTimer); flashTimer = setTimeout(setSave, 3500); }
+  function setSave() {
+    const s = $('#save-state');
+    if (db && canWrite) { s.className = 'save-state on'; s.textContent = 'Saving on'; $('#readonly-note').hidden = true; }
+    else if (db) { s.className = 'save-state off'; s.textContent = 'View only'; $('#readonly-note').hidden = false; }
+    else { s.className = 'save-state off'; s.textContent = 'Not saving'; $('#readonly-note').hidden = false; }
+  }
+
+  // ---------- Small visuals ----------
+  function miniGrid(present = [], absent = [], counts = null, big = false) {
+    const g = el('div', { class: `grid3${big ? ' big' : ''}`, role: 'img', 'aria-label': counts ? 'Grid with digit counts' : `Present ${present.join(', ')}${absent.length ? `; absent ${absent.join(', ')}` : ''}` });
+    for (const row of Engine.GRID) for (const d of row) {
+      const on = counts ? counts[d] > 0 : present.includes(d);
+      const off = !counts && absent.includes(d);
+      const cell = el('span', { class: on ? 'on' : off ? 'off' : '' }, String(d));
+      if (counts && counts[d] > 1) cell.append(el('sup', {}, `×${counts[d]}`));
+      g.append(cell);
+    }
+    return g;
+  }
+  const pairViz = r => el('div', { class: 'pair', 'aria-hidden': 'true' }, el('span', { class: 'dg' }, r.pair[0]), el('span', { class: 'dg sep' }, r.ordered ? '→' : '⇄'), el('span', { class: 'dg' }, r.pair[1]));
+  const badge = txt => el('div', { class: 'pair', 'aria-hidden': 'true' }, el('span', { class: 'dg' }, txt));
+  const polChip = story => { const [c, t] = POL[Engine.polarity(story)]; return el('span', { class: `chip ${c}` }, t); };
+
+  // ---------- Effective wording (with edits applied) ----------
+  function storyOf(item) {
+    const d = decisions.get(item.id);
+    const edit = d && d.status === 'edited' ? d.edit || {} : {};
+    const r = item.rule;
+    if (item.kind === 'shotgun' || item.kind === 'yoga') return { ...r.story, ...edit };
+    if (item.kind === 'planet') return { ...r.story, ...edit };
+    if (item.kind === 'remedy') return { screen_saver: r.screen_saver || '', bracelet: r.bracelet, mani: r.mani, ...edit };
+    if (item.kind === 'py') return { text: r.text, ...edit };
+    return {};
+  }
+
+  function siteLines(item) {
+    const s = storyOf(item);
+    const box = el('div', { class: 'site' }, el('span', { class: 'lbl' }, 'Visitors read'));
+    if (item.kind === 'shotgun' || item.kind === 'yoga') {
+      if (s.good) box.append(el('div', { class: 'line good' }, s.good));
+      if (s.trait) box.append(el('div', { class: 'line trait' }, s.trait));
+      if (s.care) box.append(el('div', { class: 'line care' }, s.care));
+      for (const m of item.rule.multiples || []) box.append(el('div', { class: 'line care' }, el('b', {}, `If ${m.digit} appears ${m.min}+ times: `), m.care));
+      if (item.rule.remedy) box.append(el('div', { class: 'line plain' }, el('b', {}, 'Remedy: '), item.rule.remedy.text));
+    } else if (item.kind === 'planet') {
+      box.append(el('div', { class: 'line trait' }, s.trait), el('div', { class: 'line plain' }, el('b', {}, 'Signifies: '), s.signifies));
+    } else if (item.kind === 'profession') {
+      box.append(el('div', { class: 'line good' }, `Shown when the number has ${item.rule.codes.map(c => c.replace('+', ' and ')).join(' or ')}: "a combination linked with ${item.rule.field.toLowerCase()}".`));
+    } else if (item.kind === 'remedy') {
+      const from = item.rule.screen_saver_from === 'destiny' ? 'The screen saver for their destiny number' + (s.screen_saver ? ', or: ' : '.') : '';
+      box.append(el('div', { class: 'line plain' }, el('b', {}, 'Screen saver: '), from + (s.screen_saver || '')), el('div', { class: 'line plain' }, el('b', {}, 'Bracelet: '), s.bracelet), el('div', { class: 'line plain' }, el('b', {}, 'Mani: '), s.mani));
+    } else if (item.kind === 'py') {
+      box.append(el('div', { class: 'line plain' }, s.text));
+    } else {
+      box.append(el('div', { class: 'line trait' }, 'Used in the calculation only (not shown as text).'));
+    }
+    return box;
+  }
+
+  const FIELD_LABEL = { good: 'Good part (green)', care: 'Needs-care part (red)', trait: 'Neutral trait (grey)', signifies: 'Signifies', screen_saver: 'Screen saver', bracelet: 'Bracelet', mani: 'Mani', text: 'What visitors read' };
+
+  // ---------- Rule cards ----------
+  const cards = new Map();
+  function renderCard(item) {
+    const st = statusOf(item.id);
+    const d = decisions.get(item.id);
+    const card = el('article', { class: `card ${st}`, id: `rule-${item.id}` });
+    let visual = null;
+    if (item.kind === 'shotgun') visual = pairViz(item.rule);
+    else if (item.kind === 'yoga') visual = miniGrid(item.rule.present, item.rule.absent);
+    else if (item.kind === 'planet') visual = badge(item.rule.digit);
+    else if (item.kind === 'remedy') visual = badge(item.rule.birth_number);
+    const tags = el('div', { class: 'chips' }, el('span', { class: 'mono muted' }, item.id));
+    if (item.kind === 'shotgun' || item.kind === 'yoga') tags.append(polChip(storyOf(item)));
+    for (const a of item.rule.areas || []) tags.append(el('span', { class: 'chip' }, AREA[a] || a));
+    if (item.rule.sensitive) tags.append(el('span', { class: 'chip care' }, 'Sensitive'));
+    if (item.conflict) tags.append(el('span', { class: 'chip gold' }, 'In a conflict'));
+    if (item.kind === 'profession') for (const c of item.rule.codes) tags.append(el('span', { class: 'chip brand mono' }, c.replace('+', ' & ')));
+    card.append(el('div', { class: 'card-head' }, visual,
+      el('div', { class: 'card-title' }, el('h3', {}, item.title), item.sub ? el('span', { class: 'muted', style: 'font-size:.88rem' }, item.sub) : null, tags),
+      el('span', { class: `status ${st}` }, STATUS_TEXT[st])));
+    card.append(el('div', { class: 'cols' },
+      el('blockquote', { class: 'quote', style: 'margin:0' }, el('span', { class: 'src' }, `${SRC[item.file] || item.file}${item.ref ? ' · ' + item.ref : ''}`), item.quote),
+      siteLines(item)));
+    if (item.rule.review_note) card.append(el('div', { class: 'note' }, el('b', {}, 'Please check: '), item.rule.review_note));
+    if (d && d.status === 'flagged' && d.note) card.append(el('div', { class: 'note' }, el('b', {}, 'Your note: '), d.note));
+    card.append(actionsFor(item, card));
+    return card;
+  }
+
+  function actionsFor(item, card) {
+    const st = statusOf(item.id);
+    const dis = !(db && canWrite);
+    const row = el('div', { class: 'actions' });
+    row.append(el('button', { type: 'button', class: `btn ${st === 'approved' ? 'ok' : ''}`, disabled: dis, onclick: () => write('decisions', item.id, { status: 'approved' }) }, st === 'approved' ? 'Approved ✓' : 'Approve'));
+    if (item.fields.length) row.append(el('button', { type: 'button', class: 'btn', disabled: dis, onclick: () => openEditor(item, card) }, 'Edit wording'));
+    row.append(el('button', { type: 'button', class: 'btn ghost', disabled: dis, onclick: () => openFlag(item, card) }, st === 'flagged' ? 'Change note' : 'Flag'));
+    if (st !== 'pending') row.append(el('button', { type: 'button', class: 'btn ghost', disabled: dis, onclick: () => db.collection('decisions').doc(item.id).delete().catch(() => flash("Couldn't undo. Please try again.")) }, 'Undo'));
+    return row;
+  }
+
+  function openEditor(item, card) {
+    const s = storyOf(item);
+    const fields = item.fields.filter(f => item.kind === 'shotgun' || item.kind === 'yoga' ? f in s || f !== 'trait' : true);
+    const inputs = {};
+    const box = el('div', { class: 'edit-box' });
+    for (const f of fields) {
+      const ta = el('textarea', { id: `ed-${item.id}-${f}` });
+      ta.value = s[f] || '';
+      inputs[f] = ta;
+      box.append(el('label', {}, FIELD_LABEL[f] || f, ta));
+    }
+    const save = el('button', { type: 'button', class: 'btn primary', onclick: async () => {
+      const edit = {};
+      for (const [f, ta] of Object.entries(inputs)) edit[f] = ta.value.trim();
+      if (await write('decisions', item.id, { status: 'edited', edit })) refreshCard(item.id);
+    } }, 'Save wording');
+    box.append(el('p', { class: 'muted', style: 'font-size:.85rem' }, 'Leave a box empty to drop that part.'), el('div', { class: 'actions' }, save, el('button', { type: 'button', class: 'btn ghost', onclick: () => refreshCard(item.id) }, 'Cancel')));
+    card.lastElementChild.replaceWith(box);
+    box.querySelector('textarea')?.focus();
+  }
+
+  function openFlag(item, card) {
+    const ta = el('textarea', { id: `fl-${item.id}`, placeholder: 'What is wrong or unclear?' });
+    ta.value = decisions.get(item.id)?.note || '';
+    const box = el('div', { class: 'edit-box' }, el('label', {}, 'Note for Claude', ta), el('div', { class: 'actions' },
+      el('button', { type: 'button', class: 'btn primary', onclick: async () => {
+        if (!ta.value.trim()) { ta.focus(); return; }
+        if (await write('decisions', item.id, { status: 'flagged', note: ta.value.trim() })) refreshCard(item.id);
+      } }, 'Save flag'),
+      el('button', { type: 'button', class: 'btn ghost', onclick: () => refreshCard(item.id) }, 'Cancel')));
+    card.lastElementChild.replaceWith(box);
+    ta.focus();
+  }
+
+  function refreshCard(id) {
+    const old = cards.get(id);
+    if (!old) return;
+    const fresh = renderCard(byId.get(id));
+    fresh.hidden = old.hidden;
+    old.replaceWith(fresh);
+    cards.set(id, fresh);
+  }
+
+  // ---------- Groups, filters, progress ----------
+  const groupEls = new Map();
+  function buildGroups() {
+    const host = $('#groups');
+    const nav = $('#groupnav');
+    for (const [key, name] of groups) {
+      const list = el('div', { class: 'list' });
+      const count = el('span', {});
+      const confirmBtn = el('button', { type: 'button', class: 'btn', onclick: () => approveGroup(key, confirmBtn) }, 'Approve all in this group');
+      const head = el('div', { class: 'group-head', id: `g-${key}` }, el('div', {}, el('h2', {}, name), el('div', { class: 'sub' }, count)), confirmBtn);
+      const empty = el('p', { class: 'empty', hidden: true }, 'Nothing here matches the current filter.');
+      host.append(el('div', { class: 'block', style: 'display:grid;gap:12px;margin-top:22px' }, head, empty, list));
+      const link = el('a', { href: `#g-${key}` }, name.replace('Personal year ', 'PY '), el('span', {}, ''));
+      nav.append(link);
+      groupEls.set(key, { list, count, link, empty, confirmBtn });
+      for (const it of items.filter(i => i.groupKey === key)) { const c = renderCard(it); cards.set(it.id, c); list.append(c); }
+    }
+  }
+
+  async function approveGroup(key, btn) {
+    if (!(db && canWrite)) return;
+    const todo = items.filter(i => i.groupKey === key && statusOf(i.id) === 'pending');
+    if (!todo.length) { btn.textContent = 'All reviewed'; return; }
+    if (btn.dataset.armed !== '1') {
+      btn.dataset.armed = '1'; btn.classList.add('primary');
+      btn.textContent = `Approve ${todo.length} as written? Tap again`;
+      setTimeout(() => { btn.dataset.armed = ''; btn.classList.remove('primary'); updateGroups(); }, 6000);
+      return;
+    }
+    btn.dataset.armed = ''; btn.classList.remove('primary'); btn.disabled = true;
+    let n = 0;
+    for (const it of todo) { btn.textContent = `Saving ${++n} of ${todo.length}…`; await write('decisions', it.id, { status: 'approved' }); }
+    btn.disabled = false; updateGroups();
+  }
+
+  const matches = it => {
+    const st = statusOf(it.id);
+    if (filter !== 'all' && st !== filter) return false;
+    if (!query) return true;
+    const s = storyOf(it);
+    const hay = [it.id, it.title, it.sub, it.quote, ...Object.values(s), ...(it.rule.present || []), ...(it.rule.codes || [])].join(' ').toLowerCase();
+    return hay.includes(query);
+  };
+
+  function updateGroups() {
+    for (const [key] of groups) {
+      const g = groupEls.get(key);
+      const its = items.filter(i => i.groupKey === key);
+      const done = its.filter(i => ['approved', 'edited'].includes(statusOf(i.id))).length;
+      g.count.textContent = `${done} of ${its.length} approved`;
+      g.link.lastChild.textContent = `${done}/${its.length}`;
+      let shown = 0;
+      for (const it of its) { const c = cards.get(it.id); const vis = matches(it); c.hidden = !vis; if (vis) shown++; }
+      g.empty.hidden = shown > 0;
+      if (!g.confirmBtn.dataset.armed && !g.confirmBtn.disabled) {
+        const pend = its.filter(i => statusOf(i.id) === 'pending').length;
+        g.confirmBtn.textContent = pend ? `Approve all ${pend} remaining` : 'All reviewed';
+        g.confirmBtn.disabled = !pend || !(db && canWrite);
+      }
+    }
+    const total = items.length;
+    const c = { approved: 0, edited: 0, flagged: 0 };
+    for (const it of items) { const s = statusOf(it.id); if (s in c) c[s]++; }
+    $('#m-ok').style.width = `${(c.approved / total) * 100}%`;
+    $('#m-ed').style.width = `${(c.edited / total) * 100}%`;
+    $('#m-fl').style.width = `${(c.flagged / total) * 100}%`;
+    const decided = B.conflicts.conflicts.filter(x => conflictChoice.has(x.id)).length;
+    const confirmed = CONFIRMS.filter(x => confirmChoice.get(x.id)?.choice === 'yes').length;
+    $('#meter-label').textContent = `${c.approved + c.edited} of ${total} rules approved · ${c.flagged} flagged · ${decided}/${B.conflicts.conflicts.length} conflicts · ${confirmed}/${CONFIRMS.length} checks`;
+  }
+
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    filter = b.dataset.f;
+    document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    updateGroups();
+  }));
+  let qTimer;
+  $('#q').addEventListener('input', e => { clearTimeout(qTimer); qTimer = setTimeout(() => { query = e.target.value.trim().toLowerCase(); updateGroups(); }, 150); });
+
+  // ---------- Conflicts & confirmations ----------
+  const CONFIRMS = B.method.steps.filter(s => s.confirm);
+  function renderDecisions() {
+    const host = $('#conflicts');
+    host.replaceChildren();
+    for (const c of B.conflicts.conflicts) {
+      const chosen = conflictChoice.get(c.id);
+      const card = el('article', { class: `card ${chosen ? 'approved' : ''}` });
+      card.append(el('div', { class: 'card-head' }, el('div', { class: 'card-title' }, el('span', { class: 'chip gold' }, 'Sources disagree'), el('h3', {}, c.topic)), el('span', { class: `status ${chosen ? 'approved' : ''}` }, chosen ? 'Decided' : 'To decide')));
+      const sides = el('div', { class: 'cols' });
+      for (const s of c.sides) { const it = byId.get(s); sides.append(el('blockquote', { class: 'quote', style: 'margin:0' }, el('span', { class: 'src' }, SRC[it.file] || it.file), it.quote)); }
+      card.append(sides);
+      const opts = el('div', { class: 'options', role: 'radiogroup', 'aria-label': c.topic });
+      for (const o of c.options) {
+        const id = `cf-${c.id}-${o.key}`;
+        const visible = o.show.length ? o.show.map(s => byId.get(s)).map(it => storyOf(it).text).join(' / ') : o.text;
+        const input = el('input', { type: 'radio', name: `cf-${c.id}`, id, checked: chosen === o.key, disabled: !(db && canWrite), onchange: () => write('conflicts', c.id, { choice: o.key }) });
+        opts.append(el('label', { class: `opt ${chosen === o.key ? 'sel' : ''}`, for: id }, input, el('span', {}, el('b', {}, o.label), el('small', {}, `Visitors read: ${visible || '(nothing on this point)'}`))));
+      }
+      card.append(opts);
+      host.append(card);
+    }
+    const ch = $('#confirms');
+    ch.replaceChildren();
+    for (const s of CONFIRMS) {
+      const cur = confirmChoice.get(s.id);
+      const card = el('article', { class: `card ${cur?.choice === 'yes' ? 'approved' : cur?.choice === 'no' ? 'flagged' : ''}` });
+      card.append(el('div', { class: 'card-head' }, el('div', { class: 'card-title' }, el('span', { class: 'chip brand' }, 'Check my method'), el('h3', {}, s.text)), el('span', { class: `status ${cur?.choice === 'yes' ? 'approved' : cur?.choice === 'no' ? 'flagged' : ''}` }, cur?.choice === 'yes' ? 'Correct' : cur?.choice === 'no' ? 'Not right' : 'To check')));
+      if (s.id === 'M-NAME-CHALDEAN') {
+        const t = el('div', { class: 'ch-table' });
+        for (const [n, letters] of Object.entries(B.method.chaldean)) t.append(el('div', {}, el('b', {}, n), letters));
+        card.append(t);
+      }
+      if (s.id === 'M-X-ABSENT') card.append(el('div', { class: 'row' }, miniGrid([7, 5], [6]), el('p', { class: 'muted', style: 'flex:1;min-width:200px' }, 'Example from slide 13: Easy Money Yoga needs 7 and 5 in the number and no 6. With 6 present, the number gets the 6-7-5 Raj Yog instead.')));
+      if (s.quote) card.append(el('blockquote', { class: 'quote', style: 'margin:0' }, el('span', { class: 'src' }, SRC[s.file] || s.file), s.quote));
+      const note = el('textarea', { id: `cn-${s.id}`, placeholder: 'If it is not right, how should it work?' });
+      note.value = cur?.note || '';
+      const dis = !(db && canWrite);
+      card.append(el('div', { class: 'actions' },
+        el('button', { type: 'button', class: `btn ${cur?.choice === 'yes' ? 'ok' : ''}`, disabled: dis, onclick: () => write('confirms', s.id, { choice: 'yes' }) }, cur?.choice === 'yes' ? 'Correct ✓' : 'This is correct'),
+        el('button', { type: 'button', class: 'btn ghost', disabled: dis, onclick: () => { if (!note.value.trim()) { note.hidden = false; note.focus(); return; } write('confirms', s.id, { choice: 'no', note: note.value.trim() }); } }, cur?.choice === 'no' ? 'Update note' : 'Not right')));
+      note.hidden = cur?.choice !== 'no';
+      card.append(note);
+      ch.append(card);
+    }
+  }
+
+  // ---------- Live preview (same engine as the site) ----------
+  function effectiveRulebook() {
+    const book = JSON.parse(JSON.stringify(B));
+    for (const set of [book.shotgun, book.yogas, book.planets]) for (const r of set.rules) {
+      const d = decisions.get(r.id);
+      if (d?.status === 'edited' && d.edit) r.story = { ...r.story, ...d.edit };
+    }
+    for (const r of book.remedies.rules) { const d = decisions.get(r.id); if (d?.status === 'edited' && d.edit) Object.assign(r, d.edit); }
+    for (const list of Object.values(book.personalYear.years)) for (const it of list) { const d = decisions.get(it.id); if (d?.status === 'edited' && d.edit?.text != null) it.text = d.edit.text; }
+    for (const c of book.conflicts.conflicts) c.decision = conflictChoice.get(c.id) ?? null;
+    for (const set of [book.shotgun, book.yogas]) for (const r of set.rules) for (const k of ['good', 'care', 'trait']) if (r.story[k] === '') delete r.story[k];
+    return book;
+  }
+
+  const sec = (title, ...kids) => el('section', { class: 'st-sec' }, el('h3', {}, ...[].concat(title)), ...kids);
+  const rid = id => el('span', { class: 'rid' }, id);
+  function storyItem(x, textKey) {
+    const pol = x.polarity === 'positive' ? 'good' : x.polarity === 'negative' ? 'care' : x.polarity === 'mixed' ? 'mixed' : '';
+    const box = el('div', { class: `st-item ${pol}` }, el('div', { class: 't' }, x.title, x.count > 1 ? el('span', { class: 'chip' }, `×${x.count}`) : null, x.fromDob ? el('span', { class: 'chip' }, 'birth date') : null, rid(x.id)));
+    if (textKey) { box.append(el('span', {}, x[textKey])); return box; }
+    if (x.good) box.append(el('span', {}, x.good));
+    if (x.trait) box.append(el('span', {}, x.trait));
+    if (x.care) box.append(el('span', {}, x.care));
+    if (x.remedy) box.append(el('span', {}, el('b', {}, 'Remedy: '), x.remedy));
+    return box;
+  }
+
+  function renderStory(r) {
+    const out = $('#story');
+    out.replaceChildren();
+    if (!r.ok) { $('#try-msg').textContent = Object.values(r.errors).join(' '); return; }
+    $('#try-msg').textContent = `Personal year ${r.input.year}: ${r.numbers.personalYear} · birth number ${r.numbers.birth} · destiny ${r.numbers.destiny}${r.numbers.name ? ` · name ${r.numbers.name}` : ''}`;
+    for (const s of r.sections) {
+      if (s.id === 'decoded') {
+        const digits = el('div', { class: 'digits' }, [...s.mobile].map(c => el('span', { class: `dg ${c === '0' ? 'zero' : ''}` }, c)));
+        out.append(sec('Your number, decoded', digits, s.zeros.length ? el('p', { class: 'muted' }, 'Zeros are skipped, so the digits on either side of a 0 count as neighbours.') : null, ...s.pairs.map(p => storyItem(p))));
+      } else if (s.id === 'mobile-grid') {
+        out.append(sec("Your number's grid", el('div', { class: 'row' }, miniGrid([], [], s.counts, true), el('div', { style: 'flex:1;min-width:220px;display:grid;gap:6px' }, ...s.planets.map(p => el('div', { class: 'st-item' }, el('div', { class: 't' }, `${p.digit} · ${p.planet}`, p.count > 1 ? el('span', { class: 'chip' }, `×${p.count}`) : null, rid(p.id)), el('span', {}, p.trait))))),
+          s.yogas.length ? el('p', { class: 'muted' }, `${s.yogas.length} yogas form on this grid:`) : el('p', { class: 'muted' }, 'No yogas form on this grid.'), ...s.yogas.map(y => storyItem({ ...y, title: `${y.title} (${y.pattern})` }))));
+      } else if (s.id === 'dob-grid') {
+        out.append(sec('Yogas you were born with', el('div', { class: 'row' }, miniGrid([], [], s.counts, true), el('div', { style: 'flex:1;min-width:220px;display:grid;gap:6px' }, ...(s.yogas.length ? s.yogas.map(y => storyItem({ ...y, title: `${y.title} (${y.pattern})` })) : [el('p', { class: 'muted' }, 'No yogas form on the birth-date grid.')])))));
+      } else if (s.id === 'concern') {
+        out.append(sec(['For what you shared', el('span', { class: 'muted', style: 'font-weight:400' }, `"${s.text}"`)], s.areas.length ? el('div', { class: 'chips' }, s.areas.map(a => el('span', { class: 'chip brand' }, AREA[a] || a))) : el('p', { class: 'muted' }, 'No life area recognised from these words, so the full reading below applies.'), ...s.items.map(x => storyItem(x))));
+      } else if (s.id === 'career') {
+        out.append(sec('Your number & your career', ...s.professions.map(p => storyItem(p, 'good'))));
+      } else if (s.id === 'year-ahead') {
+        out.append(sec('Your year ahead', ...s.years.map(y => el('details', { open: true }, el('summary', {}, `${y.year}: personal year ${y.number}`),
+          el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...y.items.map(i => el('div', { class: 'st-item' }, el('div', { class: 't' }, CAT[i.cat] || i.cat, i.appliesToName === true ? el('span', { class: 'chip care' }, 'Applies to your name') : null, rid(i.id)), el('span', {}, i.text)))))),
+          el('details', {}, el('summary', {}, 'For every year'), el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...s.forEveryone.map(i => el('div', { class: 'st-item' }, el('span', {}, i.text)))))));
+      } else if (s.id === 'name') {
+        out.append(sec('Your name number', el('p', {}, `Chaldean total ${s.total}, which reduces to ${s.number}.`)));
+      } else if (s.id === 'if-kept') {
+        out.append(sec('If you keep this number', ...s.items.map(x => el('div', { class: 'st-item care' }, el('div', { class: 't' }, x.title, x.forConcern ? el('span', { class: 'chip brand' }, 'Your concern') : null, rid(x.id)), el('span', {}, x.text)))));
+      } else if (s.id === 'protection') {
+        out.append(sec('Your correction & protection', el('dl', { class: 'kv' },
+          el('dt', {}, 'Birth number'), el('dd', {}, String(s.birthNumber)), el('dt', {}, 'Screen saver'), el('dd', {}, s.screenSaver.join(' Or: ') || '—'),
+          el('dt', {}, 'Bracelet'), el('dd', {}, s.bracelet), el('dt', {}, 'Mani'), el('dd', {}, s.mani)),
+          ...s.yogaRemedies.map(y => el('div', { class: 'st-item' }, el('div', { class: 't' }, `For ${y.title}`, rid(y.id)), el('span', {}, y.text)))));
+      } else if (s.id === 'better-number') {
+        out.append(sec('What to look for in a better number',
+          el('details', { open: true }, el('summary', {}, `Look for (${s.lookFor.length})`), el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...s.lookFor.map(x => el('div', { class: 'st-item good' }, el('div', { class: 't' }, x.title, x.have ? el('span', { class: 'chip good' }, 'You have this') : null, rid(x.id)), el('span', {}, `Pattern: ${x.pattern}. ${x.why}`))))),
+          el('details', {}, el('summary', {}, `Avoid (${s.avoid.length})`), el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...s.avoid.map(x => el('div', { class: 'st-item care' }, el('div', { class: 't' }, x.title, rid(x.id)), el('span', {}, `Pattern: ${x.pattern}. ${x.why}`)))))));
+      } else if (s.id === 'compare') {
+        for (const c of s.comparisons) {
+          const L = c.lists, n = c.counts;
+          const list = (title, arr, cls) => arr.length ? el('details', { open: cls === 'care' && title.startsWith('New') }, el('summary', {}, `${title} (${arr.length})`), el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...arr.map(x => el('div', { class: `st-item ${cls}` }, el('div', { class: 't' }, x.title, rid(x.id)), el('span', {}, x.text))))) : null;
+          out.append(sec(`Current vs ${c.planned}: what changes`,
+            el('div', { class: 'cmp-counts' },
+              el('div', { class: 'g' }, el('b', {}, n.problemsRemoved), 'problems go away'), el('div', { class: 'c' }, el('b', {}, n.problemsAdded), 'new problems'),
+              el('div', {}, el('b', {}, n.problemsStay), 'problems stay'), el('div', { class: 'g' }, el('b', {}, n.strengthsGained), 'strengths gained'),
+              el('div', { class: 'c' }, el('b', {}, n.strengthsLost), 'strengths lost'), el('div', {}, el('b', {}, n.strengthsKept), 'strengths kept')),
+            c.forConcern ? el('p', { class: 'muted' }, `For your concern: ${c.forConcern.problemsRemoved.length} problems go away, ${c.forConcern.problemsAdded.length} new, ${c.forConcern.strengthsGained.length} strengths gained, ${c.forConcern.strengthsLost.length} lost.`) : null,
+            list('Problems that go away', L.problemsRemoved, 'good'), list('New problems it brings', L.problemsAdded, 'care'), list('Problems that stay', L.problemsStay, 'mixed'),
+            list('Strengths gained', L.strengthsGained, 'good'), list('Strengths lost', L.strengthsLost, 'care'), list('Strengths kept', L.strengthsKept, ''),
+            L.professionsGained.length || L.professionsLost.length ? el('p', {}, `Careers: gains ${L.professionsGained.join(', ') || 'none'}; loses ${L.professionsLost.join(', ') || 'none'}.`) : null));
+        }
+      } else if (s.id === 'cta') {
+        out.append(sec('Talk to us on WhatsApp', el('p', { class: 'muted' }, 'The site ends with the WhatsApp button to the Kamala bot and the disclaimer: guidance, not a guarantee.'), s.healthNote ? el('p', {}, 'Health lines appeared, so the doctor note is shown: "Please also consult a doctor for any health concern."') : null));
+      }
+    }
+  }
+
+  function runPreview() {
+    const engine = Engine.createEngine(effectiveRulebook());
+    const ist = new Date(Date.now() + 5.5 * 3600 * 1000);
+    const r = engine.reading({
+      name: $('#t-name').value, mobile: $('#t-mobile').value, dob: $('#t-dob').value, concern: $('#t-concern').value,
+      planned: $('#t-planned').value.split(',').map(s => s.trim()).filter(Boolean), year: ist.getUTCFullYear()
+    });
+    renderStory(r);
+  }
+  $('#try-form').addEventListener('submit', e => { e.preventDefault(); runPreview(); });
+
+  // ---------- Boot ----------
+  buildGroups();
+  renderDecisions();
+  updateGroups();
+  runPreview();
+  setSave();
+  $('#save-state').textContent = 'Connecting…';
+
+  let previewTimer;
+  const changed = ids => {
+    for (const id of ids) if (cards.has(id)) refreshCard(id);
+    updateGroups();
+    clearTimeout(previewTimer); previewTimer = setTimeout(runPreview, 400);
+  };
+
+  (async () => {
+    try { db = window.claude && window.claude.use ? await window.claude.use('db') : null; } catch { db = null; }
+    if (!db) { setSave(); return; }
+    try {
+      const user = await window.claude.use('user');
+      const w = user ? await user.can('data.write') : null;
+      canWrite = w !== false;
+    } catch { canWrite = true; }
+    setSave();
+    const sub = (col, apply) => db.collection(col).limit(1000).onSnapshot(snap => {
+      const before = new Map(apply.get());
+      const next = new Map(snap.docs.map(d => [d.id, d.data()]));
+      apply.set(next);
+      const ids = new Set([...before.keys(), ...next.keys()].filter(k => before.get(k) !== next.get(k)));
+      apply.after(ids);
+    }, () => { db = null; setSave(); });
+    sub('decisions', { get: () => decisions, set: m => { decisions = m; }, after: ids => changed(ids) });
+    sub('conflicts', { get: () => conflictChoice, set: m => { conflictChoice = new Map([...m].map(([k, v]) => [k, v.choice])); }, after: () => { renderDecisions(); updateGroups(); clearTimeout(previewTimer); previewTimer = setTimeout(runPreview, 400); } });
+    sub('confirms', { get: () => confirmChoice, set: m => { confirmChoice = m; }, after: () => { renderDecisions(); updateGroups(); } });
+    for (const it of items) refreshCard(it.id);
+    renderDecisions();
+    updateGroups();
+  })();
+})();
+</script>

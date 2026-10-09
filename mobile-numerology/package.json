@@ -1,0 +1,16 @@
+{
+  "name": "veshannastro-mobile-numerology",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Free rule-based mobile numerology reading (no AI at runtime).",
+  "type": "module",
+  "scripts": {
+    "lint:rules": "node scripts/lint-rulebook.js",
+    "lint:rules:strict": "node scripts/lint-rulebook.js --strict",
+    "review": "node scripts/build-review.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "kind": "profession",
+  "about": "Profession codes from slide 32, matched on the 10-digit mobile number with zeros skipped. Code syntax: a 2- or 3-digit code = those digits side by side, in either order (forward or reverse); a single digit = present anywhere; '+' joins terms that must all match (e.g. '3+7' = 3 AND 7 anywhere; '3+75' = a 3 anywhere AND 7,5 side by side).",
+  "source_file": "P01-srk-slides.md",
+  "rules": [
+    { "id": "PR-DOCTOR", "field": "Doctor", "codes": ["19", "3+7"], "ref": "Slide 32", "quote": "DOCTOR – 19 / 3 AND 7", "areas": ["career", "health"] },
+    { "id": "PR-ENGINEER", "field": "Engineer", "codes": ["19", "3+75"], "ref": "Slide 32", "quote": "ENGINEER – 19 / 3 AND 75", "areas": ["career"] },
+    { "id": "PR-MEDIA", "field": "Media / glamour industry", "codes": ["6", "17", "67"], "ref": "Slide 32", "quote": "Media / glamour industry – 6 / 17 / 67", "areas": ["career"] },
+    { "id": "PR-TEACHER", "field": "Teacher", "codes": ["31", "75"], "ref": "Slide 32", "quote": "Teacher – 31/ 75", "areas": ["career", "education"] },
+    { "id": "PR-ACCOUNTS", "field": "Accounts / banking", "codes": ["85", "75"], "ref": "Slide 32", "quote": "Accounts / banking – 85 / 75", "areas": ["career", "money"] },
+    { "id": "PR-LAWYER", "field": "Lawyer", "codes": ["98", "31", "17"], "ref": "Slide 32", "quote": "Lawyer – 98 / 31 / 17", "areas": ["career", "legal"] },
+    { "id": "PR-JUDGE", "field": "Judge", "codes": ["38", "17", "31"], "ref": "Slide 32", "quote": "Judge – 38 / 17 / 31", "areas": ["career", "legal"] },
+    { "id": "PR-LEADER", "field": "Leader / politician", "codes": ["19", "4", "31"], "ref": "Slide 32", "quote": "Leader /politician – 19 / 4 / 31", "areas": ["career", "government"] },
+    { "id": "PR-UNIFORM", "field": "Army / police / fire", "codes": ["19", "94"], "ref": "Slide 32", "quote": "Army /police / fire – 19 / 94", "areas": ["career", "government"] },
+    { "id": "PR-OCCULT", "field": "Occult", "codes": ["371", "75", "25"], "ref": "Slide 32", "quote": "Occult – 371 / 75 / 25", "areas": ["career", "spiritual"] },
+    { "id": "PR-CONSULTANT", "field": "Consultant", "codes": ["38", "37"], "ref": "Slide 32", "quote": "CONSULTANT – 38 / 37", "areas": ["career"] },
+    { "id": "PR-HOSPITAL-COURT", "field": "Working in a hospital / court", "codes": ["54", "13", "17", "9"], "ref": "Slide 32", "quote": "Working in the hospital / court – 54 / 13 / 17 / 9", "areas": ["career", "health", "legal"] },
+    { "id": "PR-IRON", "field": "Iron / chemical / construction work", "codes": ["8"], "ref": "Slide 32", "quote": "Work of Iron / Chemical / Construction – Can take '8' in mobile number", "areas": ["career"] },
+    { "id": "PR-HEALER", "field": "Healer (any type)", "codes": ["17", "8"], "ref": "Slide 32", "quote": "Healer ( any type ) – 17/ 8", "areas": ["career", "spiritual"] }
+  ]
+}

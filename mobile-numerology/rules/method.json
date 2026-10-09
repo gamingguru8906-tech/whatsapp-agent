@@ -1,0 +1,26 @@
+{
+  "kind": "method",
+  "about": "How numbers are calculated. Each step cites a source line or an owner decision (C1-C8, taken in chat on 2026-10-08/09).",
+  "grid": {
+    "layout": [[3, 1, 9], [6, 7, 5], [2, 8, 4]],
+    "src": "P01", "file": "P01-srk-slides.md", "ref": "Slide 6", "quote": "VEDIC NUMEROLOGY GRID"
+  },
+  "steps": [
+    { "id": "M-MOBILE-10", "decision": "C4", "text": "Only the 10-digit mobile number is read. A leading +91, 91 or 0 is removed first. The number must start with 6, 7, 8 or 9." },
+    { "id": "M-ZERO", "decision": "C2", "text": "Zero is skipped: 8-0-5 is read as 8-5, and 0 never goes on a grid." },
+    { "id": "M-REPEAT", "decision": "C3", "text": "Repeated digits only matter where a source says so (multiple 6 / multiple 7 on Venus-Ketu). A same-digit pair such as 9-9 has no meaning." },
+    { "id": "M-TWO-GRIDS", "decision": "C1", "text": "Two separate grids: the birth-date grid (all digits of DD MM YYYY, zeros skipped) and the mobile grid. Yogas are read on each. A planned number changes only the mobile grid." },
+    { "id": "M-X-ABSENT", "decision": "reading of P01 slides 13-31", "text": "On a yoga diagram, a red digit must be present, a red X must be absent, and a blank cell is ignored.", "confirm": true },
+    { "id": "M-PROFESSION-CODES", "decision": "C5", "text": "A 2- or 3-digit profession code matches when those digits are side by side in either order (19 or 91; 371 or 173). 'X AND Y' and single digits match anywhere in the number.", "confirm": true },
+    { "id": "M-BIRTH-NUMBER", "src": "T01", "file": "T01-personal-year-a.md",
+      "quote": "The speaker identifies a birth number of nine and a destiny number of three",
+      "text": "Birth number (mulank) = day of birth reduced to one digit. Destiny number (bhagyank) = all digits of the full date of birth added and reduced to one digit. Inferred from T01's example (18 September 2001 → birth 9, destiny 3).", "confirm": true },
+    { "id": "M-PERSONAL-YEAR", "src": "T01", "file": "T01-personal-year-a.md",
+      "quote": "add the day of birth, the month of birth, and the digits of the year being considered, reducing the result to a single digit",
+      "text": "Personal year = day + month + digit-sum of the year, reduced fully to one digit (11 → 2, 22 → 4). The calendar year is used: the story shows this year and next year." },
+    { "id": "M-NAME-CHALDEAN", "decision": "C8", "text": "Name number = sum of the Chaldean values of all letters in the name, reduced to one digit. No source gives the letter table, so the standard Chaldean table below is used; please confirm it.", "confirm": true }
+  ],
+  "chaldean": {
+    "1": "A I J Q Y", "2": "B K R", "3": "C G L S", "4": "D M T", "5": "E H N X", "6": "U V W", "7": "O Z", "8": "F P"
+  }
+}

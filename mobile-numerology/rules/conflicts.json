@@ -1,0 +1,22 @@
+{
+  "kind": "conflict",
+  "about": "Places where the sources disagree. Nothing tagged with an undecided conflict is shown on the site until the owner picks an option.",
+  "conflicts": [
+    { "id": "CF-PY9-BLACK", "topic": "Personal Year 9 colours: is black good or bad?",
+      "sides": ["PY9-T01-g", "PY9-T03-f"],
+      "options": [
+        { "key": "t01", "label": "Avoid black (T01)", "show": ["PY9-T01-g"], "text": "Yellow and orange; avoid black." },
+        { "key": "t03", "label": "Black is fine (T03)", "show": ["PY9-T03-f"], "text": "Saffron, white, light blue, light grey and black." },
+        { "key": "neither", "label": "Leave black out", "show": [], "text": "Yellow, orange, saffron, white, light blue and light grey." }
+      ],
+      "decision": null },
+    { "id": "CF-PY8-OUTLOOK", "topic": "Personal Year 8 outlook: job-loss risk (T01) or earning opportunities (T03)?",
+      "sides": ["PY8-T01-a", "PY8-T03-a"],
+      "options": [
+        { "key": "both", "label": "Show both, gently (recommended)", "show": ["PY8-T01-a", "PY8-T03-a"] },
+        { "key": "t01", "label": "Only T01 (caution)", "show": ["PY8-T01-a"] },
+        { "key": "t03", "label": "Only T03 (opportunity)", "show": ["PY8-T03-a"] }
+      ],
+      "decision": null }
+  ]
+}

@@ -1,0 +1,740 @@
+<title>Veshannastro Rulebook Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=League+Spartan:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap">
+<style>
+/* Layout: a working ledger. Sticky progress bar, then decisions that block launch, then every rule as a card
+   (source quote beside the site wording) in one readable column. Brand tokens are the owner's own site tokens. */
+:root {
+  --bg: hsl(0 0% 100%);
+  --fg: hsl(222.2 84% 4.9%);
+  --card: hsl(0 0% 100%);
+  --muted: hsl(210 40% 96.1%);
+  --muted-fg: hsl(215.4 16.3% 46.9%);
+  --faint: hsl(215 20% 65%);
+  --border: hsl(214.3 31.8% 91.4%);
+  --primary: hsl(340 80% 55%);
+  --primary-fg: hsl(210 40% 98%);
+  --primary-soft: hsl(338 60% 96%);
+  --primary-dark: hsl(338 73% 45%);
+  --accent: hsl(45 90% 60%);
+  --accent-soft: hsl(46 80% 93%);
+  --success: hsl(142 71% 36%);
+  --success-soft: hsl(152 47% 93%);
+  --success-dark: hsl(142 72% 29%);
+  --danger: hsl(0 72% 51%);
+  --danger-soft: hsl(0 93% 94%);
+  --danger-dark: hsl(0 74% 42%);
+  --warning: hsl(32 95% 44%);
+  --warning-soft: hsl(48 96% 89%);
+  --warning-dark: hsl(26 84% 31%);
+  --shadow: 0 1px 2px hsl(222 40% 10% / 0.06), 0 4px 16px hsl(222 40% 10% / 0.05);
+  --radius: 0.8rem;
+  --font-ui: "League Spartan", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-quote: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: hsl(224 30% 8%); --fg: hsl(210 40% 96%); --card: hsl(224 26% 11%); --muted: hsl(222 22% 16%);
+    --muted-fg: hsl(215 20% 68%); --faint: hsl(215 14% 46%); --border: hsl(222 18% 22%);
+    --primary: hsl(340 82% 64%); --primary-fg: hsl(224 30% 8%); --primary-soft: hsl(338 40% 18%); --primary-dark: hsl(338 85% 78%);
+    --accent: hsl(45 90% 62%); --accent-soft: hsl(45 40% 16%);
+    --success: hsl(142 60% 50%); --success-soft: hsl(150 35% 14%); --success-dark: hsl(142 65% 72%);
+    --danger: hsl(0 80% 64%); --danger-soft: hsl(0 45% 16%); --danger-dark: hsl(0 85% 80%);
+    --warning: hsl(32 92% 58%); --warning-soft: hsl(36 50% 15%); --warning-dark: hsl(38 92% 74%);
+    --shadow: 0 1px 2px hsl(0 0% 0% / 0.4); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: hsl(224 30% 8%); --fg: hsl(210 40% 96%); --card: hsl(224 26% 11%); --muted: hsl(222 22% 16%);
+  --muted-fg: hsl(215 20% 68%); --faint: hsl(215 14% 46%); --border: hsl(222 18% 22%);
+  --primary: hsl(340 82% 64%); --primary-fg: hsl(224 30% 8%); --primary-soft: hsl(338 40% 18%); --primary-dark: hsl(338 85% 78%);
+  --accent: hsl(45 90% 62%); --accent-soft: hsl(45 40% 16%);
+  --success: hsl(142 60% 50%); --success-soft: hsl(150 35% 14%); --success-dark: hsl(142 65% 72%);
+  --danger: hsl(0 80% 64%); --danger-soft: hsl(0 45% 16%); --danger-dark: hsl(0 85% 80%);
+  --warning: hsl(32 92% 58%); --warning-soft: hsl(36 50% 15%); --warning-dark: hsl(38 92% 74%);
+  --shadow: 0 1px 2px hsl(0 0% 0% / 0.4); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 860px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; font-weight: 700; }
+h3 { font-size: 1.08rem; font-weight: 600; }
+p { margin: 0; }
+.muted { color: var(--muted-fg); }
+.eyebrow { font-size: 0.74rem; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 600; color: var(--primary-dark); }
+.mono { font-family: var(--font-mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* Sticky progress bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+.bar-inner { max-width: 860px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.brand { font-weight: 700; letter-spacing: 0.01em; }
+.brand b { color: var(--primary); }
+.meter { flex: 1 1 180px; min-width: 0; display: grid; gap: 4px; }
+.meter-track { height: 8px; border-radius: 99px; background: var(--muted); overflow: hidden; display: flex; }
+.meter-track span { display: block; height: 100%; }
+.meter-label { font-size: 0.82rem; color: var(--muted-fg); font-variant-numeric: tabular-nums; }
+.save-state { font-size: 0.8rem; padding: 3px 9px; border-radius: 99px; background: var(--muted); color: var(--muted-fg); white-space: nowrap; }
+.save-state.on { background: var(--success-soft); color: var(--success-dark); }
+.save-state.off { background: var(--warning-soft); color: var(--warning-dark); }
+
+section.block { margin-top: 36px; display: grid; gap: 14px; }
+.intro { margin-top: 28px; display: grid; gap: 12px; }
+.intro p { max-width: 66ch; }
+.howto { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.howto div { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 4px; background: var(--card); }
+.howto strong { font-weight: 600; }
+.notice { border-radius: var(--radius); padding: 12px 14px; background: var(--warning-soft); color: var(--warning-dark); }
+
+/* Chips */
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.03em; padding: 2px 8px; border-radius: 99px; background: var(--muted); color: var(--muted-fg); white-space: nowrap; }
+.chip.good { background: var(--success-soft); color: var(--success-dark); }
+.chip.care { background: var(--danger-soft); color: var(--danger-dark); }
+.chip.mixed { background: var(--warning-soft); color: var(--warning-dark); }
+.chip.brand { background: var(--primary-soft); color: var(--primary-dark); }
+.chip.gold { background: var(--accent-soft); color: var(--warning-dark); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Cards */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.card.approved { border-color: color-mix(in srgb, var(--success) 45%, var(--border)); }
+.card.edited { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }
+.card.flagged { border-color: color-mix(in srgb, var(--danger) 55%, var(--border)); }
+.card-head { display: flex; gap: 12px; align-items: flex-start; }
+.card-title { flex: 1; min-width: 0; display: grid; gap: 4px; justify-items: start; }
+.card-title h3 { justify-self: stretch; }
+[id] { scroll-margin-top: 96px; }
+.status { font-size: 0.75rem; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--muted); color: var(--muted-fg); white-space: nowrap; }
+.status.approved { background: var(--success-soft); color: var(--success-dark); }
+.status.edited { background: var(--primary-soft); color: var(--primary-dark); }
+.status.flagged { background: var(--danger-soft); color: var(--danger-dark); }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+.quote { font-family: var(--font-quote); font-size: 0.98rem; line-height: 1.5; padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; min-width: 0; overflow-wrap: anywhere; }
+.quote .src { display: block; font-family: var(--font-ui); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--warning-dark); margin-bottom: 4px; }
+.site { display: grid; gap: 6px; min-width: 0; }
+.site .lbl { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-fg); }
+.line { padding: 8px 10px; border-radius: 8px; font-size: 0.95rem; }
+.line.good { background: var(--success-soft); color: var(--success-dark); }
+.line.care { background: var(--danger-soft); color: var(--danger-dark); }
+.line.trait { background: var(--muted); }
+.line.plain { background: var(--primary-soft); }
+.line b { font-weight: 600; }
+.note { font-size: 0.88rem; padding: 8px 10px; border-radius: 8px; border: 1px dashed var(--warning); color: var(--warning-dark); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { border: 1px solid var(--border); background: var(--card); border-radius: 99px; padding: 6px 14px; font-weight: 600; font-size: 0.88rem; }
+.btn:hover { border-color: var(--primary); }
+.btn.primary { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
+.btn.ok { background: var(--success); color: var(--primary-fg); border-color: var(--success); }
+.btn.ghost { background: transparent; }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.edit-box { display: grid; gap: 8px; }
+.edit-box label { display: grid; gap: 4px; font-size: 0.8rem; font-weight: 600; color: var(--muted-fg); }
+textarea, input[type="text"], input[type="tel"], input[type="date"], input[type="search"] { width: 100%; border: 1px solid var(--border); background: var(--bg); border-radius: 10px; padding: 9px 11px; font-size: 0.95rem; }
+textarea { min-height: 70px; resize: vertical; font-family: var(--font-ui); line-height: 1.45; }
+
+/* Digits and the Vedic grid */
+.digits { display: flex; gap: 4px; flex-wrap: wrap; }
+.dg { font-family: var(--font-mono); font-size: 1.05rem; width: 1.9em; height: 2.2em; display: grid; place-items: center; border-radius: 7px; background: var(--primary-soft); color: var(--primary-dark); font-variant-numeric: tabular-nums; }
+.dg.zero { background: transparent; color: var(--faint); text-decoration: line-through; }
+.dg.sep { width: auto; background: transparent; color: var(--muted-fg); font-family: var(--font-ui); padding: 0 2px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 2.1em); grid-auto-rows: 2.1em; gap: 3px; font-family: var(--font-mono); flex: none; }
+.grid3 span { display: grid; place-items: center; border-radius: 6px; font-size: 0.92rem; background: var(--muted); color: var(--faint); position: relative; }
+.grid3 span.on { background: var(--primary); color: var(--primary-fg); font-weight: 600; }
+.grid3 span.off { background: var(--danger-soft); color: var(--danger-dark); }
+.grid3 span.off::after { content: ""; position: absolute; inset: 22% 22%; background: linear-gradient(45deg, transparent 46%, currentColor 46% 54%, transparent 54%), linear-gradient(-45deg, transparent 46%, currentColor 46% 54%, transparent 54%); opacity: 0.8; }
+.grid3.big { grid-template-columns: repeat(3, 3em); grid-auto-rows: 3em; }
+.grid3 span sup { position: absolute; top: 3px; right: 5px; font-size: 0.62rem; }
+.pair { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); flex: none; }
+.pair .dg { width: 2.1em; height: 2.1em; }
+
+/* Group nav + filters */
+.groupnav { display: flex; gap: 6px; flex-wrap: wrap; }
+.groupnav a { text-decoration: none; color: var(--fg); border: 1px solid var(--border); padding: 5px 11px; border-radius: 99px; font-size: 0.86rem; font-weight: 500; background: var(--card); }
+.groupnav a span { color: var(--muted-fg); font-variant-numeric: tabular-nums; margin-left: 4px; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 99px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 6px 12px; font-size: 0.86rem; font-weight: 600; color: var(--muted-fg); }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.filters input[type="search"] { flex: 1 1 200px; width: auto; border-radius: 99px; }
+.group-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--border); }
+.group-head .sub { font-size: 0.88rem; color: var(--muted-fg); }
+.list { display: grid; gap: 12px; }
+.empty { color: var(--muted-fg); font-size: 0.92rem; padding: 6px 2px; }
+
+/* Conflicts + confirmations */
+.options { display: grid; gap: 8px; }
+.opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; cursor: pointer; background: var(--bg); }
+.opt input { margin-top: 4px; accent-color: var(--primary); }
+.opt.sel { border-color: var(--primary); background: var(--primary-soft); }
+.opt small { display: block; color: var(--muted-fg); font-size: 0.85rem; }
+.ch-table { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+.ch-table div { border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; font-family: var(--font-mono); font-size: 0.82rem; }
+.ch-table b { color: var(--primary-dark); margin-right: 6px; }
+
+/* Try a number */
+.try-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.try-form label { display: grid; gap: 4px; font-size: 0.82rem; font-weight: 600; color: var(--muted-fg); min-width: 0; }
+.try-form .wide { grid-column: 1 / -1; }
+@media (max-width: 560px) { .try-form { grid-template-columns: 1fr; } }
+.story { display: grid; gap: 16px; }
+.st-sec { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; display: grid; gap: 10px; background: var(--card); min-width: 0; }
+.st-sec h3 { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.st-item { display: grid; gap: 4px; padding: 8px 10px; border-radius: 8px; background: var(--muted); min-width: 0; }
+.st-item .t { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; font-weight: 600; }
+.st-item.good { background: var(--success-soft); }
+.st-item.care { background: var(--danger-soft); }
+.st-item.mixed { background: var(--warning-soft); }
+.rid { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted-fg); font-weight: 500; }
+.row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; font-size: 0.94rem; }
+.kv dt { color: var(--muted-fg); }
+.kv dd { margin: 0; min-width: 0; }
+.cmp-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.cmp-counts div { border-radius: 8px; padding: 8px 10px; background: var(--muted); font-size: 0.86rem; }
+.cmp-counts b { display: block; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.cmp-counts .g { background: var(--success-soft); color: var(--success-dark); }
+.cmp-counts .c { background: var(--danger-soft); color: var(--danger-dark); }
+details > summary { cursor: pointer; font-weight: 600; }
+@media (prefers-reduced-motion: no-preference) { .card, .opt { transition: border-color 0.2s ease, background-color 0.2s ease; } }
+</style>
+
+<div class="bar">
+  <div class="bar-inner">
+    <div class="brand">Veshannastro <b>·</b> Rulebook</div>
+    <div class="meter">
+      <div class="meter-track" aria-hidden="true"><span id="m-ok" style="background:var(--success)"></span><span id="m-ed" style="background:var(--primary)"></span><span id="m-fl" style="background:var(--danger)"></span></div>
+      <div class="meter-label" id="meter-label">Loading…</div>
+    </div>
+    <span class="save-state" id="save-state">Connecting…</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Free mobile-numerology tool · sign-off before launch</div>
+    <h1>Check every rule before it goes live</h1>
+    <p>Each card shows the numerologist's own words on the left and what visitors will read on the right. Nothing reaches the public site until you approve it here. Your choices save automatically, and I build the site from them.</p>
+    <div class="howto">
+      <div><strong>Approve</strong><span class="muted">The wording is right and can go live.</span></div>
+      <div><strong>Edit</strong><span class="muted">Change what visitors read. Saving an edit also approves it.</span></div>
+      <div><strong>Flag</strong><span class="muted">Something is wrong or unclear. Add a note and I'll fix it.</span></div>
+    </div>
+    <p class="notice" id="readonly-note" hidden>Saving isn't available in this view, so you can read and try numbers but your choices won't be recorded. Open the page from claude.ai while signed in to save them.</p>
+  </section>
+
+  <section class="block" id="try">
+    <div class="eyebrow">Live preview</div>
+    <h2>Try any number</h2>
+    <p class="muted">This runs the same calculation the site will use, with your edits and choices applied. The example below is made up. The grey codes show which rule produced each line; visitors won't see them.</p>
+    <form class="try-form" id="try-form" novalidate>
+      <label>Name<input id="t-name" type="text" autocomplete="off" value="Rahul Sharma (example)"></label>
+      <label>Mobile number<input id="t-mobile" type="tel" autocomplete="off" value="98110 45672"></label>
+      <label>Date of birth<input id="t-dob" type="date" value="1988-10-29"></label>
+      <label>Numbers they plan to buy (optional, up to 3, comma separated)<input id="t-planned" type="text" autocomplete="off" value="98765 00295"></label>
+      <label class="wide">What they're worried about<input id="t-concern" type="text" autocomplete="off" value="Paisa nahi tikta, loan bhi hai"></label>
+      <div class="actions wide"><button class="btn primary" type="submit">Show the reading</button><span class="muted" id="try-msg"></span></div>
+    </form>
+    <div class="story" id="story"></div>
+  </section>
+
+  <section class="block" id="decide">
+    <div class="eyebrow">Needed before launch</div>
+    <h2>Your decisions</h2>
+    <p class="muted">Two places where the transcripts disagree, and four calculation choices I made that the sources don't spell out.</p>
+    <div class="list" id="conflicts"></div>
+    <div class="list" id="confirms"></div>
+  </section>
+
+  <section class="block" id="rules">
+    <div class="eyebrow">The rulebook</div>
+    <h2>All rules</h2>
+    <nav class="groupnav" id="groupnav" aria-label="Rule groups"></nav>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Show">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="pending" aria-pressed="false">To review</button>
+        <button type="button" data-f="flagged" aria-pressed="false">Flagged</button>
+        <button type="button" data-f="edited" aria-pressed="false">Edited</button>
+      </div>
+      <input type="search" id="q" placeholder="Search words, digits or a rule code" aria-label="Search rules">
+    </div>
+    <div id="groups"></div>
+  </section>
+</main>
+
+<script>const RULEBOOK = /*__RULEBOOK__*/null;</script>
+<script>const Engine = (() => {
+/*__ENGINE__*/
+return { createEngine, publicView, polarity, GRID, normaliseMobile, personalYear };
+})();</script>
+<script>
+(() => {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const el = (tag, attrs = {}, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v;
+      else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? '' : v);
+    }
+    for (const c of kids.flat()) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+    return n;
+  };
+  const SRC = { 'P01-srk-slides.md': 'P01 · SRK PDF', 'T01-personal-year-a.md': 'T01 · Transcript 1', 'T03-personal-year-b.md': 'T03 · Transcript 3' };
+  const AREA = { money: 'Money', career: 'Career', relationship: 'Love & marriage', family: 'Family', health: 'Health', mind: 'Mind', education: 'Education', legal: 'Court & legal', government: 'Government', travel: 'Travel & abroad', home: 'Home', spiritual: 'Spiritual', personality: 'Personality' };
+  const CAT = { theme: 'The year', do: 'Do', avoid: 'Avoid', money: 'Money', career: 'Work', relationship: 'Love & marriage', health: 'Health', colours: 'Colours', accessories: 'Wear', remedy: 'Remedy', crystal: 'Crystal', name: 'Name', home: 'Home', education: 'Study', travel: 'Travel', chart: 'Birth chart' };
+  const POL = { positive: ['good', 'Good'], negative: ['care', 'Needs care'], mixed: ['mixed', 'Mixed'], neutral: ['', 'Trait'] };
+
+  // ---------- Build one review list from every rule file ----------
+  const B = RULEBOOK;
+  const items = [];
+  const add = (group, groupKey, it) => items.push({ group, groupKey, ...it });
+  for (const r of B.shotgun.rules) add('Shot-gun pairs', 'sg', { id: r.id, kind: 'shotgun', rule: r, title: r.ordered ? `${r.pair[0]} then ${r.pair[1]}` : `${r.pair[0]}-${r.pair[1]} / ${r.pair[1]}-${r.pair[0]}`, file: B.shotgun.source_file, ref: r.ref, quote: r.quote, fields: ['good', 'care', 'trait'] });
+  for (const r of B.yogas.rules) add('Grid yogas', 'yg', { id: r.id, kind: 'yoga', rule: r, title: r.name, sub: `${r.group} · ${r.planets}`, file: B.yogas.source_file, ref: r.ref, quote: r.quote, fields: ['good', 'care', 'trait'] });
+  for (const r of B.planets.rules) add('Digits & planets', 'pl', { id: r.id, kind: 'planet', rule: r, title: `${r.digit} · ${r.planet}`, file: B.planets.source_file, ref: r.ref, quote: r.quote, fields: ['trait', 'signifies'] });
+  for (const r of B.professions.rules) add('Professions', 'pr', { id: r.id, kind: 'profession', rule: r, title: r.field, file: B.professions.source_file, ref: r.ref, quote: r.quote, fields: [] });
+  for (const r of B.remedies.rules) add('Remedies by birth number', 'rm', { id: r.id, kind: 'remedy', rule: r, title: `Birth number ${r.birth_number}`, file: B.remedies.source_file, ref: r.ref, quote: `${r.quote} · ${r.bracelet_quote}`, fields: ['screen_saver', 'bracelet', 'mani'] });
+  for (const m of B.personalYear.method) add('Personal year: method', 'pym', { id: m.id, kind: 'method', rule: m, title: 'How the personal year is worked out', file: B.personalYear.sources[m.src], quote: m.quote, fields: [] });
+  for (let y = 1; y <= 9; y++) for (const it of B.personalYear.years[y]) add(`Personal year ${y}`, `py${y}`, { id: it.id, kind: 'py', rule: it, title: `${CAT[it.cat] || it.cat}`, sub: it.src === 'T01' ? 'Speaker in transcript 1' : 'Speaker in transcript 3', file: B.personalYear.sources[it.src], quote: it.quote, fields: ['text'], conflict: it.conflict });
+  for (const it of B.personalYear.for_everyone) add('Personal year: for everyone', 'pya', { id: it.id, kind: 'py', rule: it, title: 'For every year', file: B.personalYear.sources[it.src], quote: it.quote, fields: ['text'] });
+  const byId = new Map(items.map(i => [i.id, i]));
+  const groups = [...new Map(items.map(i => [i.groupKey, i.group]))];
+
+  // ---------- Saved decisions ----------
+  let decisions = new Map();   // id -> {status: approved|edited|flagged, edit?, note?}
+  let conflictChoice = new Map(); // conflict id -> option key
+  let confirmChoice = new Map();  // method step id -> {choice: yes|no, note}
+  let db = null;
+  let canWrite = false;
+  const inflight = new Set();
+  let filter = 'all';
+  let query = '';
+
+  const statusOf = id => decisions.get(id)?.status || 'pending';
+  const STATUS_TEXT = { pending: 'To review', approved: 'Approved', edited: 'Edited', flagged: 'Flagged' };
+
+  async function write(col, id, data) {
+    if (!db || !canWrite) return false;
+    const key = `${col}/${id}`;
+    if (inflight.has(key)) return false;
+    inflight.add(key);
+    try { await db.collection(col).doc(id).set({ ...data, at: new Date().toISOString() }); return true; }
+    catch (e) {
+      if (e && e.code === 'invalid_argument') { canWrite = false; setSave(); }
+      flash(`Couldn't save (${e && e.code ? e.code : 'error'}). Please try again.`);
+      return false;
+    } finally { inflight.delete(key); }
+  }
+  let flashTimer;
+  function flash(msg) { const s = $('#save-state'); s.textContent = msg; clearTimeout(flashTimer); flashTimer = setTimeout(setSave, 3500); }
+  function setSave() {
+    const s = $('#save-state');
+    if (db && canWrite) { s.className = 'save-state on'; s.textContent = 'Saving on'; $('#readonly-note').hidden = true; }
+    else if (db) { s.className = 'save-state off'; s.textContent = 'View only'; $('#readonly-note').hidden = false; }
+    else { s.className = 'save-state off'; s.textContent = 'Not saving'; $('#readonly-note').hidden = false; }
+  }
+
+  // ---------- Small visuals ----------
+  function miniGrid(present = [], absent = [], counts = null, big = false) {
+    const g = el('div', { class: `grid3${big ? ' big' : ''}`, role: 'img', 'aria-label': counts ? 'Grid with digit counts' : `Present ${present.join(', ')}${absent.length ? `; absent ${absent.join(', ')}` : ''}` });
+    for (const row of Engine.GRID) for (const d of row) {
+      const on = counts ? counts[d] > 0 : present.includes(d);
+      const off = !counts && absent.includes(d);
+      const cell = el('span', { class: on ? 'on' : off ? 'off' : '' }, String(d));
+      if (counts && counts[d] > 1) cell.append(el('sup', {}, `×${counts[d]}`));
+      g.append(cell);
+    }
+    return g;
+  }
+  const pairViz = r => el('div', { class: 'pair', 'aria-hidden': 'true' }, el('span', { class: 'dg' }, r.pair[0]), el('span', { class: 'dg sep' }, r.ordered ? '→' : '⇄'), el('span', { class: 'dg' }, r.pair[1]));
+  const badge = txt => el('div', { class: 'pair', 'aria-hidden': 'true' }, el('span', { class: 'dg' }, txt));
+  const polChip = story => { const [c, t] = POL[Engine.polarity(story)]; return el('span', { class: `chip ${c}` }, t); };
+
+  // ---------- Effective wording (with edits applied) ----------
+  function storyOf(item) {
+    const d = decisions.get(item.id);
+    const edit = d && d.status === 'edited' ? d.edit || {} : {};
+    const r = item.rule;
+    if (item.kind === 'shotgun' || item.kind === 'yoga') return { ...r.story, ...edit };
+    if (item.kind === 'planet') return { ...r.story, ...edit };
+    if (item.kind === 'remedy') return { screen_saver: r.screen_saver || '', bracelet: r.bracelet, mani: r.mani, ...edit };
+    if (item.kind === 'py') return { text: r.text, ...edit };
+    return {};
+  }
+
+  function siteLines(item) {
+    const s = storyOf(item);
+    const box = el('div', { class: 'site' }, el('span', { class: 'lbl' }, 'Visitors read'));
+    if (item.kind === 'shotgun' || item.kind === 'yoga') {
+      if (s.good) box.append(el('div', { class: 'line good' }, s.good));
+      if (s.trait) box.append(el('div', { class: 'line trait' }, s.trait));
+      if (s.care) box.append(el('div', { class: 'line care' }, s.care));
+      for (const m of item.rule.multiples || []) box.append(el('div', { class: 'line care' }, el('b', {}, `If ${m.digit} appears ${m.min}+ times: `), m.care));
+      if (item.rule.remedy) box.append(el('div', { class: 'line plain' }, el('b', {}, 'Remedy: '), item.rule.remedy.text));
+    } else if (item.kind === 'planet') {
+      box.append(el('div', { class: 'line trait' }, s.trait), el('div', { class: 'line plain' }, el('b', {}, 'Signifies: '), s.signifies));
+    } else if (item.kind === 'profession') {
+      box.append(el('div', { class: 'line good' }, `Shown when the number has ${item.rule.codes.map(c => c.replace('+', ' and ')).join(' or ')}: "a combination linked with ${item.rule.field.toLowerCase()}".`));
+    } else if (item.kind === 'remedy') {
+      const from = item.rule.screen_saver_from === 'destiny' ? 'The screen saver for their destiny number' + (s.screen_saver ? ', or: ' : '.') : '';
+      box.append(el('div', { class: 'line plain' }, el('b', {}, 'Screen saver: '), from + (s.screen_saver || '')), el('div', { class: 'line plain' }, el('b', {}, 'Bracelet: '), s.bracelet), el('div', { class: 'line plain' }, el('b', {}, 'Mani: '), s.mani));
+    } else if (item.kind === 'py') {
+      box.append(el('div', { class: 'line plain' }, s.text));
+    } else {
+      box.append(el('div', { class: 'line trait' }, 'Used in the calculation only (not shown as text).'));
+    }
+    return box;
+  }
+
+  const FIELD_LABEL = { good: 'Good part (green)', care: 'Needs-care part (red)', trait: 'Neutral trait (grey)', signifies: 'Signifies', screen_saver: 'Screen saver', bracelet: 'Bracelet', mani: 'Mani', text: 'What visitors read' };
+
+  // ---------- Rule cards ----------
+  const cards = new Map();
+  function renderCard(item) {
+    const st = statusOf(item.id);
+    const d = decisions.get(item.id);
+    const card = el('article', { class: `card ${st}`, id: `rule-${item.id}` });
+    let visual = null;
+    if (item.kind === 'shotgun') visual = pairViz(item.rule);
+    else if (item.kind === 'yoga') visual = miniGrid(item.rule.present, item.rule.absent);
+    else if (item.kind === 'planet') visual = badge(item.rule.digit);
+    else if (item.kind === 'remedy') visual = badge(item.rule.birth_number);
+    const tags = el('div', { class: 'chips' }, el('span', { class: 'mono muted' }, item.id));
+    if (item.kind === 'shotgun' || item.kind === 'yoga') tags.append(polChip(storyOf(item)));
+    for (const a of item.rule.areas || []) tags.append(el('span', { class: 'chip' }, AREA[a] || a));
+    if (item.rule.sensitive) tags.append(el('span', { class: 'chip care' }, 'Sensitive'));
+    if (item.conflict) tags.append(el('span', { class: 'chip gold' }, 'In a conflict'));
+    if (item.kind === 'profession') for (const c of item.rule.codes) tags.append(el('span', { class: 'chip brand mono' }, c.replace('+', ' & ')));
+    card.append(el('div', { class: 'card-head' }, visual,
+      el('div', { class: 'card-title' }, el('h3', {}, item.title), item.sub ? el('span', { class: 'muted', style: 'font-size:.88rem' }, item.sub) : null, tags),
+      el('span', { class: `status ${st}` }, STATUS_TEXT[st])));
+    card.append(el('div', { class: 'cols' },
+      el('blockquote', { class: 'quote', style: 'margin:0' }, el('span', { class: 'src' }, `${SRC[item.file] || item.file}${item.ref ? ' · ' + item.ref : ''}`), item.quote),
+      siteLines(item)));
+    if (item.rule.review_note) card.append(el('div', { class: 'note' }, el('b', {}, 'Please check: '), item.rule.review_note));
+    if (d && d.status === 'flagged' && d.note) card.append(el('div', { class: 'note' }, el('b', {}, 'Your note: '), d.note));
+    card.append(actionsFor(item, card));
+    return card;
+  }
+
+  function actionsFor(item, card) {
+    const st = statusOf(item.id);
+    const dis = !(db && canWrite);
+    const row = el('div', { class: 'actions' });
+    row.append(el('button', { type: 'button', class: `btn ${st === 'approved' ? 'ok' : ''}`, disabled: dis, onclick: () => write('decisions', item.id, { status: 'approved' }) }, st === 'approved' ? 'Approved ✓' : 'Approve'));
+    if (item.fields.length) row.append(el('button', { type: 'button', class: 'btn', disabled: dis, onclick: () => openEditor(item, card) }, 'Edit wording'));
+    row.append(el('button', { type: 'button', class: 'btn ghost', disabled: dis, onclick: () => openFlag(item, card) }, st === 'flagged' ? 'Change note' : 'Flag'));
+    if (st !== 'pending') row.append(el('button', { type: 'button', class: 'btn ghost', disabled: dis, onclick: () => db.collection('decisions').doc(item.id).delete().catch(() => flash("Couldn't undo. Please try again.")) }, 'Undo'));
+    return row;
+  }
+
+  function openEditor(item, card) {
+    const s = storyOf(item);
+    const fields = item.fields.filter(f => item.kind === 'shotgun' || item.kind === 'yoga' ? f in s || f !== 'trait' : true);
+    const inputs = {};
+    const box = el('div', { class: 'edit-box' });
+    for (const f of fields) {
+      const ta = el('textarea', { id: `ed-${item.id}-${f}` });
+      ta.value = s[f] || '';
+      inputs[f] = ta;
+      box.append(el('label', {}, FIELD_LABEL[f] || f, ta));
+    }
+    const save = el('button', { type: 'button', class: 'btn primary', onclick: async () => {
+      const edit = {};
+      for (const [f, ta] of Object.entries(inputs)) edit[f] = ta.value.trim();
+      if (await write('decisions', item.id, { status: 'edited', edit })) refreshCard(item.id);
+    } }, 'Save wording');
+    box.append(el('p', { class: 'muted', style: 'font-size:.85rem' }, 'Leave a box empty to drop that part.'), el('div', { class: 'actions' }, save, el('button', { type: 'button', class: 'btn ghost', onclick: () => refreshCard(item.id) }, 'Cancel')));
+    card.lastElementChild.replaceWith(box);
+    box.querySelector('textarea')?.focus();
+  }
+
+  function openFlag(item, card) {
+    const ta = el('textarea', { id: `fl-${item.id}`, placeholder: 'What is wrong or unclear?' });
+    ta.value = decisions.get(item.id)?.note || '';
+    const box = el('div', { class: 'edit-box' }, el('label', {}, 'Note for Claude', ta), el('div', { class: 'actions' },
+      el('button', { type: 'button', class: 'btn primary', onclick: async () => {
+        if (!ta.value.trim()) { ta.focus(); return; }
+        if (await write('decisions', item.id, { status: 'flagged', note: ta.value.trim() })) refreshCard(item.id);
+      } }, 'Save flag'),
+      el('button', { type: 'button', class: 'btn ghost', onclick: () => refreshCard(item.id) }, 'Cancel')));
+    card.lastElementChild.replaceWith(box);
+    ta.focus();
+  }
+
+  function refreshCard(id) {
+    const old = cards.get(id);
+    if (!old) return;
+    const fresh = renderCard(byId.get(id));
+    fresh.hidden = old.hidden;
+    old.replaceWith(fresh);
+    cards.set(id, fresh);
+  }
+
+  // ---------- Groups, filters, progress ----------
+  const groupEls = new Map();
+  function buildGroups() {
+    const host = $('#groups');
+    const nav = $('#groupnav');
+    for (const [key, name] of groups) {
+      const list = el('div', { class: 'list' });
+      const count = el('span', {});
+      const confirmBtn = el('button', { type: 'button', class: 'btn', onclick: () => approveGroup(key, confirmBtn) }, 'Approve all in this group');
+      const head = el('div', { class: 'group-head', id: `g-${key}` }, el('div', {}, el('h2', {}, name), el('div', { class: 'sub' }, count)), confirmBtn);
+      const empty = el('p', { class: 'empty', hidden: true }, 'Nothing here matches the current filter.');
+      host.append(el('div', { class: 'block', style: 'display:grid;gap:12px;margin-top:22px' }, head, empty, list));
+      const link = el('a', { href: `#g-${key}` }, name.replace('Personal year ', 'PY '), el('span', {}, ''));
+      nav.append(link);
+      groupEls.set(key, { list, count, link, empty, confirmBtn });
+      for (const it of items.filter(i => i.groupKey === key)) { const c = renderCard(it); cards.set(it.id, c); list.append(c); }
+    }
+  }
+
+  async function approveGroup(key, btn) {
+    if (!(db && canWrite)) return;
+    const todo = items.filter(i => i.groupKey === key && statusOf(i.id) === 'pending');
+    if (!todo.length) { btn.textContent = 'All reviewed'; return; }
+    if (btn.dataset.armed !== '1') {
+      btn.dataset.armed = '1'; btn.classList.add('primary');
+      btn.textContent = `Approve ${todo.length} as written? Tap again`;
+      setTimeout(() => { btn.dataset.armed = ''; btn.classList.remove('primary'); updateGroups(); }, 6000);
+      return;
+    }
+    btn.dataset.armed = ''; btn.classList.remove('primary'); btn.disabled = true;
+    let n = 0;
+    for (const it of todo) { btn.textContent = `Saving ${++n} of ${todo.length}…`; await write('decisions', it.id, { status: 'approved' }); }
+    btn.disabled = false; updateGroups();
+  }
+
+  const matches = it => {
+    const st = statusOf(it.id);
+    if (filter !== 'all' && st !== filter) return false;
+    if (!query) return true;
+    const s = storyOf(it);
+    const hay = [it.id, it.title, it.sub, it.quote, ...Object.values(s), ...(it.rule.present || []), ...(it.rule.codes || [])].join(' ').toLowerCase();
+    return hay.includes(query);
+  };
+
+  function updateGroups() {
+    for (const [key] of groups) {
+      const g = groupEls.get(key);
+      const its = items.filter(i => i.groupKey === key);
+      const done = its.filter(i => ['approved', 'edited'].includes(statusOf(i.id))).length;
+      g.count.textContent = `${done} of ${its.length} approved`;
+      g.link.lastChild.textContent = `${done}/${its.length}`;
+      let shown = 0;
+      for (const it of its) { const c = cards.get(it.id); const vis = matches(it); c.hidden = !vis; if (vis) shown++; }
+      g.empty.hidden = shown > 0;
+      if (!g.confirmBtn.dataset.armed && !g.confirmBtn.disabled) {
+        const pend = its.filter(i => statusOf(i.id) === 'pending').length;
+        g.confirmBtn.textContent = pend ? `Approve all ${pend} remaining` : 'All reviewed';
+        g.confirmBtn.disabled = !pend || !(db && canWrite);
+      }
+    }
+    const total = items.length;
+    const c = { approved: 0, edited: 0, flagged: 0 };
+    for (const it of items) { const s = statusOf(it.id); if (s in c) c[s]++; }
+    $('#m-ok').style.width = `${(c.approved / total) * 100}%`;
+    $('#m-ed').style.width = `${(c.edited / total) * 100}%`;
+    $('#m-fl').style.width = `${(c.flagged / total) * 100}%`;
+    const decided = B.conflicts.conflicts.filter(x => conflictChoice.has(x.id)).length;
+    const confirmed = CONFIRMS.filter(x => confirmChoice.get(x.id)?.choice === 'yes').length;
+    $('#meter-label').textContent = `${c.approved + c.edited} of ${total} rules approved · ${c.flagged} flagged · ${decided}/${B.conflicts.conflicts.length} conflicts · ${confirmed}/${CONFIRMS.length} checks`;
+  }
+
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    filter = b.dataset.f;
+    document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    updateGroups();
+  }));
+  let qTimer;
+  $('#q').addEventListener('input', e => { clearTimeout(qTimer); qTimer = setTimeout(() => { query = e.target.value.trim().toLowerCase(); updateGroups(); }, 150); });
+
+  // ---------- Conflicts & confirmations ----------
+  const CONFIRMS = B.method.steps.filter(s => s.confirm);
+  function renderDecisions() {
+    const host = $('#conflicts');
+    host.replaceChildren();
+    for (const c of B.conflicts.conflicts) {
+      const chosen = conflictChoice.get(c.id);
+      const card = el('article', { class: `card ${chosen ? 'approved' : ''}` });
+      card.append(el('div', { class: 'card-head' }, el('div', { class: 'card-title' }, el('span', { class: 'chip gold' }, 'Sources disagree'), el('h3', {}, c.topic)), el('span', { class: `status ${chosen ? 'approved' : ''}` }, chosen ? 'Decided' : 'To decide')));
+      const sides = el('div', { class: 'cols' });
+      for (const s of c.sides) { const it = byId.get(s); sides.append(el('blockquote', { class: 'quote', style: 'margin:0' }, el('span', { class: 'src' }, SRC[it.file] || it.file), it.quote)); }
+      card.append(sides);
+      const opts = el('div', { class: 'options', role: 'radiogroup', 'aria-label': c.topic });
+      for (const o of c.options) {
+        const id = `cf-${c.id}-${o.key}`;
+        const visible = o.show.length ? o.show.map(s => byId.get(s)).map(it => storyOf(it).text).join(' / ') : o.text;
+        const input = el('input', { type: 'radio', name: `cf-${c.id}`, id, checked: chosen === o.key, disabled: !(db && canWrite), onchange: () => write('conflicts', c.id, { choice: o.key }) });
+        opts.append(el('label', { class: `opt ${chosen === o.key ? 'sel' : ''}`, for: id }, input, el('span', {}, el('b', {}, o.label), el('small', {}, `Visitors read: ${visible || '(nothing on this point)'}`))));
+      }
+      card.append(opts);
+      host.append(card);
+    }
+    const ch = $('#confirms');
+    ch.replaceChildren();
+    for (const s of CONFIRMS) {
+      const cur = confirmChoice.get(s.id);
+      const card = el('article', { class: `card ${cur?.choice === 'yes' ? 'approved' : cur?.choice === 'no' ? 'flagged' : ''}` });
+      card.append(el('div', { class: 'card-head' }, el('div', { class: 'card-title' }, el('span', { class: 'chip brand' }, 'Check my method'), el('h3', {}, s.text)), el('span', { class: `status ${cur?.choice === 'yes' ? 'approved' : cur?.choice === 'no' ? 'flagged' : ''}` }, cur?.choice === 'yes' ? 'Correct' : cur?.choice === 'no' ? 'Not right' : 'To check')));
+      if (s.id === 'M-NAME-CHALDEAN') {
+        const t = el('div', { class: 'ch-table' });
+        for (const [n, letters] of Object.entries(B.method.chaldean)) t.append(el('div', {}, el('b', {}, n), letters));
+        card.append(t);
+      }
+      if (s.id === 'M-X-ABSENT') card.append(el('div', { class: 'row' }, miniGrid([7, 5], [6]), el('p', { class: 'muted', style: 'flex:1;min-width:200px' }, 'Example from slide 13: Easy Money Yoga needs 7 and 5 in the number and no 6. With 6 present, the number gets the 6-7-5 Raj Yog instead.')));
+      if (s.quote) card.append(el('blockquote', { class: 'quote', style: 'margin:0' }, el('span', { class: 'src' }, SRC[s.file] || s.file), s.quote));
+      const note = el('textarea', { id: `cn-${s.id}`, placeholder: 'If it is not right, how should it work?' });
+      note.value = cur?.note || '';
+      const dis = !(db && canWrite);
+      card.append(el('div', { class: 'actions' },
+        el('button', { type: 'button', class: `btn ${cur?.choice === 'yes' ? 'ok' : ''}`, disabled: dis, onclick: () => write('confirms', s.id, { choice: 'yes' }) }, cur?.choice === 'yes' ? 'Correct ✓' : 'This is correct'),
+        el('button', { type: 'button', class: 'btn ghost', disabled: dis, onclick: () => { if (!note.value.trim()) { note.hidden = false; note.focus(); return; } write('confirms', s.id, { choice: 'no', note: note.value.trim() }); } }, cur?.choice === 'no' ? 'Update note' : 'Not right')));
+      note.hidden = cur?.choice !== 'no';
+      card.append(note);
+      ch.append(card);
+    }
+  }
+
+  // ---------- Live preview (same engine as the site) ----------
+  function effectiveRulebook() {
+    const book = JSON.parse(JSON.stringify(B));
+    for (const set of [book.shotgun, book.yogas, book.planets]) for (const r of set.rules) {
+      const d = decisions.get(r.id);
+      if (d?.status === 'edited' && d.edit) r.story = { ...r.story, ...d.edit };
+    }
+    for (const r of book.remedies.rules) { const d = decisions.get(r.id); if (d?.status === 'edited' && d.edit) Object.assign(r, d.edit); }
+    for (const list of Object.values(book.personalYear.years)) for (const it of list) { const d = decisions.get(it.id); if (d?.status === 'edited' && d.edit?.text != null) it.text = d.edit.text; }
+    for (const c of book.conflicts.conflicts) c.decision = conflictChoice.get(c.id) ?? null;
+    for (const set of [book.shotgun, book.yogas]) for (const r of set.rules) for (const k of ['good', 'care', 'trait']) if (r.story[k] === '') delete r.story[k];
+    return book;
+  }
+
+  const sec = (title, ...kids) => el('section', { class: 'st-sec' }, el('h3', {}, ...[].concat(title)), ...kids);
+  const rid = id => el('span', { class: 'rid' }, id);
+  function storyItem(x, textKey) {
+    const pol = x.polarity === 'positive' ? 'good' : x.polarity === 'negative' ? 'care' : x.polarity === 'mixed' ? 'mixed' : '';
+    const box = el('div', { class: `st-item ${pol}` }, el('div', { class: 't' }, x.title, x.count > 1 ? el('span', { class: 'chip' }, `×${x.count}`) : null, x.fromDob ? el('span', { class: 'chip' }, 'birth date') : null, rid(x.id)));
+    if (textKey) { box.append(el('span', {}, x[textKey])); return box; }
+    if (x.good) box.append(el('span', {}, x.good));
+    if (x.trait) box.append(el('span', {}, x.trait));
+    if (x.care) box.append(el('span', {}, x.care));
+    if (x.remedy) box.append(el('span', {}, el('b', {}, 'Remedy: '), x.remedy));
+    return box;
+  }
+
+  function renderStory(r) {
+    const out = $('#story');
+    out.replaceChildren();
+    if (!r.ok) { $('#try-msg').textContent = Object.values(r.errors).join(' '); return; }
+    $('#try-msg').textContent = `Personal year ${r.input.year}: ${r.numbers.personalYear} · birth number ${r.numbers.birth} · destiny ${r.numbers.destiny}${r.numbers.name ? ` · name ${r.numbers.name}` : ''}`;
+    for (const s of r.sections) {
+      if (s.id === 'decoded') {
+        const digits = el('div', { class: 'digits' }, [...s.mobile].map(c => el('span', { class: `dg ${c === '0' ? 'zero' : ''}` }, c)));
+        out.append(sec('Your number, decoded', digits, s.zeros.length ? el('p', { class: 'muted' }, 'Zeros are skipped, so the digits on either side of a 0 count as neighbours.') : null, ...s.pairs.map(p => storyItem(p))));
+      } else if (s.id === 'mobile-grid') {
+        out.append(sec("Your number's grid", el('div', { class: 'row' }, miniGrid([], [], s.counts, true), el('div', { style: 'flex:1;min-width:220px;display:grid;gap:6px' }, ...s.planets.map(p => el('div', { class: 'st-item' }, el('div', { class: 't' }, `${p.digit} · ${p.planet}`, p.count > 1 ? el('span', { class: 'chip' }, `×${p.count}`) : null, rid(p.id)), el('span', {}, p.trait))))),
+          s.yogas.length ? el('p', { class: 'muted' }, `${s.yogas.length} yogas form on this grid:`) : el('p', { class: 'muted' }, 'No yogas form on this grid.'), ...s.yogas.map(y => storyItem({ ...y, title: `${y.title} (${y.pattern})` }))));
+      } else if (s.id === 'dob-grid') {
+        out.append(sec('Yogas you were born with', el('div', { class: 'row' }, miniGrid([], [], s.counts, true), el('div', { style: 'flex:1;min-width:220px;display:grid;gap:6px' }, ...(s.yogas.length ? s.yogas.map(y => storyItem({ ...y, title: `${y.title} (${y.pattern})` })) : [el('p', { class: 'muted' }, 'No yogas form on the birth-date grid.')])))));
+      } else if (s.id === 'concern') {
+        out.append(sec(['For what you shared', el('span', { class: 'muted', style: 'font-weight:400' }, `"${s.text}"`)], s.areas.length ? el('div', { class: 'chips' }, s.areas.map(a => el('span', { class: 'chip brand' }, AREA[a] || a))) : el('p', { class: 'muted' }, 'No life area recognised from these words, so the full reading below applies.'), ...s.items.map(x => storyItem(x))));
+      } else if (s.id === 'career') {
+        out.append(sec('Your number & your career', ...s.professions.map(p => storyItem(p, 'good'))));
+      } else if (s.id === 'year-ahead') {
+        out.append(sec('Your year ahead', ...s.years.map(y => el('details', { open: true }, el('summary', {}, `${y.year}: personal year ${y.number}`),
+          el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...y.items.map(i => el('div', { class: 'st-item' }, el('div', { class: 't' }, CAT[i.cat] || i.cat, i.appliesToName === true ? el('span', { class: 'chip care' }, 'Applies to your name') : null, rid(i.id)), el('span', {}, i.text)))))),
+          el('details', {}, el('summary', {}, 'For every year'), el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...s.forEveryone.map(i => el('div', { class: 'st-item' }, el('span', {}, i.text)))))));
+      } else if (s.id === 'name') {
+        out.append(sec('Your name number', el('p', {}, `Chaldean total ${s.total}, which reduces to ${s.number}.`)));
+      } else if (s.id === 'if-kept') {
+        out.append(sec('If you keep this number', ...s.items.map(x => el('div', { class: 'st-item care' }, el('div', { class: 't' }, x.title, x.forConcern ? el('span', { class: 'chip brand' }, 'Your concern') : null, rid(x.id)), el('span', {}, x.text)))));
+      } else if (s.id === 'protection') {
+        out.append(sec('Your correction & protection', el('dl', { class: 'kv' },
+          el('dt', {}, 'Birth number'), el('dd', {}, String(s.birthNumber)), el('dt', {}, 'Screen saver'), el('dd', {}, s.screenSaver.join(' Or: ') || '—'),
+          el('dt', {}, 'Bracelet'), el('dd', {}, s.bracelet), el('dt', {}, 'Mani'), el('dd', {}, s.mani)),
+          ...s.yogaRemedies.map(y => el('div', { class: 'st-item' }, el('div', { class: 't' }, `For ${y.title}`, rid(y.id)), el('span', {}, y.text)))));
+      } else if (s.id === 'better-number') {
+        out.append(sec('What to look for in a better number',
+          el('details', { open: true }, el('summary', {}, `Look for (${s.lookFor.length})`), el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...s.lookFor.map(x => el('div', { class: 'st-item good' }, el('div', { class: 't' }, x.title, x.have ? el('span', { class: 'chip good' }, 'You have this') : null, rid(x.id)), el('span', {}, `Pattern: ${x.pattern}. ${x.why}`))))),
+          el('details', {}, el('summary', {}, `Avoid (${s.avoid.length})`), el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...s.avoid.map(x => el('div', { class: 'st-item care' }, el('div', { class: 't' }, x.title, rid(x.id)), el('span', {}, `Pattern: ${x.pattern}. ${x.why}`)))))));
+      } else if (s.id === 'compare') {
+        for (const c of s.comparisons) {
+          const L = c.lists, n = c.counts;
+          const list = (title, arr, cls) => arr.length ? el('details', { open: cls === 'care' && title.startsWith('New') }, el('summary', {}, `${title} (${arr.length})`), el('div', { style: 'display:grid;gap:6px;margin-top:8px' }, ...arr.map(x => el('div', { class: `st-item ${cls}` }, el('div', { class: 't' }, x.title, rid(x.id)), el('span', {}, x.text))))) : null;
+          out.append(sec(`Current vs ${c.planned}: what changes`,
+            el('div', { class: 'cmp-counts' },
+              el('div', { class: 'g' }, el('b', {}, n.problemsRemoved), 'problems go away'), el('div', { class: 'c' }, el('b', {}, n.problemsAdded), 'new problems'),
+              el('div', {}, el('b', {}, n.problemsStay), 'problems stay'), el('div', { class: 'g' }, el('b', {}, n.strengthsGained), 'strengths gained'),
+              el('div', { class: 'c' }, el('b', {}, n.strengthsLost), 'strengths lost'), el('div', {}, el('b', {}, n.strengthsKept), 'strengths kept')),
+            c.forConcern ? el('p', { class: 'muted' }, `For your concern: ${c.forConcern.problemsRemoved.length} problems go away, ${c.forConcern.problemsAdded.length} new, ${c.forConcern.strengthsGained.length} strengths gained, ${c.forConcern.strengthsLost.length} lost.`) : null,
+            list('Problems that go away', L.problemsRemoved, 'good'), list('New problems it brings', L.problemsAdded, 'care'), list('Problems that stay', L.problemsStay, 'mixed'),
+            list('Strengths gained', L.strengthsGained, 'good'), list('Strengths lost', L.strengthsLost, 'care'), list('Strengths kept', L.strengthsKept, ''),
+            L.professionsGained.length || L.professionsLost.length ? el('p', {}, `Careers: gains ${L.professionsGained.join(', ') || 'none'}; loses ${L.professionsLost.join(', ') || 'none'}.`) : null));
+        }
+      } else if (s.id === 'cta') {
+        out.append(sec('Talk to us on WhatsApp', el('p', { class: 'muted' }, 'The site ends with the WhatsApp button to the Kamala bot and the disclaimer: guidance, not a guarantee.'), s.healthNote ? el('p', {}, 'Health lines appeared, so the doctor note is shown: "Please also consult a doctor for any health concern."') : null));
+      }
+    }
+  }
+
+  function runPreview() {
+    const engine = Engine.createEngine(effectiveRulebook());
+    const ist = new Date(Date.now() + 5.5 * 3600 * 1000);
+    const r = engine.reading({
+      name: $('#t-name').value, mobile: $('#t-mobile').value, dob: $('#t-dob').value, concern: $('#t-concern').value,
+      planned: $('#t-planned').value.split(',').map(s => s.trim()).filter(Boolean), year: ist.getUTCFullYear()
+    });
+    renderStory(r);
+  }
+  $('#try-form').addEventListener('submit', e => { e.preventDefault(); runPreview(); });
+
+  // ---------- Boot ----------
+  buildGroups();
+  renderDecisions();
+  updateGroups();
+  runPreview();
+  setSave();
+  $('#save-state').textContent = 'Connecting…';
+
+  let previewTimer;
+  const changed = ids => {
+    for (const id of ids) if (cards.has(id)) refreshCard(id);
+    updateGroups();
+    clearTimeout(previewTimer); previewTimer = setTimeout(runPreview, 400);
+  };
+
+  (async () => {
+    try { db = window.claude && window.claude.use ? await window.claude.use('db') : null; } catch { db = null; }
+    if (!db) { setSave(); return; }
+    try {
+      const user = await window.claude.use('user');
+      const w = user ? await user.can('data.write') : null;
+      canWrite = w !== false;
+    } catch { canWrite = true; }
+    setSave();
+    const sub = (col, apply) => db.collection(col).limit(1000).onSnapshot(snap => {
+      const before = new Map(apply.get());
+      const next = new Map(snap.docs.map(d => [d.id, d.data()]));
+      apply.set(next);
+      const ids = new Set([...before.keys(), ...next.keys()].filter(k => before.get(k) !== next.get(k)));
+      apply.after(ids);
+    }, () => { db = null; setSave(); });
+    sub('decisions', { get: () => decisions, set: m => { decisions = m; }, after: ids => changed(ids) });
+    sub('conflicts', { get: () => conflictChoice, set: m => { conflictChoice = new Map([...m].map(([k, v]) => [k, v.choice])); }, after: () => { renderDecisions(); updateGroups(); clearTimeout(previewTimer); previewTimer = setTimeout(runPreview, 400); } });
+    sub('confirms', { get: () => confirmChoice, set: m => { confirmChoice = m; }, after: () => { renderDecisions(); updateGroups(); } });
+    for (const it of items) refreshCard(it.id);
+    renderDecisions();
+    updateGroups();
+  })();
+})();
+</script>

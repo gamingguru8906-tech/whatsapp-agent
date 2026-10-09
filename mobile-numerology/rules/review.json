@@ -1,0 +1,6 @@
+{
+  "about": "The owner's review decisions. 'approved' marks each rule id the owner has signed off; 'overrides' holds approved wording changes; 'conflicts' holds the chosen option per conflict. Filled from the review page.",
+  "approved": {},
+  "overrides": {},
+  "conflicts": {}
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "concern_keywords",
+  "about": "Maps words in the visitor's free-text concern to life areas used by the rules. Whole-word, case-insensitive. Multi-word phrases are matched as phrases. If nothing matches, all rules are shown and the visitor's own words are echoed.",
+  "areas": {
+    "money": ["money", "paisa", "paise", "paisa nahi", "finance", "financial", "income", "salary", "debt", "debts", "loan", "loans", "karza", "karz", "emi", "savings", "wealth", "dhan", "payment", "payments", "profit", "loss", "losses", "kamai", "udhaar", "udhar"],
+    "career": ["career", "job", "jobs", "naukri", "work", "promotion", "business", "vyapar", "vyapaar", "dhandha", "startup", "office", "boss", "interview", "profession", "growth", "kaam"],
+    "relationship": ["marriage", "shaadi", "shadi", "vivah", "love", "relationship", "partner", "spouse", "husband", "wife", "pati", "patni", "girlfriend", "boyfriend", "divorce", "affair", "breakup", "rishta", "engagement"],
+    "family": ["family", "parivar", "parents", "father", "papa", "mother", "maa", "mummy", "children", "child", "kids", "son", "daughter", "beta", "beti", "brother", "sister", "bhai", "behen", "in-laws", "sasural"],
+    "health": ["health", "sehat", "disease", "illness", "sick", "bimari", "pain", "hospital", "surgery", "doctor", "medical"],
+    "mind": ["stress", "tension", "anxiety", "depression", "fear", "darr", "negative", "worry", "worried", "peace", "sukoon", "sleep", "mental", "confidence", "overthinking"],
+    "education": ["study", "studies", "padhai", "exam", "exams", "education", "college", "school", "degree"],
+    "legal": ["court", "case", "legal", "police", "litigation", "dispute", "kanoon", "lawyer"],
+    "government": ["government", "sarkari", "govt", "upsc", "ssc"],
+    "travel": ["abroad", "foreign", "videsh", "travel", "visa", "canada", "usa", "uk", "dubai", "settle"],
+    "home": ["home", "house", "ghar", "property", "flat", "land", "makaan"],
+    "spiritual": ["spiritual", "god", "puja", "meditation", "bhakti"]
+  },
+  "chips": ["Money is not staying with me", "Career growth / job", "Business not working", "Marriage delay", "Relationship problems", "Debt and loans", "Health worries", "Stress and anxiety", "Planning to buy a new number"]
+}
