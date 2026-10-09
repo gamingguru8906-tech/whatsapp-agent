@@ -1,11 +1,17 @@
 # Cloudflare Worker for the free mobile-numerology site. Free plan.
 # Secrets (never in this file): npx wrangler secret put DATABASE_URL / SHEET_WEBAPP_URL / SHEET_SECRET / TURNSTILE_SECRET / OWNER_KEY
-# DATABASE_URL = Kamala's database (same value as on Render). SHEET_WEBAPP_URL = Kamala's Apps Script /exec URL.
+# Database: the HYPERDRIVE binding below (DATABASE_URL only as a fallback). SHEET_WEBAPP_URL = Kamala's Apps Script /exec URL.
 # SHEET_SECRET = the NUMEROLOGY_SHEET_SECRET from setupNumerologySheets (not Kamala's apiSecret).
 name = "veshannastro-numerology"
 main = "worker/index.js"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+
+# Kamala's database (Supabase) through Hyperdrive: a warm connection pool next to the database. The connection string
+# lives in the Hyperdrive config (Cloudflare dashboard > Hyperdrive), never in this file.
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = "c9c1d25736484e64a9ea1122a8273f9f"
 
 [assets]
 directory = "./dist"
@@ -19,7 +25,7 @@ crons = ["*/10 * * * *"]
 [vars]
 # Public values. Set them in the Cloudflare dashboard (Settings > Variables) or here.
 TURNSTILE_SITE_KEY = ""
-WHATSAPP_NUMBER = ""
+WHATSAPP_NUMBER = "917646952745"
 
 # 10 readings per minute per IP address.
 [[ratelimits]]

@@ -6,7 +6,7 @@ import { test, before, beforeEach, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import pg from 'pg';
-import worker, { handleReading } from '../worker/index.js';
+import worker, { handleReading, handleHealth } from '../worker/index.js';
 import { flushUnsynced, dedupeKey } from '../worker/store.js';
 import { SCHEMA_STATEMENTS } from '../db/schema.js';
 
@@ -218,5 +218,31 @@ test('a table made by the earlier schema (no reading_summary) gets the column on
   const [row] = await run('SELECT reading_summary, sheet_synced FROM numerology_leads');
   assert.ok(row.reading_summary.length > 50);
   assert.equal(row.sheet_synced, true);
+});
+
+test('owner health check: wrong key is a 404; the right key creates the table and reports counts, never leads', { skip }, async () => {
+  const h = (key, e = {}) => handleHealth(new URL(`https://site.test/api/health?key=${key}`), { ...env, ...e }, { run });
+  assert.equal((await h('wrong')).status, 404);
+  const first = await (await h('owner-key')).json();
+  assert.deepEqual(first, { ok: true, database: 'ok', sheet: true, turnstile: false, whatsapp: false, leads: 0, waiting_for_sheet: 0, last_sheet_error: null });
+  assert.equal(await tableExists(), true);
+  await submit(form());
+  const after = await (await h('owner-key')).json();
+  assert.equal(after.leads, 1);
+  assert.ok(!JSON.stringify(after).includes('Rahul'));
+});
+
+test('the real connection path (DATABASE_URL, no deps.run): lead saved; a dead database falls back to the Sheet', { skip }, async () => {
+  const live = { ...env, DATABASE_URL: DB };
+  const ok = await handleReading(post(form()), live, undefined, { fetchImpl: sheet.fetch, sleep: async () => {}, year: 2026 });
+  assert.equal(ok.status, 200);
+  assert.equal(await count(), 1);
+  const dead = { ...env, DATABASE_URL: 'postgresql://test@127.0.0.1:1/none' };
+  const res = await handleReading(post(form({ concern: 'Marriage delay' })), dead, undefined, { fetchImpl: sheet.fetch, sleep: async () => {}, year: 2026 });
+  assert.equal(res.status, 200, 'the visitor still gets the reading');
+  assert.equal(sheet.rows.size, 2, 'the second lead went straight to the Sheet');
+  const health = await handleHealth(new URL('https://site.test/api/health?key=owner-key'), dead);
+  assert.equal(health.status, 503);
+  assert.match((await health.json()).database, /^error:/);
 });
 

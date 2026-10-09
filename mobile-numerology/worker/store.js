@@ -13,6 +13,9 @@ async function createSchema(run) {
   }
 }
 
+/** Creates the table (and any newer column or index) if missing. Safe to call any time. */
+export const ensureTable = run => createSchema(run);
+
 export function withSchema(run) {
   return async (text, params) => {
     try {

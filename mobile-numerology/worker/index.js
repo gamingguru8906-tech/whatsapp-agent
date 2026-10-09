@@ -1,11 +1,11 @@
 // Cloudflare Worker: serves the site (static assets in dist/), POST /api/reading and a scheduled Sheet catch-up.
-// Leads go to Kamala's database (DATABASE_URL, table numerology_leads) and to the "Numerology Leads" tab of
+// Leads go to Kamala's database (Hyperdrive or DATABASE_URL, table numerology_leads) and to the "Numerology Leads" tab of
 // Kamala's CRM Sheet. The site's code stays separate from Kamala's; only the data is shared.
 // The rulebook runs here, so visitors only ever receive their own reading, never the rules.
-import { neon } from '@neondatabase/serverless';
 import { createEngine, publicView } from '../engine/core.js';
 import { rulebook } from '../engine/rulebook.js';
-import { saveLead, flushUnsynced, dedupeKey, readingId } from './store.js';
+import { saveLead, flushUnsynced, dedupeKey, readingId, ensureTable } from './store.js';
+import { databaseUrl, withDb } from './db.js';
 import { readingSummary } from '../engine/summary.js';
 import { clientIp, verifyTurnstile, withinRateLimit } from './security.js';
 
@@ -18,10 +18,28 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
 // The reading is for the calendar year in India.
 export const istYear = (now = Date.now()) => new Date(now + 5.5 * 3600e3).getUTCFullYear();
 
-const neonRunner = env => {
-  const sql = neon(env.DATABASE_URL);
-  return (text, params) => sql(text, params);
-};
+
+// Owner check: /api/health?key=OWNER_KEY. Connects to the database, creates the table if it is missing, and reports
+// counts and whether the Sheet is configured. Never shows any lead or secret.
+export async function handleHealth(url, env, deps = {}) {
+  if (!env.OWNER_KEY || url.searchParams.get('key') !== env.OWNER_KEY) return json({ ok: false, error: 'Not found' }, 404);
+  const out = { ok: true, database: 'not configured', sheet: Boolean(env.SHEET_WEBAPP_URL && env.SHEET_SECRET),
+    turnstile: Boolean(env.TURNSTILE_SECRET), whatsapp: Boolean(env.WHATSAPP_NUMBER) };
+  if (!deps.run && !databaseUrl(env)) return json(out);
+  try {
+    const check = async run => {
+      await ensureTable(run);
+      const [c] = await run(`SELECT count(*)::int AS leads, count(*) FILTER (WHERE NOT sheet_synced)::int AS waiting_for_sheet,
+        max(sheet_error) FILTER (WHERE NOT sheet_synced) AS last_sheet_error FROM numerology_leads`, []);
+      return c;
+    };
+    Object.assign(out, { database: 'ok' }, deps.run ? await check(deps.run) : await withDb(env, check));
+  } catch (e) {
+    out.ok = false;
+    out.database = `error: ${e.message}`;
+  }
+  return json(out, out.ok ? 200 : 503);
+}
 
 export async function handleReading(request, env, ctx, deps = {}) {
   let body;
@@ -44,13 +62,12 @@ export async function handleReading(request, env, ctx, deps = {}) {
   const lead = { ...result.input, consent: true, waOptIn: body.waOptIn === true, readingSummary: readingSummary(result) };
   // The visitor's WhatsApp button carries this ID, so Kamala can find this exact reading (same details = same ID).
   const leadRef = readingId(await dedupeKey(lead));
-  const run = deps.run ?? (env.DATABASE_URL ? neonRunner(env) : null);
-  if (run) {
-    const saving = saveLead(env, lead, { run, fetchImpl: deps.fetchImpl, sleep: deps.sleep })
-      .catch(e => console.error('Lead not saved:', e.message));
+  if (deps.run || databaseUrl(env)) {
+    const save = run => saveLead(env, lead, { run, fetchImpl: deps.fetchImpl, sleep: deps.sleep });
+    const saving = (deps.run ? save(deps.run) : withDb(env, save)).catch(e => console.error('Lead not saved:', e.message));
     if (ctx?.waitUntil) ctx.waitUntil(saving); else await saving;
   } else {
-    console.warn('DATABASE_URL (Kamala\'s database) is not set: the reading was shown but the lead was not stored.');
+    console.warn('No database (HYPERDRIVE / DATABASE_URL) is set: the reading was shown but the lead was not stored.');
   }
 
   const owner = env.OWNER_KEY && request.headers.get('x-owner-key') === env.OWNER_KEY;
@@ -64,6 +81,7 @@ export default {
       if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
       return handleReading(request, env, ctx);
     }
+    if (url.pathname === '/api/health') return handleHealth(url, env);
     if (url.pathname === '/api/config') {
       return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || null, whatsappNumber: env.WHATSAPP_NUMBER || null });
     }
@@ -72,7 +90,9 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    if (!env.DATABASE_URL) return;
-    ctx.waitUntil(flushUnsynced(env, { run: neonRunner(env) }).then(r => console.log('Sheet catch-up:', JSON.stringify(r))));
+    if (!databaseUrl(env)) return;
+    ctx.waitUntil(withDb(env, run => flushUnsynced(env, { run }))
+      .then(r => console.log('Sheet catch-up:', JSON.stringify(r)))
+      .catch(e => console.error('Sheet catch-up failed:', e.message)));
   }
 };
