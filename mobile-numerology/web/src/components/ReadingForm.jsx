@@ -21,7 +21,7 @@ function Picker({ id, value, onChange, label, invalid, children }) {
   return (
     <span className="relative mt-1 block">
       <select id={id} value={value} onChange={onChange} aria-label={label} aria-invalid={invalid}
-        className={`w-full appearance-none rounded-[10px] bg-muted py-2 pl-3 pr-7 text-[17px] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${value ? 'text-foreground' : 'text-muted-foreground'}`}>
+        className={`w-full appearance-none rounded-[10px] bg-primary-soft/70 py-2 pl-3 pr-7 text-[17px] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${value ? 'text-foreground' : 'text-muted-foreground'}`}>
         {children}
       </select>
       <ChevronDown size={16} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -38,7 +38,7 @@ function Switch({ id, checked, onChange, children, hint }) {
       </span>
       <span className="relative inline-flex shrink-0">
         <input id={id} type="checkbox" role="switch" className="peer sr-only" checked={checked} onChange={onChange} />
-        <span className="h-[31px] w-[51px] rounded-full bg-muted transition-colors peer-checked:bg-success peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2" />
+        <span className="h-[31px] w-[51px] rounded-full bg-border transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2" />
         <span className="absolute left-[2px] top-[2px] h-[27px] w-[27px] rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.15),0_1px_1px_rgba(0,0,0,0.16)] transition-transform peer-checked:translate-x-[20px]" />
       </span>
     </label>
@@ -137,7 +137,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
         <div className="grid grid-cols-2 gap-2" aria-label="Quick choices">
           {CHIPS.map(c => (
             <button key={c} type="button" onClick={() => addChip(c)}
-              className="min-h-[44px] rounded-[12px] border border-border/70 bg-card px-3 py-2 text-left text-[15px] leading-tight text-foreground transition-colors hover:border-primary/50 active:bg-primary-soft">
+              className="min-h-[44px] rounded-[12px] border border-primary/15 bg-card px-3 py-2 text-left text-[15px] leading-tight text-maroon transition-colors hover:border-primary/50 hover:bg-primary-soft active:bg-primary-soft">
               {c}
             </button>
           ))}

@@ -23,7 +23,7 @@ export default function VedicGrid({ counts, present = [], absent = [], size = 'm
         return (
           <span key={d} style={on && step >= 0 ? { animationDelay: `${180 + step * 110}ms` } : undefined}
             className={`relative grid ${cell} place-items-center font-display font-bold tabular-nums ${
-              on ? `bg-primary text-primary-foreground ${step >= 0 ? 'cell-light' : ''}` : off ? 'bg-care-soft text-care-dark' : 'bg-muted text-faint'}`}>
+              on ? `tile-on ${step >= 0 ? 'cell-light' : ''}` : off ? 'bg-care-soft text-care-dark' : 'bg-muted text-faint'}`}>
             {off ? <s className="decoration-2">{d}</s> : d}
             {n > 1 && size !== 'sm' && <sup className="absolute right-1.5 top-1.5 font-sans text-[10px] font-semibold leading-none">×{n}</sup>}
           </span>

@@ -20,7 +20,9 @@ export default {
         danger: { DEFAULT: v('danger'), soft: v('danger-soft'), dark: v('danger-dark') },
         warning: { DEFAULT: v('warning'), soft: v('warning-soft'), dark: v('warning-dark') },
         care: { DEFAULT: v('care'), soft: v('care-soft'), dark: v('care-dark') },
-        whatsapp: { DEFAULT: v('whatsapp'), dark: v('whatsapp-dark') }
+        whatsapp: { DEFAULT: v('whatsapp'), dark: v('whatsapp-dark') },
+        maroon: { DEFAULT: v('maroon'), dark: v('maroon-dark'), soft: v('maroon-soft') },
+        gold: { DEFAULT: v('gold'), soft: v('gold-soft') }
       },
       borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
       // Titles in the brand face; reading text in the phone's own system font (SF Pro on Apple devices).

@@ -15,6 +15,13 @@ const CAT_ORDER = Object.keys(CAT);
 const AREA = { money: 'Money', career: 'Career', relationship: 'Love and marriage', family: 'Family', health: 'Health', mind: 'Peace of mind', education: 'Education', legal: 'Court and legal', government: 'Government', travel: 'Travel and abroad', home: 'Home', spiritual: 'Spiritual' };
 const dot = p => ({ positive: 'dot-good', negative: 'dot-care', mixed: 'dot-mixed' }[p] || 'dot-neutral');
 
+// Each chapter has its own jewel colour on its icon, so the long reading is easy to scan.
+const HUE = {
+  concern: '#E83E7B', decoded: '#7A1E3A', 'mobile-grid': '#9B3D8F', 'dob-grid': '#6B4FB3', career: '#12808A',
+  'year-ahead': '#E07B1A', name: '#3E54A3', 'if-kept': '#C46A0A', protection: '#1E8A5A', 'better-number': '#C2416B', compare: '#2B6CB0'
+};
+const hueOf = id => HUE[id] || HUE[id.replace(/-\d+$/, '')] || '#7A1E3A';
+
 // Points about what the visitor shared come first in every list.
 const concernFirst = (items, ids) => [...items.filter(x => ids.has(x.id)), ...items.filter(x => !ids.has(x.id))];
 
@@ -27,7 +34,8 @@ function Chapter({ id, icon: Icon, title, intro, children }) {
   return (
     <section id={`r-${id}`} className="scroll-mt-32">
       <div className="mb-3 flex items-center gap-3 px-1">
-        {Icon && <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary text-primary-foreground"><Icon size={19} strokeWidth={2.2} aria-hidden="true" /></span>}
+        {Icon && <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] text-white shadow-[0_4px_10px_-4px_rgba(0,0,0,0.35)]"
+          style={{ background: `linear-gradient(145deg, ${hueOf(id)}, color-mix(in srgb, ${hueOf(id)} 70%, #2a0a14))` }}><Icon size={19} strokeWidth={2.2} aria-hidden="true" /></span>}
         <h2 className="t-section">{title}</h2>
       </div>
       {intro && <p className="mb-3 px-1 text-[15px] leading-snug text-muted-foreground">{intro}</p>}
@@ -131,11 +139,11 @@ function WaButton({ href, children = 'Ask us on WhatsApp', className = '' }) {
 function InlineCta({ href, title, text }) {
   if (!href) return null;
   return (
-    <div data-wa-cta className="group-card flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+    <div data-wa-cta className="flex flex-col gap-3 overflow-hidden rounded-[20px] border border-primary/15 bg-primary-soft px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
       <div className="flex items-start gap-3">
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-whatsapp text-white"><WaIcon size={19} /></span>
         <div>
-          <p className="t-headline">{title}</p>
+          <p className="t-headline text-maroon">{title}</p>
           <p className="text-[15px] leading-snug text-muted-foreground">{text}</p>
         </div>
       </div>
@@ -157,7 +165,7 @@ function Overview({ by, href, carePoints, mobile }) {
   const more = concern.items.length > 3;
   return (
     <section id="r-overview" className="group-card scroll-mt-32 shadow-soft">
-      <div className="flex flex-wrap items-center gap-6 px-5 pb-5 pt-6 sm:flex-nowrap sm:gap-8 sm:px-6">
+      <div className="blush-band flex flex-wrap items-center gap-6 px-5 pb-5 pt-6 sm:flex-nowrap sm:gap-8 sm:px-6">
         <VedicGrid size="lg" counts={by('mobile-grid').counts} lightOrder={[...mobile].map(Number).filter(Boolean)} />
         <div className="min-w-0 flex-1 basis-48">
           <div className="flex gap-7">
@@ -180,7 +188,7 @@ function Overview({ by, href, carePoints, mobile }) {
 
       <div className="rows border-t border-border/70">
         <div className="row">
-          <p className="t-headline">About what you shared</p>
+          <p className="t-headline text-maroon">About what you shared</p>
           <p className="mt-0.5 text-[15px] italic text-muted-foreground">“{concern.text}”</p>
           {concern.areas.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5">{concern.areas.map(a => <span key={a} className="chip bg-primary-soft text-primary-dark">{AREA[a] || a}</span>)}</div>}
           {!concern.areas.length && <p className="t-body mt-2">Thank you for sharing. Your full reading below covers every part of life your number touches.</p>}
@@ -209,7 +217,7 @@ function Overview({ by, href, carePoints, mobile }) {
         )}
         {remedies.length > 0 && (
           <button type="button" onClick={() => jump('protection')} className="row flex w-full items-center gap-3 text-left">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary-dark"><ShieldCheck size={19} aria-hidden="true" /></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] text-white" style={{ background: HUE.protection }}><ShieldCheck size={19} aria-hidden="true" /></span>
             <span className="min-w-0 flex-1">
               <span className="t-headline block">Your protection</span>
               <span className="block text-[15px] leading-snug text-muted-foreground">{remedies.join(', ')}{protection.screenSaver.length ? ', and a phone screen saver for you' : ''}</span>
@@ -268,7 +276,7 @@ function ChapterBar({ chapters, rootRef }) {
       <div ref={navRef} className="no-scrollbar flex gap-1 overflow-x-auto px-3 py-2">
         {chapters.map(c => (
           <button key={c.id} data-id={c.id} type="button" onClick={() => jump(c.id)} aria-current={active === c.id ? 'true' : undefined}
-            className={`min-h-[36px] shrink-0 rounded-full px-3.5 text-[15px] font-medium transition-colors ${active === c.id ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted'}`}>
+            className={`min-h-[36px] shrink-0 rounded-full px-3.5 text-[15px] font-medium transition-colors ${active === c.id ? 'bg-maroon text-white' : 'text-muted-foreground hover:bg-primary-soft hover:text-maroon'}`}>
             {c.label}
           </button>
         ))}
@@ -424,18 +432,19 @@ function YearAhead({ s, nameNo, owner }) {
       <div className="inline-flex self-start rounded-[10px] bg-border/50 p-[3px]" role="tablist" aria-label="Year">
         {s.years.map((yy, i) => (
           <button key={yy.year} role="tab" aria-selected={tab === i} type="button" onClick={() => setTab(i)}
-            className={`min-h-[32px] rounded-[8px] px-5 text-[15px] font-semibold transition ${tab === i ? 'bg-card text-foreground shadow-[0_3px_8px_rgba(0,0,0,0.12),0_3px_1px_rgba(0,0,0,0.04)]' : 'text-muted-foreground'}`}>
+            className={`min-h-[32px] rounded-[8px] px-5 text-[15px] font-semibold transition ${tab === i ? 'bg-card text-maroon shadow-[0_3px_8px_rgba(0,0,0,0.12),0_3px_1px_rgba(0,0,0,0.04)]' : 'text-muted-foreground'}`}>
             {yy.year}
           </button>
         ))}
       </div>
       <div className="group-card row flex items-center gap-4 py-4">
-        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-primary font-display text-[1.75rem] font-bold text-primary-foreground">{y.number}</span>
-        <p className="t-body"><strong className="font-semibold">{y.year} is personal year {y.number} for you.</strong>{nameNo ? <span className="text-muted-foreground"> Your name number is {nameNo}.</span> : null}</p>
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full font-display text-[1.75rem] font-bold text-white shadow-[0_6px_14px_-6px_rgba(180,110,10,0.8)]"
+          style={{ background: 'linear-gradient(145deg, #F2C14E, #E07B1A)' }}>{y.number}</span>
+        <p className="t-body"><strong className="font-semibold text-maroon">{y.year} is personal year {y.number} for you.</strong>{nameNo ? <span className="text-muted-foreground"> Your name number is {nameNo}.</span> : null}</p>
       </div>
       {groups.map(([c, list]) => (
         <div key={c}>
-          <h3 className="mb-1.5 px-1 text-[13px] font-medium text-muted-foreground">{CAT[c]}</h3>
+          <h3 className="mb-1.5 px-1 text-[13px] font-semibold" style={{ color: HUE['year-ahead'] }}>{CAT[c]}</h3>
           <div className="group-card rows">
             {list.map(i => (
               <div key={i.id} className="row">
@@ -463,7 +472,8 @@ function NameNumber({ s }) {
   return (
     <Chapter id="name" icon={PenLine} title="Your name number" intro="The letters of your name, added by the Chaldean method and reduced to one digit.">
       <div className="group-card row flex items-center gap-4 py-4">
-        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-primary font-display text-[1.75rem] font-bold text-primary-foreground">{s.number}</span>
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full font-display text-[1.75rem] font-bold text-white"
+          style={{ background: `linear-gradient(145deg, #6F86D6, ${HUE.name})` }}>{s.number}</span>
         <p className="t-body">Your name adds up to {s.total}, which reduces to <strong className="font-semibold">{s.number}</strong>. Look for “Your name” in your year ahead for what this means this year.</p>
       </div>
     </Chapter>
@@ -507,7 +517,7 @@ function Protection({ s }) {
       <div className="group-card rows">
         {rows.map(([Icon, t, v]) => (
           <div key={t} className="row flex gap-3">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-primary-soft text-primary-dark"><Icon size={18} aria-hidden="true" /></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-success-soft text-success-dark"><Icon size={18} aria-hidden="true" /></span>
             <div className="min-w-0">
               <h3 className="t-headline">{t}</h3>
               <p className="t-body mt-0.5">{v}</p>
@@ -608,13 +618,13 @@ function Compare({ s }) {
 
 function Cta({ s, href }) {
   return (
-    <section id="r-cta-end" data-wa-cta className="group-card px-6 py-8 text-center shadow-soft">
-      <h2 className="t-title">Want to go deeper?</h2>
-      <p className="mx-auto mt-2 max-w-md text-[17px] text-muted-foreground">Consult with us about your number, your remedies, or choosing a new number that suits your birth date.</p>
+    <section id="r-cta-end" data-wa-cta className="maroon-band overflow-hidden rounded-[24px] px-6 py-9 text-center shadow-soft">
+      <h2 className="font-display text-[1.75rem] font-bold leading-tight text-white sm:text-[2rem]">Want to go deeper?</h2>
+      <p className="mx-auto mt-2 max-w-md text-[17px] text-white/80">Consult with us about your number, your remedies, or choosing a new number that suits your birth date.</p>
       {href
-        ? <WaButton href={href} className="mt-6 px-7">Consult with us on WhatsApp</WaButton>
-        : <p className="mt-5 text-[15px] font-semibold text-muted-foreground">WhatsApp contact coming soon.</p>}
-      {s.healthNote && <p className="t-note mt-5">For any health concern mentioned in your reading, please also consult a doctor.</p>}
+        ? <WaButton href={href} className="mt-6">Consult with us on WhatsApp</WaButton>
+        : <p className="mt-5 text-[15px] font-semibold text-white/80">WhatsApp contact coming soon.</p>}
+      {s.healthNote && <p className="mt-5 text-[13px] text-white/70">For any health concern mentioned in your reading, please also consult a doctor.</p>}
     </section>
   );
 }
@@ -657,14 +667,14 @@ export default function Story({ result, config, onAgain }) {
     <div ref={rootRef} className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8 pb-20 sm:pb-0">
       <div className="grid gap-4">
         <div>
-          <p className="text-[15px] font-medium text-primary-dark">Your free reading</p>
+          <p className="text-[15px] font-semibold text-primary">Your free reading</p>
           <h2 className="t-title mt-1">{first}, here's what {fmt(input.mobile)} says</h2>
         </div>
-        <div className={`group-card grid ${stats.length === 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
+        <div className={`maroon-band grid overflow-hidden rounded-[20px] shadow-soft ${stats.length === 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
           {stats.map(([label, v], i) => (
-            <div key={label} className={`px-2 py-3 text-center ${i ? 'border-l border-border/60' : ''}`}>
-              <p className={`font-display text-[1.75rem] font-bold leading-none tabular-nums ${label === 'Personal year' ? 'text-primary' : ''}`}>{v}</p>
-              <p className="mt-1 text-[12px] leading-tight text-muted-foreground">{label}</p>
+            <div key={label} className={`px-2 py-4 text-center ${i ? 'border-l border-white/15' : ''}`}>
+              <p className={`font-display text-[1.875rem] font-bold leading-none tabular-nums ${label === 'Personal year' ? 'text-[#F6CB5A]' : 'text-white'}`}>{v}</p>
+              <p className="mt-1.5 text-[12px] leading-tight text-white/75">{label}</p>
             </div>
           ))}
         </div>

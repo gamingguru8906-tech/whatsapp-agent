@@ -3,38 +3,43 @@
 @tailwind utilities;
 
 /*
- * Design: Apple-style clarity. Content first, the interface recedes.
- * - One tint: the Veshannastro pink (actions, the grid, the current chapter). Everything else is neutral.
+ * Design: clear like an Apple app, warm like the brand.
+ * - Off-white page, white grouped cards with hairline rows; maroon for titles and the strongest moments,
+ *   Veshannastro pink for actions and the grid, blush tints where the reader should look, gold for the year ahead.
+ * - Each chapter has its own jewel colour on its icon, so the long reading is easy to scan.
  * - Strength / needs care are small coloured dots and labels, never full coloured blocks.
- * - White grouped cards on a soft grey page; rows separated by hairlines.
- * - League Spartan only for titles; the phone's own system font for reading.
- * Light theme only.
+ * - League Spartan only for titles; the phone's own system font for reading. Light theme only.
  */
 :root {
   color-scheme: light;
-  --background: 240 11% 96%;         /* page: #F5F5F7 */
-  --foreground: 240 3% 12%;          /* ink: #1D1D1F */
+  --background: 33 54% 97%;          /* off-white page: #FBF7F2 */
+  --foreground: 341 24% 13%;         /* warm ink with a maroon cast */
   --card: 0 0% 100%;
-  --card-foreground: 240 3% 12%;
-  --primary: 340 80% 55%;            /* the one tint: #E83E7B */
+  --card-foreground: 341 24% 13%;
+  --primary: 340 80% 55%;            /* Veshannastro pink #E83E7B */
   --primary-foreground: 0 0% 100%;
-  --primary-soft: 338 70% 96%;
+  --primary-soft: 337 80% 95%;       /* blush tint */
   --primary-dark: 338 73% 42%;
-  --secondary: 240 6% 94%;
-  --muted: 240 9% 94%;               /* neutral fill */
-  --muted-foreground: 240 2% 44%;    /* secondary text: #6E6E73 */
+  --maroon: 341 61% 30%;             /* #7A1E3A */
+  --maroon-dark: 341 67% 20%;
+  --maroon-soft: 342 46% 94%;
+  --gold: 40 64% 53%;                /* #D4A23A */
+  --gold-soft: 41 82% 92%;
+  --secondary: 30 37% 93%;
+  --muted: 30 37% 93%;               /* warm neutral fill */
+  --muted-foreground: 339 7% 41%;
   --accent: 45 90% 60%;
-  --accent-foreground: 240 3% 12%;
-  --accent-soft: 46 80% 94%;
-  --border: 240 6% 85%;              /* hairline */
-  --input: 240 6% 85%;
+  --accent-foreground: 341 24% 13%;
+  --accent-soft: 46 80% 93%;
+  --border: 27 32% 87%;              /* warm hairline */
+  --input: 27 32% 87%;
   --ring: 340 80% 55%;
   --radius: 0.875rem;
-  --text-faint: 240 4% 66%;
-  --success: 137 59% 34%;            /* strength dot #248A3D */
-  --success-soft: 137 45% 94%;
-  --success-dark: 137 62% 27%;
-  --whatsapp: 145 72% 37%;           /* WhatsApp buttons only */
+  --text-faint: 25 10% 64%;
+  --success: 146 50% 34%;            /* strength */
+  --success-soft: 140 45% 93%;
+  --success-dark: 146 58% 26%;
+  --whatsapp: 145 72% 37%;
   --whatsapp-dark: 145 74% 31%;
   --danger: 0 72% 51%;
   --danger-soft: 0 93% 95%;
@@ -42,8 +47,8 @@
   --warning: 32 95% 44%;
   --warning-soft: 48 96% 89%;
   --warning-dark: 26 84% 31%;
-  --care: 31 100% 42%;               /* needs-care dot: a calm amber #D97706-ish */
-  --care-soft: 32 100% 96%;
+  --care: 31 100% 42%;               /* needs care: calm amber */
+  --care-soft: 32 100% 95%;
   --care-dark: 26 100% 32%;
 }
 
@@ -57,9 +62,9 @@
 
 @layer components {
   /* Type scale */
-  .t-large { @apply font-display text-[2.125rem] font-bold leading-[1.06] tracking-[-0.02em] sm:text-[3.25rem]; }
-  .t-title { @apply font-display text-[1.625rem] font-bold leading-[1.12] tracking-[-0.015em] sm:text-[2rem]; }
-  .t-section { @apply font-display text-[1.375rem] font-bold leading-tight tracking-[-0.01em]; }
+  .t-large { @apply font-display text-[2.125rem] font-bold leading-[1.06] tracking-[-0.02em] text-maroon sm:text-[3.25rem]; }
+  .t-title { @apply font-display text-[1.625rem] font-bold leading-[1.12] tracking-[-0.015em] text-maroon sm:text-[2rem]; }
+  .t-section { @apply font-display text-[1.375rem] font-bold leading-tight tracking-[-0.01em] text-maroon; }
   .t-headline { @apply text-[17px] font-semibold leading-snug; }
   .t-body { @apply text-[16px] leading-[1.5]; }
   .t-note { @apply text-[13px] leading-snug text-muted-foreground; }
@@ -82,16 +87,35 @@
   .dot-neutral { background: hsl(var(--text-faint)); }
 
   .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[13px] font-medium; }
-  .digit { @apply grid h-11 w-9 place-items-center rounded-[10px] bg-card text-lg font-semibold tabular-nums text-foreground shadow-[0_0_0_1px_hsl(var(--border))] sm:h-12 sm:w-10 sm:text-xl; }
+  .digit { @apply grid h-11 w-9 place-items-center rounded-[10px] bg-card text-lg font-semibold tabular-nums text-maroon shadow-[0_0_0_1px_hsl(var(--border))] sm:h-12 sm:w-10 sm:text-xl; }
 
   /* Buttons */
-  .btn { @apply inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[14px] px-5 text-[17px] font-semibold no-underline transition-colors; }
-  .btn-primary { @apply btn bg-primary text-primary-foreground hover:bg-primary-dark; }
+  .btn { @apply inline-flex min-h-[50px] items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-5 text-[17px] font-semibold no-underline transition-colors; }
+  .btn-primary { @apply btn text-primary-foreground shadow-[0_8px_20px_-8px_hsl(var(--primary)/0.7)];
+    background: linear-gradient(120deg, hsl(var(--primary)) 0%, hsl(var(--maroon)) 100%); }
+  .btn-primary:hover { background: linear-gradient(120deg, hsl(var(--primary-dark)) 0%, hsl(var(--maroon-dark)) 100%); }
   .btn-whatsapp { @apply btn bg-whatsapp text-white hover:bg-whatsapp-dark; }
   .btn-plain { @apply btn bg-muted text-foreground hover:bg-border/60; }
 }
 
 summary::-webkit-details-marker { display: none; }
+
+/* Grid tiles: pink deepening into maroon, with a soft top highlight. */
+.tile-on {
+  background: linear-gradient(150deg, hsl(340 82% 60%) 0%, hsl(338 70% 46%) 55%, hsl(var(--maroon)) 100%);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 6px 14px -8px hsl(var(--maroon) / 0.7);
+}
+/* Warm glow behind the hero: a blush wash top right, a gold wash bottom left. */
+.hero-glow {
+  background:
+    radial-gradient(60% 65% at 95% 5%, hsl(337 88% 90%) 0%, transparent 72%),
+    radial-gradient(50% 55% at 0% 100%, hsl(41 88% 87%) 0%, transparent 70%),
+    radial-gradient(40% 40% at 45% 40%, hsl(342 60% 96%) 0%, transparent 80%),
+    hsl(var(--background));
+}
+.maroon-band { background: linear-gradient(125deg, hsl(var(--maroon-dark)) 0%, hsl(var(--maroon)) 55%, hsl(338 70% 44%) 100%); color: #fff; }
+.blush-band { background: linear-gradient(160deg, hsl(var(--primary-soft)) 0%, hsl(var(--card)) 85%); }
 
 @layer utilities {
   .no-scrollbar { scrollbar-width: none; }
@@ -101,7 +125,7 @@ summary::-webkit-details-marker { display: none; }
 
 /* The one orchestrated moment: grid cells light up in the order of the digits. */
 @keyframes cell-light {
-  0% { background: hsl(var(--muted)); color: hsl(var(--text-faint)); transform: scale(0.94); }
+  0% { filter: grayscale(1) brightness(1.75); opacity: 0.55; transform: scale(0.94); }
   60% { transform: scale(1.06); }
   100% { transform: scale(1); }
 }
