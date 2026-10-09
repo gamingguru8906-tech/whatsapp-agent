@@ -27,6 +27,7 @@ const crm = require('./crm');
 const voiceNote = require('./voice-note');
 const voiceAgent = require('./voice-agent');
 const growth = require('./growth');
+const numerologyLeads = require('./numerology-leads');
 
 // No outside call may hang forever (WhatsApp, Meta media, website). Calls that need longer pass their own timeout.
 axios.defaults.timeout = 60000;
@@ -1941,6 +1942,13 @@ async function handleInboundMessage(msg) {
         } catch (e) {
           await sendTextMessage(from, `❌ Analytics update failed: ${e.message}`);
         }
+        return;
+      }
+
+      if (lowerCmd === '/numerology' || lowerCmd.startsWith('/numerology ')) {
+        // Leads from the free mobile-numerology website, read from this database (table numerology_leads).
+        if (!isOwner) return await sendTextMessage(from, 'That command is available to the business owner only.');
+        for (const text of await numerologyLeads.report(pool, command.split(/\s+/).slice(1))) await sendTextMessage(from, text);
         return;
       }
 
