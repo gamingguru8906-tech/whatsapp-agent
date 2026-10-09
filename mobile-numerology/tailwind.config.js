@@ -19,11 +19,16 @@ export default {
         success: { DEFAULT: v('success'), soft: v('success-soft'), dark: v('success-dark') },
         danger: { DEFAULT: v('danger'), soft: v('danger-soft'), dark: v('danger-dark') },
         warning: { DEFAULT: v('warning'), soft: v('warning-soft'), dark: v('warning-dark') },
-        care: { DEFAULT: v('care'), soft: v('care-soft'), dark: v('care-dark') }
+        care: { DEFAULT: v('care'), soft: v('care-soft'), dark: v('care-dark') },
+        whatsapp: { DEFAULT: v('whatsapp'), dark: v('whatsapp-dark') }
       },
       borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
-      fontFamily: { sans: ['"League Spartan"', '"League Spartan Fallback"', 'system-ui', 'sans-serif'] },
-      boxShadow: { soft: '0 1px 2px hsl(222 40% 10% / 0.05), 0 8px 24px hsl(338 60% 40% / 0.07)' },
+      // Titles in the brand face; reading text in the phone's own system font (SF Pro on Apple devices).
+      fontFamily: {
+        display: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', '"Noto Sans"', '"Helvetica Neue"', 'Arial', 'sans-serif']
+      },
+      boxShadow: { soft: '0 1px 2px hsl(240 10% 10% / 0.04), 0 12px 32px hsl(240 10% 10% / 0.08)' },
       keyframes: {
         pop: { '0%': { transform: 'translateY(6px) scale(0.92)', opacity: '0.4' }, '100%': { transform: 'none', opacity: '1' } },
         rise: { '0%': { transform: 'translateY(8px)', opacity: '0.6' }, '100%': { transform: 'none', opacity: '1' } }

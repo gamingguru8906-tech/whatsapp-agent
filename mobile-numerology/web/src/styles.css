@@ -2,72 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
-/* The owner's site tokens, light theme only. */
+/*
+ * Design: Apple-style clarity. Content first, the interface recedes.
+ * - One tint: the Veshannastro pink (actions, the grid, the current chapter). Everything else is neutral.
+ * - Strength / needs care are small coloured dots and labels, never full coloured blocks.
+ * - White grouped cards on a soft grey page; rows separated by hairlines.
+ * - League Spartan only for titles; the phone's own system font for reading.
+ * Light theme only.
+ */
 :root {
   color-scheme: light;
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  --background: 240 11% 96%;         /* page: #F5F5F7 */
+  --foreground: 240 3% 12%;          /* ink: #1D1D1F */
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --primary: 340 80% 55%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  --card-foreground: 240 3% 12%;
+  --primary: 340 80% 55%;            /* the one tint: #E83E7B */
+  --primary-foreground: 0 0% 100%;
+  --primary-soft: 338 70% 96%;
+  --primary-dark: 338 73% 42%;
+  --secondary: 240 6% 94%;
+  --muted: 240 9% 94%;               /* neutral fill */
+  --muted-foreground: 240 2% 44%;    /* secondary text: #6E6E73 */
   --accent: 45 90% 60%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
+  --accent-foreground: 240 3% 12%;
+  --accent-soft: 46 80% 94%;
+  --border: 240 6% 85%;              /* hairline */
+  --input: 240 6% 85%;
   --ring: 340 80% 55%;
-  --radius: 0.8rem;
-  --primary-soft: 338 60% 96%;
-  --primary-dark: 338 73% 45%;
-  --accent-soft: 46 80% 93%;
-  --text-faint: 215 20% 65%;
-  --success: 142 71% 36%;
-  --success-soft: 152 47% 93%;
-  --success-dark: 142 72% 29%;
+  --radius: 0.875rem;
+  --text-faint: 240 4% 66%;
+  --success: 137 59% 34%;            /* strength dot #248A3D */
+  --success-soft: 137 45% 94%;
+  --success-dark: 137 62% 27%;
+  --whatsapp: 145 72% 37%;           /* WhatsApp buttons only */
+  --whatsapp-dark: 145 74% 31%;
   --danger: 0 72% 51%;
-  --danger-soft: 0 93% 94%;
+  --danger-soft: 0 93% 95%;
   --danger-dark: 0 74% 42%;
   --warning: 32 95% 44%;
   --warning-soft: 48 96% 89%;
   --warning-dark: 26 84% 31%;
-  /* "Needs care": a calm amber instead of alarm red, so a reading reads as guidance, not a warning. */
-  --care: 30 85% 55%;
+  --care: 31 100% 42%;               /* needs-care dot: a calm amber #D97706-ish */
   --care-soft: 32 100% 96%;
-  --care-dark: 24 72% 33%;
+  --care-dark: 26 100% 32%;
 }
 
 @layer base {
   * { @apply border-border; }
   html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
-  body { @apply bg-background text-foreground font-sans antialiased; font-size: 16px; line-height: 1.55; }
+  body { @apply bg-background font-sans text-foreground antialiased; font-size: 17px; line-height: 1.47; letter-spacing: -0.01em; }
   h1, h2, h3 { text-wrap: balance; }
-  :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+  :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; border-radius: 6px; }
 }
 
 @layer components {
-  .field { @apply w-full rounded-lg border border-input bg-background px-3.5 py-3 text-[16px] leading-tight placeholder:text-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20; }
-  .label { @apply mb-1.5 block text-sm font-semibold text-foreground; }
-  .hint { @apply mt-1 text-sm text-muted-foreground; }
-  .error { @apply mt-1 text-sm font-medium text-danger-dark; }
-  .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold; }
-  .section { @apply rounded-lg border bg-card p-5 shadow-soft sm:p-6; }
-  .section-title { @apply text-xl font-bold leading-tight sm:text-2xl; }
-  .section-intro { @apply mt-1.5 text-[15px] text-muted-foreground; }
-  .item { @apply rounded-lg px-4 py-3; }
-  .item-good { @apply border-l-[3px] border-l-success/70 bg-success-soft; }
-  .item-care { @apply border-l-[3px] border-l-care bg-care-soft; }
-  .item-mixed { @apply border-l-[3px] border-l-accent bg-accent-soft; }
-  .item-neutral { @apply bg-muted; }
-  .digit { @apply grid h-11 w-9 place-items-center rounded-md bg-primary-soft text-lg font-semibold tabular-nums text-primary-dark sm:h-12 sm:w-10 sm:text-xl; }
+  /* Type scale */
+  .t-large { @apply font-display text-[2.125rem] font-bold leading-[1.06] tracking-[-0.02em] sm:text-[3.25rem]; }
+  .t-title { @apply font-display text-[1.625rem] font-bold leading-[1.12] tracking-[-0.015em] sm:text-[2rem]; }
+  .t-section { @apply font-display text-[1.375rem] font-bold leading-tight tracking-[-0.01em]; }
+  .t-headline { @apply text-[17px] font-semibold leading-snug; }
+  .t-body { @apply text-[16px] leading-[1.5]; }
+  .t-note { @apply text-[13px] leading-snug text-muted-foreground; }
+
+  /* Grouped card with hairline-separated rows (iOS inset grouped list) */
+  .group-card { @apply overflow-hidden rounded-[20px] border border-border/70 bg-card; }
+  .rows > * + * { box-shadow: inset 0 1px 0 hsl(var(--border) / 0.8); }
+  .row { @apply px-4 py-3.5 sm:px-5; }
+
+  /* Form */
+  .field { @apply w-full bg-transparent py-1 text-[17px] leading-tight text-foreground placeholder:text-faint focus:outline-none; }
+  .field-label { @apply block text-[13px] font-medium text-muted-foreground; }
+  .error { @apply mt-1 text-[14px] font-medium text-danger-dark; }
+
+  /* Status dots: strength, needs care, both */
+  .dot { @apply mt-[0.45em] inline-block h-2.5 w-2.5 shrink-0 rounded-full; }
+  .dot-good { background: hsl(var(--success)); }
+  .dot-care { background: hsl(var(--care)); }
+  .dot-mixed { background: linear-gradient(90deg, hsl(var(--success)) 50%, hsl(var(--care)) 50%); }
+  .dot-neutral { background: hsl(var(--text-faint)); }
+
+  .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[13px] font-medium; }
+  .digit { @apply grid h-11 w-9 place-items-center rounded-[10px] bg-card text-lg font-semibold tabular-nums text-foreground shadow-[0_0_0_1px_hsl(var(--border))] sm:h-12 sm:w-10 sm:text-xl; }
+
+  /* Buttons */
+  .btn { @apply inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[14px] px-5 text-[17px] font-semibold no-underline transition-colors; }
+  .btn-primary { @apply btn bg-primary text-primary-foreground hover:bg-primary-dark; }
+  .btn-whatsapp { @apply btn bg-whatsapp text-white hover:bg-whatsapp-dark; }
+  .btn-plain { @apply btn bg-muted text-foreground hover:bg-border/60; }
 }
+
+summary::-webkit-details-marker { display: none; }
 
 @layer utilities {
   .no-scrollbar { scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
+  .material { background: hsl(var(--background) / 0.82); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
 }
+
+/* The one orchestrated moment: grid cells light up in the order of the digits. */
+@keyframes cell-light {
+  0% { background: hsl(var(--muted)); color: hsl(var(--text-faint)); transform: scale(0.94); }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+.cell-light { animation: cell-light 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
