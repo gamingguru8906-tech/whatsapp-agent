@@ -60,10 +60,9 @@ in its source and not on that list fails the build.
 | Kiran Bedi, Rajiv Gandhi, Sania Mirza | P01 | Example people, not shown on the site; two are used as tests. |
 | "Friendly number" (birth number 4 remedy) | P01 | Not defined in any source. |
 
-## Still open before launch
+## Conflicts decided by the owner (2026-10-09)
 
-Two places where the transcripts disagree need the owner's choice (`rules/conflicts.json`). Until then the site shows
-neither side, and `npm run lint:rules:strict` fails:
+Recorded in `rules/review.json`:
 
-- Personal Year 9 colours: T01 says avoid black, T03 lists black as recommended.
-- Personal Year 8 outlook: T01 says possible job loss, T03 says opportunities to earn.
+- Personal Year 9 colours: **avoid black** (T01). T03's list with black is not shown.
+- Personal Year 8 outlook: **both lines shown** (T01 possible job loss, T03 opportunities to earn).

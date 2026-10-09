@@ -259,11 +259,15 @@
     "PY-ALL-7": true
   },
   "overrides": {},
-  "conflicts": {},
+  "conflicts": {
+    "CF-PY9-BLACK": "t01",
+    "CF-PY8-OUTLOOK": "both"
+  },
   "confirmed": {
     "M-X-ABSENT": true,
     "M-PROFESSION-CODES": true,
     "M-BIRTH-NUMBER": true,
     "M-NAME-CHALDEAN": true
-  }
+  },
+  "conflicts_note": "Owner in chat, 2026-10-09: PY9 \"Avoid black (T1)\"; PY8 \"Show both, gently\"."
 }
