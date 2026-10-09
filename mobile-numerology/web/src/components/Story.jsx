@@ -337,16 +337,16 @@ function Compare({ s }) {
 function Cta({ s, config, name }) {
   const num = (config.whatsappNumber || '').replace(/\D/g, '');
   // "(Ref: WEB-NUMEROLOGY)" tags the lead's source in the WhatsApp bot's CRM (growth.js extractRef), which removes it from the text.
-  const text = encodeURIComponent(`Hi, I'm ${name}. I just got my free mobile numerology reading and would like to talk about it. (Ref: WEB-NUMEROLOGY)`);
+  const text = encodeURIComponent(`Hi, I'm ${name}. I just got my free mobile numerology reading and would like a consultation. (Ref: WEB-NUMEROLOGY)`);
   return (
     <section className="rounded-lg border-2 border-primary/25 bg-primary-soft p-6 text-center animate-rise">
       <h2 className="text-2xl font-bold">Want to go deeper?</h2>
-      <p className="mx-auto mt-2 max-w-md text-[15px] text-muted-foreground">Talk to us about your number, your remedies, or choosing a new number that suits your birth date.</p>
+      <p className="mx-auto mt-2 max-w-md text-[15px] text-muted-foreground">Consult with us about your number, your remedies, or choosing a new number that suits your birth date.</p>
       {num
         ? <a href={`https://wa.me/${num}?text=${text}`} target="_blank" rel="noopener noreferrer"
             className="mt-5 inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-success px-6 text-base font-bold text-primary-foreground no-underline shadow-soft hover:bg-success-dark">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20Z" /></svg>
-            Talk to us on WhatsApp
+            Consult with us on WhatsApp
           </a>
         : <p className="mt-4 text-sm font-semibold text-muted-foreground">WhatsApp contact coming soon.</p>}
       {s.healthNote && <p className="mt-4 text-sm text-muted-foreground">For any health concern mentioned in your reading, please also consult a doctor.</p>}
