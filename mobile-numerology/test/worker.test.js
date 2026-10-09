@@ -199,3 +199,24 @@ test('the request to the Sheet carries the numerology key and target, never Kama
   assert.equal(sent.apiSecret, undefined);
   assert.ok(!JSON.stringify(sent).includes('kamala-secret'));
 });
+
+test('the reading comes back with its Reading ID, and the lead keeps a summary for Kamala', { skip }, async () => {
+  const body = await (await submit(form())).json();
+  const key = await dedupeKey({ name: 'Rahul Sharma', mobile: '9811045672', concern: 'Paisa nahi tikta', dob: '1988-10-29' });
+  assert.equal(body.leadRef, `NM-${key.slice(0, 8)}`);
+  const [row] = await run('SELECT reading_summary FROM numerology_leads');
+  assert.match(row.reading_summary, /Their concern, in their words: "Paisa nahi tikta"/);
+  const again = await (await submit(form({ name: 'rahul sharma' }))).json();
+  assert.equal(again.leadRef, body.leadRef, 'same details, same Reading ID');
+});
+
+test('a table made by the earlier schema (no reading_summary) gets the column on the next lead', { skip }, async () => {
+  await run(`CREATE TABLE numerology_leads (id BIGSERIAL PRIMARY KEY, dedupe_key TEXT NOT NULL UNIQUE, created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    name TEXT NOT NULL, mobile TEXT NOT NULL, dob DATE NOT NULL, concern TEXT NOT NULL, planned TEXT NOT NULL DEFAULT '', consent BOOLEAN NOT NULL,
+    wa_opt_in BOOLEAN NOT NULL DEFAULT false, sheet_synced BOOLEAN NOT NULL DEFAULT false, sheet_attempts INTEGER NOT NULL DEFAULT 0, sheet_error TEXT)`);
+  assert.equal((await submit(form())).status, 200);
+  const [row] = await run('SELECT reading_summary, sheet_synced FROM numerology_leads');
+  assert.ok(row.reading_summary.length > 50);
+  assert.equal(row.sheet_synced, true);
+});
+

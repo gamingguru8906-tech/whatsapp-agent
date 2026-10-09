@@ -5,7 +5,8 @@
 import { neon } from '@neondatabase/serverless';
 import { createEngine, publicView } from '../engine/core.js';
 import { rulebook } from '../engine/rulebook.js';
-import { saveLead, flushUnsynced } from './store.js';
+import { saveLead, flushUnsynced, dedupeKey, readingId } from './store.js';
+import { readingSummary } from '../engine/summary.js';
 import { clientIp, verifyTurnstile, withinRateLimit } from './security.js';
 
 const engine = createEngine(rulebook);
@@ -40,7 +41,9 @@ export async function handleReading(request, env, ctx, deps = {}) {
   });
   if (!result.ok) return json({ ok: false, errors: result.errors }, 400);
 
-  const lead = { ...result.input, consent: true, waOptIn: body.waOptIn === true };
+  const lead = { ...result.input, consent: true, waOptIn: body.waOptIn === true, readingSummary: readingSummary(result) };
+  // The visitor's WhatsApp button carries this ID, so Kamala can find this exact reading (same details = same ID).
+  const leadRef = readingId(await dedupeKey(lead));
   const run = deps.run ?? (env.DATABASE_URL ? neonRunner(env) : null);
   if (run) {
     const saving = saveLead(env, lead, { run, fetchImpl: deps.fetchImpl, sleep: deps.sleep })
@@ -51,7 +54,7 @@ export async function handleReading(request, env, ctx, deps = {}) {
   }
 
   const owner = env.OWNER_KEY && request.headers.get('x-owner-key') === env.OWNER_KEY;
-  return json(owner ? { ...result, owner: true } : publicView(result));
+  return json(owner ? { ...result, owner: true, leadRef } : { ...publicView(result), leadRef });
 }
 
 export default {

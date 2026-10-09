@@ -18,7 +18,7 @@ export function withSchema(run) {
     try {
       return await run(text, params);
     } catch (e) {
-      if (e.code !== '42P01') throw e; // 42P01: table does not exist yet
+      if (e.code !== '42P01' && e.code !== '42703') throw e; // table, or a newer column, does not exist yet
       await createSchema(run);
       return run(text, params);
     }
@@ -29,6 +29,7 @@ const clean = s => String(s ?? '').normalize('NFKC').toLowerCase()
   .replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
 
 // Same name, mobile, concern and date of birth (ignoring case, spacing and punctuation) = same lead.
+// Its first 8 characters are the Reading ID ("NM-xxxxxxxx") the visitor sends Kamala from the WhatsApp button.
 export async function dedupeKey({ name, mobile, concern, dob }) {
   const raw = [clean(name), mobile, clean(concern), dob].join('|');
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
@@ -36,6 +37,8 @@ export async function dedupeKey({ name, mobile, concern, dob }) {
 }
 
 const istStamp = date => new Date(new Date(date).getTime() + 5.5 * 3600e3).toISOString().replace('T', ' ').slice(0, 19);
+
+export const readingId = key => `NM-${String(key).slice(0, 8)}`;
 
 export function sheetRow(lead) {
   const planned = lead.planned ? String(lead.planned).split(',').filter(Boolean) : [];
@@ -53,11 +56,12 @@ const COLUMNS = 'id, dedupe_key, created_at, name, mobile, dob::text AS dob, con
 export async function insertLead(run, lead) {
   const key = await dedupeKey(lead);
   const rows = await run(
-    `INSERT INTO numerology_leads (dedupe_key, name, mobile, dob, concern, planned, consent, wa_opt_in)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `INSERT INTO numerology_leads (dedupe_key, name, mobile, dob, concern, planned, consent, wa_opt_in, reading_summary)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      ON CONFLICT (dedupe_key) DO NOTHING
      RETURNING ${COLUMNS}`,
-    [key, lead.name, lead.mobile, lead.dob, lead.concern, (lead.planned ?? []).join(','), lead.consent === true, lead.waOptIn === true]);
+    [key, lead.name, lead.mobile, lead.dob, lead.concern, (lead.planned ?? []).join(','), lead.consent === true, lead.waOptIn === true,
+      String(lead.readingSummary ?? '')]);
   return rows[0] ?? null;
 }
 

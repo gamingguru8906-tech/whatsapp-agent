@@ -334,10 +334,12 @@ function Compare({ s }) {
   });
 }
 
-function Cta({ s, config, name }) {
+function Cta({ s, config, name, leadRef }) {
   const num = (config.whatsappNumber || '').replace(/\D/g, '');
   // "(Ref: WEB-NUMEROLOGY)" tags the lead's source in the WhatsApp bot's CRM (growth.js extractRef), which removes it from the text.
-  const text = encodeURIComponent(`Hi, I'm ${name}. I just got my free mobile numerology reading and would like a consultation. (Ref: WEB-NUMEROLOGY)`);
+  // The Reading ID lets Kamala open this exact reading, even when they write from a different number.
+  const id = /^NM-[0-9a-f]{8}$/.test(leadRef || '') ? ` Reading ID: ${leadRef}.` : '';
+  const text = encodeURIComponent(`Hi, I'm ${name}. I just got my free mobile numerology reading and would like a consultation.${id} (Ref: WEB-NUMEROLOGY)`);
   return (
     <section className="rounded-lg border-2 border-primary/25 bg-primary-soft p-6 text-center animate-rise">
       <h2 className="text-2xl font-bold">Want to go deeper?</h2>
@@ -385,7 +387,7 @@ export default function Story({ result, config, onAgain }) {
       <Protection s={by('protection')} />
       <BetterNumber s={by('better-number')} />
       {by('compare') && <Compare s={by('compare')} />}
-      <Cta s={by('cta')} config={config} name={first} />
+      <Cta s={by('cta')} config={config} name={first} leadRef={result.leadRef} />
       <button type="button" onClick={onAgain} className="justify-self-center rounded-full border px-5 py-2.5 text-sm font-semibold hover:border-primary">
         Check another number
       </button>
