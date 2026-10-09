@@ -2380,11 +2380,29 @@ ${crm.readingContext(dbUser)}`;
     console.error('❌ CRITICAL ERROR in webhook processing:', err.message, err.stack);
     // A failure between a tool call and its answer must not leave the chat history broken for the next message.
     if (from && sessions[from]) sessions[from] = repairToolTurns(sessions[from]);
-    await notifyOwner(`🚨 WEBHOOK CRASH ALERT\n\nCustomer: +${from}\nError: ${err.message}\n\nCheck Render logs for the full stack trace.`, 'Kamala crashed on a message').catch(() => {});
+    const theirMessage = String(msg?.text?.body || msg?.button?.text || msg?.interactive?.button_reply?.title
+      || msg?.interactive?.list_reply?.title || `[${msg?.type || 'message'}]`).slice(0, 400);
+    // The AI itself is unavailable (bad or blocked API key, quota, Google outage): asking the customer to resend
+    // would only fail again. Tell them the team will reply, and give the owner everything needed to reply by hand.
+    const errText = String(err.message || '');
+    const aiDown = /All candidate Gemini models failed/i.test(errText)
+      || (/GoogleGenerativeAI|generativelanguage|Gemini/i.test(errText) && /denied access|PERMISSION_DENIED|API key|RESOURCE_EXHAUSTED|quota|\b403\b|\b429\b/i.test(errText));
+    if (aiDown) {
+      await notifyOwner(`⚠️ Kamala's AI (Gemini) is not working, so +${from} got no answer from her.\n\nTheir message: ${theirMessage}\n\nPlease reply to them yourself on WhatsApp.\nTo fix Kamala: check GEMINI_API_KEY in Render (Google says: ${String(err.message || '').slice(-140)})`, 'Kamala AI is down - please reply manually').catch(() => {});
+      const lastTold = aiDownToldAt.get(from) || 0;
+      if (from && Date.now() - lastTold > 60 * 60 * 1000) {
+        aiDownToldAt.set(from, Date.now());
+        await sendCustomerText(from, 'Ji, aapka message mil gaya hai 🙏 Hamari team aapko thodi der mein yahin reply karegi.').catch(() => {});
+      }
+      return;
+    }
+    await notifyOwner(`🚨 WEBHOOK CRASH ALERT\n\nCustomer: +${from}\nTheir message: ${theirMessage}\nError: ${err.message}\n\nCheck Render logs for the full stack trace.`, 'Kamala crashed on a message').catch(() => {});
     // Warm, neutral fallback (never leak technical details, never promise anything).
     if (from) await sendTextMessage(from, "Sorry ji, aapka message theek se process nahi ho paya. Ek baar phir bhej dijiye?").catch(() => {});
   }
 }
+// When the AI is down, each customer is told "the team will reply" at most once an hour, not on every message.
+const aiDownToldAt = new Map();
 
 // Gemini rejects a history where a tool call is not followed by its answer (or an answer has no call), and then
 // fails on every later message. A failed step, a restart or a message sent in between can leave such a gap:
