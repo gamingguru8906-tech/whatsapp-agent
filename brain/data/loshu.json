@@ -1,0 +1,17 @@
+{
+  "about": "Lo Shu grid and its eight lines (planes). Used for the birth date only, beside the Vedic grid (owner decision, 10 Oct 2026).",
+  "layout": [[4, 9, 2], [3, 5, 7], [8, 1, 6]],
+  "layoutSource": { "file": "B-LOSHU", "page": 3, "quote": "4 9 2 / 3 5 7 / 8 1 6" },
+  "digits": "All digits of DD MM YYYY, zeros skipped (zero has no cell; same as the live birth-date grid). Test: 12.07.1965 is missing 3, 4 and 8 (Lo Shu file, p. 4-5).",
+  "planes": [
+    { "id": "LS-492", "digits": [4, 9, 2], "kind": "row",      "name": "Mental",    "src": "B-CHALDEAN p. 63; B-LOSHU p. 3" },
+    { "id": "LS-357", "digits": [3, 5, 7], "kind": "row",      "name": "Emotional", "src": "B-CHALDEAN p. 64; B-LOSHU p. 3" },
+    { "id": "LS-816", "digits": [8, 1, 6], "kind": "row",      "name": "Practical", "src": "B-CHALDEAN p. 64 (Physical); B-LOSHU p. 3" },
+    { "id": "LS-438", "digits": [4, 3, 8], "kind": "column",   "name": "Thought",   "src": "B-CHALDEAN p. 64 (Vision); B-LOSHU p. 3" },
+    { "id": "LS-951", "digits": [9, 5, 1], "kind": "column",   "name": "Will",      "src": "B-CHALDEAN p. 64; B-LOSHU p. 4" },
+    { "id": "LS-276", "digits": [2, 7, 6], "kind": "column",   "name": "Action",    "src": "B-CHALDEAN p. 65; B-LOSHU p. 4" },
+    { "id": "LS-258", "digits": [2, 5, 8], "kind": "diagonal", "name": "Silver",    "src": "B-CHALDEAN p. 65" },
+    { "id": "LS-456", "digits": [4, 5, 6], "kind": "diagonal", "name": "Golden",    "src": "B-CHALDEAN p. 65" }
+  ],
+  "planeRule": "A plane is 'missing' only when none of its three digits is in the birth date (the conservative reading of p. 63; it matches the Lo Shu file's worked example, where 3, 4 and 8 are absent). A plane is 'full' when all three are present."
+}

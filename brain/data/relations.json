@@ -1,0 +1,15 @@
+{
+  "about": "Friend, neutral and enemy numbers: the one table for every segment (owner decision 3, 10 Oct 2026). Read by the row of the person's own number: relation(own, other). Starred cells in the book (3-7, 4-4, 4-8, 8-4, 8-8) are both friend and enemy/neutral; they are kept as 'mixed' and never shown as plain friend or enemy.",
+  "source": { "file": "B-CHALDEAN", "page": 31, "quote": "King Sun 1 1, 2, 3, 5, 6, 9 4, 7 8" },
+  "rows": {
+    "1": { "planet": "Sun",     "friend": [1, 2, 3, 5, 6, 9], "neutral": [4, 7],          "enemy": [8],          "mixed": [] },
+    "2": { "planet": "Moon",    "friend": [1, 2, 3, 5],       "neutral": [6, 7],          "enemy": [4, 8, 9],    "mixed": [] },
+    "3": { "planet": "Jupiter", "friend": [1, 2, 3, 5],       "neutral": [4, 8, 9],       "enemy": [6],          "mixed": [7] },
+    "4": { "planet": "Rahu",    "friend": [1, 5, 6, 7],       "neutral": [3],             "enemy": [2, 9],       "mixed": [4, 8] },
+    "5": { "planet": "Mercury", "friend": [1, 2, 3, 5, 6],    "neutral": [4, 7, 8, 9],    "enemy": [],           "mixed": [] },
+    "6": { "planet": "Venus",   "friend": [1, 5, 6, 7],       "neutral": [2, 4, 8, 9],    "enemy": [3],          "mixed": [] },
+    "7": { "planet": "Ketu",    "friend": [1, 3, 4, 5, 6],    "neutral": [2, 7, 8, 9],    "enemy": [],           "mixed": [] },
+    "8": { "planet": "Saturn",  "friend": [3, 5, 6, 7],       "neutral": [9],             "enemy": [1, 2],       "mixed": [4, 8] },
+    "9": { "planet": "Mars",    "friend": [1, 3, 5],          "neutral": [6, 7, 8, 9],    "enemy": [2, 4],       "mixed": [] }
+  }
+}

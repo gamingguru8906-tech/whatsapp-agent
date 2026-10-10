@@ -1,0 +1,8 @@
+{
+  "name": "veshannastro-brain",
+  "private": true,
+  "type": "module",
+  "description": "The shared numerology brain for Veshannastro: calculations, rules and the reading composer used by every segment.",
+  "scripts": { "test": "node --test test/*.test.js" },
+  "engines": { "node": ">=20" }
+}

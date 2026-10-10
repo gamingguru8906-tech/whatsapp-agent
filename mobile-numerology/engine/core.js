@@ -5,16 +5,10 @@
 export const GRID = [[3, 1, 9], [6, 7, 5], [2, 8, 4]];
 export const MAX_PLANNED = 3;
 
-export function digitSum(n) {
-  return String(n).split('').reduce((s, c) => s + Number(c), 0);
-}
-
-// Reduce to a single digit 1-9 (11 and 22 are reduced too, as in the sources' examples).
-export function reduce(n) {
-  let v = Math.abs(Math.trunc(n));
-  while (v > 9) v = digitSum(v);
-  return v;
-}
+// Shared calculations come from the brain (../../brain/calc.js), so both segments count exactly the same way.
+import { digitSum, reduce, parseDob, digitsNoZero, counts, dobDigits, birthNumber, destinyNumber, personalYear, nameNumbers } from '../../brain/calc.js';
+export { digitSum, reduce, parseDob, digitsNoZero, dobDigits, birthNumber, destinyNumber, personalYear };
+export const gridCounts = counts;
 
 export function normaliseMobile(input) {
   let d = String(input ?? '').replace(/\D/g, '');
@@ -25,41 +19,10 @@ export function normaliseMobile(input) {
   return { ok: true, value: d };
 }
 
-export function parseDob(input, today = new Date()) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(input ?? '').trim());
-  if (!m) return { ok: false, error: 'Please enter your date of birth.' };
-  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
-  const date = new Date(Date.UTC(y, mo - 1, d));
-  if (date.getUTCFullYear() !== y || date.getUTCMonth() !== mo - 1 || date.getUTCDate() !== d) {
-    return { ok: false, error: 'That date of birth does not exist.' };
-  }
-  if (y < 1900 || date > today) return { ok: false, error: 'Please check the year of birth.' };
-  return { ok: true, value: { y, m: mo, d, iso: m[0] } };
-}
-
-// Digits as read for the grid and the pairs: zeros are skipped (owner decision C2).
-export const digitsNoZero = str => String(str).split('').map(Number).filter(n => n > 0);
-
-export function gridCounts(digits) {
-  const c = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
-  for (const n of digits) if (n >= 1 && n <= 9) c[n]++;
-  return c;
-}
-
-export const dobDigits = dob => digitsNoZero(
-  `${String(dob.d).padStart(2, '0')}${String(dob.m).padStart(2, '0')}${dob.y}`);
-
-export const birthNumber = dob => reduce(dob.d);
-export const destinyNumber = dob => reduce(digitSum(`${dob.d}${dob.m}${dob.y}`));
-export const personalYear = (dob, year) => reduce(dob.d + dob.m + digitSum(year));
-
-export function nameNumber(name, chaldean) {
-  const value = {};
-  for (const [num, letters] of Object.entries(chaldean)) for (const l of letters.split(' ')) value[l] = Number(num);
-  const letters = String(name ?? '').toUpperCase().replace(/[^A-Z]/g, '');
-  if (!letters) return null;
-  const total = [...letters].reduce((s, l) => s + value[l], 0);
-  return { total, number: reduce(total) };
+// Name number as the mobile reading has always shown it: the Chaldean total and its one-digit root.
+export function nameNumber(name) {
+  const n = nameNumbers(name);
+  return n ? { total: n.total, number: n.root } : null;
 }
 
 // Polarity follows from which story parts a rule has: good and care = mixed.
