@@ -1,0 +1,4017 @@
+{
+ "CHALDEAN-PSYCHIC-025": {
+  "when": {
+   "psychic": [
+    3
+   ]
+  },
+  "say": "Your life partner is likely to be loyal, and you are respectful towards partners. You may get physically close before marriage with a partner whose birth number is 1, 3, 6 or 9."
+ },
+ "CHALDEAN-PSYCHIC-027": {
+  "when": {
+   "psychic": [
+    3
+   ]
+  },
+  "period": {
+   "dateIn": [
+    [
+     [
+      2,
+      15
+     ],
+     [
+      3,
+      15
+     ]
+    ],
+    [
+     [
+      11,
+      25
+     ],
+     [
+      12,
+      25
+     ]
+    ]
+   ]
+  },
+  "say": "This is a favourable time for you to start new ventures and investments, and a good time for travel."
+ },
+ "CHALDEAN-PSYCHIC-036": {
+  "when": {
+   "psychic": [
+    4
+   ]
+  },
+  "say": "Choose friends and partners whose birth number is 1, 6 or 7; people with 2 and 5 are also compatible with you."
+ },
+ "CHALDEAN-PSYCHIC-037": {
+  "when": {
+   "psychic": [
+    4
+   ]
+  },
+  "say": "Avoid romantic or business partnerships with people whose birth number is 4 or 8."
+ },
+ "CHALDEAN-PSYCHIC-048": {
+  "when": {
+   "psychic": [
+    5
+   ]
+  },
+  "period": {
+   "month": [
+    1,
+    4,
+    12
+   ]
+  },
+  "say": "This is an unfavourable time to start new and important projects, take big decisions or invest. You may feel isolated and doubt others as well as yourself."
+ },
+ "CHALDEAN-PSYCHIC-058": {
+  "when": {
+   "psychic": [
+    6
+   ]
+  },
+  "period": {
+   "month": [
+    4,
+    10,
+    11
+   ]
+  },
+  "say": "This is an unfavourable time to start new work or investments, and may bring health troubles, bad news, hindrances, indecision and jealousy. Decide with your head, not your heart."
+ },
+ "CHALDEAN-PSYCHIC-065": {
+  "when": {
+   "psychic": [
+    7
+   ]
+  },
+  "period": {
+   "month": [
+    6,
+    7
+   ]
+  },
+  "say": "This is a favourable time for you to begin new ventures, take up opportunities, learn new skills and change your lifestyle, especially between 20 June and 20 July."
+ },
+ "CHALDEAN-PSYCHIC-069": {
+  "when": {
+   "psychic": [
+    8
+   ]
+  },
+  "say": "You are resilient: big success can come to you later in life if you keep going, through hard work rather than luck."
+ },
+ "CHALDEAN-PSYCHIC-075": {
+  "when": {
+   "psychic": [
+    8
+   ]
+  },
+  "period": {
+   "dateIn": [
+    [
+     [
+      1,
+      15
+     ],
+     [
+      2,
+      15
+     ]
+    ],
+    [
+     [
+      3,
+      1
+     ],
+     [
+      4,
+      30
+     ]
+    ],
+    [
+     [
+      12,
+      1
+     ],
+     [
+      12,
+      31
+     ]
+    ]
+   ]
+  },
+  "say": "This is an unfavourable time, linked with losses and loss of face. Avoid arguments, greed, love or business decisions, signing legal papers and moving house, and take care of your stomach and lower body."
+ },
+ "CHALDEAN-PSYCHIC-080": {
+  "when": {
+   "psychic": [
+    9
+   ]
+  },
+  "say": "If someone close to you has birth number 5, you may not get along very well, as you are straightforward and dislike diplomacy."
+ },
+ "CHALDEAN-PSYCHIC-086": {
+  "when": {
+   "psychic": [
+    9
+   ]
+  },
+  "period": {
+   "dateIn": [
+    [
+     [
+      3,
+      1
+     ],
+     [
+      3,
+      31
+     ]
+    ],
+    [
+     [
+      5,
+      1
+     ],
+     [
+      6,
+      30
+     ]
+    ],
+    [
+     [
+      10,
+      1
+     ],
+     [
+      10,
+      20
+     ]
+    ],
+    [
+     [
+      11,
+      25
+     ],
+     [
+      12,
+      25
+     ]
+    ]
+   ]
+  },
+  "say": "This is an unfavourable time, linked with misunderstandings, betrayal, cheating, accidents, ill health and losses. Take extra care and keep your anger in control."
+ },
+ "CHALDEAN-DESTINY-008": {
+  "when": {
+   "destiny": [
+    2
+   ]
+  },
+  "say": "For men: you tend to have the love and support of women at home and at work, though a first serious relationship or marriage may not last long."
+ },
+ "CHALDEAN-DESTINY-009": {
+  "when": {
+   "destiny": [
+    2
+   ]
+  },
+  "say": "For women: you are devoted to your partner and can get over-emotional in relationships, yet you are strong and resilient, though sometimes blamed for things you did not do."
+ },
+ "CHALDEAN-DESTINY-026": {
+  "when": {
+   "destiny": [
+    5
+   ]
+  },
+  "say": "Take care that your ideas are not misused for gambling, fast money or manipulation. Overusing your mind can bring headaches or stomach issues, and boredom can creep into relationships."
+ },
+ "CHALDEAN-DESTINY-030": {
+  "when": {
+   "destiny": [
+    6
+   ]
+  },
+  "say": "Your destiny number can create situations that tempt you into unwanted physical relationships, or where others try to take advantage of you, so take care."
+ },
+ "CHALDEAN-DESTINY-031": {
+  "when": {
+   "destiny": [
+    6
+   ]
+  },
+  "say": "For women: this destiny number is more favourable to you than to men. If you do not marry early, it can get harder later, and giving your partner space helps."
+ },
+ "CHALDEAN-DESTINY-032": {
+  "when": {
+   "destiny": [
+    6
+   ]
+  },
+  "say": "For men: this destiny number is linked with possible sexual problems, so take care and take precautions."
+ },
+ "CHALDEAN-DESTINY-039": {
+  "when": {
+   "destiny": [
+    7
+   ]
+  },
+  "say": "For women: you are sociable, intelligent, career-oriented and assertive, and bond well with women. You can be sentimental at times, though others may see you as less romantic."
+ },
+ "CHALDEAN-DESTINY-040": {
+  "when": {
+   "destiny": [
+    7
+   ]
+  },
+  "say": "You can do very well in spirituality, mental health work, teaching, resolving disputes and diplomacy."
+ },
+ "CHALDEAN-DESTINY-046": {
+  "when": {
+   "destiny": [
+    8
+   ]
+  },
+  "say": "For women: you may inherit or build property, though disputes can arise, and real estate later becomes your safest income. The right partner may come late, and marriage troubles are not from your side."
+ },
+ "CHALDEAN-DESTINY-047": {
+  "when": {
+   "destiny": [
+    8
+   ]
+  },
+  "say": "For men: this number can make you not respect your spouse as they deserve, which may be the main cause of a turbulent marriage, so take care to give due respect."
+ },
+ "CHALDEAN-DESTINY-051": {
+  "when": {
+   "all": [
+    {
+     "destiny": [
+      9
+     ]
+    },
+    {
+     "psychic": [
+      2,
+      4,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   ]
+  },
+  "say": "Destiny number 9 magnifies the effect of your birth number, and as your birth number is not a friend of 9, this can bring complications in life."
+ },
+ "NUMNAME-NN-KD-1": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      13,
+      14,
+      16,
+      19
+     ]
+    },
+    {
+     "destinyCompound": [
+      13,
+      14,
+      16,
+      19
+     ]
+    }
+   ]
+  },
+  "say": "Your birth date carries a karmic debt number, linked with selfishness in love, power, work or freedom in past lives; now is your chance to set it right."
+ },
+ "NUMNAME-NN-KD-2": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      13,
+      14,
+      16,
+      19
+     ]
+    },
+    {
+     "destinyCompound": [
+      13,
+      14,
+      16,
+      19
+     ]
+    }
+   ]
+  },
+  "say": "As 13, 14, 16 or 19 shows up as your birthday or destiny number, it signals that you are working through issues from the past."
+ },
+ "NUMNAME-NN-KD-3": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      13
+     ]
+    },
+    {
+     "destinyCompound": [
+      13
+     ]
+    }
+   ]
+  },
+  "say": "In your karmic number 13, the creativity and joy of 3 can turn into frivolity and superficiality, so take care with this."
+ },
+ "NUMNAME-NN-KD-4": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      14
+     ]
+    },
+    {
+     "destinyCompound": [
+      14
+     ]
+    }
+   ]
+  },
+  "say": "In your karmic number 14, the discipline, hard work and stability of 4 can turn into rebelliousness and indulgence, so take care with this."
+ },
+ "NUMNAME-NN-KD-5": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      16
+     ]
+    },
+    {
+     "destinyCompound": [
+      16
+     ]
+    }
+   ]
+  },
+  "say": "In your karmic number 16, the 6 shows that love and commitment were forsaken in the past, so take care to honour them now."
+ },
+ "NUMNAME-NN-KD-6": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      19
+     ]
+    },
+    {
+     "destinyCompound": [
+      19
+     ]
+    }
+   ]
+  },
+  "say": "In your karmic number 19, the 9 shows that wisdom, spiritual knowledge and power were used for personal gain in the past, so take care to use them well now."
+ },
+ "NUMNAME-NN-K10-1": {
+  "when": {
+   "any": [
+    {
+     "dayIs": [
+      10
+     ]
+    },
+    {
+     "destinyCompound": [
+      10
+     ]
+    }
+   ]
+  },
+  "say": "The 10 in your birth date means karmic completion and rebirth: the debt is paid and you are free to begin again, standing on your own with the good traits of every number."
+ },
+ "NUMNAME-NN-K10-2": {
+  "when": {
+   "any": [
+    {
+     "dayIs": [
+      10
+     ]
+    },
+    {
+     "destinyCompound": [
+      10
+     ]
+    }
+   ]
+  },
+  "say": "The 10 in your birth date is considered fortunate and holds the promise of victory in difficult situations, so go forth with courage."
+ },
+ "NUMNAME-NN-K10-3": {
+  "when": {
+   "any": [
+    {
+     "dayIs": [
+      10
+     ]
+    },
+    {
+     "destinyCompound": [
+      10
+     ]
+    }
+   ]
+  },
+  "say": "The 10 in your birth date usually shows a past misuse of personal power; now is the time to use your courage, independence and leadership well."
+ },
+ "NUMNAME-NN-K13-1": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      13
+     ]
+    },
+    {
+     "destinyCompound": [
+      13
+     ]
+    }
+   ]
+  },
+  "say": "Your karmic number 13 is not about bad luck but about hard work in every area, with discipline in how you express yourself and in practical matters; there are no shortcuts."
+ },
+ "NUMNAME-NN-K13-2": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      13
+     ]
+    },
+    {
+     "destinyCompound": [
+      13
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 13, you may show the negative side of 4: being rigid, controlling or dogmatic, and blaming others for your limits, so take care with this."
+ },
+ "NUMNAME-NN-K13-3": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      13
+     ]
+    },
+    {
+     "destinyCompound": [
+      13
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 13, success comes from keeping order: keep appointments, follow through on commitments, keep your home tidy and never procrastinate. Steady, consistent effort brings reward."
+ },
+ "NUMNAME-NN-K13-4": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      13
+     ]
+    },
+    {
+     "destinyCompound": [
+      13
+     ]
+    }
+   ]
+  },
+  "say": "Do not despair about carrying 13 in your birth date: many famous people have a karmic 13 birthday."
+ },
+ "NUMNAME-NN-K14-1": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      14
+     ]
+    },
+    {
+     "destinyCompound": [
+      14
+     ]
+    }
+   ]
+  },
+  "say": "Karmic number 14 is linked with freedom abused in past lives; you may be a rebellious free spirit who takes huge risks for pleasure, so take care."
+ },
+ "NUMNAME-NN-K14-2": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      14
+     ]
+    },
+    {
+     "destinyCompound": [
+      14
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 14, take care with the negative side of 5: jumping between relationships or jobs, chasing pleasures like food, sugar, sex or drugs, and craving the new over steady work."
+ },
+ "NUMNAME-NN-K14-3": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      14
+     ]
+    },
+    {
+     "destinyCompound": [
+      14
+     ]
+    }
+   ]
+  },
+  "say": "The key to your karmic number 14 is commitment, moderation, order and temperance, while staying flexible and not becoming rigid."
+ },
+ "NUMNAME-NN-K14-4": {
+  "when": {
+   "personalYear": [
+    5
+   ]
+  },
+  "say": "If your personal year adds up to 14 before reducing to 5, you may expect emotional upsets and delays this year."
+ },
+ "NUMNAME-NN-K14-5": {
+  "when": {
+   "destinyCompound": [
+    14
+   ]
+  },
+  "say": "With 14 as your destiny number, you may learn life's lessons through setbacks, disappointments and reversals of fortune; make commitments and ride the ups and downs."
+ },
+ "NUMNAME-NN-K14-6": {
+  "when": {
+   "dayIs": [
+    14
+   ]
+  },
+  "say": "Born on the 14th, you are here to learn to let go, resist the pull of indulgence, allow change and steer a steady course."
+ },
+ "NUMNAME-NN-K14-7": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      14
+     ]
+    },
+    {
+     "destinyCompound": [
+      14
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 14, remember that you are never given more than you can handle, and practise temperance in all things."
+ },
+ "NUMNAME-NN-K16-1": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      16
+     ]
+    },
+    {
+     "destinyCompound": [
+      16
+     ]
+    }
+   ]
+  },
+  "say": "Karmic number 16 is linked with past love affairs that hurt others and a failure to act responsibly in love, so take care to love responsibly now."
+ },
+ "NUMNAME-NN-K16-2": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      16
+     ]
+    },
+    {
+     "destinyCompound": [
+      16
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 16, take care with the negative side of 7: indifference, aloofness, withdrawal, being hard to approach and putting your privacy before others' feelings."
+ },
+ "NUMNAME-NN-K16-3": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      16
+     ]
+    },
+    {
+     "destinyCompound": [
+      16
+     ]
+    }
+   ]
+  },
+  "say": "Karmic number 16 is linked with sudden falls followed by rebirth and spiritual growth; humility is the key to your future success."
+ },
+ "NUMNAME-NN-K16-4": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      16
+     ]
+    },
+    {
+     "destinyCompound": [
+      16
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 16, you may know alienation and loneliness and may tend to look down on others, so take care with this."
+ },
+ "NUMNAME-NN-K16-5": {
+  "when": {
+   "any": [
+    {
+     "dayIs": [
+      16
+     ]
+    },
+    {
+     "destinyCompound": [
+      16
+     ]
+    }
+   ]
+  },
+  "say": "With 16 as your birthday or destiny number, life may bring a series of falls and rises until its spiritual lesson is learned."
+ },
+ "NUMNAME-NN-K19-1": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      19
+     ]
+    },
+    {
+     "destinyCompound": [
+      19
+     ]
+    }
+   ]
+  },
+  "say": "Karmic number 19 is linked with past abuse of power and acting in a self-centred way; your lesson is to stand on your own and use power properly."
+ },
+ "NUMNAME-NN-K19-2": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      19
+     ]
+    },
+    {
+     "destinyCompound": [
+      19
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 19, take care with the negative side of 1: selfishness, intimidation, dependence, ego, laziness, aggression, and refusing help or not standing up for yourself."
+ },
+ "NUMNAME-NN-K19-4": {
+  "when": {
+   "any": [
+    {
+     "karmic": [
+      19
+     ]
+    },
+    {
+     "destinyCompound": [
+      19
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 19, success comes from looking past your own needs to the needs of others and working towards independence; the 1 promises a new beginning."
+ },
+ "CHALDEAN-MATURITY-002": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      1
+     ]
+    },
+    {
+     "has": [
+      1
+     ]
+    }
+   ]
+  },
+  "say": "As 1 also appears in your birth date, take care not to become too authoritative or intimidating as you grow older."
+ },
+ "CHALDEAN-MATURITY-003": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      1
+     ]
+    },
+    {
+     "any": [
+      {
+       "karmic": [
+        19
+       ]
+      },
+      {
+       "destinyCompound": [
+        19
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 19 alongside maturity number 1, ego may become a persistent issue, and you may face challenges alone."
+ },
+ "CHALDEAN-MATURITY-005": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      2
+     ]
+    },
+    {
+     "has": [
+      2
+     ]
+    }
+   ]
+  },
+  "say": "As 2 also appears in your birth date, you may become oversensitive, moody and indecisive as you grow older, so take care."
+ },
+ "CHALDEAN-MATURITY-006": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      2
+     ]
+    },
+    {
+     "lacks": [
+      2
+     ]
+    }
+   ]
+  },
+  "say": "As 2 is new to your chart, this maturity number greatly helps you build more productive collaborations."
+ },
+ "CHALDEAN-MATURITY-008": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      3
+     ]
+    },
+    {
+     "has": [
+      3
+     ]
+    }
+   ]
+  },
+  "say": "As 3 also appears in your birth date, guard against superficiality, showing off, pompousness and selfishness as you grow older."
+ },
+ "CHALDEAN-MATURITY-010": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      4
+     ]
+    },
+    {
+     "any": [
+      {
+       "karmic": [
+        13
+       ]
+      },
+      {
+       "destinyCompound": [
+        13
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 13 alongside maturity number 4, you may struggle to reach your goals, so avoid rigidity, overwork and being too opinionated."
+ },
+ "CHALDEAN-MATURITY-011": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      4
+     ]
+    },
+    {
+     "has": [
+      4
+     ]
+    }
+   ]
+  },
+  "say": "As 4 also appears in your birth date, you may become fanatical about goals in a way that can harm your health, so take care, and guard against corruption."
+ },
+ "CHALDEAN-MATURITY-012": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      4
+     ]
+    },
+    {
+     "lacks": [
+      4
+     ]
+    }
+   ]
+  },
+  "say": "As 4 is new to your chart, your systematic nature can pave the way for material success, popularity and wealth."
+ },
+ "CHALDEAN-MATURITY-014": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      5
+     ]
+    },
+    {
+     "lacks": [
+      5
+     ]
+    }
+   ]
+  },
+  "say": "As 5 is new to your chart, adaptability and risk-taking help you thrive with confidence and tolerance; guard against impatience and leaving projects midway."
+ },
+ "CHALDEAN-MATURITY-015": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      5
+     ]
+    },
+    {
+     "has": [
+      5
+     ]
+    }
+   ]
+  },
+  "say": "As 5 also appears in your birth date, you may grow careless about responsibilities, so take care and stay loyal to old relationships."
+ },
+ "CHALDEAN-MATURITY-016": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      5
+     ]
+    },
+    {
+     "any": [
+      {
+       "karmic": [
+        14
+       ]
+      },
+      {
+       "destinyCompound": [
+        14
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 14 alongside maturity number 5, freedom may be hard to attain, and you may get caught in laziness and sensual indulgence, so take care."
+ },
+ "CHALDEAN-MATURITY-017": {
+  "when": {
+   "maturity": [
+    6
+   ]
+  },
+  "say": "As you mature, family welfare, care and community matter more to you; you may be drawn to roles like counsellor, healer or teacher, and handle money and property prudently."
+ },
+ "CHALDEAN-MATURITY-018": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      6
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        6
+       ]
+      },
+      {
+       "destiny": [
+        6
+       ]
+      },
+      {
+       "nameRoot": [
+        6
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "As 6 repeats among your core numbers, this maturity number may prompt you to reflect on your past relationships."
+ },
+ "CHALDEAN-MATURITY-019": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      6
+     ]
+    },
+    {
+     "lacks": [
+      6
+     ]
+    }
+   ]
+  },
+  "say": "As 6 is new to your chart, focus on your duties; this number brings the close relationships you have long yearned for."
+ },
+ "CHALDEAN-MATURITY-021": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      7
+     ]
+    },
+    {
+     "has": [
+      7
+     ]
+    }
+   ]
+  },
+  "say": "As 7 also appears in your birth date, you may become emotionally detached and may even consider leaving the material world for a meditative life."
+ },
+ "CHALDEAN-MATURITY-022": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      7
+     ]
+    },
+    {
+     "lacks": [
+      7
+     ]
+    }
+   ]
+  },
+  "say": "As 7 is new to your chart, you will find joy in exploring your deeper self, and may be drawn to gurus and the occult."
+ },
+ "CHALDEAN-MATURITY-023": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      7
+     ]
+    },
+    {
+     "any": [
+      {
+       "karmic": [
+        16
+       ]
+      },
+      {
+       "destinyCompound": [
+        16
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With karmic number 16 alongside maturity number 7, take care with a tendency to avoid responsibilities and become self-absorbed."
+ },
+ "CHALDEAN-MATURITY-025": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      8
+     ]
+    },
+    {
+     "has": [
+      8
+     ]
+    }
+   ]
+  },
+  "say": "As 8 also appears in your birth date, guard against an obsessive fondness for money and against boasting as you grow older."
+ },
+ "CHALDEAN-MATURITY-026": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      8
+     ]
+    },
+    {
+     "lacks": [
+      8
+     ]
+    }
+   ]
+  },
+  "say": "As 8 is new to your chart, after a long journey of effort you can see tremendous success and recognition."
+ },
+ "CHALDEAN-MATURITY-028": {
+  "when": {
+   "all": [
+    {
+     "maturity": [
+      9
+     ]
+    },
+    {
+     "repeat": {
+      "digit": 9,
+      "times": [
+       2,
+       3,
+       4,
+       5,
+       6
+      ]
+     }
+    }
+   ]
+  },
+  "say": "As 9 recurs often in your birth date, guard against arrogance and aloofness as you grow older."
+ },
+ "CHALDEAN-MATURITY-030": {
+  "when": {
+   "all": [
+    {
+     "master": [
+      11
+     ]
+    },
+    {
+     "nameCompound": [
+      11,
+      29,
+      38,
+      47,
+      56,
+      65,
+      74,
+      83,
+      92
+     ]
+    }
+   ]
+  },
+  "say": "With life path and name number both 11, your maturity number is 22: early life may be challenging, misunderstood and full of self-doubt, but later can bring confidence, integrity, leadership and great success."
+ },
+ "CHALDEAN-PAIRS-002": {
+  "when": {
+   "pair": [
+    [
+     1,
+     8
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     8,
+     2
+    ],
+    [
+     3,
+     6
+    ],
+    [
+     6,
+     3
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     4,
+     8
+    ],
+    [
+     8,
+     4
+    ],
+    [
+     2,
+     9
+    ]
+   ]
+  },
+  "say": "If this number combination brings struggles in relationships, suggested remedies are Kumbh Vivah, chanting the Venus (Shukra) mantra 108 times at dawn, a name correction, or wearing an opal."
+ },
+ "CHALDEAN-PAIRS-003": {
+  "when": {
+   "pair": [
+    [
+     1,
+     8
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     8,
+     2
+    ],
+    [
+     3,
+     6
+    ],
+    [
+     6,
+     3
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     4,
+     8
+    ],
+    [
+     8,
+     4
+    ],
+    [
+     2,
+     9
+    ]
+   ]
+  },
+  "say": "If this combination brings struggles in career, business or settling abroad, a name correction is a must; donations, a gold '24' pendant, 7 and 6 Mukhi Rudraksha together, and the Sarva Karya Siddhi mantra help."
+ },
+ "CHALDEAN-PAIRS-004": {
+  "when": {
+   "pair": [
+    [
+     1,
+     8
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     8,
+     2
+    ],
+    [
+     3,
+     6
+    ],
+    [
+     6,
+     3
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     4,
+     8
+    ],
+    [
+     8,
+     4
+    ],
+    [
+     2,
+     9
+    ]
+   ]
+  },
+  "say": "If this combination brings health struggles, keeping lapis lazuli in your bedroom and the Dhanwantari Yantra are suggested, with Maha Mrityunjay jaap for bigger issues, alongside proper medical care."
+ },
+ "LOSHU-LS-P1": {
+  "when": {
+   "plane": {
+    "id": "LS-492",
+    "state": "full"
+   }
+  },
+  "say": "Your mental plane (4-9-2) is complete; this plane covers thinking, creating, imagining and analysing."
+ },
+ "LOSHU-LS-P2": {
+  "when": {
+   "plane": {
+    "id": "LS-357",
+    "state": "full"
+   }
+  },
+  "say": "Your emotional plane (3-5-7) is complete; this plane covers spirituality, intuition, feelings and emotions."
+ },
+ "LOSHU-LS-P3": {
+  "when": {
+   "plane": {
+    "id": "LS-816",
+    "state": "full"
+   }
+  },
+  "say": "Your practical plane (8-1-6) is complete; this plane covers physical work, creativity and being practical in everyday life, with your feet on the ground."
+ },
+ "LOSHU-LS-P4": {
+  "when": {
+   "plane": {
+    "id": "LS-438",
+    "state": "full"
+   }
+  },
+  "say": "Your thought plane (4-3-8) is complete; this plane shows your ability to come up with ideas, create things and carry them through."
+ },
+ "LOSHU-LS-P5": {
+  "when": {
+   "plane": {
+    "id": "LS-951",
+    "state": "full"
+   }
+  },
+  "say": "Your will plane (9-5-1) is complete; this plane gives determination and persistence to succeed, and is where planning happens."
+ },
+ "LOSHU-LS-P6": {
+  "when": {
+   "plane": {
+    "id": "LS-276",
+    "state": "full"
+   }
+  },
+  "say": "Your action plane (2-7-6) is complete; this plane shows your ability to put your thoughts into action."
+ },
+ "LOSHU-LS-P7": {
+  "skip": "General method note on how the three columns work together (idea, will, action); no trigger of its own."
+ },
+ "LOSHU-LS-S1": {
+  "when": {
+   "has": [
+    1
+   ]
+  },
+  "say": "With 1 in your birth date, this number shapes how you communicate and react to others; how many times it appears shows how."
+ },
+ "LOSHU-LS-S2": {
+  "when": {
+   "has": [
+    2
+   ]
+  },
+  "say": "With 2 in your birth date, this number shapes your sensitivity and intuition; how many times it appears shows how strong they are."
+ },
+ "LOSHU-LS-S3": {
+  "when": {
+   "has": [
+    3
+   ]
+  },
+  "say": "With 3 in your birth date, you have planning and imagination, with intellectual capacity, a good memory and the ability to think clearly and logically."
+ },
+ "LOSHU-LS-S4": {
+  "when": {
+   "has": [
+    4
+   ]
+  },
+  "say": "With 4 in your birth date, you are disciplined and organised: neat, tidy, good with details, practical and hard-working, valuing order and balance."
+ },
+ "LOSHU-LS-S5": {
+  "when": {
+   "has": [
+    5
+   ]
+  },
+  "say": "With 5 in your birth date, you have emotional and mental balance and stability, along with a love of freedom."
+ },
+ "LOSHU-LS-S7": {
+  "when": {
+   "has": [
+    7
+   ]
+  },
+  "say": "With 7 in your birth date, your heart rules your head, and you may learn through sacrifice and through losses or disappointments in love, emotions, health and finance."
+ },
+ "LOSHU-LS-S8": {
+  "when": {
+   "has": [
+    8
+   ]
+  },
+  "say": "With 8 in your birth date, you are disciplined and organised, with attention to detail."
+ },
+ "CHALDEAN-REPEATS-019": {
+  "when": {
+   "repeat": {
+    "digit": 5,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 5 three times in your birth date, you are flexible and dislike interference, but can be over-adventurous and take extreme risks that often bring negative results."
+ },
+ "CHALDEAN-REPEATS-029": {
+  "when": {
+   "repeat": {
+    "digit": 8,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 8 four times in your birth date, constant change and distraction can leave you feeling without purpose, so take care to stay focused."
+ },
+ "LOSHU-LS-F1-1": {
+  "when": {
+   "repeat": {
+    "digit": 1,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 1 appearing once in your birth date, you tend to be an introvert."
+ },
+ "LOSHU-LS-F1-2": {
+  "when": {
+   "repeat": {
+    "digit": 1,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 1 appearing twice in your birth date, you tend to be communicative."
+ },
+ "LOSHU-LS-F1-3": {
+  "when": {
+   "repeat": {
+    "digit": 1,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 1 appearing three times in your birth date, you tend to be talkative."
+ },
+ "LOSHU-LS-F1-4": {
+  "when": {
+   "repeat": {
+    "digit": 1,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 1 appearing four times in your birth date, you tend to be compassionate."
+ },
+ "LOSHU-LS-F2-1": {
+  "when": {
+   "repeat": {
+    "digit": 2,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 2 appearing once in your birth date, you tend to be sensitive."
+ },
+ "LOSHU-LS-F2-2": {
+  "when": {
+   "repeat": {
+    "digit": 2,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 2 appearing twice in your birth date, you tend to be bright."
+ },
+ "LOSHU-LS-F2-3": {
+  "when": {
+   "repeat": {
+    "digit": 2,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 2 appearing three times in your birth date, you tend to be very sensitive."
+ },
+ "LOSHU-LS-F2-4": {
+  "when": {
+   "repeat": {
+    "digit": 2,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 2 appearing four times in your birth date, you tend to be a loner."
+ },
+ "LOSHU-LS-F3-1": {
+  "when": {
+   "repeat": {
+    "digit": 3,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 3 appearing once in your birth date, your memory and imagination are in excellent balance."
+ },
+ "LOSHU-LS-F3-2": {
+  "when": {
+   "repeat": {
+    "digit": 3,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 3 appearing twice in your birth date, you tend to be creative."
+ },
+ "LOSHU-LS-F3-3": {
+  "when": {
+   "repeat": {
+    "digit": 3,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 3 appearing three times in your birth date, you tend to be over-imaginative."
+ },
+ "LOSHU-LS-F3-4": {
+  "when": {
+   "repeat": {
+    "digit": 3,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 3 appearing four times in your birth date, you tend to be over-imaginative."
+ },
+ "LOSHU-LS-F4-1": {
+  "when": {
+   "repeat": {
+    "digit": 4,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 4 appearing once in your birth date, you tend to be orderly and stable."
+ },
+ "LOSHU-LS-F4-2": {
+  "when": {
+   "repeat": {
+    "digit": 4,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 4 appearing twice in your birth date, you tend to be pragmatic."
+ },
+ "LOSHU-LS-F4-3": {
+  "when": {
+   "repeat": {
+    "digit": 4,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 4 appearing three times in your birth date, you tend to be hard-working."
+ },
+ "LOSHU-LS-F4-4": {
+  "when": {
+   "repeat": {
+    "digit": 4,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 4 appearing four times in your birth date, you tend to be more physically active."
+ },
+ "LOSHU-LS-F5-1": {
+  "when": {
+   "repeat": {
+    "digit": 5,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 5 appearing once in your birth date, you tend to be caring."
+ },
+ "LOSHU-LS-F5-2": {
+  "when": {
+   "repeat": {
+    "digit": 5,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 5 appearing twice in your birth date, you tend to be persistent."
+ },
+ "LOSHU-LS-F5-3": {
+  "when": {
+   "repeat": {
+    "digit": 5,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 5 appearing three times in your birth date, you tend to be determined."
+ },
+ "LOSHU-LS-F5-4": {
+  "when": {
+   "repeat": {
+    "digit": 5,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 5 appearing four times in your birth date, you tend to act instantly."
+ },
+ "LOSHU-LS-F6-1": {
+  "when": {
+   "repeat": {
+    "digit": 6,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 6 appearing once in your birth date, you tend to be a good adviser."
+ },
+ "LOSHU-LS-F6-2": {
+  "when": {
+   "repeat": {
+    "digit": 6,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 6 appearing twice in your birth date, you tend to be original."
+ },
+ "LOSHU-LS-F6-3": {
+  "when": {
+   "repeat": {
+    "digit": 6,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 6 appearing three times in your birth date, you tend to be high-tempered, so take care with your temper."
+ },
+ "LOSHU-LS-F6-4": {
+  "when": {
+   "repeat": {
+    "digit": 6,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 6 appearing four times in your birth date, you tend to be emotional."
+ },
+ "LOSHU-LS-F7-1": {
+  "when": {
+   "repeat": {
+    "digit": 7,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 7 appearing once in your birth date, you tend to learn through experience."
+ },
+ "LOSHU-LS-F7-2": {
+  "when": {
+   "repeat": {
+    "digit": 7,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 7 appearing twice in your birth date, you tend to be spiritual."
+ },
+ "LOSHU-LS-F7-3": {
+  "when": {
+   "repeat": {
+    "digit": 7,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 7 appearing three times in your birth date, you tend to learn through loss."
+ },
+ "LOSHU-LS-F7-4": {
+  "when": {
+   "repeat": {
+    "digit": 7,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 7 appearing four times in your birth date, you may face difficulties on many fronts of life."
+ },
+ "LOSHU-LS-F8-1": {
+  "when": {
+   "repeat": {
+    "digit": 8,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 8 appearing once in your birth date, you tend to be scrupulous."
+ },
+ "LOSHU-LS-F8-2": {
+  "when": {
+   "repeat": {
+    "digit": 8,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 8 appearing twice in your birth date, you tend to be adamant."
+ },
+ "LOSHU-LS-F8-3": {
+  "when": {
+   "repeat": {
+    "digit": 8,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 8 appearing three times in your birth date, you tend to be materialistic."
+ },
+ "LOSHU-LS-F8-4": {
+  "when": {
+   "repeat": {
+    "digit": 8,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 8 appearing four times in your birth date, you tend to be always on the move."
+ },
+ "LOSHU-LS-F9-1": {
+  "when": {
+   "repeat": {
+    "digit": 9,
+    "times": [
+     1
+    ]
+   }
+  },
+  "say": "With 9 appearing once in your birth date, you tend to be intelligent."
+ },
+ "LOSHU-LS-F9-2": {
+  "when": {
+   "repeat": {
+    "digit": 9,
+    "times": [
+     2
+    ]
+   }
+  },
+  "say": "With 9 appearing twice in your birth date, you tend to be critical."
+ },
+ "LOSHU-LS-F9-3": {
+  "when": {
+   "repeat": {
+    "digit": 9,
+    "times": [
+     3
+    ]
+   }
+  },
+  "say": "With 9 appearing three times in your birth date, you tend to be a giver."
+ },
+ "LOSHU-LS-F9-4": {
+  "when": {
+   "repeat": {
+    "digit": 9,
+    "times": [
+     4
+    ]
+   }
+  },
+  "say": "With 9 appearing four times in your birth date, you tend to be brilliant, but a loner."
+ },
+ "CHALDEAN-NAME-001": {
+  "when": {
+   "nameRoot": [
+    4,
+    8
+   ]
+  },
+  "say": "Your full name adds up to 4 or 8, which a full name should not add up to, so a name correction is advised."
+ },
+ "CHALDEAN-NAME-002": {
+  "when": {
+   "firstNameRoot": [
+    4,
+    8
+   ]
+  },
+  "say": "Your first name adds up to 4 or 8, which a first name should not add up to, so a correction is advised."
+ },
+ "CHALDEAN-NAME-003": {
+  "when": {
+   "nameRoot": [
+    2,
+    7
+   ]
+  },
+  "say": "Your name adds up to 2 or 7, which is not advised unless you work in hospitality, medicine, healing or the occult."
+ },
+ "CHALDEAN-NAME-004": {
+  "when": {
+   "nameRoot": [
+    3
+   ]
+  },
+  "say": "If you work in education, a name number of 3 is allowed for you."
+ },
+ "CHALDEAN-NAME-007": {
+  "when": {
+   "nameCompound": [
+    18,
+    81,
+    28,
+    82,
+    29,
+    92,
+    36,
+    63,
+    49,
+    94
+   ]
+  },
+  "say": "The two digits of your name total are enemy numbers of each other, which is not advised, so a name correction is worth considering."
+ },
+ "CHALDEAN-NAME-009": {
+  "when": {
+   "any": [
+    {
+     "all": [
+      {
+       "psychic": [
+        1
+       ]
+      },
+      {
+       "nameRoot": [
+        8
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "psychic": [
+        2
+       ]
+      },
+      {
+       "nameRoot": [
+        4,
+        8,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "psychic": [
+        3
+       ]
+      },
+      {
+       "nameRoot": [
+        6
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "psychic": [
+        4
+       ]
+      },
+      {
+       "nameRoot": [
+        2,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "psychic": [
+        6
+       ]
+      },
+      {
+       "nameRoot": [
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "psychic": [
+        8
+       ]
+      },
+      {
+       "nameRoot": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "psychic": [
+        9
+       ]
+      },
+      {
+       "nameRoot": [
+        2,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "destiny": [
+        1
+       ]
+      },
+      {
+       "nameRoot": [
+        8
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "destiny": [
+        2
+       ]
+      },
+      {
+       "nameRoot": [
+        4,
+        8,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "destiny": [
+        3
+       ]
+      },
+      {
+       "nameRoot": [
+        6
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "destiny": [
+        4
+       ]
+      },
+      {
+       "nameRoot": [
+        2,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "destiny": [
+        6
+       ]
+      },
+      {
+       "nameRoot": [
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "destiny": [
+        8
+       ]
+      },
+      {
+       "nameRoot": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "destiny": [
+        9
+       ]
+      },
+      {
+       "nameRoot": [
+        2,
+        4
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "Your name number is an enemy of your birth or destiny number; a name number should always be compatible with both, so a name correction is advised."
+ },
+ "CHALDEAN-NAME-010": {
+  "skip": "Method note for the numerologist (a name should 'uplift' the Lo Shu grid); the book does not define it, so there is no trigger."
+ },
+ "CHALDEAN-NAME-011": {
+  "skip": "Method note on choosing a new name (it must appeal to both numerologist and client); no trigger."
+ },
+ "CHALDEAN-NAME-013": {
+  "when": {
+   "pair": [
+    [
+     4,
+     8
+    ],
+    [
+     8,
+     4
+    ]
+   ]
+  },
+  "say": "Your birth and destiny numbers are 4 and 8; their friendship is only temporary, and a lasting bond between them is not considered good."
+ },
+ "CHALDEAN-NAME-014": {
+  "skip": "Method note (titles like Dr., Er., Prof. are not counted in a personal name); already applied in the name calculation."
+ },
+ "NAMENUM-NAME-007": {
+  "when": {
+   "nameCompound": [
+    10
+   ]
+  },
+  "say": "If your name is not spelled the way it is spoken, the good effect of your name number 10 gets spoiled."
+ },
+ "NAMENUM-NAME-008": {
+  "when": {
+   "nameCompound": [
+    10
+   ]
+  },
+  "say": "If your name contains a syllable with a negative meaning, like 'Sad', 'Mar' or 'war', your name number 10 is afflicted."
+ },
+ "NAMENUM-NAME-018": {
+  "when": {
+   "nameCompound": [
+    46
+   ]
+  },
+  "say": "With name number 46, if the words of your name carry numbers that are enemies of each other, this inner clash can spoil your chances of success."
+ },
+ "NAMENUM-NAME-029": {
+  "when": {
+   "nameCompound": [
+    73
+   ]
+  },
+  "say": "With name number 73, if your birth, destiny, business, spouse's or wedding-date number is 6, 8 or 9, it can bring obstacles, difficulties and even failure."
+ },
+ "NAMENUM-NAME-030": {
+  "when": {
+   "nameCompound": [
+    47,
+    29,
+    26,
+    17,
+    16,
+    31,
+    35,
+    38,
+    44
+   ]
+  },
+  "say": "Your name number is considered unlucky, and an unlucky name is best changed at once with an expert's help."
+ },
+ "NAMENUM-NAME-036": {
+  "when": {
+   "nameCompound": [
+    91
+   ]
+  },
+  "say": "With name number 91, if your birth or destiny number, or your spouse's, partner's or an associate's number, is 2, 7 or 8, the name is afflicted, linked with obstacles and enemies."
+ },
+ "NAMENUM-NAME-039": {
+  "when": {
+   "nameCompound": [
+    100
+   ]
+  },
+  "say": "With name number 100, if an initial or word in your name, or your spouse's or partner's number, is 8, the name is afflicted, and a name correction is advised."
+ },
+ "NAMENUM-NAME-043": {
+  "when": {
+   "nameCompound": [
+    11
+   ]
+  },
+  "say": "With name number 11, if your spouse or business partner has 8 or 9 as their number, they may turn against you, so a name correction for them is advised."
+ },
+ "NAMENUM-NAME-046": {
+  "skip": "Claims the name gives a special power to neutralise poison and save snake-bite victims; this is a healing claim and cannot be said within the limits."
+ },
+ "NAMENUM-NAME-048": {
+  "when": {
+   "nameCompound": [
+    20
+   ]
+  },
+  "say": "If your birth or destiny number, a word in your name, or your spouse's or partner's number is 8 or 9, name number 20 is afflicted and linked with wrong deals; correction is advised."
+ },
+ "NAMENUM-NAME-050": {
+  "when": {
+   "pair": [
+    [
+     2,
+     9
+    ],
+    [
+     9,
+     2
+    ]
+   ]
+  },
+  "say": "Your birth and destiny numbers, 2 and 9, are considered an unlucky combination, as these numbers fight each other."
+ },
+ "NAMENUM-NAME-051": {
+  "when": {
+   "psychic": [
+    2,
+    9
+   ]
+  },
+  "say": "If your spouse's birth number is 9 while yours is 2, or 2 while yours is 9, married life can be unhappy, so give it extra care."
+ },
+ "NAMENUM-NAME-053": {
+  "when": {
+   "nameCompound": [
+    38
+   ]
+  },
+  "say": "With name number 38, if your birth numbers are not compatible with each other, its negative effects become worse."
+ },
+ "NAMENUM-NAME-055": {
+  "when": {
+   "nameCompound": [
+    47
+   ]
+  },
+  "say": "Name number 47 is linked with a risk to eyesight from diabetes or accidents, so take good care of your eyes and extra care with any eye surgery."
+ },
+ "NAMENUM-NAME-057": {
+  "when": {
+   "any": [
+    {
+     "psychic": [
+      2,
+      7,
+      9
+     ]
+    },
+    {
+     "destiny": [
+      2,
+      7,
+      9
+     ]
+    }
+   ]
+  },
+  "say": "There is no love compatibility between 7 and 9, or between 2 and 9, so this matters if your partner's number forms such a pair with yours."
+ },
+ "NAMENUM-NAME-059": {
+  "when": {
+   "any": [
+    {
+     "psychic": [
+      5
+     ]
+    },
+    {
+     "destiny": [
+      5
+     ]
+    },
+    {
+     "nameRoot": [
+      5
+     ]
+    }
+   ]
+  },
+  "say": "Number 5, which is in your chart, has no enemies among the numbers 1 to 9."
+ },
+ "NAMENUM-NAME-063": {
+  "when": {
+   "nameCompound": [
+    65
+   ]
+  },
+  "say": "With name number 65, if your birth or destiny number, an initial or word in your name, or your partner's number is 3, 8 or 9, it does not match; a correction is advised."
+ },
+ "NAMENUM-NAME-065": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      74
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        2,
+        9
+       ]
+      },
+      {
+       "destiny": [
+        2,
+        9
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With your birth or destiny number 9 or 2, name number 74 meets clashing numbers (9 against 7, 2 against 4), which can lead to your own downfall."
+ },
+ "NAMENUM-NAME-066": {
+  "skip": "General background (a name is more powerful than birth numbers); no trigger."
+ },
+ "NAMENUM-NAME-068": {
+  "when": {
+   "nameCompound": [
+    83
+   ]
+  },
+  "say": "With name number 83, if an initial or word in your name, your birth number or your partner's number is 6, 8 or 9, it is not compatible, and a name correction is advised."
+ },
+ "NAMENUM-NAME-075": {
+  "skip": "General method rule (the 'Golden Rule' of checking every initial and word against the total and birth numbers); no trigger."
+ },
+ "NAMENUM-NAME-077": {
+  "when": {
+   "all": [
+    {
+     "psychic": [
+      3
+     ]
+    },
+    {
+     "any": [
+      {
+       "destiny": [
+        6
+       ]
+      },
+      {
+       "nameRoot": [
+        6
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With birth number 3 weakened by a clashing destiny or name number 6, you may settle for clerical or accounts work and tend towards laziness, gambling or borrowing; a name correction is advised."
+ },
+ "NAMENUM-NAME-087": {
+  "when": {
+   "nameRoot": [
+    3
+   ]
+  },
+  "say": "With a name number in the 3 series, it is better to avoid 6 in any form: the dates 6th, 15th or 24th, Fridays, emeralds, a business name in 6 or a partner with 6."
+ },
+ "NAMENUM-NAME-088": {
+  "when": {
+   "nameCompound": [
+    30
+   ]
+  },
+  "say": "With name number 30, an initial or word in your name adding up to 6, or a partner with 6, is considered harmful, and a name correction is advised."
+ },
+ "NAMENUM-NAME-090": {
+  "when": {
+   "nameCompound": [
+    39
+   ]
+  },
+  "say": "With name number 39, 6 is considered unlucky for your happiness, so avoid it in your dealings, including a partner or a business name in 6."
+ },
+ "NAMENUM-NAME-091": {
+  "skip": "Method note (a name number can be spelled thousands of ways; how the numerologist picks one); no trigger."
+ },
+ "NAMENUM-NAME-097": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      66
+     ]
+    },
+    {
+     "partRoot": [
+      8
+     ]
+    }
+   ]
+  },
+  "say": "With name number 66, a word or initial in your name adding up to 8 is unlucky; no part of your name should be in 8."
+ },
+ "NAMENUM-NAME-098": {
+  "when": {
+   "nameCompound": [
+    66
+   ]
+  },
+  "say": "With name number 66, your name should not carry negative syllables like ban, war, end, none, no, gone, run, trick or fleece; if it does, it is considered defective."
+ },
+ "NAMENUM-NAME-100": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      75
+     ]
+    },
+    {
+     "partRoot": [
+      6,
+      8,
+      9
+     ]
+    }
+   ]
+  },
+  "say": "With name number 75, a word or initial adding up to 8, 6 or 9 brings the affliction of Saturn, Venus or Mars, linked with mental anguish, isolation and losses through relatives."
+ },
+ "NAMENUM-NAME-101": {
+  "when": {
+   "nameCompound": [
+    75
+   ]
+  },
+  "say": "With name number 75, syllables like war, end or gone, or an initial of U, V, W, O, Z, P or F, afflict your name, so correct it promptly."
+ },
+ "NAMENUM-NAME-104": {
+  "when": {
+   "nameCompound": [
+    84
+   ]
+  },
+  "say": "Name number 84 is linked with a risk of long-term illness early in life, so take good care of your health."
+ },
+ "NAMENUM-NAME-106": {
+  "when": {
+   "nameCompound": [
+    93
+   ]
+  },
+  "say": "If name number 93 is not giving you its benefits, negative letters, syllables or words may be present, and adding a letter or two can correct the name."
+ },
+ "NAMENUM-NAME-109": {
+  "when": {
+   "pair": [
+    [
+     4,
+     2
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     4,
+     9
+    ],
+    [
+     9,
+     4
+    ],
+    [
+     4,
+     7
+    ],
+    [
+     7,
+     4
+    ]
+   ]
+  },
+  "say": "Your birth and destiny numbers pair 4 with 2, 9 or 7: 2 and 4 are not good together, 4 and 9 do not work, and 4 and 7 is riskier still."
+ },
+ "NAMENUM-NAME-113": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      13
+     ]
+    },
+    {
+     "firstLetter": [
+      "P",
+      "F",
+      "D",
+      "M",
+      "T"
+     ]
+    }
+   ]
+  },
+  "say": "With name number 13, a name beginning with P, F, D, M or T is best avoided."
+ },
+ "NAMENUM-NAME-117": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      31
+     ]
+    },
+    {
+     "any": [
+      {
+       "has": [
+        8
+       ]
+      },
+      {
+       "partRoot": [
+        8
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With 8 in your birth date or name, name number 31 is afflicted, linked with drifting between worldly and spiritual life and a loss of name and fame."
+ },
+ "NAMENUM-NAME-118": {
+  "when": {
+   "nameCompound": [
+    31
+   ]
+  },
+  "say": "With name number 31, syllables like war, end, die, dra, mar, bore or bar, or a name starting with P, F, O or Z, give poor sound vibrations, linked with loss, defamation and accidents."
+ },
+ "NAMENUM-NAME-120": {
+  "when": {
+   "nameCompound": [
+    40
+   ]
+  },
+  "say": "With name number 40, if Rahu is afflicted in your horoscope, life can become full of hardship."
+ },
+ "NAMENUM-NAME-121": {
+  "when": {
+   "nameCompound": [
+    40
+   ]
+  },
+  "say": "With name number 40, negative syllables, an initial or word adding up to 8, 6, 3 or 7, or a clash with your birth numbers afflict it; correcting it with an expert is advised."
+ },
+ "NAMENUM-NAME-125": {
+  "skip": "would show to everyone (condition not computable)"
+ },
+ "NAMENUM-NAME-126": {
+  "when": {
+   "psychic": [
+    5
+   ]
+  },
+  "say": "If your partner's number is 9, 18 or 27, you are drawn to each other like magnets, but marriage can turn bitter, with your partner dominating."
+ },
+ "NAMENUM-NAME-127": {
+  "when": {
+   "psychic": [
+    5
+   ]
+  },
+  "say": "If both you and your spouse are ruled by number 5, having children may be delayed, so be patient."
+ },
+ "NAMENUM-NAME-129": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      14
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        1,
+        4,
+        5
+       ]
+      },
+      {
+       "destiny": [
+        1,
+        4,
+        5
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "Name number 14 suits you, as your birth or destiny number is 1, 4 or 5; with 1 and 4 together, it can bring roaring success in business."
+ },
+ "NAMENUM-NAME-130": {
+  "when": {
+   "nameCompound": [
+    14
+   ]
+  },
+  "say": "With name number 14, you can stay surrounded by goods and clients who spread your name, but you may trust too easily, sell on credit and get cheated, reveal secrets and lose focus."
+ },
+ "NAMENUM-NAME-132": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      14
+     ]
+    },
+    {
+     "partRoot": [
+      7,
+      8
+     ]
+    }
+   ]
+  },
+  "say": "With name number 14, a word or initial in your name adding up to 7 or 8 can hurt your business."
+ },
+ "NAMENUM-NAME-133": {
+  "skip": "General business advice (use lucky colours and dates on letterheads and logos) with no colour or gem table and no trigger."
+ },
+ "NAMENUM-NAME-135": {
+  "when": {
+   "nameCompound": [
+    23
+   ]
+  },
+  "say": "With name number 23, negative syllables like war, end, die or ash, or name parts adding up to 4, 8 or 9, can make its powers fizzle out, bringing failure and money troubles."
+ },
+ "NAMENUM-NAME-137": {
+  "when": {
+   "nameCompound": [
+    32
+   ]
+  },
+  "say": "With name number 32, an initial or word in your name, or your spouse's or partner's name, adding up to 6 or 9 is best avoided, and a name correction is advised."
+ },
+ "NAMENUM-NAME-139": {
+  "when": {
+   "nameCompound": [
+    41
+   ]
+  },
+  "say": "With name number 41, marrying someone with 8, 1 or 2 among their numbers is not advised, like two swords in one sheath, and 8 and 1 are best avoided as business partners."
+ },
+ "NAMENUM-NAME-141": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      50
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      {
+       "destiny": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 50, your birth or destiny number guides your path: 2 suits poetry, writing and speaking; 3 senior government posts; 4 politics; 5 historical research and business; 6 trades like jewellery."
+ },
+ "NAMENUM-NAME-142": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      50
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        7,
+        8
+       ]
+      },
+      {
+       "destiny": [
+        7,
+        8
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "Your birth or destiny number 7 or 8 afflicts name number 50, but 50 is strong enough to fight these effects and pull you through unharmed."
+ },
+ "NAMENUM-NAME-143": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      59
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        5
+       ]
+      },
+      {
+       "destiny": [
+        5
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "Name number 59 is lucky for you, as 5 is your birth or destiny number; it is linked with cleverness, humour, writing, film work and self-made success that can bring lasting fortune."
+ },
+ "NAMENUM-NAME-144": {
+  "skip": "General background (the name number matters more than the life path number); no trigger."
+ },
+ "NAMENUM-NAME-145": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      59
+     ]
+    },
+    {
+     "partRoot": [
+      2,
+      7,
+      8
+     ]
+    }
+   ]
+  },
+  "say": "With name number 59, a word or initial adding up to 2, 7 or 8 clashes with it, linked with nerve-related health troubles; take care, and be cautious with people of 2, 7 or 8."
+ },
+ "NAMENUM-NAME-146": {
+  "when": {
+   "nameCompound": [
+    68
+   ]
+  },
+  "say": "With name number 68, the pleasures of Venus clash with Saturn, linked with failures, business losses, strikes, tax raids, thefts and accidents; only a strong, well-corrected name helps."
+ },
+ "NAMENUM-NAME-149": {
+  "when": {
+   "nameCompound": [
+    77
+   ]
+  },
+  "say": "With name number 77, loving or marrying someone with number 2 brings excellent compatibility and a good family life, and can bring rising wealth."
+ },
+ "NAMENUM-NAME-151": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      86
+     ]
+    },
+    {
+     "partRoot": [
+      3,
+      7,
+      8
+     ]
+    }
+   ]
+  },
+  "say": "With name number 86, a word or initial adding up to 8, 7 or 3 brings negativity; altering the spelling, replacing an initial or changing the surname can balance it."
+ },
+ "NAMENUM-NAME-154": {
+  "when": {
+   "nameCompound": [
+    95
+   ]
+  },
+  "say": "With name number 95, if your surname is unfavourable but must be kept, balance it by altering your initial or the other words of your name."
+ },
+ "NAMENUM-NAME-157": {
+  "when": {
+   "all": [
+    {
+     "nameRoot": [
+      6
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        4,
+        7,
+        8
+       ]
+      },
+      {
+       "destiny": [
+        4,
+        7,
+        8
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 6 and birth or destiny number 4, 7 or 8, an incorrect name can affect you to a great extent, so have it checked and corrected by an expert."
+ },
+ "NAMENUM-NAME-159": {
+  "when": {
+   "nameCompound": [
+    15
+   ]
+  },
+  "say": "With name number 15, negative syllables like no, war, end, die, sad or mad, or name parts adding up to 3, 7 or 8, afflict it, as 3, 7 and 8 are unfavourable for you."
+ },
+ "NAMENUM-NAME-160": {
+  "when": {
+   "nameCompound": [
+    15
+   ]
+  },
+  "say": "With name number 15, a spouse, child or partner with birth number 3 is not compatible with you, as 3 and 6 clash, so a name correction for them is advised."
+ },
+ "NAMENUM-NAME-166": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      24
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        3
+       ]
+      },
+      {
+       "destiny": [
+        3
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 24 and 3 as your birth or destiny number, life and business can get badly messed up and progress may stall; be careful with clients, staff, partners or loved ones with 3."
+ },
+ "NAMENUM-NAME-167": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      24
+     ]
+    },
+    {
+     "partRoot": [
+      3,
+      7,
+      8
+     ]
+    }
+   ]
+  },
+  "say": "With name number 24, a word or initial in your name adding up to 7, 8 or 3 can bring problems and stunt your success."
+ },
+ "NAMENUM-NAME-170": {
+  "when": {
+   "nameCompound": [
+    33
+   ]
+  },
+  "say": "With name number 33, too many words adding up to 6, or any adding up to 7 or 8, afflict the name, as Venus gets strengthened against Jupiter."
+ },
+ "NAMENUM-NAME-173": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      42
+     ]
+    },
+    {
+     "any": [
+      {
+       "has": [
+        2
+       ]
+      },
+      {
+       "has": [
+        3
+       ]
+      },
+      {
+       "has": [
+        8
+       ]
+      },
+      {
+       "partRoot": [
+        2,
+        3,
+        8
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 42, a 2, 3 or 8 in your birth date or in a word or initial of your name afflicts it."
+ },
+ "NAMENUM-NAME-175": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      51
+     ]
+    },
+    {
+     "partRoot": [
+      3,
+      7,
+      8
+     ]
+    }
+   ]
+  },
+  "say": "With name number 51, a word or initial adding up to 7, 8 or 3 clashes with it, linked with failures, talking big without results and bad company."
+ },
+ "NAMENUM-NAME-177": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      60
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        1,
+        4,
+        5,
+        9
+       ]
+      },
+      {
+       "destiny": [
+        1,
+        4,
+        5,
+        9
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 60 and birth or destiny number 1, 4, 5 or 9, you can be successful and enjoy comforts, with a calm, contented, intuitive nature and skilled speech."
+ },
+ "NAMENUM-NAME-178": {
+  "skip": "would show to everyone (condition not computable)"
+ },
+ "NAMENUM-NAME-179": {
+  "when": {
+   "nameCompound": [
+    60
+   ]
+  },
+  "say": "With name number 60, a spouse or partner with 3 can harm you, and marrying a 3 or 6 is not advised; if married, a spouse's name correction to 1, 4, 5 or 9 helps."
+ },
+ "NAMENUM-NAME-180": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      60
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        3,
+        7,
+        8
+       ]
+      },
+      {
+       "destiny": [
+        3,
+        7,
+        8
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 60 and birth or destiny number 3, 7 or 8, life may stay ordinary: 3 opposes enjoyment, 7 works against marriage, and 8 threatens misfortune."
+ },
+ "NAMENUM-NAME-182": {
+  "skip": "General enmity list (6 against 3, 2 and 7 against 9, 8 against all); background already held in the friend/enemy table."
+ },
+ "NAMENUM-NAME-183": {
+  "when": {
+   "nameCompound": [
+    69
+   ]
+  },
+  "say": "With name number 69, if your spouse or partner has 3, 7, 2 or 8, legal disputes or deception may follow, so a name correction for them is advised."
+ },
+ "NAMENUM-NAME-186": {
+  "when": {
+   "nameCompound": [
+    78
+   ]
+  },
+  "say": "With name number 78, if your birth numbers or name are afflicted, you may struggle in love, marriage and earning enough, with misfortune and accidents, so take care."
+ },
+ "NAMENUM-NAME-187": {
+  "when": {
+   "nameCompound": [
+    78
+   ]
+  },
+  "say": "With name number 78, a 9 anywhere in your name, or syllables like sad, end or di, is linked with bad luck."
+ },
+ "NAMENUM-NAME-189": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      87
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        8,
+        9
+       ]
+      },
+      {
+       "destiny": [
+        8,
+        9
+       ]
+      },
+      {
+       "partRoot": [
+        8,
+        9
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 87, an 8 or 9 in your birth numbers, initials or name words is linked with extreme bad luck, so build balancing numbers into your name."
+ },
+ "NAMENUM-NAME-191": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      96
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        2,
+        3,
+        7,
+        8,
+        9
+       ]
+      },
+      {
+       "destiny": [
+        2,
+        3,
+        7,
+        8,
+        9
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 96 and birth or destiny number 2, 3, 7, 8 or 9, this name does not suit you and carries risks."
+ },
+ "NAMENUM-NAME-192": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      96
+     ]
+    },
+    {
+     "partRoot": [
+      2,
+      3,
+      7,
+      8
+     ]
+    }
+   ]
+  },
+  "say": "With name number 96, a word or initial adding up to 2, 3, 7 or 8 spoils its effect, unless the letters are placed to balance it."
+ },
+ "NAMENUM-NAME-193": {
+  "when": {
+   "any": [
+    {
+     "psychic": [
+      7
+     ]
+    },
+    {
+     "destiny": [
+      7
+     ]
+    },
+    {
+     "nameRoot": [
+      7
+     ]
+    }
+   ]
+  },
+  "say": "With 7 in your birth, destiny or name number, luck may not come easily despite your mental calibre; success comes after struggle, friends are few, and marriage needs care, though altruistic work suits you."
+ },
+ "NAMENUM-NAME-194": {
+  "when": {
+   "nameCompound": [
+    16
+   ]
+  },
+  "say": "Name number 16 is a fated number, linked with slow material progress, love slipping away and a pull towards religion and simple living; with a perfect name, science, law, arts or journalism can suit you."
+ },
+ "NAMENUM-NAME-195": {
+  "when": {
+   "nameCompound": [
+    16
+   ]
+  },
+  "say": "With name number 16, people close to you with 3, 8 or 9, and days, deals or price tags in these numbers, can bring trouble, so avoid such numbers."
+ },
+ "NAMENUM-NAME-196": {
+  "skip": "General background (name over name number over birth numbers); no trigger of its own."
+ },
+ "NAMENUM-NAME-197": {
+  "when": {
+   "pair": [
+    [
+     7,
+     8
+    ],
+    [
+     8,
+     7
+    ],
+    [
+     8,
+     8
+    ]
+   ]
+  },
+  "say": "Your birth and destiny numbers form one of the most difficult combinations (7 and 8, or 8 and 8), though a perfect name can still bring success."
+ },
+ "NAMENUM-NAME-199": {
+  "when": {
+   "nameCompound": [
+    25
+   ]
+  },
+  "say": "With name number 25, 9 clashes with your 2 and 7, so avoid 9 in a partner, your name parts or business name, or correct the name if it cannot be avoided."
+ },
+ "NAMENUM-NAME-202": {
+  "when": {
+   "nameCompound": [
+    43
+   ]
+  },
+  "say": "With name number 43, meeting 6 in any form, such as a spouse, friend or partner with 6, afflicts it and can leave you torn between worldly life and spirituality."
+ },
+ "NAMENUM-NAME-203": {
+  "skip": "General background (bad names can exist in good name numbers; overall vibration matters); no trigger."
+ },
+ "NAMENUM-NAME-206": {
+  "when": {
+   "nameCompound": [
+    61
+   ]
+  },
+  "say": "With name number 61, coming across 3, 8 or 9, in people or in your name, can bring misery, loss of dignity and money troubles."
+ },
+ "NAMENUM-NAME-207": {
+  "when": {
+   "nameCompound": [
+    70
+   ]
+  },
+  "say": "With name number 70, you lean towards faith, research, science, teaching or medicine rather than money; love may fail or marriage come late, and big business profits are unlikely."
+ },
+ "NAMENUM-NAME-208": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      70
+     ]
+    },
+    {
+     "partRoot": [
+      8,
+      9
+     ]
+    }
+   ]
+  },
+  "say": "With name number 70, a word or initial in your name adding up to 9 or 8 spoils it and can bring losses."
+ },
+ "NAMENUM-NAME-216": {
+  "when": {
+   "any": [
+    {
+     "psychic": [
+      8
+     ]
+    },
+    {
+     "destiny": [
+      8
+     ]
+    },
+    {
+     "nameRoot": [
+      8
+     ]
+    }
+   ]
+  },
+  "say": "If 8 in your numbers brings Saturn's troubles, changing your name to a suitable 5 vibration, like 14, 23, 32, 41 or 50, can protect you; an expert should choose between them."
+ },
+ "NAMENUM-NAME-217": {
+  "when": {
+   "all": [
+    {
+     "any": [
+      {
+       "psychic": [
+        8
+       ]
+      },
+      {
+       "destiny": [
+        8
+       ]
+      },
+      {
+       "nameRoot": [
+        8
+       ]
+      }
+     ]
+    },
+    {
+     "age": [
+      17,
+      26,
+      35,
+      44
+     ]
+    }
+   ]
+  },
+  "say": "With 8 among your numbers, your present age (17, 26, 35 or 44) is linked with unexpected bad events, so take extra care this year."
+ },
+ "NAMENUM-NAME-220": {
+  "skip": "General business note (a defective personal name makes a business fail even with a good business name); no trigger."
+ },
+ "NAMENUM-NAME-222": {
+  "skip": "General background (the name is superior to the name number); no trigger."
+ },
+ "NAMENUM-NAME-224": {
+  "when": {
+   "nameCompound": [
+    44
+   ]
+  },
+  "say": "With name number 44, you have good love compatibility with people born under 1."
+ },
+ "NAMENUM-NAME-232": {
+  "when": {
+   "all": [
+    {
+     "any": [
+      {
+       "psychic": [
+        9
+       ]
+      },
+      {
+       "destiny": [
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        2,
+        4,
+        7,
+        8
+       ]
+      },
+      {
+       "nameRoot": [
+        2,
+        4,
+        7,
+        8
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "Your 9 is afflicted by 2, 4, 7 or 8 in your birth or name number, linked with rudeness, arrogance, lust, drink or drugs and cruelty, so guard against these."
+ },
+ "NAMENUM-NAME-234": {
+  "when": {
+   "all": [
+    {
+     "any": [
+      {
+       "psychic": [
+        9
+       ]
+      },
+      {
+       "destiny": [
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "nameRoot": [
+      2,
+      4,
+      7,
+      8
+     ]
+    }
+   ]
+  },
+  "say": "As a person ruled by 9, your name number should not be 2, 4, 7 or 8, as yours is, so a correction in harmony with your birth numbers is advised."
+ },
+ "NAMENUM-NAME-239": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      36
+     ]
+    },
+    {
+     "any": [
+      {
+       "psychic": [
+        9
+       ]
+      },
+      {
+       "destiny": [
+        9
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "With name number 36 and birth or destiny number 9, you can have a successful business."
+ },
+ "NAMENUM-NAME-241": {
+  "when": {
+   "nameCompound": [
+    45
+   ]
+  },
+  "say": "With name number 45, avoid a business name in 2 or 7, and partners whose name number is 7 or whose birth numbers are in the 2 or 7 series, as these oppose 9."
+ },
+ "NAMENUM-NAME-242": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      45
+     ]
+    },
+    {
+     "dayIs": [
+      9,
+      27
+     ]
+    }
+   ]
+  },
+  "say": "As you were born on the 9th or 27th, name number 45 is allowed for you."
+ },
+ "NAMENUM-NAME-243": {
+  "when": {
+   "all": [
+    {
+     "nameCompound": [
+      44,
+      45
+     ]
+    },
+    {
+     "dayIs": [
+      18
+     ]
+    }
+   ]
+  },
+  "say": "As you were born on the 18th, name number 44 or 45 is considered unfavourable for you."
+ },
+ "NAMENUM-NAME-246": {
+  "when": {
+   "nameCompound": [
+    63
+   ]
+  },
+  "say": "With name number 63, avoid people born on the 2nd, 11th, 20th, 29th, 7th, 16th or 25th, or with 2 or 7 as life or name number, as spouse, partner or in dealings."
+ },
+ "NAMENUM-NAME-247": {
+  "when": {
+   "nameCompound": [
+    72
+   ]
+  },
+  "say": "Name number 72 is a favourite of successful businesspeople, linked with knowledge, intuition, creative imagination, sound money sense and charity, and with the right name, success that can last generations."
+ },
+ "NAMENUM-NAME-248": {
+  "when": {
+   "nameCompound": [
+    72
+   ]
+  },
+  "say": "With name number 72, you tend to be devoted to people born under 2 or 7, and they help you in turn."
+ },
+ "NAMENUM-NAME-250": {
+  "when": {
+   "psychic": [
+    1,
+    8
+   ]
+  },
+  "say": "If your birth number is 1 and your spouse's is 8, or yours is 8 and theirs is 1, you can both have a successful, happy married life."
+ },
+ "NAMENUM-NAME-253": {
+  "when": {
+   "nameCompound": [
+    99
+   ]
+  },
+  "say": "With name number 99, people born on the 2nd, 11th, 20th, 29th, 7th, 16th or 25th, or with 2 or 7 as life or name number, may not suit you as spouse or partner."
+ },
+ "NAMENUM-NAME-260": {
+  "when": {
+   "any": [
+    {
+     "all": [
+      {
+       "nameRoot": [
+        1
+       ]
+      },
+      {
+       "partRoot": [
+        8
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "nameRoot": [
+        2
+       ]
+      },
+      {
+       "partRoot": [
+        4,
+        8,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "nameRoot": [
+        3
+       ]
+      },
+      {
+       "partRoot": [
+        6
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "nameRoot": [
+        4
+       ]
+      },
+      {
+       "partRoot": [
+        2,
+        9
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "nameRoot": [
+        6
+       ]
+      },
+      {
+       "partRoot": [
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "nameRoot": [
+        8
+       ]
+      },
+      {
+       "partRoot": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "all": [
+      {
+       "nameRoot": [
+        9
+       ]
+      },
+      {
+       "partRoot": [
+        2,
+        4
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "say": "An initial or word in your name adds up to a number that is an enemy of your name total, which is considered harmful, so a name correction is advised."
+ },
+ "NAMENUM-NAME-261": {
+  "skip": "would show to everyone (condition not computable)"
+ },
+ "NAMENUM-NAME-262": {
+  "skip": "Worked example only (a jumble like 'PQRLSTOX' is not a name); already covered by the approved name-33 rule."
+ },
+ "NAMENUM-NAME-263": {
+  "when": {
+   "nameCompound": [
+    10
+   ]
+  },
+  "say": "With name number 10, if your name is spoken differently from how it is written, its effect gets spoiled."
+ },
+ "NAMENUM-NAME-264": {
+  "skip": "Background quote about the letter A with no rule attached."
+ },
+ "NUMNAME-NN-C15W": {
+  "when": {
+   "partRoot": [
+    6
+   ]
+  },
+  "say": "If one word of your name adds up to exactly 15, that word is considered auspicious."
+ },
+ "NUMNAME-NN-CX": {
+  "skip": "Method note (compounds outside 10-70 are covered in another chapter); no trigger."
+ },
+ "WATCH-COL-17": {
+  "when": {
+   "watch": {
+    "dialColour": [
+     "other"
+    ]
+   }
+  },
+  "say": "Your dial colour is best read as a mix of the main colours it combines."
+ },
+ "WATCH-COL-18": {
+  "skip": "About a gold wall clock, not a wristwatch; no value for it."
+ },
+ "WATCH-WR-5": {
+  "when": {
+   "watch": {
+    "goal": [
+     "women"
+    ]
+   }
+  },
+  "say": "If things are difficult with your mother, spouse or a woman at work, try wearing your watch on your left wrist for the next few months."
+ },
+ "WATCH-WR-7": {
+  "skip": "Background (why most people wear a watch on the left); no trigger."
+ },
+ "WATCH-DS-3": {
+  "when": {
+   "watch": {
+    "dialSize": [
+     "small",
+     "large",
+     "extraLarge"
+    ]
+   }
+  },
+  "say": "If you are in the limelight but handle private matters, as in politics, entertainment or fashion, a medium-dial watch suits you."
+ },
+ "WATCH-DS-6": {
+  "when": {
+   "watch": {
+    "dialSize": [
+     "large"
+    ]
+   }
+  },
+  "say": "If your large dial feels unnatural or straining, it can leave you hyper-vigilant, anxious or over-stretched, so stepping down to a medium or small dial is recommended."
+ },
+ "WATCH-DS-8": {
+  "skip": "General advice (match dial size to your confidence and mood); no trigger."
+ },
+ "WATCH-SH-7": {
+  "when": {
+   "watch": {
+    "dialShape": [
+     "rectHorizontal"
+    ]
+   }
+  },
+  "say": "You are laid back and take one thing at a time, under-promising and over-delivering. You can sit for hours, and are good at maintaining relationships as you focus on what is in front of you."
+ },
+ "WATCH-SH-8": {
+  "when": {
+   "watch": {
+    "dialShape": [
+     "roundedRect"
+    ]
+   }
+  },
+  "say": "You are focused, committed and hard-working, and truly try to understand others. Soft-spoken but valuable when you speak, you are flexible and empathetic, and take care of your own presentation."
+ },
+ "WATCH-SH-9": {
+  "when": {
+   "watch": {
+    "dialShape": [
+     "rectVertical",
+     "rectHorizontal",
+     "ovalVertical",
+     "ovalHorizontal"
+    ]
+   }
+  },
+  "say": "A rectangular dial carries angular, masculine energy linked with execution, while an oval dial carries curvy, feminine energy linked with thought."
+ },
+ "WATCH-SH-17": {
+  "skip": "Triangle and pentagon dials: no value for these shapes, and the book gives no specific meaning."
+ },
+ "WATCH-SH-18": {
+  "skip": "Diamond, floral and abstract dial shapes: no value for them, and no meaning given."
+ },
+ "WATCH-DG-16": {
+  "skip": "Chosen coloured gemstones on the watch: no value for this detail."
+ },
+ "WATCH-NUM-4": {
+  "when": {
+   "watch": {
+    "numeralsShown": [
+     "all",
+     "odd"
+    ]
+   }
+  },
+  "say": "The 1 on your dial points to your ability to take action; whatever you do, you do a lot of it, like giving generously."
+ },
+ "WATCH-NUM-5": {
+  "when": {
+   "watch": {
+    "numeralsShown": [
+     "all",
+     "even"
+    ]
+   }
+  },
+  "say": "The 2 on your dial adds emotion and activates feminine energy."
+ },
+ "WATCH-NUM-7": {
+  "skip": "All numerals except 3: no value for this detail."
+ },
+ "WATCH-NUM-8": {
+  "when": {
+   "watch": {
+    "numeralsShown": [
+     "all"
+    ]
+   }
+  },
+  "say": "The 4 on your dial is linked with artistic talent and the ability to find and try new things."
+ },
+ "WATCH-NUM-9": {
+  "skip": "Only numeral 4 on the dial: no value for this detail."
+ },
+ "WATCH-NUM-10": {
+  "when": {
+   "watch": {
+    "numeralsShown": [
+     "all",
+     "odd"
+    ]
+   }
+  },
+  "say": "The 5 on your dial is linked with a calculating mind and writing ability."
+ },
+ "WATCH-NUM-11": {
+  "skip": "Only numeral 5 missing: no value for this detail."
+ },
+ "WATCH-NUM-15": {
+  "skip": "A numeral set off its position: no value for this detail."
+ },
+ "WATCH-NUM-16": {
+  "skip": "A numeral written wrongly (e.g. a wrong Roman 4): no value for this detail."
+ },
+ "WATCH-DT-4": {
+  "skip": "Brand name printed near 3 in place of a date: no value for this detail."
+ },
+ "WATCH-DT-17": {
+  "skip": "One worked example (day arc between 9 and 10); no value for this detail."
+ },
+ "WATCH-DT-18": {
+  "skip": "Scope note (date-position reading is for wristwatches, not smartwatches); no trigger."
+ },
+ "WATCH-BS-4": {
+  "when": {
+   "watch": {
+    "strapWidth": [
+     "narrow"
+    ]
+   }
+  },
+  "say": "A very thin strap is linked with fewer commitments to the outside world and fewer friends, and you may have lost touch with school or college friends."
+ },
+ "WATCH-BM-2": {
+  "when": {
+   "watch": {
+    "strapMaterial": [
+     "stone"
+    ]
+   }
+  },
+  "say": "You are outspoken and welcoming, in harmony with nature, and think about the environment and other people's feelings."
+ },
+ "WATCH-BX-3": {
+  "skip": "Method note (all strap readings assume a solid strap); no trigger."
+ },
+ "WATCH-HD-1": {
+  "skip": "Background (what the hour, minute and second hands stand for); no trigger."
+ },
+ "WATCH-HD-2": {
+  "when": {
+   "watch": {
+    "hands": [
+     "noSeconds",
+     "noMinute"
+    ]
+   }
+  },
+  "say": "A missing hand on your watch shows less attention to that size of decision in your life."
+ },
+ "WATCH-HD-5": {
+  "skip": "No hour hand: no value for this detail."
+ },
+ "WATCH-FC-2": {
+  "when": {
+   "watch": {
+    "original": [
+     "firstCopy"
+    ]
+   }
+  },
+  "say": "Rather than throwing away a first-copy watch, sell it, even for one rupee, and then buy an original you can afford."
+ },
+ "WATCH-GF-2": {
+  "when": {
+   "watch": {
+    "gift": [
+     "worn",
+     "kept"
+    ]
+   }
+  },
+  "say": "If you ever lose a watch someone gifted you, your involvement in that relationship may drop from your side."
+ },
+ "WATCH-GF-3": {
+  "when": {
+   "watch": {
+    "gift": [
+     "worn",
+     "kept"
+    ]
+   }
+  },
+  "say": "If you lose a gifted watch and the giver brings it up, the bond between the two of you can become even stronger."
+ },
+ "WATCH-GF-4": {
+  "when": {
+   "all": [
+    {
+     "watch": {
+      "gift": [
+       "worn",
+       "kept"
+      ]
+     }
+    },
+    {
+     "watch": {
+      "original": [
+       "firstCopy"
+      ]
+     }
+    }
+   ]
+  },
+  "say": "A first-copy watch received as a gift may mean the giver wants to use you for their own needs, and the watch can feel like a burden, so it is better not to wear it."
+ },
+ "WATCH-GF-6": {
+  "skip": "General advice on choosing a watch as a gift; no trigger."
+ },
+ "WATCH-DV-3": {
+  "when": {
+   "watch": {
+    "dialArt": [
+     "face",
+     "scenery",
+     "animal",
+     "birds",
+     "plants"
+    ]
+   }
+  },
+  "say": "A picture on your dial points to an artistic, creative side."
+ },
+ "WATCH-DV-12": {
+  "when": {
+   "watch": {
+    "markers": [
+     "diamonds"
+    ]
+   }
+  },
+  "say": "Diamonds on your dial show a wish to be beautiful, sophisticated and classy at all times."
+ },
+ "WATCH-DV-13": {
+  "skip": "Golden-ratio (Fibonacci) spiral dial: no value for it (the 'spiral' value is a different pattern with an opposite reading)."
+ },
+ "WATCH-DV-14": {
+  "skip": "Golden-ratio dial on plastic or a first copy: no value for the golden-ratio dial."
+ },
+ "WATCH-DV-15": {
+  "skip": "Wall-clock example (Roman numerals separated by lines); no value for it."
+ },
+ "WATCH-DV-16": {
+  "skip": "Landmark picture on a clock: no value for it."
+ },
+ "WATCH-OT-1": {
+  "when": {
+   "watch": {
+    "watchType": [
+     "pocketFlip"
+    ]
+   }
+  },
+  "say": "You keep your personal life very private, but will not hesitate to show it off on the right occasion."
+ },
+ "WATCH-OT-2": {
+  "when": {
+   "watch": {
+    "watchType": [
+     "pocketFlip"
+    ]
+   }
+  },
+  "say": "A flip-cover watch shows that you like to keep your private life private."
+ },
+ "WATCH-OT-4": {
+  "skip": "Projector watch: no value for it."
+ },
+ "WATCH-CH-6": {
+  "skip": "Use-and-throw watch: no trait given and no value for it."
+ },
+ "WATCH-WP-1": {
+  "skip": "Water-resistant rating: no value for it."
+ },
+ "WATCH-WP-2": {
+  "skip": "Waterproof rating: no value for it."
+ },
+ "WATCH-WP-3": {
+  "skip": "Advice to suggest a water-resistant watch for money problems: no value for water rating and no trigger."
+ }
+}

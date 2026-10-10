@@ -230,7 +230,12 @@
   {
    "id": "LOSHU-LS-P1",
    "set": "planes",
-   "when": null,
+   "when": {
+    "plane": {
+     "id": "LS-492",
+     "state": "full"
+    }
+   },
    "period": null,
    "text": "Thinking, creating, imagining and analysing",
    "polarity": "neutral",
@@ -248,13 +253,19 @@
     "rank": 7
    },
    "condition": "Lo Shu top row 4-9-2 (Mental plane, head)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your mental plane (4-9-2) is complete; this plane covers thinking, creating, imagining and analysing."
   },
   {
    "id": "LOSHU-LS-P2",
    "set": "planes",
-   "when": null,
+   "when": {
+    "plane": {
+     "id": "LS-357",
+     "state": "full"
+    }
+   },
    "period": null,
    "text": "Spirituality, intuition, feelings and emotions",
    "polarity": "neutral",
@@ -273,13 +284,19 @@
     "rank": 7
    },
    "condition": "middle row 3-5-7 (Emotional plane, body)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your emotional plane (3-5-7) is complete; this plane covers spirituality, intuition, feelings and emotions."
   },
   {
    "id": "LOSHU-LS-P3",
    "set": "planes",
-   "when": null,
+   "when": {
+    "plane": {
+     "id": "LS-816",
+     "state": "full"
+    }
+   },
    "period": null,
    "text": "Physical labour, creativity, being practical in everyday life; feet on the ground",
    "polarity": "neutral",
@@ -297,13 +314,19 @@
     "rank": 7
    },
    "condition": "bottom row 8-1-6 (Practical plane, feet)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your practical plane (8-1-6) is complete; this plane covers physical work, creativity and being practical in everyday life, with your feet on the ground."
   },
   {
    "id": "LOSHU-LS-P4",
    "set": "planes",
-   "when": null,
+   "when": {
+    "plane": {
+     "id": "LS-438",
+     "state": "full"
+    }
+   },
    "period": null,
    "text": "Ability to come up with ideas, create things and carry them through",
    "polarity": "neutral",
@@ -321,13 +344,19 @@
     "rank": 7
    },
    "condition": "left column 4-3-8 (Thought plane)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your thought plane (4-3-8) is complete; this plane shows your ability to come up with ideas, create things and carry them through."
   },
   {
    "id": "LOSHU-LS-P5",
    "set": "planes",
-   "when": null,
+   "when": {
+    "plane": {
+     "id": "LS-951",
+     "state": "full"
+    }
+   },
    "period": null,
    "text": "Determination and persistence to succeed; planning happens here",
    "polarity": "neutral",
@@ -345,13 +374,19 @@
     "rank": 7
    },
    "condition": "middle column 9-5-1 (Will plane)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your will plane (9-5-1) is complete; this plane gives determination and persistence to succeed, and is where planning happens."
   },
   {
    "id": "LOSHU-LS-P6",
    "set": "planes",
-   "when": null,
+   "when": {
+    "plane": {
+     "id": "LS-276",
+     "state": "full"
+    }
+   },
    "period": null,
    "text": "Ability to put thoughts into action",
    "polarity": "neutral",
@@ -369,8 +404,9 @@
     "rank": 7
    },
    "condition": "right column 2-7-6 (Action plane)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your action plane (2-7-6) is complete; this plane shows your ability to put your thoughts into action."
   },
   {
    "id": "LOSHU-LS-P7",
@@ -392,8 +428,8 @@
     "rank": 7
    },
    "condition": "(all three columns)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General method note on how the three columns work together (idea, will, action); no trigger of its own."
   }
  ]
 }

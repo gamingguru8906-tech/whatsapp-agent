@@ -4,13 +4,16 @@
 import * as c from './calc.js';
 
 // Everything the rules can ask about a person, from their date of birth and name.
-export function personFacts({ dob, name, year }) {
+export function personFacts({ dob, name, year, today }) {
   const cnt = c.counts(c.dobDigits(dob));
   const n = name ? c.nameNumbers(name) : null;
   const psychic = c.birthNumber(dob);
   const destiny = c.destinyNumber(dob);
   return {
     psychic, destiny,
+    dayIs: dob.d,
+    destinyCompound: c.digitSum(`${dob.d}${dob.m}${dob.y}`),
+    age: today ? ageOn(dob, today) : null,
     master: c.masterDestiny(dob),
     karmic: c.karmicDebtDay(dob),
     personalYear: year ? c.personalYear(dob, year) : null,
@@ -28,6 +31,12 @@ export function personFacts({ dob, name, year }) {
   };
 }
 
+// Completed years on `today` (UTC date parts).
+function ageOn(dob, today) {
+  const y = today.getUTCFullYear(), m = today.getUTCMonth() + 1, d = today.getUTCDate();
+  return y - dob.y - ((m < dob.m || (m === dob.m && d < dob.d)) ? 1 : 0);
+}
+
 const inList = (v, list) => v !== null && v !== undefined && list.includes(v);
 
 export function holds(when, f) {
@@ -39,6 +48,7 @@ export function holds(when, f) {
     switch (k) {
       case 'psychic': case 'destiny': case 'master': case 'karmic': case 'maturity': case 'personality':
       case 'personalYear': case 'nameCompound': case 'nameRoot': case 'firstNameRoot':
+      case 'dayIs': case 'destinyCompound': case 'age':
         return inList(f[k], v);
       case 'firstLetter': return inList(f.firstLetter, v);
       case 'initialLetter': return f.initials.some(i => v.includes(i));

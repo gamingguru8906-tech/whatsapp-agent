@@ -362,7 +362,26 @@
   {
    "id": "NUMNAME-NN-KD-1",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       13,
+       14,
+       16,
+       19
+      ]
+     },
+     {
+      "destinyCompound": [
+       13,
+       14,
+       16,
+       19
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Karmic debt: selfishness in love, power, work or freedom in past lives; now is the chance to set it right",
    "polarity": "care",
@@ -379,13 +398,33 @@
     "rank": 6
    },
    "condition": "X in {13, 14, 16, 19}",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your birth date carries a karmic debt number, linked with selfishness in love, power, work or freedom in past lives; now is your chance to set it right."
   },
   {
    "id": "NUMNAME-NN-KD-2",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       13,
+       14,
+       16,
+       19
+      ]
+     },
+     {
+      "destinyCompound": [
+       13,
+       14,
+       16,
+       19
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Signals working with issues from the past; most significant in personal year, destiny, birthday",
    "polarity": "care",
@@ -403,13 +442,27 @@
     "rank": 6
    },
    "condition": "birthday or destiny in {13, 14, 16, 19} before reducing",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 13, 14, 16 or 19 shows up as your birthday or destiny number, it signals that you are working through issues from the past."
   },
   {
    "id": "NUMNAME-NN-KD-3",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       13
+      ]
+     },
+     {
+      "destinyCompound": [
+       13
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "The 3 in 13: creativity and joy turned into frivolity and superficiality",
    "polarity": "care",
@@ -426,13 +479,27 @@
     "rank": 6
    },
    "condition": "X = 13",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "In your karmic number 13, the creativity and joy of 3 can turn into frivolity and superficiality, so take care with this."
   },
   {
    "id": "NUMNAME-NN-KD-4",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       14
+      ]
+     },
+     {
+      "destinyCompound": [
+       14
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "The 4 in 14: discipline and stability turned into rebelliousness and indulgence",
    "polarity": "care",
@@ -449,13 +516,27 @@
     "rank": 6
    },
    "condition": "X = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "In your karmic number 14, the discipline, hard work and stability of 4 can turn into rebelliousness and indulgence, so take care with this."
   },
   {
    "id": "NUMNAME-NN-KD-5",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       16
+      ]
+     },
+     {
+      "destinyCompound": [
+       16
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "The 6 in 16: love and commitment forsaken",
    "polarity": "care",
@@ -472,13 +553,27 @@
     "rank": 6
    },
    "condition": "X = 16",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "In your karmic number 16, the 6 shows that love and commitment were forsaken in the past, so take care to honour them now."
   },
   {
    "id": "NUMNAME-NN-KD-6",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       19
+      ]
+     },
+     {
+      "destinyCompound": [
+       19
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "The 9 in 19: wisdom, spiritual knowledge and power used for personal gain",
    "polarity": "care",
@@ -495,13 +590,27 @@
     "rank": 6
    },
    "condition": "X = 19",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "In your karmic number 19, the 9 shows that wisdom, spiritual knowledge and power were used for personal gain in the past, so take care to use them well now."
   },
   {
    "id": "NUMNAME-NN-K10-1",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "dayIs": [
+       10
+      ]
+     },
+     {
+      "destinyCompound": [
+       10
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Karmic completion and rebirth: the debt is paid, free to begin again; a chance to stand on your own and use the good traits of 1-9",
    "polarity": "good",
@@ -520,13 +629,27 @@
     "rank": 6
    },
    "condition": "X = 10 (also check 1s that are really 10/1)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The 10 in your birth date means karmic completion and rebirth: the debt is paid and you are free to begin again, standing on your own with the good traits of every number."
   },
   {
    "id": "NUMNAME-NN-K10-2",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "dayIs": [
+       10
+      ]
+     },
+     {
+      "destinyCompound": [
+       10
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Fortunate; promise of victory in difficult situations; go forth with courage",
    "polarity": "good",
@@ -543,13 +666,27 @@
     "rank": 6
    },
    "condition": "X = 10",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The 10 in your birth date is considered fortunate and holds the promise of victory in difficult situations, so go forth with courage."
   },
   {
    "id": "NUMNAME-NN-K10-3",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "dayIs": [
+       10
+      ]
+     },
+     {
+      "destinyCompound": [
+       10
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Usually shows a past misuse of personal power; now use courage, independence and leadership",
    "polarity": "mixed",
@@ -566,13 +703,27 @@
     "rank": 6
    },
    "condition": "X = 10",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The 10 in your birth date usually shows a past misuse of personal power; now is the time to use your courage, independence and leadership well."
   },
   {
    "id": "NUMNAME-NN-K13-1",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       13
+      ]
+     },
+     {
+      "destinyCompound": [
+       13
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Not bad luck but hard work everywhere; discipline in expression and practical matters; no shortcuts",
    "polarity": "care",
@@ -590,13 +741,27 @@
     "rank": 6
    },
    "condition": "X = 13",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your karmic number 13 is not about bad luck but about hard work in every area, with discipline in how you express yourself and in practical matters; there are no shortcuts."
   },
   {
    "id": "NUMNAME-NN-K13-2",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       13
+      ]
+     },
+     {
+      "destinyCompound": [
+       13
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Often shows the negative traits of 4: rigid, controlling, dogmatic, blaming others for limits",
    "polarity": "care",
@@ -613,13 +778,27 @@
     "rank": 6
    },
    "condition": "X = 13",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 13, you may show the negative side of 4: being rigid, controlling or dogmatic, and blaming others for your limits, so take care with this."
   },
   {
    "id": "NUMNAME-NN-K13-3",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       13
+      ]
+     },
+     {
+      "destinyCompound": [
+       13
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Success by keeping order: keep appointments, follow through on commitments, keep the house tidy, never procrastinate; steady effort brings reward",
    "polarity": "good",
@@ -637,13 +816,27 @@
     "rank": 6
    },
    "condition": "X = 13",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 13, success comes from keeping order: keep appointments, follow through on commitments, keep your home tidy and never procrastinate. Steady, consistent effort brings reward."
   },
   {
    "id": "NUMNAME-NN-K13-4",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       13
+      ]
+     },
+     {
+      "destinyCompound": [
+       13
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Do not despair: many famous people have 13 birthdays",
    "polarity": "good",
@@ -660,13 +853,27 @@
     "rank": 6
    },
    "condition": "DOB day = 13 or destiny 13/4",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Do not despair about carrying 13 in your birth date: many famous people have a karmic 13 birthday."
   },
   {
    "id": "NUMNAME-NN-K14-1",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       14
+      ]
+     },
+     {
+      "destinyCompound": [
+       14
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Past lives abused freedom; rebellious free spirit; huge risks for sensual pursuits",
    "polarity": "care",
@@ -683,13 +890,27 @@
     "rank": 6
    },
    "condition": "X = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Karmic number 14 is linked with freedom abused in past lives; you may be a rebellious free spirit who takes huge risks for pleasure, so take care."
   },
   {
    "id": "NUMNAME-NN-K14-2",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       14
+      ]
+     },
+     {
+      "destinyCompound": [
+       14
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Negative traits of 5: jumping between relationships or jobs, seeking pleasure (food, sugar, sex, drugs); craving the new over steady work",
    "polarity": "care",
@@ -708,13 +929,27 @@
     "rank": 6
    },
    "condition": "X = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 14, take care with the negative side of 5: jumping between relationships or jobs, chasing pleasures like food, sugar, sex or drugs, and craving the new over steady work."
   },
   {
    "id": "NUMNAME-NN-K14-3",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       14
+      ]
+     },
+     {
+      "destinyCompound": [
+       14
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "The key is commitment, moderation, order and temperance; stay flexible, do not become rigid",
    "polarity": "good",
@@ -731,13 +966,18 @@
     "rank": 6
    },
    "condition": "X = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The key to your karmic number 14 is commitment, moderation, order and temperance, while staying flexible and not becoming rigid."
   },
   {
    "id": "NUMNAME-NN-K14-4",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "personalYear": [
+     5
+    ]
+   },
    "period": null,
    "text": "Expect emotional upsets and delays",
    "polarity": "care",
@@ -754,13 +994,18 @@
     "rank": 6
    },
    "condition": "personal year (compound) = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If your personal year adds up to 14 before reducing to 5, you may expect emotional upsets and delays this year."
   },
   {
    "id": "NUMNAME-NN-K14-5",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "destinyCompound": [
+     14
+    ]
+   },
    "period": null,
    "text": "Lessons through setbacks, disappointments, reversal of fortune; must make commitments and ride the ups and downs",
    "polarity": "care",
@@ -778,13 +1023,18 @@
     "rank": 6
    },
    "condition": "destiny (compound) = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 14 as your destiny number, you may learn life's lessons through setbacks, disappointments and reversals of fortune; make commitments and ride the ups and downs."
   },
   {
    "id": "NUMNAME-NN-K14-6",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "dayIs": [
+     14
+    ]
+   },
    "period": null,
    "text": "Here to learn to let go, resist indulgence, allow change, steer a steady course",
    "polarity": "mixed",
@@ -801,13 +1051,27 @@
     "rank": 6
    },
    "condition": "DOB day = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Born on the 14th, you are here to learn to let go, resist the pull of indulgence, allow change and steer a steady course."
   },
   {
    "id": "NUMNAME-NN-K14-7",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       14
+      ]
+     },
+     {
+      "destinyCompound": [
+       14
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "\"Universal Law #5\": you are never given more than you can handle; temperance in all things",
    "polarity": "good",
@@ -824,13 +1088,27 @@
     "rank": 6
    },
    "condition": "X = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 14, remember that you are never given more than you can handle, and practise temperance in all things."
   },
   {
    "id": "NUMNAME-NN-K16-1",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       16
+      ]
+     },
+     {
+      "destinyCompound": [
+       16
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Past illicit love affairs that hurt others; failure to act responsibly in love",
    "polarity": "care",
@@ -847,13 +1125,27 @@
     "rank": 6
    },
    "condition": "X = 16",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Karmic number 16 is linked with past love affairs that hurt others and a failure to act responsibly in love, so take care to love responsibly now."
   },
   {
    "id": "NUMNAME-NN-K16-2",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       16
+      ]
+     },
+     {
+      "destinyCompound": [
+       16
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Negative traits of 7: indifference, aloofness, withdrawal, hard to approach, privacy over others' feelings, intellectualising emotion",
    "polarity": "care",
@@ -871,13 +1163,27 @@
     "rank": 6
    },
    "condition": "X = 16",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 16, take care with the negative side of 7: indifference, aloofness, withdrawal, being hard to approach and putting your privacy before others' feelings."
   },
   {
    "id": "NUMNAME-NN-K16-3",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       16
+      ]
+     },
+     {
+      "destinyCompound": [
+       16
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Tarot Tower: sudden falls and rebirth; humility is the key to future success; key word \"awaken\"; spiritual growth",
    "polarity": "mixed",
@@ -894,13 +1200,27 @@
     "rank": 6
    },
    "condition": "X = 16",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Karmic number 16 is linked with sudden falls followed by rebirth and spiritual growth; humility is the key to your future success."
   },
   {
    "id": "NUMNAME-NN-K16-4",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       16
+      ]
+     },
+     {
+      "destinyCompound": [
+       16
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Will know alienation and loneliness; tends to look down on others",
    "polarity": "care",
@@ -918,13 +1238,27 @@
     "rank": 6
    },
    "condition": "X = 16",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 16, you may know alienation and loneliness and may tend to look down on others, so take care with this."
   },
   {
    "id": "NUMNAME-NN-K16-5",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "dayIs": [
+       16
+      ]
+     },
+     {
+      "destinyCompound": [
+       16
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Life is a series of falls and rises until the spiritual lesson is learned",
    "polarity": "care",
@@ -941,13 +1275,27 @@
     "rank": 6
    },
    "condition": "destiny or birthday = 16",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 16 as your birthday or destiny number, life may bring a series of falls and rises until its spiritual lesson is learned."
   },
   {
    "id": "NUMNAME-NN-K19-1",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       19
+      ]
+     },
+     {
+      "destinyCompound": [
+       19
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Past abuse of power, completely self-centred; lesson is standing on your own and using power properly",
    "polarity": "care",
@@ -964,13 +1312,27 @@
     "rank": 6
    },
    "condition": "X = 19",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Karmic number 19 is linked with past abuse of power and acting in a self-centred way; your lesson is to stand on your own and use power properly."
   },
   {
    "id": "NUMNAME-NN-K19-2",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       19
+      ]
+     },
+     {
+      "destinyCompound": [
+       19
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Negative traits of 1: selfishness, intimidation, dependence, not standing up for oneself, refusing help, egotism, laziness, aggression",
    "polarity": "care",
@@ -987,8 +1349,9 @@
     "rank": 6
    },
    "condition": "X = 19",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 19, take care with the negative side of 1: selfishness, intimidation, dependence, ego, laziness, aggression, and refusing help or not standing up for yourself."
   },
   {
    "id": "NUMNAME-NN-K19-3",
@@ -1017,7 +1380,20 @@
   {
    "id": "NUMNAME-NN-K19-4",
    "set": "karmic",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "karmic": [
+       19
+      ]
+     },
+     {
+      "destinyCompound": [
+       19
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Success by looking past your own needs to others'; work toward independence; the 1 promises a new beginning",
    "polarity": "good",
@@ -1034,8 +1410,9 @@
     "rank": 6
    },
    "condition": "X = 19",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 19, success comes from looking past your own needs to the needs of others and working towards independence; the 1 promises a new beginning."
   }
  ]
 }

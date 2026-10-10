@@ -484,7 +484,13 @@
   {
    "id": "WATCH-COL-17",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "dialColour": [
+      "other"
+     ]
+    }
+   },
    "period": null,
    "text": "Read it as a mixture of the listed colours",
    "polarity": "neutral",
@@ -501,8 +507,9 @@
     "rank": 3
    },
    "condition": "colour not listed",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your dial colour is best read as a mix of the main colours it combines."
   },
   {
    "id": "WATCH-COL-18",
@@ -525,8 +532,8 @@
     "rank": 3
    },
    "condition": "wall clock colour = gold",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: About a gold wall clock, not a wristwatch; no value for it."
   },
   {
    "id": "WATCH-WR-1",
@@ -680,8 +687,9 @@
     "rank": 3
    },
    "condition": "concern = relationship with mother, spouse or a woman at work",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If things are difficult with your mother, spouse or a woman at work, try wearing your watch on your left wrist for the next few months."
   },
   {
    "id": "WATCH-WR-6",
@@ -735,8 +743,8 @@
     "rank": 3
    },
    "condition": "(background)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Background (why most people wear a watch on the left); no trigger."
   },
   {
    "id": "WATCH-WR-8",
@@ -826,7 +834,15 @@
   {
    "id": "WATCH-DS-3",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "dialSize": [
+      "small",
+      "large",
+      "extraLarge"
+     ]
+    }
+   },
    "period": null,
    "text": "Should own a medium-dial watch",
    "polarity": "good",
@@ -845,8 +861,9 @@
     "rank": 3
    },
    "condition": "in the limelight for long but handles private information (politicians, celebrities, fashion people)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If you are in the limelight but handle private matters, as in politics, entertainment or fashion, a medium-dial watch suits you."
   },
   {
    "id": "WATCH-DS-4",
@@ -912,7 +929,13 @@
   {
    "id": "WATCH-DS-6",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "dialSize": [
+      "large"
+     ]
+    }
+   },
    "period": null,
    "text": "May feel hyper-vigilant, overactive, anxious, worried, over-effort: step down to a medium or small dial",
    "polarity": "care",
@@ -929,8 +952,9 @@
     "rank": 3
    },
    "condition": "dial = large AND person feels it is unnatural or straining",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If your large dial feels unnatural or straining, it can leave you hyper-vigilant, anxious or over-stretched, so stepping down to a medium or small dial is recommended."
   },
   {
    "id": "WATCH-DS-7",
@@ -983,8 +1007,8 @@
     "rank": 3
    },
    "condition": "(general)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General advice (match dial size to your confidence and mood); no trigger."
   },
   {
    "id": "WATCH-SH-1",
@@ -1196,8 +1220,9 @@
     "rank": 3
    },
    "condition": "dial shape = rectangle, horizontal (wider than tall)",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "You are laid back and take one thing at a time, under-promising and over-delivering. You can sit for hours, and are good at maintaining relationships as you focus on what is in front of you."
   },
   {
    "id": "WATCH-SH-8",
@@ -1226,13 +1251,23 @@
     "rank": 3
    },
    "condition": "dial shape = rounded rectangle / rounded square (Apple-Watch-like)",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "You are focused, committed and hard-working, and truly try to understand others. Soft-spoken but valuable when you speak, you are flexible and empathetic, and take care of your own presentation."
   },
   {
    "id": "WATCH-SH-9",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "dialShape": [
+      "rectVertical",
+      "rectHorizontal",
+      "ovalVertical",
+      "ovalHorizontal"
+     ]
+    }
+   },
    "period": null,
    "text": "Rectangle = angular = masculine, \"Execution\"; oval = curvy = feminine, \"Thought\" (diagram)",
    "polarity": "neutral",
@@ -1250,8 +1285,9 @@
     "rank": 3
    },
    "condition": "oval vs rectangle (energy)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "A rectangular dial carries angular, masculine energy linked with execution, while an oval dial carries curvy, feminine energy linked with thought."
   },
   {
    "id": "WATCH-SH-10",
@@ -1489,8 +1525,8 @@
     "rank": 3
    },
    "condition": "dial shape = triangle, pentagon (point up or down) or similar polygon",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Triangle and pentagon dials: no value for these shapes, and the book gives no specific meaning."
   },
   {
    "id": "WATCH-SH-18",
@@ -1512,8 +1548,8 @@
     "rank": 3
    },
    "condition": "dial shape = diagonal square (diamond), floral, abstract",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Diamond, floral and abstract dial shapes: no value for them, and no meaning given."
   },
   {
    "id": "WATCH-DG-1",
@@ -1984,8 +2020,8 @@
     "rank": 3
    },
    "condition": "specific chosen gemstones on the watch",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Chosen coloured gemstones on the watch: no value for this detail."
   },
   {
    "id": "WATCH-NUM-1",
@@ -2080,7 +2116,14 @@
   {
    "id": "WATCH-NUM-4",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "all",
+      "odd"
+     ]
+    }
+   },
    "period": null,
    "text": "Ability to act; does a lot of whatever they do (donates a lot)",
    "polarity": "good",
@@ -2098,13 +2141,21 @@
     "rank": 3
    },
    "condition": "numeral 1",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The 1 on your dial points to your ability to take action; whatever you do, you do a lot of it, like giving generously."
   },
   {
    "id": "WATCH-NUM-5",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "all",
+      "even"
+     ]
+    }
+   },
    "period": null,
    "text": "More emotional; activates feminine energy",
    "polarity": "neutral",
@@ -2121,8 +2172,9 @@
     "rank": 3
    },
    "condition": "numeral 2",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The 2 on your dial adds emotion and activates feminine energy."
   },
   {
    "id": "WATCH-NUM-6",
@@ -2174,13 +2226,19 @@
     "rank": 3
    },
    "condition": "all numerals except 3",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: All numerals except 3: no value for this detail."
   },
   {
    "id": "WATCH-NUM-8",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "all"
+     ]
+    }
+   },
    "period": null,
    "text": "Artistic faculties; finding and trying new things",
    "polarity": "good",
@@ -2197,8 +2255,9 @@
     "rank": 3
    },
    "condition": "numeral 4",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The 4 on your dial is linked with artistic talent and the ability to find and try new things."
   },
   {
    "id": "WATCH-NUM-9",
@@ -2220,13 +2279,20 @@
     "rank": 3
    },
    "condition": "only numeral 4 present",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Only numeral 4 on the dial: no value for this detail."
   },
   {
    "id": "WATCH-NUM-10",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "all",
+      "odd"
+     ]
+    }
+   },
    "period": null,
    "text": "Calculating mind, writing ability",
    "polarity": "good",
@@ -2244,8 +2310,9 @@
     "rank": 3
    },
    "condition": "numeral 5",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The 5 on your dial is linked with a calculating mind and writing ability."
   },
   {
    "id": "WATCH-NUM-11",
@@ -2268,8 +2335,8 @@
     "rank": 3
    },
    "condition": "only numeral 5 missing",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Only numeral 5 missing: no value for this detail."
   },
   {
    "id": "WATCH-NUM-12",
@@ -2393,8 +2460,8 @@
     "rank": 3
    },
    "condition": "a numeral is placed off its position (e.g. 9 and 6 set higher)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: A numeral set off its position: no value for this detail."
   },
   {
    "id": "WATCH-NUM-16",
@@ -2416,8 +2483,8 @@
     "rank": 3
    },
    "condition": "a numeral is written wrongly (e.g. a Roman 4 that reads as 3)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: A numeral written wrongly (e.g. a wrong Roman 4): no value for this detail."
   },
   {
    "id": "WATCH-DT-1",
@@ -2527,8 +2594,8 @@
     "rank": 3
    },
    "condition": "brand name printed near 3 (in place of a date)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Brand name printed near 3 in place of a date: no value for this detail."
   },
   {
    "id": "WATCH-DT-5",
@@ -3060,8 +3127,8 @@
     "rank": 3
    },
    "condition": "day-of-week arc between 9 and 10 (one worked example)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: One worked example (day arc between 9 and 10); no value for this detail."
   },
   {
    "id": "WATCH-DT-18",
@@ -3083,8 +3150,8 @@
     "rank": 3
    },
    "condition": "scope",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Scope note (date-position reading is for wristwatches, not smartwatches); no trigger."
   },
   {
    "id": "WATCH-BS-1",
@@ -3178,7 +3245,13 @@
   {
    "id": "WATCH-BS-4",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "strapWidth": [
+      "narrow"
+     ]
+    }
+   },
    "period": null,
    "text": "Fewer commitments to the outside world, fewer friends, lost touch with school/college mates",
    "polarity": "care",
@@ -3195,8 +3268,9 @@
     "rank": 3
    },
    "condition": "strap = very thin (book: common among married Indian women)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "A very thin strap is linked with fewer commitments to the outside world and fewer friends, and you may have lost touch with school or college friends."
   },
   {
    "id": "WATCH-BM-1",
@@ -3233,7 +3307,13 @@
   {
    "id": "WATCH-BM-2",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "stone"
+     ]
+    }
+   },
    "period": null,
    "text": "Outspoken, welcoming; in harmony with nature; thinks about the environment and others' feelings",
    "polarity": "good",
@@ -3251,8 +3331,9 @@
     "rank": 3
    },
    "condition": "strap = earthy material (stone)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "You are outspoken and welcoming, in harmony with nature, and think about the environment and other people's feelings."
   },
   {
    "id": "WATCH-BM-3",
@@ -3674,8 +3755,8 @@
     "rank": 3
    },
    "condition": "strap = solid (default)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Method note (all strap readings assume a solid strap); no trigger."
   },
   {
    "id": "WATCH-HD-1",
@@ -3697,13 +3778,20 @@
     "rank": 3
    },
    "condition": "(analog) hands",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Background (what the hour, minute and second hands stand for); no trigger."
   },
   {
    "id": "WATCH-HD-2",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "hands": [
+      "noSeconds",
+      "noMinute"
+     ]
+    }
+   },
    "period": null,
    "text": "Lacks attention to that size of decision",
    "polarity": "care",
@@ -3720,8 +3808,9 @@
     "rank": 3
    },
    "condition": "any hand missing",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "A missing hand on your watch shows less attention to that size of decision in your life."
   },
   {
    "id": "WATCH-HD-3",
@@ -3801,8 +3890,8 @@
     "rank": 3
    },
    "condition": "no hour hand",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: No hour hand: no value for this detail."
   },
   {
    "id": "WATCH-HD-6",
@@ -4045,7 +4134,13 @@
   {
    "id": "WATCH-FC-2",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "original": [
+      "firstCopy"
+     ]
+    }
+   },
    "period": null,
    "text": "Don't just throw it away (its effect stays because it still \"belongs\" to you): sell it, even for one rupee, then buy an original you can afford",
    "polarity": "neutral",
@@ -4063,8 +4158,9 @@
     "rank": 3
    },
    "condition": "watch = first copy (remedy)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Rather than throwing away a first-copy watch, sell it, even for one rupee, and then buy an original you can afford."
   },
   {
    "id": "WATCH-FC-3",
@@ -4130,7 +4226,14 @@
   {
    "id": "WATCH-GF-2",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "gift": [
+      "worn",
+      "kept"
+     ]
+    }
+   },
    "period": null,
    "text": "Your side of involvement in that relationship drops",
    "polarity": "care",
@@ -4147,13 +4250,21 @@
     "rank": 3
    },
    "condition": "lost a gifted watch (on purpose or by accident)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If you ever lose a watch someone gifted you, your involvement in that relationship may drop from your side."
   },
   {
    "id": "WATCH-GF-3",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "gift": [
+      "worn",
+      "kept"
+     ]
+    }
+   },
    "period": null,
    "text": "The bond becomes stronger",
    "polarity": "good",
@@ -4170,13 +4281,32 @@
     "rank": 3
    },
    "condition": "lost a gifted watch AND the giver brings it up",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If you lose a gifted watch and the giver brings it up, the bond between the two of you can become even stronger."
   },
   {
    "id": "WATCH-GF-4",
    "set": "watch",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "gift": [
+        "worn",
+        "kept"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "original": [
+        "firstCopy"
+       ]
+      }
+     }
+    ]
+   },
    "period": null,
    "text": "Giver may want to use you (personal, work, money, emotional); the watch is a burden: get rid of it by selling",
    "polarity": "care",
@@ -4193,8 +4323,9 @@
     "rank": 3
    },
    "condition": "gift = first copy",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "A first-copy watch received as a gift may mean the giver wants to use you for their own needs, and the watch can feel like a burden, so it is better not to wear it."
   },
   {
    "id": "WATCH-GF-5",
@@ -4247,8 +4378,8 @@
     "rank": 3
    },
    "condition": "choosing a watch as a gift",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General advice on choosing a watch as a gift; no trigger."
   },
   {
    "id": "WATCH-DV-1",
@@ -4312,7 +4443,17 @@
   {
    "id": "WATCH-DV-3",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "dialArt": [
+      "face",
+      "scenery",
+      "animal",
+      "birds",
+      "plants"
+     ]
+    }
+   },
    "period": null,
    "text": "Artistic, creative",
    "polarity": "good",
@@ -4329,8 +4470,9 @@
     "rank": 3
    },
    "condition": "dial shows a picture",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "A picture on your dial points to an artistic, creative side."
   },
   {
    "id": "WATCH-DV-4",
@@ -4569,7 +4711,13 @@
   {
    "id": "WATCH-DV-12",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "markers": [
+      "diamonds"
+     ]
+    }
+   },
    "period": null,
    "text": "Wants to be beautiful, sophisticated, classy at all times",
    "polarity": "neutral",
@@ -4586,8 +4734,9 @@
     "rank": 3
    },
    "condition": "diamonds on the dial surface",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Diamonds on your dial show a wish to be beautiful, sophisticated and classy at all times."
   },
   {
    "id": "WATCH-DV-13",
@@ -4611,8 +4760,8 @@
     "rank": 3
    },
    "condition": "golden-ratio / Fibonacci spiral on the dial",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Golden-ratio (Fibonacci) spiral dial: no value for it (the 'spiral' value is a different pattern with an opposite reading)."
   },
   {
    "id": "WATCH-DV-14",
@@ -4634,8 +4783,8 @@
     "rank": 3
    },
    "condition": "golden-ratio dial AND (plastic OR first copy)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Golden-ratio dial on plastic or a first copy: no value for the golden-ratio dial."
   },
   {
    "id": "WATCH-DV-15",
@@ -4657,8 +4806,8 @@
     "rank": 3
    },
    "condition": "Roman numerals separated by lines (clock example)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Wall-clock example (Roman numerals separated by lines); no value for it."
   },
   {
    "id": "WATCH-DV-16",
@@ -4680,13 +4829,19 @@
     "rank": 3
    },
    "condition": "landmark picture (Eiffel Tower) on clock",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Landmark picture on a clock: no value for it."
   },
   {
    "id": "WATCH-OT-1",
    "set": "watch",
-   "when": null,
+   "when": {
+    "watch": {
+     "watchType": [
+      "pocketFlip"
+     ]
+    }
+   },
    "period": null,
    "text": "Keeps personal life very private but shows it off on the right occasion",
    "polarity": "neutral",
@@ -4703,8 +4858,9 @@
     "rank": 3
    },
    "condition": "pocket or neck watch with cover flap",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "You keep your personal life very private, but will not hesitate to show it off on the right occasion."
   },
   {
    "id": "WATCH-OT-2",
@@ -4732,8 +4888,9 @@
     "rank": 3
    },
    "condition": "flip-cover watch",
-   "status": "review",
-   "reason": "wording: Text is 'Same as OT-1', but WATCH-OT-1 is not approved (in review), so there is no say to reuse. If OT-1 is approved, suggested: \"You like to keep your personal life private, but will show it off on the right occasion.\""
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "A flip-cover watch shows that you like to keep your private life private."
   },
   {
    "id": "WATCH-OT-3",
@@ -4784,8 +4941,8 @@
     "rank": 3
    },
    "condition": "projector watch",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Projector watch: no value for it."
   },
   {
    "id": "WATCH-OT-5",
@@ -4983,8 +5140,8 @@
     "rank": 3
    },
    "condition": "use-and-throw watch",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Use-and-throw watch: no trait given and no value for it."
   },
   {
    "id": "WATCH-MW-1",
@@ -5066,8 +5223,8 @@
     "rank": 3
    },
    "condition": "water rating = water-resistant",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Water-resistant rating: no value for it."
   },
   {
    "id": "WATCH-WP-2",
@@ -5091,8 +5248,8 @@
     "rank": 3
    },
    "condition": "water rating = waterproof",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Waterproof rating: no value for it."
   },
   {
    "id": "WATCH-WP-3",
@@ -5115,8 +5272,8 @@
     "rank": 3
    },
    "condition": "someone has many money problems",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Advice to suggest a water-resistant watch for money problems: no value for water rating and no trigger."
   },
   {
    "id": "WATCH-WW-1",

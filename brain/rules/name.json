@@ -4,7 +4,12 @@
   {
    "id": "CHALDEAN-NAME-001",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameRoot": [
+     4,
+     8
+    ]
+   },
    "period": null,
    "text": "Not allowed",
    "polarity": "care",
@@ -21,13 +26,19 @@
     "rank": 4
    },
    "condition": "full name reduces to 4 or 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your full name adds up to 4 or 8, which a full name should not add up to, so a name correction is advised."
   },
   {
    "id": "CHALDEAN-NAME-002",
    "set": "name",
-   "when": null,
+   "when": {
+    "firstNameRoot": [
+     4,
+     8
+    ]
+   },
    "period": null,
    "text": "Not allowed",
    "polarity": "care",
@@ -44,13 +55,19 @@
     "rank": 4
    },
    "condition": "first name reduces to 4 or 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your first name adds up to 4 or 8, which a first name should not add up to, so a correction is advised."
   },
   {
    "id": "CHALDEAN-NAME-003",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameRoot": [
+     2,
+     7
+    ]
+   },
    "period": null,
    "text": "Not allowed (2/7 fine only for those fields)",
    "polarity": "care",
@@ -68,13 +85,18 @@
     "rank": 4
    },
    "condition": "name number in {2, 7} AND profession not in {hospitality, medical, occult, healing}",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your name adds up to 2 or 7, which is not advised unless you work in hospitality, medicine, healing or the occult."
   },
   {
    "id": "CHALDEAN-NAME-004",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameRoot": [
+     3
+    ]
+   },
    "period": null,
    "text": "Allowed",
    "polarity": "good",
@@ -92,8 +114,9 @@
     "rank": 4
    },
    "condition": "name number = 3 AND profession = education",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If you work in education, a name number of 3 is allowed for you."
   },
   {
    "id": "CHALDEAN-NAME-005",
@@ -154,7 +177,20 @@
   {
    "id": "CHALDEAN-NAME-007",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     18,
+     81,
+     28,
+     82,
+     29,
+     92,
+     36,
+     63,
+     49,
+     94
+    ]
+   },
    "period": null,
    "text": "Not allowed",
    "polarity": "care",
@@ -171,8 +207,9 @@
     "rank": 4
    },
    "condition": "name compound = two digits that are enemies (chart 3.2)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "The two digits of your name total are enemy numbers of each other, which is not advised, so a name correction is worth considering."
   },
   {
    "id": "CHALDEAN-NAME-008",
@@ -213,7 +250,216 @@
   {
    "id": "CHALDEAN-NAME-009",
    "set": "name",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "all": [
+       {
+        "psychic": [
+         1
+        ]
+       },
+       {
+        "nameRoot": [
+         8
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "psychic": [
+         2
+        ]
+       },
+       {
+        "nameRoot": [
+         4,
+         8,
+         9
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "psychic": [
+         3
+        ]
+       },
+       {
+        "nameRoot": [
+         6
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "psychic": [
+         4
+        ]
+       },
+       {
+        "nameRoot": [
+         2,
+         9
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "psychic": [
+         6
+        ]
+       },
+       {
+        "nameRoot": [
+         3
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "psychic": [
+         8
+        ]
+       },
+       {
+        "nameRoot": [
+         1,
+         2
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "psychic": [
+         9
+        ]
+       },
+       {
+        "nameRoot": [
+         2,
+         4
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "destiny": [
+         1
+        ]
+       },
+       {
+        "nameRoot": [
+         8
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "destiny": [
+         2
+        ]
+       },
+       {
+        "nameRoot": [
+         4,
+         8,
+         9
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "destiny": [
+         3
+        ]
+       },
+       {
+        "nameRoot": [
+         6
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "destiny": [
+         4
+        ]
+       },
+       {
+        "nameRoot": [
+         2,
+         9
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "destiny": [
+         6
+        ]
+       },
+       {
+        "nameRoot": [
+         3
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "destiny": [
+         8
+        ]
+       },
+       {
+        "nameRoot": [
+         1,
+         2
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "destiny": [
+         9
+        ]
+       },
+       {
+        "nameRoot": [
+         2,
+         4
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Must be compatible (friend) with both",
    "polarity": "good",
@@ -230,8 +476,9 @@
     "rank": 4
    },
    "condition": "name number vs psychic and destiny",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your name number is an enemy of your birth or destiny number; a name number should always be compatible with both, so a name correction is advised."
   },
   {
    "id": "CHALDEAN-NAME-010",
@@ -253,8 +500,8 @@
     "rank": 4
    },
    "condition": "name number",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Method note for the numerologist (a name should 'uplift' the Lo Shu grid); the book does not define it, so there is no trigger."
   },
   {
    "id": "CHALDEAN-NAME-011",
@@ -276,8 +523,8 @@
     "rank": 4
    },
    "condition": "new name",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Method note on choosing a new name (it must appeal to both numerologist and client); no trigger."
   },
   {
    "id": "CHALDEAN-NAME-012",
@@ -310,7 +557,18 @@
   {
    "id": "CHALDEAN-NAME-013",
    "set": "name",
-   "when": null,
+   "when": {
+    "pair": [
+     [
+      4,
+      8
+     ],
+     [
+      8,
+      4
+     ]
+    ]
+   },
    "period": null,
    "text": "Friendship of 4 and 8 is only temporary; permanent friendship is not good (explains the starred 4-8 cells in 3.2)",
    "polarity": "care",
@@ -327,8 +585,9 @@
     "rank": 4
    },
    "condition": "4 and 8 together",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your birth and destiny numbers are 4 and 8; their friendship is only temporary, and a lasting bond between them is not considered good."
   },
   {
    "id": "CHALDEAN-NAME-014",
@@ -350,8 +609,8 @@
     "rank": 4
    },
    "condition": "name includes Dr., Er., Prof.",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Method note (titles like Dr., Er., Prof. are not counted in a personal name); already applied in the name calculation."
   },
   {
    "id": "CHALDEAN-NAME-015",
@@ -626,7 +885,11 @@
   {
    "id": "NAMENUM-NAME-007",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     10
+    ]
+   },
    "period": null,
    "text": "Spoiled (not computable).",
    "polarity": "care",
@@ -643,13 +906,18 @@
     "rank": 5
    },
    "condition": "name compound = 10 AND spoken name not properly represented in written form",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If your name is not spelled the way it is spoken, the good effect of your name number 10 gets spoiled."
   },
   {
    "id": "NAMENUM-NAME-008",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     10
+    ]
+   },
    "period": null,
    "text": "Afflicted (needs a word list; not computable as stated).",
    "polarity": "care",
@@ -666,8 +934,9 @@
     "rank": 5
    },
    "condition": "name compound = 10 AND a syllable has negative connotation (e.g. Sad, Mar, war)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If your name contains a syllable with a negative meaning, like 'Sad', 'Mar' or 'war', your name number 10 is afflicted."
   },
   {
    "id": "NAMENUM-NAME-009",
@@ -1006,7 +1275,11 @@
   {
    "id": "NAMENUM-NAME-018",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     46
+    ]
+   },
    "period": null,
    "text": "Internal enmity ruins success.",
    "polarity": "care",
@@ -1023,8 +1296,9 @@
     "rank": 5
    },
    "condition": "name compound = 46 AND component words carry numbers inimical to other components",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 46, if the words of your name carry numbers that are enemies of each other, this inner clash can spoil your chances of success."
   },
   {
    "id": "NAMENUM-NAME-019",
@@ -1345,7 +1619,11 @@
   {
    "id": "NAMENUM-NAME-029",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     73
+    ]
+   },
    "period": null,
    "text": "Obstacles, difficulties, failure.",
    "polarity": "care",
@@ -1364,13 +1642,26 @@
     "rank": 5
    },
    "condition": "name compound = 73 AND (day, life, business, wife's or wedding-date number in 6, 8, 9)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 73, if your birth, destiny, business, spouse's or wedding-date number is 6, 8 or 9, it can bring obstacles, difficulties and even failure."
   },
   {
    "id": "NAMENUM-NAME-030",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     47,
+     29,
+     26,
+     17,
+     16,
+     31,
+     35,
+     38,
+     44
+    ]
+   },
    "period": null,
    "text": "Change it at once with an expert (bioenergetics/Lecher antenna/horary).",
    "polarity": "care",
@@ -1387,8 +1678,9 @@
     "rank": 5
    },
    "condition": "name number unlucky (any)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your name number is considered unlucky, and an unlucky name is best changed at once with an expert's help."
   },
   {
    "id": "NAMENUM-NAME-031",
@@ -1530,7 +1822,11 @@
   {
    "id": "NAMENUM-NAME-036",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     91
+    ]
+   },
    "period": null,
    "text": "Afflicted: obstacles, enemies; avoid appointments with them; correct wife's name; remove partner or change his name.",
    "polarity": "care",
@@ -1549,8 +1845,9 @@
     "rank": 5
    },
    "condition": "name compound = 91 AND (day or life, or person met / wife / partner number in 2, 7, 8)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 91, if your birth or destiny number, or your spouse's, partner's or an associate's number, is 2, 7 or 8, the name is afflicted, linked with obstacles and enemies."
   },
   {
    "id": "NAMENUM-NAME-037",
@@ -1622,7 +1919,11 @@
   {
    "id": "NAMENUM-NAME-039",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     100
+    ]
+   },
    "period": null,
    "text": "Evil; correct name, remove partner or change her/his name.",
    "polarity": "care",
@@ -1641,8 +1942,9 @@
     "rank": 5
    },
    "condition": "name compound = 100 AND (initial or component word = 8, or partner/wife day/life/name number = 8)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 100, if an initial or word in your name, or your spouse's or partner's number, is 8, the name is afflicted, and a name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-040",
@@ -1752,7 +2054,11 @@
   {
    "id": "NAMENUM-NAME-043",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     11
+    ]
+   },
    "period": null,
    "text": "They turn against you; get their names changed or remove partner.",
    "polarity": "care",
@@ -1770,8 +2076,9 @@
     "rank": 5
    },
    "condition": "name compound = 11 AND (wife or business partner day/life/name number in 9, 8)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 11, if your spouse or business partner has 8 or 9 as their number, they may turn against you, so a name correction for them is advised."
   },
   {
    "id": "NAMENUM-NAME-044",
@@ -1862,8 +2169,8 @@
     "rank": 5
    },
    "condition": "name compound = 20 (claim)",
-   "status": "review",
-   "reason": "wording: Medical claim: special power to detoxify poison or save snake-bite victims (marked SKIP); cannot be shown without implying a healing power."
+   "status": "dropped",
+   "reason": "not shown: Claims the name gives a special power to neutralise poison and save snake-bite victims; this is a healing claim and cannot be said within the limits."
   },
   {
    "id": "NAMENUM-NAME-047",
@@ -1895,7 +2202,11 @@
   {
    "id": "NAMENUM-NAME-048",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     20
+    ]
+   },
    "period": null,
    "text": "Same affliction text as 11: wrong deals; change spouse/partner name; correct name.",
    "polarity": "care",
@@ -1913,8 +2224,9 @@
     "rank": 5
    },
    "condition": "name compound = 20 AND (day or life in 9, 8) / wife or partner in 9, 8 / initial or component in 9, 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If your birth or destiny number, a word in your name, or your spouse's or partner's number is 8 or 9, name number 20 is afflicted and linked with wrong deals; correction is advised."
   },
   {
    "id": "NAMENUM-NAME-049",
@@ -1948,7 +2260,18 @@
   {
    "id": "NAMENUM-NAME-050",
    "set": "name",
-   "when": null,
+   "when": {
+    "pair": [
+     [
+      2,
+      9
+     ],
+     [
+      9,
+      2
+     ]
+    ]
+   },
    "period": null,
    "text": "Unlucky combination; numbers fight each other.",
    "polarity": "care",
@@ -1965,13 +2288,19 @@
     "rank": 5
    },
    "condition": "(day, life) = (2, 9) or (9, 2)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your birth and destiny numbers, 2 and 9, are considered an unlucky combination, as these numbers fight each other."
   },
   {
    "id": "NAMENUM-NAME-051",
    "set": "name",
-   "when": null,
+   "when": {
+    "psychic": [
+     2,
+     9
+    ]
+   },
    "period": null,
    "text": "Unhappy married life.",
    "polarity": "care",
@@ -1988,8 +2317,9 @@
     "rank": 5
    },
    "condition": "spouse number 2 and own number 9 (or vice versa)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If your spouse's birth number is 9 while yours is 2, or 2 while yours is 9, married life can be unhappy, so give it extra care."
   },
   {
    "id": "NAMENUM-NAME-052",
@@ -2023,7 +2353,11 @@
   {
    "id": "NAMENUM-NAME-053",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     38
+    ]
+   },
    "period": null,
    "text": "Effects worse.",
    "polarity": "care",
@@ -2040,8 +2374,9 @@
     "rank": 5
    },
    "condition": "name compound = 38 AND birth-date compatibility afflicted",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 38, if your birth numbers are not compatible with each other, its negative effects become worse."
   },
   {
    "id": "NAMENUM-NAME-054",
@@ -2097,8 +2432,9 @@
     "rank": 5
    },
    "condition": "name compound = 47 (health claim)",
-   "status": "review",
-   "reason": "wording: Health prediction of vision loss from diabetes or accidents and advice on eye surgery (marked SKIP); a medical claim tied to a name number."
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Name number 47 is linked with a risk to eyesight from diabetes or accidents, so take good care of your eyes and extra care with any eye surgery."
   },
   {
    "id": "NAMENUM-NAME-056",
@@ -2151,7 +2487,24 @@
   {
    "id": "NAMENUM-NAME-057",
    "set": "name",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "psychic": [
+       2,
+       7,
+       9
+      ]
+     },
+     {
+      "destiny": [
+       2,
+       7,
+       9
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "No love compatibility.",
    "polarity": "care",
@@ -2168,8 +2521,9 @@
     "rank": 5
    },
    "condition": "(any) numbers 7 and 9, or 2 and 9",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "There is no love compatibility between 7 and 9, or between 2 and 9, so this matters if your partner's number forms such a pair with yours."
   },
   {
    "id": "NAMENUM-NAME-058",
@@ -2203,7 +2557,25 @@
   {
    "id": "NAMENUM-NAME-059",
    "set": "name",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "psychic": [
+       5
+      ]
+     },
+     {
+      "destiny": [
+       5
+      ]
+     },
+     {
+      "nameRoot": [
+       5
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "5 is central, not inimical to any number 1-9.",
    "polarity": "neutral",
@@ -2220,8 +2592,9 @@
     "rank": 5
    },
    "condition": "number 5 (general)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Number 5, which is in your chart, has no enemies among the numbers 1 to 9."
   },
   {
    "id": "NAMENUM-NAME-060",
@@ -2348,7 +2721,11 @@
   {
    "id": "NAMENUM-NAME-063",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     65
+    ]
+   },
    "period": null,
    "text": "Incompatible; correct name; remove partner or change his name.",
    "polarity": "care",
@@ -2367,8 +2744,9 @@
     "rank": 5
    },
    "condition": "name compound = 65 AND (day, life, initial, component, partner number in 3, 8, 9)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 65, if your birth or destiny number, an initial or word in your name, or your partner's number is 3, 8 or 9, it does not match; a correction is advised."
   },
   {
    "id": "NAMENUM-NAME-064",
@@ -2403,7 +2781,31 @@
   {
    "id": "NAMENUM-NAME-065",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       74
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         2,
+         9
+        ]
+       },
+       {
+        "destiny": [
+         2,
+         9
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "9 inimical to 7; 2 inimical to 4; causes own downfall.",
    "polarity": "care",
@@ -2420,8 +2822,9 @@
     "rank": 5
    },
    "condition": "name compound = 74 AND (day or life = 9, or day or life = 2)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With your birth or destiny number 9 or 2, name number 74 meets clashing numbers (9 against 7, 2 against 4), which can lead to your own downfall."
   },
   {
    "id": "NAMENUM-NAME-066",
@@ -2443,8 +2846,8 @@
     "rank": 5
    },
    "condition": "(general)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General background (a name is more powerful than birth numbers); no trigger."
   },
   {
    "id": "NAMENUM-NAME-067",
@@ -2479,7 +2882,11 @@
   {
    "id": "NAMENUM-NAME-068",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     83
+    ]
+   },
    "period": null,
    "text": "Incompatible; correct name, remove or rename partner.",
    "polarity": "care",
@@ -2497,8 +2904,9 @@
     "rank": 5
    },
    "condition": "name compound = 83 AND (initial, component, partner name or birth number in 9, 8, 6)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 83, if an initial or word in your name, your birth number or your partner's number is 6, 8 or 9, it is not compatible, and a name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-069",
@@ -2757,8 +3165,8 @@
     "rank": 5
    },
    "condition": "(general Golden Rule)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General method rule (the 'Golden Rule' of checking every initial and word against the total and birth numbers); no trigger."
   },
   {
    "id": "NAMENUM-NAME-076",
@@ -2806,7 +3214,29 @@
   {
    "id": "NAMENUM-NAME-077",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "psychic": [
+       3
+      ]
+     },
+     {
+      "any": [
+       {
+        "destiny": [
+         6
+        ]
+       },
+       {
+        "nameRoot": [
+         6
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Weakened 3: settle as clerk/accountant; lazy, gambling, unjust acts, borrowing, unlawful activity. Correct name.",
    "polarity": "care",
@@ -2825,8 +3255,9 @@
     "rank": 5
    },
    "condition": "day number = 3 AND (life or name number conflicts with 3)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With birth number 3 weakened by a clashing destiny or name number 6, you may settle for clerical or accounts work and tend towards laziness, gambling or borrowing; a name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-078",
@@ -3190,7 +3621,11 @@
   {
    "id": "NAMENUM-NAME-087",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameRoot": [
+     3
+    ]
+   },
    "period": null,
    "text": "Avoid 6 in any form: day/life 6, partner or spouse with 6, business/product/brand name in 6, days ruled by 6, Friday, gems of 6 (emerald), dates 6/15/24.",
    "polarity": "care",
@@ -3211,13 +3646,18 @@
     "rank": 5
    },
    "condition": "name compound in 3-series (3, 12, 21, 30 ...)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With a name number in the 3 series, it is better to avoid 6 in any form: the dates 6th, 15th or 24th, Fridays, emeralds, a business name in 6 or a partner with 6."
   },
   {
    "id": "NAMENUM-NAME-088",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     30
+    ]
+   },
    "period": null,
    "text": "Evil; correct name; remove or rename partner.",
    "polarity": "care",
@@ -3235,8 +3675,9 @@
     "rank": 5
    },
    "condition": "name compound = 30 AND an initial or component reduces to 6, or partner = 6",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 30, an initial or word in your name adding up to 6, or a partner with 6, is considered harmful, and a name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-089",
@@ -3310,8 +3751,9 @@
     "rank": 5
    },
    "condition": "name compound = 39",
-   "status": "review",
-   "reason": "wording: Core of the rule is avoiding other people with 6 (a girl or partner with 6); instructions about other people are not allowed."
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 39, 6 is considered unlucky for your happiness, so avoid it in your dealings, including a partner or a business name in 6."
   },
   {
    "id": "NAMENUM-NAME-091",
@@ -3333,8 +3775,8 @@
     "rank": 5
    },
    "condition": "(method)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Method note (a name number can be spelled thousands of ways; how the numerologist picks one); no trigger."
   },
   {
    "id": "NAMENUM-NAME-092",
@@ -3535,7 +3977,20 @@
   {
    "id": "NAMENUM-NAME-097",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       66
+      ]
+     },
+     {
+      "partRoot": [
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "8 unlucky; no component in 8.",
    "polarity": "care",
@@ -3552,13 +4007,18 @@
     "rank": 5
    },
    "condition": "name compound = 66 AND a component reduces to 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 66, a word or initial in your name adding up to 8 is unlucky; no part of your name should be in 8."
   },
   {
    "id": "NAMENUM-NAME-098",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     66
+    ]
+   },
    "period": null,
    "text": "Defective name.",
    "polarity": "care",
@@ -3575,8 +4035,9 @@
     "rank": 5
    },
    "condition": "name compound = 66 AND name contains syllables ban, war, end, none, no, gone, run, trick, fleece",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 66, your name should not carry negative syllables like ban, war, end, none, no, gone, run, trick or fleece; if it does, it is considered defective."
   },
   {
    "id": "NAMENUM-NAME-099",
@@ -3628,7 +4089,22 @@
   {
    "id": "NAMENUM-NAME-100",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       75
+      ]
+     },
+     {
+      "partRoot": [
+       6,
+       8,
+       9
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Afflicted by Saturn / Venus / Mars: mental anguish, isolation, glory stolen, fleeced by relatives.",
    "polarity": "care",
@@ -3645,13 +4121,18 @@
     "rank": 5
    },
    "condition": "name compound = 75 AND any part of name reduces to 8, 6 or 9",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 75, a word or initial adding up to 8, 6 or 9 brings the affliction of Saturn, Venus or Mars, linked with mental anguish, isolation and losses through relatives."
   },
   {
    "id": "NAMENUM-NAME-101",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     75
+    ]
+   },
    "period": null,
    "text": "Afflicted; correct immediately. (U V W = 6, O Z = 7, P F = 8 in Chaldean.)",
    "polarity": "care",
@@ -3668,8 +4149,9 @@
     "rank": 5
    },
    "condition": "name compound = 75 AND (syllables war, end, gone OR an initial in U, V, W, O, Z, P, F)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 75, syllables like war, end or gone, or an initial of U, V, W, O, Z, P or F, afflict your name, so correct it promptly."
   },
   {
    "id": "NAMENUM-NAME-102",
@@ -3770,8 +4252,9 @@
     "rank": 5
    },
    "condition": "name compound = 84 (health claim)",
-   "status": "review",
-   "reason": "wording: Predicts chronic or incurable diseases early in life (marked SKIP); a medical claim tied to a name number."
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Name number 84 is linked with a risk of long-term illness early in life, so take good care of your health."
   },
   {
    "id": "NAMENUM-NAME-105",
@@ -3824,7 +4307,11 @@
   {
    "id": "NAMENUM-NAME-106",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     93
+    ]
+   },
    "period": null,
    "text": "Negative letters, syllables or components present; correct by adding \"an alphabet or two\".",
    "polarity": "care",
@@ -3841,8 +4328,9 @@
     "rank": 5
    },
    "condition": "name compound = 93 AND benefits absent",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If name number 93 is not giving you its benefits, negative letters, syllables or words may be present, and adding a letter or two can correct the name."
   },
   {
    "id": "NAMENUM-NAME-107",
@@ -3910,7 +4398,34 @@
   {
    "id": "NAMENUM-NAME-109",
    "set": "name",
-   "when": null,
+   "when": {
+    "pair": [
+     [
+      4,
+      2
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      4,
+      9
+     ],
+     [
+      9,
+      4
+     ],
+     [
+      4,
+      7
+     ],
+     [
+      7,
+      4
+     ]
+    ]
+   },
    "period": null,
    "text": "2&4 not good; 4&9 does not work; 4&7 \"still more dangerous\".",
    "polarity": "care",
@@ -3927,8 +4442,9 @@
     "rank": 5
    },
    "condition": "(day, life) contain 4 with 2, 9 or 7",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your birth and destiny numbers pair 4 with 2, 9 or 7: 2 and 4 are not good together, 4 and 9 do not work, and 4 and 7 is riskier still."
   },
   {
    "id": "NAMENUM-NAME-110",
@@ -4023,7 +4539,24 @@
   {
    "id": "NAMENUM-NAME-113",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       13
+      ]
+     },
+     {
+      "firstLetter": [
+       "P",
+       "F",
+       "D",
+       "M",
+       "T"
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Avoid (P F = 8; D M T = 4).",
    "polarity": "care",
@@ -4040,8 +4573,9 @@
     "rank": 5
    },
    "condition": "name compound = 13 AND name starts with P, F, D, M or T",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 13, a name beginning with P, F, D, M or T is best avoided."
   },
   {
    "id": "NAMENUM-NAME-114",
@@ -4151,7 +4685,29 @@
   {
    "id": "NAMENUM-NAME-117",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       31
+      ]
+     },
+     {
+      "any": [
+       {
+        "has": [
+         8
+        ]
+       },
+       {
+        "partRoot": [
+         8
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Afflicted: drifting between worldly and ascetic life, lose name and fame, low-status clerk in a religious body.",
    "polarity": "care",
@@ -4168,8 +4724,9 @@
     "rank": 5
    },
    "condition": "name compound = 31 AND (birth date contains 8 OR an initial or component reduces to 8)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 8 in your birth date or name, name number 31 is afflicted, linked with drifting between worldly and spiritual life and a loss of name and fame."
   },
   {
    "id": "NAMENUM-NAME-118",
@@ -4192,7 +4749,7 @@
    },
    "condition": "name compound = 31 AND (name has war, end, di, die, dra, mar, bore, bar OR starts with P, F, O, Z)",
    "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "reason": "wording outside the limits: death prediction"
   },
   {
    "id": "NAMENUM-NAME-119",
@@ -4227,7 +4784,11 @@
   {
    "id": "NAMENUM-NAME-120",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     40
+    ]
+   },
    "period": null,
    "text": "Life full of miseries. Needs a birth chart, not computable from name/DOB.",
    "polarity": "care",
@@ -4244,13 +4805,18 @@
     "rank": 5
    },
    "condition": "name compound = 40 AND Rahu afflicted in horoscope (Saturn's star/sub, Capricorn/Aquarius, Saturn aspect)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 40, if Rahu is afflicted in your horoscope, life can become full of hardship."
   },
   {
    "id": "NAMENUM-NAME-121",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     40
+    ]
+   },
    "period": null,
    "text": "Afflicted; correct with expert.",
    "polarity": "care",
@@ -4267,8 +4833,9 @@
     "rank": 5
    },
    "condition": "name compound = 40 AND (name has war, dra, di, die, strike, lash, down, bore, bar OR initial/component in 8, 6, 3, 7 OR inimical to day/life)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 40, negative syllables, an initial or word adding up to 8, 6, 3 or 7, or a clash with your birth numbers afflict it; correcting it with an expert is advised."
   },
   {
    "id": "NAMENUM-NAME-122",
@@ -4409,13 +4976,17 @@
     "rank": 5
    },
    "condition": "business name number = 5",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: would show to everyone (condition not computable)"
   },
   {
    "id": "NAMENUM-NAME-126",
    "set": "name",
-   "when": null,
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
    "period": null,
    "text": "Attracted like magnets; marriage may be bitter, partner dominates.",
    "polarity": "care",
@@ -4432,13 +5003,18 @@
     "rank": 5
    },
    "condition": "ruling number 5 AND partner's ruling number in {9, 18, 27} (i.e. 9)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If your partner's number is 9, 18 or 27, you are drawn to each other like magnets, but marriage can turn bitter, with your partner dominating."
   },
   {
    "id": "NAMENUM-NAME-127",
    "set": "name",
-   "when": null,
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
    "period": null,
    "text": "Children come late or are denied. SKIP or MAYBE (fear-based, health).",
    "polarity": "care",
@@ -4455,8 +5031,9 @@
     "rank": 5
    },
    "condition": "ruling number 5 (esp. both spouses 5)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If both you and your spouse are ruled by number 5, having children may be delayed, so be patient."
   },
   {
    "id": "NAMENUM-NAME-128",
@@ -4485,7 +5062,33 @@
   {
    "id": "NAMENUM-NAME-129",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       14
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         1,
+         4,
+         5
+        ]
+       },
+       {
+        "destiny": [
+         1,
+         4,
+         5
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Suits; with 1&4 or 4&1 in birth numbers \"roaring success\" in business; others \"may or may not\" (measure vibrations).",
    "polarity": "good",
@@ -4503,13 +5106,18 @@
     "rank": 5
    },
    "condition": "name compound = 14 AND (day in 1 or 4 OR life in 1 or 4 OR day/life = 5 OR day&life = 1&4 / 4&1)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Name number 14 suits you, as your birth or destiny number is 1, 4 or 5; with 1 and 4 together, it can bring roaring success in business."
   },
   {
    "id": "NAMENUM-NAME-130",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     14
+    ]
+   },
    "period": null,
    "text": "Sun drive + Rahu strategy + Mercury: fast-moving brands, always busy, clients spread your name; but trusting, sells on credit and gets cheated later; reveals secrets; loses focus, rarely No. 1.",
    "polarity": "mixed",
@@ -4527,8 +5135,9 @@
     "rank": 5
    },
    "condition": "name/business/brand compound = 14",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 14, you can stay surrounded by goods and clients who spread your name, but you may trust too easily, sell on credit and get cheated, reveal secrets and lose focus."
   },
   {
    "id": "NAMENUM-NAME-131",
@@ -4580,7 +5189,21 @@
   {
    "id": "NAMENUM-NAME-132",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       14
+      ]
+     },
+     {
+      "partRoot": [
+       7,
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Hurts business.",
    "polarity": "care",
@@ -4597,8 +5220,9 @@
     "rank": 5
    },
    "condition": "name compound = 14 AND a name component reduces to 7 or 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 14, a word or initial in your name adding up to 7 or 8 can hurt your business."
   },
   {
    "id": "NAMENUM-NAME-133",
@@ -4620,8 +5244,8 @@
     "rank": 5
    },
    "condition": "(business advice)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General business advice (use lucky colours and dates on letterheads and logos) with no colour or gem table and no trigger."
   },
   {
    "id": "NAMENUM-NAME-134",
@@ -4676,7 +5300,7 @@
    },
    "condition": "name compound = 23 AND (name parts have war, end, die, ash OR name parts reduce to 4, 8, 9)",
    "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "reason": "wording outside the limits: death prediction"
   },
   {
    "id": "NAMENUM-NAME-136",
@@ -4710,7 +5334,11 @@
   {
    "id": "NAMENUM-NAME-137",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     32
+    ]
+   },
    "period": null,
    "text": "Avoid; correct their names.",
    "polarity": "care",
@@ -4728,8 +5356,9 @@
     "rank": 5
    },
    "condition": "name compound = 32 AND (initial or component reduces to 6 or 9, OR wife/partner name in 6 or 9)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 32, an initial or word in your name, or your spouse's or partner's name, adding up to 6 or 9 is best avoided, and a name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-138",
@@ -4763,7 +5392,11 @@
   {
    "id": "NAMENUM-NAME-139",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     41
+    ]
+   },
    "period": null,
    "text": "Do not marry 8 or 1 (\"two swords in a sheath\"), nor 2; avoid 8 and 1 as business partners.",
    "polarity": "care",
@@ -4781,8 +5414,9 @@
     "rank": 5
    },
    "condition": "name compound = 41 AND spouse or partner has 8, 1 or 2",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 41, marrying someone with 8, 1 or 2 among their numbers is not advised, like two swords in one sheath, and 8 and 1 are best avoided as business partners."
   },
   {
    "id": "NAMENUM-NAME-140",
@@ -4817,7 +5451,37 @@
   {
    "id": "NAMENUM-NAME-141",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       50
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       },
+       {
+        "destiny": [
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "5&2 poet, writer, speaker; 5&3 senior government officer; 5&4 politician; 5&5 historic research and business; 5&6 businessman like a jeweller; 5&7 bitter marriage, divorce; 5&8 narrow escapes from accidents. (\"ruled by\" pair is unclear: probably name 5 with day or life number.)",
    "polarity": "mixed",
@@ -4836,13 +5500,38 @@
     "rank": 5
    },
    "condition": "name compound = 50 AND ruled by (5 and 2) / (5,3) / (5,4) / (5,5) / (5,6) / (5,7) / (5,8)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 50, your birth or destiny number guides your path: 2 suits poetry, writing and speaking; 3 senior government posts; 4 politics; 5 historical research and business; 6 trades like jewellery."
   },
   {
    "id": "NAMENUM-NAME-142",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       50
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         7,
+         8
+        ]
+       },
+       {
+        "destiny": [
+         7,
+         8
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Afflicted but 50 is strong enough to pull you out; any other name number \"leads to chaos with 7 and 8\".",
    "polarity": "mixed",
@@ -4859,13 +5548,36 @@
     "rank": 5
    },
    "condition": "name compound = 50 AND birth numbers contain 7 or 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your birth or destiny number 7 or 8 afflicts name number 50, but 50 is strong enough to fight these effects and pull you through unharmed."
   },
   {
    "id": "NAMENUM-NAME-143",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       59
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         5
+        ]
+       },
+       {
+        "destiny": [
+         5
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Lucky name number; for others measure vibrations. Clever, writer, humour, editor, film script/director, self-made, money-minded, big lasting fortune.",
    "polarity": "good",
@@ -4884,8 +5596,9 @@
     "rank": 5
    },
    "condition": "name compound = 59 AND (life = 5 OR day = 5; best with day&life 5&9 or 9&5)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Name number 59 is lucky for you, as 5 is your birth or destiny number; it is linked with cleverness, humour, writing, film work and self-made success that can bring lasting fortune."
   },
   {
    "id": "NAMENUM-NAME-144",
@@ -4907,13 +5620,28 @@
     "rank": 5
    },
    "condition": "(general)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General background (the name number matters more than the life path number); no trigger."
   },
   {
    "id": "NAMENUM-NAME-145",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       59
+      ]
+     },
+     {
+      "partRoot": [
+       2,
+       7,
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Claims neurological disorders, paralysis (SKIP medical part); avoid clients with 2, 7, 8.",
    "polarity": "care",
@@ -4931,13 +5659,18 @@
     "rank": 5
    },
    "condition": "name compound = 59 AND name, initial, parts or surname reduce to 2, 7, 8 (or syllables war, mesh, gone, die)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 59, a word or initial adding up to 2, 7 or 8 clashes with it, linked with nerve-related health troubles; take care, and be cautious with people of 2, 7 or 8."
   },
   {
    "id": "NAMENUM-NAME-146",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     68
+    ]
+   },
    "period": null,
    "text": "Venus pleasure vs Saturn failure, Mercury mediates: failures, business loss/bankruptcy, strikes, tax raids, thefts, accidents, over-romantic. Only a powerful name / scientific correction helps.",
    "polarity": "care",
@@ -4956,8 +5689,9 @@
     "rank": 5
    },
    "condition": "name or business compound = 68",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 68, the pleasures of Venus clash with Saturn, linked with failures, business losses, strikes, tax raids, thefts and accidents; only a strong, well-corrected name helps."
   },
   {
    "id": "NAMENUM-NAME-147",
@@ -5058,7 +5792,11 @@
   {
    "id": "NAMENUM-NAME-149",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     77
+    ]
+   },
    "period": null,
    "text": "Excellent compatibility, good wife and children, rising wealth.",
    "polarity": "good",
@@ -5076,8 +5814,9 @@
     "rank": 5
    },
    "condition": "name compound = 77 AND partner/spouse/friend number = 2",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 77, loving or marrying someone with number 2 brings excellent compatibility and a good family life, and can bring rising wealth."
   },
   {
    "id": "NAMENUM-NAME-150",
@@ -5112,7 +5851,22 @@
   {
    "id": "NAMENUM-NAME-151",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       86
+      ]
+     },
+     {
+      "partRoot": [
+       3,
+       7,
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Negativity; compensate by altering spelling, replacing an initial or changing surname.",
    "polarity": "care",
@@ -5129,8 +5883,9 @@
     "rank": 5
    },
    "condition": "name compound = 86 AND name parts reduce to 8, 7 or 3 (or syllables sad, war, no)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 86, a word or initial adding up to 8, 7 or 3 brings negativity; altering the spelling, replacing an initial or changing the surname can balance it."
   },
   {
    "id": "NAMENUM-NAME-152",
@@ -5211,7 +5966,11 @@
   {
    "id": "NAMENUM-NAME-154",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     95
+    ]
+   },
    "period": null,
    "text": "Compensate by altering the initial or the other component words. Worked example: Anil Kumar Singh, surname Singh = 17 (8, Saturn) is very negative and needs compensation.",
    "polarity": "care",
@@ -5228,8 +5987,9 @@
     "rank": 5
    },
    "condition": "name compound = 95 AND surname is defective but kept",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 95, if your surname is unfavourable but must be kept, balance it by altering your initial or the other words of your name."
   },
   {
    "id": "NAMENUM-NAME-155",
@@ -5301,7 +6061,33 @@
   {
    "id": "NAMENUM-NAME-157",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameRoot": [
+       6
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         4,
+         7,
+         8
+        ]
+       },
+       {
+        "destiny": [
+         4,
+         7,
+         8
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Affected to a great extent; rectify with an expert.",
    "polarity": "care",
@@ -5318,8 +6104,9 @@
     "rank": 5
    },
    "condition": "name number = 6 AND (day or life in 7, 8, 4) AND name not correct",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 6 and birth or destiny number 4, 7 or 8, an incorrect name can affect you to a great extent, so have it checked and corrected by an expert."
   },
   {
    "id": "NAMENUM-NAME-158",
@@ -5372,12 +6159,16 @@
    },
    "condition": "name compound = 15 AND (name components contain no, war, end, die, sad, mad OR parts reduce to 3, 7, 8)",
    "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "reason": "wording outside the limits: death prediction"
   },
   {
    "id": "NAMENUM-NAME-160",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     15
+    ]
+   },
    "period": null,
    "text": "Incompatible; correct their names; check staff/partner numbers before hiring.",
    "polarity": "care",
@@ -5395,8 +6186,9 @@
     "rank": 5
    },
    "condition": "name compound = 15 AND wife/kid/partner birth number = 3",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 15, a spouse, child or partner with birth number 3 is not compatible with you, as 3 and 6 clash, so a name correction for them is advised."
   },
   {
    "id": "NAMENUM-NAME-161",
@@ -5638,13 +6430,29 @@
     "rank": 5
    },
    "condition": "name compound = 24 AND (day or life = 3)",
-   "status": "review",
-   "reason": "wording: Tells the person to avoid clients/staff/partners/lovers with 3, correct the wife's name and change or rename a partner; instructions about other people are not allowed."
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 24 and 3 as your birth or destiny number, life and business can get badly messed up and progress may stall; be careful with clients, staff, partners or loved ones with 3."
   },
   {
    "id": "NAMENUM-NAME-167",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       24
+      ]
+     },
+     {
+      "partRoot": [
+       3,
+       7,
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Problems; success stunted.",
    "polarity": "care",
@@ -5661,8 +6469,9 @@
     "rank": 5
    },
    "condition": "name compound = 24 AND name parts reduce to 7, 8 or 3",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 24, a word or initial in your name adding up to 7, 8 or 3 can bring problems and stunt your success."
   },
   {
    "id": "NAMENUM-NAME-168",
@@ -5723,7 +6532,11 @@
   {
    "id": "NAMENUM-NAME-170",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     33
+    ]
+   },
    "period": null,
    "text": "Afflicted (Venus strengthened against Jupiter).",
    "polarity": "care",
@@ -5740,8 +6553,9 @@
     "rank": 5
    },
    "condition": "name compound = 33 AND too many component sixes (e.g. first 6, middle 15, initials 6, last 6) OR parts in 7 or 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 33, too many words adding up to 6, or any adding up to 7 or 8, afflict the name, as Venus gets strengthened against Jupiter."
   },
   {
    "id": "NAMENUM-NAME-171",
@@ -5802,7 +6616,41 @@
   {
    "id": "NAMENUM-NAME-173",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       42
+      ]
+     },
+     {
+      "any": [
+       {
+        "has": [
+         2
+        ]
+       },
+       {
+        "has": [
+         3
+        ]
+       },
+       {
+        "has": [
+         8
+        ]
+       },
+       {
+        "partRoot": [
+         2,
+         3,
+         8
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Afflicted.",
    "polarity": "care",
@@ -5819,8 +6667,9 @@
     "rank": 5
    },
    "condition": "name compound = 42 AND (birth date contains 2, 3 or 8, OR initial/parts/surname reduce to 2, 3, 8)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 42, a 2, 3 or 8 in your birth date or in a word or initial of your name afflicts it."
   },
   {
    "id": "NAMENUM-NAME-174",
@@ -5854,7 +6703,22 @@
   {
    "id": "NAMENUM-NAME-175",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       51
+      ]
+     },
+     {
+      "partRoot": [
+       3,
+       7,
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Failures, talks big achieves nothing, evil company.",
    "polarity": "care",
@@ -5871,8 +6735,9 @@
     "rank": 5
    },
    "condition": "name compound = 51 AND (name/business name parts in 7, 8 or 3)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 51, a word or initial adding up to 7, 8 or 3 clashes with it, linked with failures, talking big without results and bad company."
   },
   {
    "id": "NAMENUM-NAME-176",
@@ -5922,7 +6787,35 @@
   {
    "id": "NAMENUM-NAME-177",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       60
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         1,
+         4,
+         5,
+         9
+        ]
+       },
+       {
+        "destiny": [
+         1,
+         4,
+         5,
+         9
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Successful: enormous wealth and enjoyment; zero tones down Venus: calm, contented, intuitive, skilled speech.",
    "polarity": "good",
@@ -5939,8 +6832,9 @@
     "rank": 5
    },
    "condition": "name compound = 60 AND numbers in {1, 4, 5, 9}",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 60 and birth or destiny number 1, 4, 5 or 9, you can be successful and enjoy comforts, with a calm, contented, intuitive nature and skilled speech."
   },
   {
    "id": "NAMENUM-NAME-178",
@@ -5962,13 +6856,17 @@
     "rank": 5
    },
    "condition": "business name compound = 60",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: would show to everyone (condition not computable)"
   },
   {
    "id": "NAMENUM-NAME-179",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     60
+    ]
+   },
    "period": null,
    "text": "Partner harms; don't marry 3; if already married correct wife's name into 1, 4, 5 or 9 series. Don't marry a 6 either (\"like poles repel\").",
    "polarity": "care",
@@ -5987,13 +6885,40 @@
     "rank": 5
    },
    "condition": "name compound = 60 AND spouse or partner with day/life 3",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 60, a spouse or partner with 3 can harm you, and marrying a 3 or 6 is not advised; if married, a spouse's name correction to 1, 4, 5 or 9 helps."
   },
   {
    "id": "NAMENUM-NAME-180",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       60
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         3,
+         7,
+         8
+        ]
+       },
+       {
+        "destiny": [
+         3,
+         7,
+         8
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "3 opposes enjoyment, 7 unfit for marriage, 8 misfortune: ordinary existence.",
    "polarity": "care",
@@ -6011,8 +6936,9 @@
     "rank": 5
    },
    "condition": "name compound = 60 AND numbers in {3, 7, 8}",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 60 and birth or destiny number 3, 7 or 8, life may stay ordinary: 3 opposes enjoyment, 7 works against marriage, and 8 threatens misfortune."
   },
   {
    "id": "NAMENUM-NAME-181",
@@ -6062,13 +6988,17 @@
     "rank": 5
    },
    "condition": "(general enmity list)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General enmity list (6 against 3, 2 and 7 against 9, 8 against all); background already held in the friend/enemy table."
   },
   {
    "id": "NAMENUM-NAME-183",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     69
+    ]
+   },
    "period": null,
    "text": "Wife may sue, partner will cheat; correct their names.",
    "polarity": "care",
@@ -6088,8 +7018,9 @@
     "rank": 5
    },
    "condition": "name compound = 69 AND spouse/partner ruled by 3, 7, 2, 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 69, if your spouse or partner has 3, 7, 2 or 8, legal disputes or deception may follow, so a name correction for them is advised."
   },
   {
    "id": "NAMENUM-NAME-184",
@@ -6158,7 +7089,11 @@
   {
    "id": "NAMENUM-NAME-186",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     78
+    ]
+   },
    "period": null,
    "text": "Failure in love, marriage, income; misfortune, accidents; poverty.",
    "polarity": "care",
@@ -6175,13 +7110,18 @@
     "rank": 5
    },
    "condition": "name compound = 78 AND (birth numbers or name defective / afflicted)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 78, if your birth numbers or name are afflicted, you may struggle in love, marriage and earning enough, with misfortune and accidents, so take care."
   },
   {
    "id": "NAMENUM-NAME-187",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     78
+    ]
+   },
    "period": null,
    "text": "Bad luck.",
    "polarity": "care",
@@ -6198,8 +7138,9 @@
     "rank": 5
    },
    "condition": "name compound = 78 AND 9 anywhere in name (part/initial) OR syllables sad, end, di",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 78, a 9 anywhere in your name, or syllables like sad, end or di, is linked with bad luck."
   },
   {
    "id": "NAMENUM-NAME-188",
@@ -6233,7 +7174,37 @@
   {
    "id": "NAMENUM-NAME-189",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       87
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         8,
+         9
+        ]
+       },
+       {
+        "destiny": [
+         8,
+         9
+        ]
+       },
+       {
+        "partRoot": [
+         8,
+         9
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Worse; build compensation into name.",
    "polarity": "care",
@@ -6250,8 +7221,9 @@
     "rank": 5
    },
    "condition": "name compound = 87 AND (born with 8 or 9, OR initials/first/middle/surname reduce to 8 or 9)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 87, an 8 or 9 in your birth numbers, initials or name words is linked with extreme bad luck, so build balancing numbers into your name."
   },
   {
    "id": "NAMENUM-NAME-190",
@@ -6286,7 +7258,37 @@
   {
    "id": "NAMENUM-NAME-191",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       96
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         2,
+         3,
+         7,
+         8,
+         9
+        ]
+       },
+       {
+        "destiny": [
+         2,
+         3,
+         7,
+         8,
+         9
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Does not suit; risks. (3 vs 6; 2 vs 9; 7 vs 9; 8 unlucky to all.)",
    "polarity": "care",
@@ -6304,13 +7306,30 @@
     "rank": 5
    },
    "condition": "name compound = 96 AND birth date numbers include 2, 3, 9 (text also says 2 or 9), 7 or 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 96 and birth or destiny number 2, 3, 7, 8 or 9, this name does not suit you and carries risks."
   },
   {
    "id": "NAMENUM-NAME-192",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       96
+      ]
+     },
+     {
+      "partRoot": [
+       2,
+       3,
+       7,
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Spoils effect; exceptions where letters are \"positioned correctly\" as built-in compensation (not computable).",
    "polarity": "care",
@@ -6327,13 +7346,32 @@
     "rank": 5
    },
    "condition": "name compound = 96 AND name part in 2, 3, 7, 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 96, a word or initial adding up to 2, 3, 7 or 8 spoils its effect, unless the letters are placed to balance it."
   },
   {
    "id": "NAMENUM-NAME-193",
    "set": "name",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "psychic": [
+       7
+      ]
+     },
+     {
+      "destiny": [
+       7
+      ]
+     },
+     {
+      "nameRoot": [
+       7
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Not lucky despite mental calibre; success only after struggle; few friends; marital trouble, separation; women \"seldom graced by beauty\" (SKIP that line, demeaning); succeed in altruistic work.",
    "polarity": "care",
@@ -6352,13 +7390,18 @@
     "rank": 5
    },
    "condition": "day, life or name number = 7 (or wedding day number 7)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 7 in your birth, destiny or name number, luck may not come easily despite your mental calibre; success comes after struggle, friends are few, and marriage needs care, though altruistic work suits you."
   },
   {
    "id": "NAMENUM-NAME-194",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     16
+    ]
+   },
    "period": null,
    "text": "\"Fated number\": no material progress (adds to 7); love slips away; occult, religion, simple living; doesn't enjoy riches; Sun+Venus braked by Ketu; science, technology, law, religion, politics, fine arts, film, poetry, journalism if name perfect, else failure.",
    "polarity": "care",
@@ -6378,13 +7421,18 @@
     "rank": 5
    },
    "condition": "name or business compound = 16",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Name number 16 is a fated number, linked with slow material progress, love slipping away and a pull towards religion and simple living; with a perfect name, science, law, arts or journalism can suit you."
   },
   {
    "id": "NAMENUM-NAME-195",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     16
+    ]
+   },
    "period": null,
    "text": "Trouble; avoid those days and prices. (Only for defective names.)",
    "polarity": "care",
@@ -6403,8 +7451,9 @@
     "rank": 5
    },
    "condition": "name compound = 16 AND (wife/brother/partner day or life in 3, 8, 9; days, transactions, price tags in 3, 8, 9)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 16, people close to you with 3, 8 or 9, and days, deals or price tags in these numbers, can bring trouble, so avoid such numbers."
   },
   {
    "id": "NAMENUM-NAME-196",
@@ -6426,13 +7475,28 @@
     "rank": 5
    },
    "condition": "(general hierarchy)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General background (name over name number over birth numbers); no trigger of its own."
   },
   {
    "id": "NAMENUM-NAME-197",
    "set": "name",
-   "when": null,
+   "when": {
+    "pair": [
+     [
+      7,
+      8
+     ],
+     [
+      8,
+      7
+     ],
+     [
+      8,
+      8
+     ]
+    ]
+   },
    "period": null,
    "text": "\"Worst birth numbers\".",
    "polarity": "care",
@@ -6449,8 +7513,9 @@
     "rank": 5
    },
    "condition": "day & life = (7, 8) or (8, 8)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your birth and destiny numbers form one of the most difficult combinations (7 and 8, or 8 and 8), though a perfect name can still bring success."
   },
   {
    "id": "NAMENUM-NAME-198",
@@ -6485,7 +7550,11 @@
   {
    "id": "NAMENUM-NAME-199",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     25
+    ]
+   },
    "period": null,
    "text": "9 inimical to 2 and 7; avoid; correct name if unavoidable.",
    "polarity": "care",
@@ -6503,8 +7572,9 @@
     "rank": 5
    },
    "condition": "name compound = 25 AND 9 present (partner, life partner, name parts, business name)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 25, 9 clashes with your 2 and 7, so avoid 9 in a partner, your name parts or business name, or correct the name if it cannot be avoided."
   },
   {
    "id": "NAMENUM-NAME-200",
@@ -6569,7 +7639,11 @@
   {
    "id": "NAMENUM-NAME-202",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     43
+    ]
+   },
    "period": null,
    "text": "Afflicted (3 vs 6): torn between worldliness and spirituality.",
    "polarity": "care",
@@ -6586,8 +7660,9 @@
     "rank": 5
    },
    "condition": "name compound = 43 AND 6 in any form (name or birth number of wife, friend, partner)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 43, meeting 6 in any form, such as a spouse, friend or partner with 6, afflicts it and can leave you torn between worldly life and spirituality."
   },
   {
    "id": "NAMENUM-NAME-203",
@@ -6610,8 +7685,8 @@
     "rank": 5
    },
    "condition": "(general)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General background (bad names can exist in good name numbers; overall vibration matters); no trigger."
   },
   {
    "id": "NAMENUM-NAME-204",
@@ -6674,7 +7749,11 @@
   {
    "id": "NAMENUM-NAME-206",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     61
+    ]
+   },
    "period": null,
    "text": "Suffers; misery, loss of dignity, poverty.",
    "polarity": "care",
@@ -6691,13 +7770,18 @@
     "rank": 5
    },
    "condition": "name compound = 61 AND meets 3, 8 or 9 (or name has evil vibes)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 61, coming across 3, 8 or 9, in people or in your name, can bring misery, loss of dignity and money troubles."
   },
   {
    "id": "NAMENUM-NAME-207",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     70
+    ]
+   },
    "period": null,
    "text": "Ketu + zero: faith, intelligence, research scholar, scientist, teacher, doctor, pastor; not money-minded; not passionate, love fails, late or no marriage, separation/divorce, lives away; no roaring business profit.",
    "polarity": "care",
@@ -6716,13 +7800,28 @@
     "rank": 5
    },
    "condition": "name or business compound = 70",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 70, you lean towards faith, research, science, teaching or medicine rather than money; love may fail or marriage come late, and big business profits are unlikely."
   },
   {
    "id": "NAMENUM-NAME-208",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       70
+      ]
+     },
+     {
+      "partRoot": [
+       8,
+       9
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Loss; remove by \"bioenergetics\".",
    "polarity": "care",
@@ -6739,8 +7838,9 @@
     "rank": 5
    },
    "condition": "name compound = 70 AND name or business parts in 9 or 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 70, a word or initial in your name adding up to 9 or 8 spoils it and can bring losses."
   },
   {
    "id": "NAMENUM-NAME-209",
@@ -6958,7 +8058,25 @@
   {
    "id": "NAMENUM-NAME-216",
    "set": "name",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "psychic": [
+       8
+      ]
+     },
+     {
+      "destiny": [
+       8
+      ]
+     },
+     {
+      "nameRoot": [
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "REMEDY: change name into a suitable 5 vibration (14, 23, 32, 41, 50, 59, 68 ...); 5 works \"like a talisman\" against dangers; expert must distinguish 14, 23, 32, 41.",
    "polarity": "good",
@@ -6976,13 +8094,44 @@
     "rank": 5
    },
    "condition": "(name, day or life = 8) AND afflicted by Saturn",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If 8 in your numbers brings Saturn's troubles, changing your name to a suitable 5 vibration, like 14, 23, 32, 41 or 50, can protect you; an expert should choose between them."
   },
   {
    "id": "NAMENUM-NAME-217",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "any": [
+       {
+        "psychic": [
+         8
+        ]
+       },
+       {
+        "destiny": [
+         8
+        ]
+       },
+       {
+        "nameRoot": [
+         8
+        ]
+       }
+      ]
+     },
+     {
+      "age": [
+       17,
+       26,
+       35,
+       44
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Unexpected bad events at those ages. Computable (age = 8 + 9k). Fear-based: MAYBE.",
    "polarity": "care",
@@ -6999,8 +8148,9 @@
     "rank": 5
    },
    "condition": "(name, day or life = 8) AND age in {17, 26, 35, 44}",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 8 among your numbers, your present age (17, 26, 35 or 44) is linked with unexpected bad events, so take extra care this year."
   },
   {
    "id": "NAMENUM-NAME-218",
@@ -7085,8 +8235,8 @@
     "rank": 5
    },
    "condition": "(business rule)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General business note (a defective personal name makes a business fail even with a good business name); no trigger."
   },
   {
    "id": "NAMENUM-NAME-221",
@@ -7137,8 +8287,8 @@
     "rank": 5
    },
    "condition": "(general)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: General background (the name is superior to the name number); no trigger."
   },
   {
    "id": "NAMENUM-NAME-223",
@@ -7172,7 +8322,11 @@
   {
    "id": "NAMENUM-NAME-224",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     44
+    ]
+   },
    "period": null,
    "text": "Good love compatibility.",
    "polarity": "good",
@@ -7189,8 +8343,9 @@
     "rank": 5
    },
    "condition": "name compound = 44 AND partner day or life = 1",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 44, you have good love compatibility with people born under 1."
   },
   {
    "id": "NAMENUM-NAME-225",
@@ -7419,7 +8574,44 @@
   {
    "id": "NAMENUM-NAME-232",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "any": [
+       {
+        "psychic": [
+         9
+        ]
+       },
+       {
+        "destiny": [
+         9
+        ]
+       }
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         2,
+         4,
+         7,
+         8
+        ]
+       },
+       {
+        "nameRoot": [
+         2,
+         4,
+         7,
+         8
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Afflicted: rude, arrogant, lustful, drugs and alcohol, cruelty.",
    "polarity": "care",
@@ -7436,8 +8628,9 @@
     "rank": 5
    },
    "condition": "number 9 AND (day number or name number in 2, 4, 7, 8)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your 9 is afflicted by 2, 4, 7 or 8 in your birth or name number, linked with rudeness, arrogance, lust, drink or drugs and cruelty, so guard against these."
   },
   {
    "id": "NAMENUM-NAME-233",
@@ -7491,7 +8684,32 @@
   {
    "id": "NAMENUM-NAME-234",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "any": [
+       {
+        "psychic": [
+         9
+        ]
+       },
+       {
+        "destiny": [
+         9
+        ]
+       }
+      ]
+     },
+     {
+      "nameRoot": [
+       2,
+       4,
+       7,
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "\"You should not have your name in No. 2, 4, 7 or 8.\" Correct to harmonise with day and life.",
    "polarity": "care",
@@ -7508,8 +8726,9 @@
     "rank": 5
    },
    "condition": "name number (reduced) in {2, 4, 7, 8} (for a 9-ruled person)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As a person ruled by 9, your name number should not be 2, 4, 7 or 8, as yours is, so a correction in harmony with your birth numbers is advised."
   },
   {
    "id": "NAMENUM-NAME-235",
@@ -7628,7 +8847,29 @@
   {
    "id": "NAMENUM-NAME-239",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       36
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         9
+        ]
+       },
+       {
+        "destiny": [
+         9
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Successful business.",
    "polarity": "good",
@@ -7645,8 +8886,9 @@
     "rank": 5
    },
    "condition": "name or business compound = 36 AND (day in {9, 18, 27} i.e. day 9, OR life 9)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 36 and birth or destiny number 9, you can have a successful business."
   },
   {
    "id": "NAMENUM-NAME-240",
@@ -7680,7 +8922,11 @@
   {
    "id": "NAMENUM-NAME-241",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     45
+    ]
+   },
    "period": null,
    "text": "Avoid (2 and 7 inimical to 9).",
    "polarity": "care",
@@ -7697,13 +8943,28 @@
     "rank": 5
    },
    "condition": "name compound = 45 AND (business name number in 2 or 7, OR partner name 7 or birth numbers in 2/7 series)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 45, avoid a business name in 2 or 7, and partners whose name number is 7 or whose birth numbers are in the 2 or 7 series, as these oppose 9."
   },
   {
    "id": "NAMENUM-NAME-242",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       45
+      ]
+     },
+     {
+      "dayIs": [
+       9,
+       27
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Can have 45.",
    "polarity": "good",
@@ -7720,13 +8981,28 @@
     "rank": 5
    },
    "condition": "name compound = 45 AND day of month in {9, 27}",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As you were born on the 9th or 27th, name number 45 is allowed for you."
   },
   {
    "id": "NAMENUM-NAME-243",
    "set": "name",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "nameCompound": [
+       44,
+       45
+      ]
+     },
+     {
+      "dayIs": [
+       18
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Evil for the 18-born (book adds disease claims: SKIP medical part). Note: depends on actual date 18, not reduced day number 9.",
    "polarity": "care",
@@ -7743,8 +9019,9 @@
     "rank": 5
    },
    "condition": "name compound in {44, 45} AND day of month = 18",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As you were born on the 18th, name number 44 or 45 is considered unfavourable for you."
   },
   {
    "id": "NAMENUM-NAME-244",
@@ -7808,7 +9085,11 @@
   {
    "id": "NAMENUM-NAME-246",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     63
+    ]
+   },
    "period": null,
    "text": "Avoid as spouse, partner, dealings.",
    "polarity": "care",
@@ -7827,13 +9108,18 @@
     "rank": 5
    },
    "condition": "name compound = 63 AND other person has day 2/7 (born 2, 11, 20, 29, 7, 16, 25), life 2/7 or name number in 2/7 series",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 63, avoid people born on the 2nd, 11th, 20th, 29th, 7th, 16th or 25th, or with 2 or 7 as life or name number, as spouse, partner or in dealings."
   },
   {
    "id": "NAMENUM-NAME-247",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     72
+    ]
+   },
    "period": null,
    "text": "Ketu and Moon best friends; Mars helpless: highly successful financially despite wrongdoing; knowledge, intuition, creative imagination, never wrong in money; \"favourite of successful businessmen\"; charity, ashrams; empire lasting generations (with right name).",
    "polarity": "good",
@@ -7852,13 +9138,18 @@
     "rank": 5
    },
    "condition": "name or business compound = 72",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Name number 72 is a favourite of successful businesspeople, linked with knowledge, intuition, creative imagination, sound money sense and charity, and with the right name, success that can last generations."
   },
   {
    "id": "NAMENUM-NAME-248",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     72
+    ]
+   },
    "period": null,
    "text": "Devoted to and helped by 2/7 people.",
    "polarity": "good",
@@ -7875,8 +9166,9 @@
     "rank": 5
    },
    "condition": "name compound = 72 AND own birth numbers 2 or 7",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 72, you tend to be devoted to people born under 2 or 7, and they help you in turn."
   },
   {
    "id": "NAMENUM-NAME-249",
@@ -7911,7 +9203,12 @@
   {
    "id": "NAMENUM-NAME-250",
    "set": "name",
-   "when": null,
+   "when": {
+    "psychic": [
+     1,
+     8
+    ]
+   },
    "period": null,
    "text": "Successful, happy marriage (Saturn-Sun affinity).",
    "polarity": "good",
@@ -7928,8 +9225,9 @@
     "rank": 5
    },
    "condition": "day = 1 AND spouse number = 8, or day = 8 AND spouse number = 1; or groom name number 1 AND bride name number 8",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If your birth number is 1 and your spouse's is 8, or yours is 8 and theirs is 1, you can both have a successful, happy married life."
   },
   {
    "id": "NAMENUM-NAME-251",
@@ -7991,7 +9289,11 @@
   {
    "id": "NAMENUM-NAME-253",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     99
+    ]
+   },
    "period": null,
    "text": "Not suitable as spouse or partner; disloyal.",
    "polarity": "care",
@@ -8010,8 +9312,9 @@
     "rank": 5
    },
    "condition": "name compound = 99 AND other person day 2/7 (2, 11, 20, 29, 7, 16, 25), life 2/7, name number 2/7",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 99, people born on the 2nd, 11th, 20th, 29th, 7th, 16th or 25th, or with 2 or 7 as life or name number, may not suit you as spouse or partner."
   },
   {
    "id": "NAMENUM-NAME-254",
@@ -8243,7 +9546,113 @@
   {
    "id": "NAMENUM-NAME-260",
    "set": "name",
-   "when": null,
+   "when": {
+    "any": [
+     {
+      "all": [
+       {
+        "nameRoot": [
+         1
+        ]
+       },
+       {
+        "partRoot": [
+         8
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "nameRoot": [
+         2
+        ]
+       },
+       {
+        "partRoot": [
+         4,
+         8,
+         9
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "nameRoot": [
+         3
+        ]
+       },
+       {
+        "partRoot": [
+         6
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "nameRoot": [
+         4
+        ]
+       },
+       {
+        "partRoot": [
+         2,
+         9
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "nameRoot": [
+         6
+        ]
+       },
+       {
+        "partRoot": [
+         3
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "nameRoot": [
+         8
+        ]
+       },
+       {
+        "partRoot": [
+         1,
+         2
+        ]
+       }
+      ]
+     },
+     {
+      "all": [
+       {
+        "nameRoot": [
+         9
+        ]
+       },
+       {
+        "partRoot": [
+         2,
+         4
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "\"Evil\"; correct the name (the generalised rule behind the five letter rules above).",
    "polarity": "care",
@@ -8264,8 +9673,9 @@
     "rank": 5
    },
    "condition": "any initial / word reduces to a number inimical to the compound",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "An initial or word in your name adds up to a number that is an enemy of your name total, which is considered harmful, so a name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-261",
@@ -8302,8 +9712,8 @@
     "rank": 5
    },
    "condition": "name contains a negative syllable (list below)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: would show to everyone (condition not computable)"
   },
   {
    "id": "NAMENUM-NAME-262",
@@ -8325,13 +9735,17 @@
     "rank": 5
    },
    "condition": "letters form no meaningful word (e.g. \"PQRLSTOX\" = 33)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Worked example only (a jumble like 'PQRLSTOX' is not a name); already covered by the approved name-33 rule."
   },
   {
    "id": "NAMENUM-NAME-263",
    "set": "name",
-   "when": null,
+   "when": {
+    "nameCompound": [
+     10
+    ]
+   },
    "period": null,
    "text": "Spoils (10). Not computable.",
    "polarity": "care",
@@ -8348,8 +9762,9 @@
     "rank": 5
    },
    "condition": "spoken name differs from written form",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With name number 10, if your name is spoken differently from how it is written, its effect gets spoiled."
   },
   {
    "id": "NAMENUM-NAME-264",
@@ -8369,8 +9784,8 @@
     "rank": 5
    },
    "condition": "Letter A",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Background quote about the letter A with no rule attached."
   },
   {
    "id": "NUMNAME-NN-C10",
@@ -8543,7 +9958,11 @@
   {
    "id": "NUMNAME-NN-C15W",
    "set": "name",
-   "when": null,
+   "when": {
+    "partRoot": [
+     6
+    ]
+   },
    "period": null,
    "text": "That word is auspicious",
    "polarity": "good",
@@ -8560,8 +9979,9 @@
     "rank": 6
    },
    "condition": "**any one word** of the name sums to 15",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If one word of your name adds up to exactly 15, that word is considered auspicious."
   },
   {
    "id": "NUMNAME-NN-C16",
@@ -10092,8 +11512,8 @@
     "rank": 6
    },
    "condition": "compound < 10 or > 70",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "dropped",
+   "reason": "not shown: Method note (compounds outside 10-70 are covered in another chapter); no trigger."
   }
  ]
 }

@@ -109,7 +109,9 @@ export function LoShu({ b, owner, call }) {
   const l = b.loshu;
   const planesOff = l.planes.filter(p => p.state === 'missing');
   const planesFull = l.planes.filter(p => p.state === 'full');
-  const items = [...l.items.planes, ...l.items.missing, ...l.items.repeats, ...l.items.present];
+  const items = [...l.items.planes, ...l.items.missing];
+  const byDigit = l.byDigit ?? [];
+  const TIMES = { 1: 'once', 2: 'twice', 3: 'three times', 4: 'four times' };
   return (
     <Chapter id="loshu" icon={Grid2x2} title="Your Lo Shu grid"
       intro="The digits of your date of birth on the Lo Shu grid. Its lines (planes) show what comes easily and what needs work.">
@@ -118,7 +120,7 @@ export function LoShu({ b, owner, call }) {
           <VedicGrid size="lg" counts={l.counts} layout={l.layout} label="Your Lo Shu grid" />
           <div className="min-w-0 flex-1 basis-48">
             {l.missing.length > 0 && <p className="t-body"><strong className="font-semibold">Missing numbers:</strong> {l.missing.join(', ')}</p>}
-            {l.repeats.length > 0 && <p className="t-body mt-1"><strong className="font-semibold">Repeated:</strong> {l.repeats.map(r => `${r.digit} (${r.times} times)`).join(', ')}</p>}
+            {l.repeats.length > 0 && <p className="t-body mt-1"><strong className="font-semibold">Repeated:</strong> {l.repeats.map(r => `${r.digit} (${TIMES[r.times] ?? `${r.times} times`})`).join(', ')}</p>}
             {planesFull.length > 0 && <p className="t-body mt-1"><strong className="font-semibold">Complete planes:</strong> {planesFull.map(p => `${p.name} (${p.digits.join('-')})`).join(', ')}</p>}
             {planesOff.length > 0 && <p className="t-body mt-1"><strong className="font-semibold">Empty planes:</strong> {planesOff.map(p => `${p.name} (${p.digits.join('-')})`).join(', ')}</p>}
           </div>
@@ -126,6 +128,30 @@ export function LoShu({ b, owner, call }) {
         {many(items, owner, 'points')}
         {l.missing.length > 0 && <CallRow href={call} text="Book a call: remedies for your missing numbers" />}
       </div>
+      {byDigit.length > 0 && (
+        <div className="group-card rows">
+          <div className="row"><h3 className="t-headline">Number by number</h3><p className="t-note mt-0.5">Each number in your birth date, and how many times it appears.</p></div>
+          {byDigit.map(g => (
+            <div key={g.digit} className="row flex gap-4">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-maroon-soft font-display text-[1.25rem] font-bold text-maroon">{g.digit}</span>
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-[14px] font-medium text-muted-foreground">Appears {TIMES[g.times] ?? `${g.times} times`}</p>
+                <ul className="mt-1.5 grid gap-2">
+                  {g.items.map(x => (
+                    <li key={x.id} className="flex gap-2.5">
+                      <span className={`dot ${DOT[x.polarity] || 'dot-neutral'}`} aria-hidden="true" />
+                      <div className="min-w-0 flex-1">
+                        <p className="t-body">{x.short ?? x.say}</p>
+                        {owner && x.source && <Source s={{ file: x.source.book, ref: `p. ${x.source.pages.join(', ')}`, quote: x.source.quote }} id={x.id} owner />}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </Chapter>
   );
 }

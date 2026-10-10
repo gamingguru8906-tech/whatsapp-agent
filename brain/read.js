@@ -36,10 +36,20 @@ function periodOf(p, today) {
 }
 
 // The number relation, in words a visitor understands.
+const DIGIT_OF = new Map(APPROVED.filter(r => ['repeats', 'present'].includes(r.set))
+  .map(r => [r.id, r.when?.repeat?.digit ?? (r.when?.has?.length === 1 ? r.when.has[0] : null)]));
+const digitOf = id => DIGIT_OF.get(id) ?? null;
+// "With 1 appearing twice in your birth date, you tend to ..." -> "You tend to ..." (the digit is the heading).
+function shorten(say) {
+  const t = say.replace(/^With \d+ (appearing [a-z ]+ |[a-z]+ times )?in your birth date, /, '');
+  if (t === say) return say;
+  return /^this /.test(t) ? `This number ${t.slice(5).replace(/^number /, '')}` : t.charAt(0).toUpperCase() + t.slice(1);
+}
+
 const REL = { friend: 'friendly', neutral: 'neutral', enemy: 'unfriendly', mixed: 'mixed' };
 
 export function brainReading({ dob, name, year, today = new Date(), watch = null, owner = false }) {
-  const f = personFacts({ dob, name, year });
+  const f = personFacts({ dob, name, year, today });
   if (watch) f.watch = watch;
   const pick = set => matchRules(bySet(set), f).filter(r => !r.period).map(r => item(r, owner));
   const cnt = f.dobCounts;
@@ -69,6 +79,12 @@ export function brainReading({ dob, name, year, today = new Date(), watch = null
       planes: pick('planes'), missing: pick('missing'), repeats: pick('repeats'), present: pick('present')
     }
   };
+  // The same repeat/present lines, grouped digit by digit so each number in the grid reads as one block.
+  loshu.byDigit = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(d => cnt[d] > 0).map(d => ({
+    digit: d, times: cnt[d],
+    items: [...loshu.items.present, ...loshu.items.repeats].filter(i => digitOf(i.id) === d)
+      .map(i => ({ ...i, short: shorten(i.say) }))
+  })).filter(g => g.items.length);
 
   // Name
   let nameReading = null;

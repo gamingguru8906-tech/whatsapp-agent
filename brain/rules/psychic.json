@@ -724,8 +724,9 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "review",
-   "reason": "wording: About pre-marital physical relationships with partners of certain numbers; a remark on sexuality (rule 6)."
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your life partner is likely to be loyal, and you are respectful towards partners. You may get physically close before marriage with a partner whose birth number is 1, 3, 6 or 9."
   },
   {
    "id": "CHALDEAN-PSYCHIC-026",
@@ -758,8 +759,35 @@
   {
    "id": "CHALDEAN-PSYCHIC-027",
    "set": "psychic",
-   "when": null,
-   "period": null,
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       2,
+       15
+      ],
+      [
+       3,
+       15
+      ]
+     ],
+     [
+      [
+       11,
+       25
+      ],
+      [
+       12,
+       25
+      ]
+     ]
+    ]
+   },
    "text": "Favourable: start ventures, investments; good for travel",
    "polarity": "good",
    "areas": [
@@ -777,8 +805,9 @@
     "rank": 4
    },
    "condition": "psychic = 3 AND date in mid-Feb - mid-Mar OR 25 Nov - 25 Dec",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "This is a favourable time for you to start new ventures and investments, and a good time for travel."
   },
   {
    "id": "CHALDEAN-PSYCHIC-028",
@@ -1013,7 +1042,11 @@
   {
    "id": "CHALDEAN-PSYCHIC-036",
    "set": "psychic",
-   "when": null,
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
    "period": null,
    "text": "Good friends/partners: 1, 6, 7; also 2 and 5 compatible",
    "polarity": "good",
@@ -1031,13 +1064,18 @@
     "rank": 4
    },
    "condition": "psychic = 4 AND partner psychic in {1,6,7} (also 2,5)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Choose friends and partners whose birth number is 1, 6 or 7; people with 2 and 5 are also compatible with you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-037",
    "set": "psychic",
-   "when": null,
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
    "period": null,
    "text": "Avoid romantic or business partnership with 4 and 8",
    "polarity": "care",
@@ -1055,8 +1093,9 @@
     "rank": 4
    },
    "condition": "psychic = 4 AND partner psychic in {4,8}",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Avoid romantic or business partnerships with people whose birth number is 4 or 8."
   },
   {
    "id": "CHALDEAN-PSYCHIC-038",
@@ -1370,8 +1409,18 @@
   {
    "id": "CHALDEAN-PSYCHIC-048",
    "set": "psychic",
-   "when": null,
-   "period": null,
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": {
+    "month": [
+     1,
+     4,
+     12
+    ]
+   },
    "text": "Unfavourable: avoid new starts, decisions, investments; isolation, doubting people, self-doubt",
    "polarity": "care",
    "areas": [
@@ -1387,8 +1436,9 @@
     "rank": 4
    },
    "condition": "psychic = 5 AND (month in {Jan, Apr, Dec} OR Mercury retrograde)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "This is an unfavourable time to start new and important projects, take big decisions or invest. You may feel isolated and doubt others as well as yourself."
   },
   {
    "id": "CHALDEAN-PSYCHIC-049",
@@ -1662,8 +1712,18 @@
   {
    "id": "CHALDEAN-PSYCHIC-058",
    "set": "psychic",
-   "when": null,
-   "period": null,
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": {
+    "month": [
+     4,
+     10,
+     11
+    ]
+   },
    "text": "Unfavourable: avoid new starts/investments; health, bad news, hindrances, indecision, jealousy; decide with head not heart",
    "polarity": "care",
    "areas": [
@@ -1680,8 +1740,9 @@
     "rank": 4
    },
    "condition": "psychic = 6 AND (month in {Apr, Oct, Nov} OR Venus retrograde)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "This is an unfavourable time to start new work or investments, and may bring health troubles, bad news, hindrances, indecision and jealousy. Decide with your head, not your heart."
   },
   {
    "id": "CHALDEAN-PSYCHIC-059",
@@ -1849,8 +1910,17 @@
   {
    "id": "CHALDEAN-PSYCHIC-065",
    "set": "psychic",
-   "when": null,
-   "period": null,
+   "when": {
+    "psychic": [
+     7
+    ]
+   },
+   "period": {
+    "month": [
+     6,
+     7
+    ]
+   },
    "text": "Favourable: new ventures, opportunities, skills, lifestyle",
    "polarity": "good",
    "areas": [
@@ -1867,8 +1937,9 @@
     "rank": 4
    },
    "condition": "psychic = 7 AND month in {Jun, Jul} (esp. 20 Jun - 20 Jul)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "This is a favourable time for you to begin new ventures, take up opportunities, learn new skills and change your lifestyle, especially between 20 June and 20 July."
   },
   {
    "id": "CHALDEAN-PSYCHIC-066",
@@ -1981,8 +2052,9 @@
     "rank": 4
    },
    "condition": "psychic = 8",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "You are resilient: big success can come to you later in life if you keep going, through hard work rather than luck."
   },
   {
    "id": "CHALDEAN-PSYCHIC-070",
@@ -2139,8 +2211,45 @@
   {
    "id": "CHALDEAN-PSYCHIC-075",
    "set": "psychic",
-   "when": null,
-   "period": null,
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       1,
+       15
+      ],
+      [
+       2,
+       15
+      ]
+     ],
+     [
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       30
+      ]
+     ],
+     [
+      [
+       12,
+       1
+      ],
+      [
+       12,
+       31
+      ]
+     ]
+    ]
+   },
    "text": "Unfavourable: avoid decisions; defamation, humiliation, losses, stomach/lower body issues; avoid arguments, love/business decisions, signing legal documents, moving house; avoid greed",
    "polarity": "care",
    "areas": [
@@ -2157,8 +2266,9 @@
     "rank": 4
    },
    "condition": "psychic = 8 AND (date in 15 Jan - 15 Feb OR month in {Mar, Apr, Dec})",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "This is an unfavourable time, linked with losses and loss of face. Avoid arguments, greed, love or business decisions, signing legal papers and moving house, and take care of your stomach and lower body."
   },
   {
    "id": "CHALDEAN-PSYCHIC-076",
@@ -2271,7 +2381,11 @@
   {
    "id": "CHALDEAN-PSYCHIC-080",
    "set": "psychic",
-   "when": null,
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
    "period": null,
    "text": "Straightforward, dislikes diplomacy, so does not get along well with psychic 5",
    "polarity": "care",
@@ -2288,8 +2402,9 @@
     "rank": 4
    },
    "condition": "psychic = 9 AND other psychic = 5",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If someone close to you has birth number 5, you may not get along very well, as you are straightforward and dislike diplomacy."
   },
   {
    "id": "CHALDEAN-PSYCHIC-081",
@@ -2455,8 +2570,55 @@
   {
    "id": "CHALDEAN-PSYCHIC-086",
    "set": "psychic",
-   "when": null,
-   "period": null,
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       31
+      ]
+     ],
+     [
+      [
+       5,
+       1
+      ],
+      [
+       6,
+       30
+      ]
+     ],
+     [
+      [
+       10,
+       1
+      ],
+      [
+       10,
+       20
+      ]
+     ],
+     [
+      [
+       11,
+       25
+      ],
+      [
+       12,
+       25
+      ]
+     ]
+    ]
+   },
    "text": "Unfavourable: misunderstandings, betrayal, cheating, accidents, ill health, losses; control anger",
    "polarity": "care",
    "areas": [
@@ -2472,8 +2634,9 @@
     "rank": 4
    },
    "condition": "psychic = 9 AND (month in {Mar, May, Jun} OR date in 1-20 Oct OR 25 Nov - 25 Dec)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "This is an unfavourable time, linked with misunderstandings, betrayal, cheating, accidents, ill health and losses. Take extra care and keep your anger in control."
   },
   {
    "id": "CHALDEAN-PSYCHIC-087",

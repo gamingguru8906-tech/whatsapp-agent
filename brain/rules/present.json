@@ -26,8 +26,9 @@
     "rank": 7
    },
    "condition": "DOB grid has 1",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 1 in your birth date, this number shapes how you communicate and react to others; how many times it appears shows how."
   },
   {
    "id": "LOSHU-LS-S2",
@@ -54,8 +55,9 @@
     "rank": 7
    },
    "condition": "DOB grid has 2",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 2 in your birth date, this number shapes your sensitivity and intuition; how many times it appears shows how strong they are."
   },
   {
    "id": "LOSHU-LS-S3",
@@ -82,8 +84,9 @@
     "rank": 7
    },
    "condition": "DOB grid has 3",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 3 in your birth date, you have planning and imagination, with intellectual capacity, a good memory and the ability to think clearly and logically."
   },
   {
    "id": "LOSHU-LS-S4",
@@ -110,8 +113,9 @@
     "rank": 7
    },
    "condition": "DOB grid has 4",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 4 in your birth date, you are disciplined and organised: neat, tidy, good with details, practical and hard-working, valuing order and balance."
   },
   {
    "id": "LOSHU-LS-S5",
@@ -138,8 +142,9 @@
     "rank": 7
    },
    "condition": "DOB grid has 5",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 5 in your birth date, you have emotional and mental balance and stability, along with a love of freedom."
   },
   {
    "id": "LOSHU-LS-S6",
@@ -196,8 +201,9 @@
     "rank": 7
    },
    "condition": "DOB grid has 7",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 7 in your birth date, your heart rules your head, and you may learn through sacrifice and through losses or disappointments in love, emotions, health and finance."
   },
   {
    "id": "LOSHU-LS-S8",
@@ -224,8 +230,9 @@
     "rank": 7
    },
    "condition": "DOB grid has 8",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 8 in your birth date, you are disciplined and organised, with attention to detail."
   },
   {
    "id": "LOSHU-LS-S9",

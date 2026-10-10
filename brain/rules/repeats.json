@@ -569,8 +569,9 @@
     "rank": 4
    },
    "condition": "DOB has 5 three times",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 5 three times in your birth date, you are flexible and dislike interference, but can be over-adventurous and take extreme risks that often bring negative results."
   },
   {
    "id": "CHALDEAN-REPEATS-020",
@@ -874,8 +875,9 @@
     "rank": 4
    },
    "condition": "DOB has 8 four times",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 8 four times in your birth date, constant change and distraction can leave you feeling without purpose, so take care to stay focused."
   },
   {
    "id": "CHALDEAN-REPEATS-030",
@@ -1000,7 +1002,14 @@
   {
    "id": "LOSHU-LS-F1-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 1,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Introvert",
    "polarity": "neutral",
@@ -1017,13 +1026,21 @@
     "rank": 7
    },
    "condition": "1 appears once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 1 appearing once in your birth date, you tend to be an introvert."
   },
   {
    "id": "LOSHU-LS-F1-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 1,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Communicative",
    "polarity": "good",
@@ -1040,13 +1057,21 @@
     "rank": 7
    },
    "condition": "1 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 1 appearing twice in your birth date, you tend to be communicative."
   },
   {
    "id": "LOSHU-LS-F1-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 1,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "Talkative",
    "polarity": "mixed",
@@ -1063,13 +1088,21 @@
     "rank": 7
    },
    "condition": "1 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 1 appearing three times in your birth date, you tend to be talkative."
   },
   {
    "id": "LOSHU-LS-F1-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 1,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "Compassionate",
    "polarity": "good",
@@ -1086,13 +1119,21 @@
     "rank": 7
    },
    "condition": "1 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 1 appearing four times in your birth date, you tend to be compassionate."
   },
   {
    "id": "LOSHU-LS-F2-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 2,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Sensitive",
    "polarity": "neutral",
@@ -1109,13 +1150,21 @@
     "rank": 7
    },
    "condition": "2 once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 2 appearing once in your birth date, you tend to be sensitive."
   },
   {
    "id": "LOSHU-LS-F2-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 2,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Bright",
    "polarity": "good",
@@ -1132,13 +1181,21 @@
     "rank": 7
    },
    "condition": "2 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 2 appearing twice in your birth date, you tend to be bright."
   },
   {
    "id": "LOSHU-LS-F2-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 2,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "Very sensitive",
    "polarity": "care",
@@ -1155,13 +1212,21 @@
     "rank": 7
    },
    "condition": "2 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 2 appearing three times in your birth date, you tend to be very sensitive."
   },
   {
    "id": "LOSHU-LS-F2-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 2,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "Loners",
    "polarity": "care",
@@ -1178,13 +1243,21 @@
     "rank": 7
    },
    "condition": "2 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 2 appearing four times in your birth date, you tend to be a loner."
   },
   {
    "id": "LOSHU-LS-F3-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 3,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Excellent",
    "polarity": "good",
@@ -1201,13 +1274,21 @@
     "rank": 7
    },
    "condition": "3 once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 3 appearing once in your birth date, your memory and imagination are in excellent balance."
   },
   {
    "id": "LOSHU-LS-F3-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 3,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Creative",
    "polarity": "good",
@@ -1224,13 +1305,21 @@
     "rank": 7
    },
    "condition": "3 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 3 appearing twice in your birth date, you tend to be creative."
   },
   {
    "id": "LOSHU-LS-F3-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 3,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "Over-imaginative",
    "polarity": "care",
@@ -1247,13 +1336,21 @@
     "rank": 7
    },
    "condition": "3 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 3 appearing three times in your birth date, you tend to be over-imaginative."
   },
   {
    "id": "LOSHU-LS-F3-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 3,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "Over-imaginative (same as thrice)",
    "polarity": "care",
@@ -1270,13 +1367,21 @@
     "rank": 7
    },
    "condition": "3 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 3 appearing four times in your birth date, you tend to be over-imaginative."
   },
   {
    "id": "LOSHU-LS-F4-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 4,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Orderly and stable",
    "polarity": "good",
@@ -1293,13 +1398,21 @@
     "rank": 7
    },
    "condition": "4 once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 4 appearing once in your birth date, you tend to be orderly and stable."
   },
   {
    "id": "LOSHU-LS-F4-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 4,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Pragmatic",
    "polarity": "good",
@@ -1316,13 +1429,21 @@
     "rank": 7
    },
    "condition": "4 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 4 appearing twice in your birth date, you tend to be pragmatic."
   },
   {
    "id": "LOSHU-LS-F4-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 4,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "Hard-working",
    "polarity": "good",
@@ -1339,13 +1460,21 @@
     "rank": 7
    },
    "condition": "4 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 4 appearing three times in your birth date, you tend to be hard-working."
   },
   {
    "id": "LOSHU-LS-F4-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 4,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "More physical activity",
    "polarity": "neutral",
@@ -1362,13 +1491,21 @@
     "rank": 7
    },
    "condition": "4 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 4 appearing four times in your birth date, you tend to be more physically active."
   },
   {
    "id": "LOSHU-LS-F5-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 5,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Caring",
    "polarity": "good",
@@ -1385,13 +1522,21 @@
     "rank": 7
    },
    "condition": "5 once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 5 appearing once in your birth date, you tend to be caring."
   },
   {
    "id": "LOSHU-LS-F5-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 5,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Persistent",
    "polarity": "good",
@@ -1408,13 +1553,21 @@
     "rank": 7
    },
    "condition": "5 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 5 appearing twice in your birth date, you tend to be persistent."
   },
   {
    "id": "LOSHU-LS-F5-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 5,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "Determined",
    "polarity": "good",
@@ -1431,13 +1584,21 @@
     "rank": 7
    },
    "condition": "5 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 5 appearing three times in your birth date, you tend to be determined."
   },
   {
    "id": "LOSHU-LS-F5-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 5,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "Instantaneous action",
    "polarity": "mixed",
@@ -1454,13 +1615,21 @@
     "rank": 7
    },
    "condition": "5 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 5 appearing four times in your birth date, you tend to act instantly."
   },
   {
    "id": "LOSHU-LS-F6-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 6,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Good advisor",
    "polarity": "good",
@@ -1477,13 +1646,21 @@
     "rank": 7
    },
    "condition": "6 once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 6 appearing once in your birth date, you tend to be a good adviser."
   },
   {
    "id": "LOSHU-LS-F6-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 6,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Originative (original)",
    "polarity": "good",
@@ -1500,13 +1677,21 @@
     "rank": 7
    },
    "condition": "6 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 6 appearing twice in your birth date, you tend to be original."
   },
   {
    "id": "LOSHU-LS-F6-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 6,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "High-tempered",
    "polarity": "care",
@@ -1523,13 +1708,21 @@
     "rank": 7
    },
    "condition": "6 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 6 appearing three times in your birth date, you tend to be high-tempered, so take care with your temper."
   },
   {
    "id": "LOSHU-LS-F6-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 6,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "Emotional",
    "polarity": "neutral",
@@ -1546,13 +1739,21 @@
     "rank": 7
    },
    "condition": "6 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 6 appearing four times in your birth date, you tend to be emotional."
   },
   {
    "id": "LOSHU-LS-F7-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 7,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Learns through experience",
    "polarity": "neutral",
@@ -1569,13 +1770,21 @@
     "rank": 7
    },
    "condition": "7 once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 7 appearing once in your birth date, you tend to learn through experience."
   },
   {
    "id": "LOSHU-LS-F7-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 7,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Spiritual",
    "polarity": "good",
@@ -1592,13 +1801,21 @@
     "rank": 7
    },
    "condition": "7 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 7 appearing twice in your birth date, you tend to be spiritual."
   },
   {
    "id": "LOSHU-LS-F7-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 7,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "Learns through loss",
    "polarity": "care",
@@ -1615,13 +1832,21 @@
     "rank": 7
    },
    "condition": "7 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 7 appearing three times in your birth date, you tend to learn through loss."
   },
   {
    "id": "LOSHU-LS-F7-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 7,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "Difficulties on many fronts of life",
    "polarity": "care",
@@ -1638,13 +1863,21 @@
     "rank": 7
    },
    "condition": "7 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 7 appearing four times in your birth date, you may face difficulties on many fronts of life."
   },
   {
    "id": "LOSHU-LS-F8-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 8,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Scrupulous",
    "polarity": "good",
@@ -1661,13 +1894,21 @@
     "rank": 7
    },
    "condition": "8 once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 8 appearing once in your birth date, you tend to be scrupulous."
   },
   {
    "id": "LOSHU-LS-F8-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 8,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Adamant",
    "polarity": "care",
@@ -1684,13 +1925,21 @@
     "rank": 7
    },
    "condition": "8 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 8 appearing twice in your birth date, you tend to be adamant."
   },
   {
    "id": "LOSHU-LS-F8-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 8,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "Materialistic",
    "polarity": "care",
@@ -1707,13 +1956,21 @@
     "rank": 7
    },
    "condition": "8 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 8 appearing three times in your birth date, you tend to be materialistic."
   },
   {
    "id": "LOSHU-LS-F8-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 8,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "Ceaselessly in motion",
    "polarity": "neutral",
@@ -1730,13 +1987,21 @@
     "rank": 7
    },
    "condition": "8 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 8 appearing four times in your birth date, you tend to be always on the move."
   },
   {
    "id": "LOSHU-LS-F9-1",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 9,
+     "times": [
+      1
+     ]
+    }
+   },
    "period": null,
    "text": "Intelligent",
    "polarity": "good",
@@ -1753,13 +2018,21 @@
     "rank": 7
    },
    "condition": "9 once",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 9 appearing once in your birth date, you tend to be intelligent."
   },
   {
    "id": "LOSHU-LS-F9-2",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 9,
+     "times": [
+      2
+     ]
+    }
+   },
    "period": null,
    "text": "Critical",
    "polarity": "care",
@@ -1776,13 +2049,21 @@
     "rank": 7
    },
    "condition": "9 twice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 9 appearing twice in your birth date, you tend to be critical."
   },
   {
    "id": "LOSHU-LS-F9-3",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 9,
+     "times": [
+      3
+     ]
+    }
+   },
    "period": null,
    "text": "Givers",
    "polarity": "good",
@@ -1799,13 +2080,21 @@
     "rank": 7
    },
    "condition": "9 thrice",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 9 appearing three times in your birth date, you tend to be a giver."
   },
   {
    "id": "LOSHU-LS-F9-4",
    "set": "repeats",
-   "when": null,
+   "when": {
+    "repeat": {
+     "digit": 9,
+     "times": [
+      4
+     ]
+    }
+   },
    "period": null,
    "text": "Brilliant but loners",
    "polarity": "mixed",
@@ -1823,8 +2112,9 @@
     "rank": 7
    },
    "condition": "9 four times",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With 9 appearing four times in your birth date, you tend to be brilliant, but a loner."
   }
  ]
 }

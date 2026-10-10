@@ -71,7 +71,50 @@
   {
    "id": "CHALDEAN-PAIRS-002",
    "set": "pairs",
-   "when": null,
+   "when": {
+    "pair": [
+     [
+      1,
+      8
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      2,
+      8
+     ],
+     [
+      8,
+      2
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      6,
+      3
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      2,
+      9
+     ]
+    ]
+   },
    "period": null,
    "text": "Remedies: (1) Kumbh Vivah; (2) chant the Venus (Shukra) mantra \"Himakunda mrinalabham...\" 108 times - wake 3:40 am (Brahma muhurta), bathe, wear white, puja at home mandir sitting on floor, bow to Venus; (3) name correction \"as per the chart\"; (4) wear an opal",
    "polarity": "neutral",
@@ -89,13 +132,57 @@
     "rank": 4
    },
    "condition": "anti pair AND struggle in relationships",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If this number combination brings struggles in relationships, suggested remedies are Kumbh Vivah, chanting the Venus (Shukra) mantra 108 times at dawn, a name correction, or wearing an opal."
   },
   {
    "id": "CHALDEAN-PAIRS-003",
    "set": "pairs",
-   "when": null,
+   "when": {
+    "pair": [
+     [
+      1,
+      8
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      2,
+      8
+     ],
+     [
+      8,
+      2
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      6,
+      3
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      2,
+      9
+     ]
+    ]
+   },
    "period": null,
    "text": "Remedies: (1) name correction \"is Must\"; (2) donations for good karma; (3) wear a number \"24\" gold pendant; (4) wear 7 Mukhi + 6 Mukhi Rudraksha together; (5) chant Sarva Karya Siddhi mantra 108 times daily",
    "polarity": "neutral",
@@ -114,13 +201,57 @@
     "rank": 4
    },
    "condition": "anti pair AND struggle in career (business / foreign settlement / daily life)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If this combination brings struggles in career, business or settling abroad, a name correction is a must; donations, a gold '24' pendant, 7 and 6 Mukhi Rudraksha together, and the Sarva Karya Siddhi mantra help."
   },
   {
    "id": "CHALDEAN-PAIRS-004",
    "set": "pairs",
-   "when": null,
+   "when": {
+    "pair": [
+     [
+      1,
+      8
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      2,
+      8
+     ],
+     [
+      8,
+      2
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      6,
+      3
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      2,
+      9
+     ]
+    ]
+   },
    "period": null,
    "text": "Remedies: (1) keep 1/2 kg lapis lazuli in bedroom; (2) Dhanwantari Yantra (\"as discussed in Yantra Class\"); (3) Maha Mrityunjay jaap if the issue is very big",
    "polarity": "neutral",
@@ -138,8 +269,9 @@
     "rank": 4
    },
    "condition": "anti pair AND struggle in health",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "If this combination brings health struggles, keeping lapis lazuli in your bedroom and the Dhanwantari Yantra are suggested, with Maha Mrityunjay jaap for bigger issues, alongside proper medical care."
   },
   {
    "id": "CHALDEAN-PAIRS-005",

@@ -202,7 +202,11 @@
   {
    "id": "CHALDEAN-DESTINY-008",
    "set": "destiny",
-   "when": null,
+   "when": {
+    "destiny": [
+     2
+    ]
+   },
    "period": null,
    "text": "Love and support of women (family, work, women in high positions); righteous mother; marries attractive woman; loves plants, redecorating; first serious relationship/marriage may not last",
    "polarity": "mixed",
@@ -220,13 +224,18 @@
     "rank": 4
    },
    "condition": "destiny = 2 AND gender = male",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "For men: you tend to have the love and support of women at home and at work, though a first serious relationship or marriage may not last long."
   },
   {
    "id": "CHALDEAN-DESTINY-009",
    "set": "destiny",
-   "when": null,
+   "when": {
+    "destiny": [
+     2
+    ]
+   },
    "period": null,
    "text": "Very attractive, dresses well; devoted to partner; over-emotional in relationships; strong and resilient; blamed for things not done",
    "polarity": "mixed",
@@ -243,8 +252,9 @@
     "rank": 4
    },
    "condition": "destiny = 2 AND gender = female",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "For women: you are devoted to your partner and can get over-emotional in relationships, yet you are strong and resilient, though sometimes blamed for things you did not do."
   },
   {
    "id": "CHALDEAN-DESTINY-010",
@@ -714,8 +724,9 @@
     "rank": 4
    },
    "condition": "destiny = 5",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Take care that your ideas are not misused for gambling, fast money or manipulation. Overusing your mind can bring headaches or stomach issues, and boredom can creep into relationships."
   },
   {
    "id": "CHALDEAN-DESTINY-027",
@@ -823,13 +834,18 @@
     "rank": 4
    },
    "condition": "destiny = 6",
-   "status": "review",
-   "reason": "wording: About unwanted sexual relationships and being taken advantage of sexually; a remark on sexuality (rule 6)."
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Your destiny number can create situations that tempt you into unwanted physical relationships, or where others try to take advantage of you, so take care."
   },
   {
    "id": "CHALDEAN-DESTINY-031",
    "set": "destiny",
-   "when": null,
+   "when": {
+    "destiny": [
+     6
+    ]
+   },
    "period": null,
    "text": "More favourable to women; look younger; if not married early, harder later; give partner space",
    "polarity": "mixed",
@@ -846,13 +862,18 @@
     "rank": 4
    },
    "condition": "destiny = 6 AND gender = female",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "For women: this destiny number is more favourable to you than to men. If you do not marry early, it can get harder later, and giving your partner space helps."
   },
   {
    "id": "CHALDEAN-DESTINY-032",
    "set": "destiny",
-   "when": null,
+   "when": {
+    "destiny": [
+     6
+    ]
+   },
    "period": null,
    "text": "Sexual problems may come; take precautions",
    "polarity": "care",
@@ -869,8 +890,9 @@
     "rank": 4
    },
    "condition": "destiny = 6 AND gender = male",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "For men: this destiny number is linked with possible sexual problems, so take care and take precautions."
   },
   {
    "id": "CHALDEAN-DESTINY-033",
@@ -1040,7 +1062,11 @@
   {
    "id": "CHALDEAN-DESTINY-039",
    "set": "destiny",
-   "when": null,
+   "when": {
+    "destiny": [
+     7
+    ]
+   },
    "period": null,
    "text": "Sociable, attractive, intelligent, sometimes sentimental; career-oriented, assertive; bonds with women; seen as less romantic",
    "polarity": "neutral",
@@ -1057,8 +1083,9 @@
     "rank": 4
    },
    "condition": "destiny = 7 AND gender = female",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "For women: you are sociable, intelligent, career-oriented and assertive, and bond well with women. You can be sentimental at times, though others may see you as less romantic."
   },
   {
    "id": "CHALDEAN-DESTINY-040",
@@ -1084,8 +1111,9 @@
     "rank": 4
    },
    "condition": "destiny = 7",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "You can do very well in spirituality, mental health work, teaching, resolving disputes and diplomacy."
   },
   {
    "id": "CHALDEAN-DESTINY-041",
@@ -1230,7 +1258,11 @@
   {
    "id": "CHALDEAN-DESTINY-046",
    "set": "destiny",
-   "when": null,
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
    "period": null,
    "text": "Inherits/accumulates property that may face disputes; real estate later the safest earning; right partner delayed but found; turbulence in marriage not from her side; stronger faith after marriage",
    "polarity": "mixed",
@@ -1248,13 +1280,18 @@
     "rank": 4
    },
    "condition": "destiny = 8 AND gender = female",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "For women: you may inherit or build property, though disputes can arise, and real estate later becomes your safest income. The right partner may come late, and marriage troubles are not from your side."
   },
   {
    "id": "CHALDEAN-DESTINY-047",
    "set": "destiny",
-   "when": null,
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
    "period": null,
    "text": "May not respect spouse as deserved; main cause of turbulent marriage",
    "polarity": "care",
@@ -1271,8 +1308,9 @@
     "rank": 4
    },
    "condition": "destiny = 8 AND gender = male",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "For men: this number can make you not respect your spouse as they deserve, which may be the main cause of a turbulent marriage, so take care to give due respect."
   },
   {
    "id": "CHALDEAN-DESTINY-048",
@@ -1360,7 +1398,25 @@
   {
    "id": "CHALDEAN-DESTINY-051",
    "set": "destiny",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "destiny": [
+       9
+      ]
+     },
+     {
+      "psychic": [
+       2,
+       4,
+       6,
+       7,
+       8,
+       9
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Complications in life (computable via chart 3.2: 9's friends are 1,3,5; enemies 2,4)",
    "polarity": "care",
@@ -1377,8 +1433,9 @@
     "rank": 4
    },
    "condition": "destiny = 9 AND relation(psychic, 9) not friend",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "Destiny number 9 magnifies the effect of your birth number, and as your birth number is not a friend of 9, this can bring complications in life."
   },
   {
    "id": "CHALDEAN-DESTINY-052",

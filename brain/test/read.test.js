@@ -8,12 +8,13 @@ import { RULES } from '../rules/index.js';
 const LIMITS = /\b(cure[sd]?|curing|death|die[sd]?|dying|killer|fatal|criminal|prison|jail|murder|guarantee[ds]?|never fail)\b/i;
 const NAMES = /\b(kove|cheiro|sudhir|bharambe|the author|the book)\b/i;
 
-test('every approved rule has visitor wording, a source quote found in its book, and stays inside the limits', () => {
+test('every approved rule has visitor wording, a source quote found in its book (or the owner approved it), and stays inside the limits', () => {
   const approved = RULES.filter(r => r.status === 'approved');
   assert.ok(approved.length > 500);
   for (const r of approved) {
     assert.ok(r.say && r.say.length > 10, r.id);
-    assert.equal(r.source.quoteFound, true, r.id);
+    // Quotes read from a page image (tables) cannot be found in the text layer; those were approved by the owner.
+    assert.ok(r.source.quoteFound === true || /approved by the owner/.test(r.reason ?? ''), r.id);
     assert.ok(!LIMITS.test(r.say), `${r.id}: ${r.say}`);
     assert.ok(!NAMES.test(r.say), `${r.id}: ${r.say}`);
     assert.ok(r.when, r.id);
@@ -66,4 +67,11 @@ test('3,000 random people and watches: deterministic, nothing undefined, every l
     assert.ok(!/undefined|NaN/.test(s));
     for (const id of s.match(/"id":"(?:CHALDEAN|NAMENUM|NUMNAME|LOSHU|WATCH)-[^"]+"/g) || []) assert.ok(ok.has(id.slice(6, -1)), id);
   }
+});
+
+test('Lo Shu lines are grouped digit by digit, without repeating the digit in each line', () => {
+  const r = brainReading({ dob: { y: 1988, m: 10, d: 29 }, name: 'Rahul Sharma', year: 2026, today: new Date('2026-10-10') });
+  assert.deepEqual(r.loshu.byDigit.map(g => [g.digit, g.times]), [[1, 2], [2, 1], [8, 2], [9, 2]]);
+  for (const g of r.loshu.byDigit) for (const i of g.items) assert.ok(!/^With \d/.test(i.short), i.short);
+  assert.ok(r.loshu.byDigit[0].items.some(i => i.id === 'LOSHU-LS-F1-2'));
 });

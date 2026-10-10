@@ -31,7 +31,20 @@
   {
    "id": "CHALDEAN-MATURITY-002",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       1
+      ]
+     },
+     {
+      "has": [
+       1
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Beware becoming authoritative and intimidating",
    "polarity": "care",
@@ -48,13 +61,36 @@
     "rank": 4
    },
    "condition": "maturity = 1 AND chart has multiple 1s",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 1 also appears in your birth date, take care not to become too authoritative or intimidating as you grow older."
   },
   {
    "id": "CHALDEAN-MATURITY-003",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       1
+      ]
+     },
+     {
+      "any": [
+       {
+        "karmic": [
+         19
+        ]
+       },
+       {
+        "destinyCompound": [
+         19
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Ego a persistent issue; facing challenges alone",
    "polarity": "care",
@@ -71,8 +107,9 @@
     "rank": 4
    },
    "condition": "maturity = 1 AND karmic 19/1",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 19 alongside maturity number 1, ego may become a persistent issue, and you may face challenges alone."
   },
   {
    "id": "CHALDEAN-MATURITY-004",
@@ -105,7 +142,20 @@
   {
    "id": "CHALDEAN-MATURITY-005",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       2
+      ]
+     },
+     {
+      "has": [
+       2
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Oversensitive, moody, indecisive",
    "polarity": "care",
@@ -122,13 +172,27 @@
     "rank": 4
    },
    "condition": "maturity = 2 AND multiple 2s",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 2 also appears in your birth date, you may become oversensitive, moody and indecisive as you grow older, so take care."
   },
   {
    "id": "CHALDEAN-MATURITY-006",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       2
+      ]
+     },
+     {
+      "lacks": [
+       2
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Helps productive collaborations",
    "polarity": "good",
@@ -145,8 +209,9 @@
     "rank": 4
    },
    "condition": "maturity = 2 AND 2 is new in chart",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 2 is new to your chart, this maturity number greatly helps you build more productive collaborations."
   },
   {
    "id": "CHALDEAN-MATURITY-007",
@@ -178,7 +243,20 @@
   {
    "id": "CHALDEAN-MATURITY-008",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       3
+      ]
+     },
+     {
+      "has": [
+       3
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Guard against superficiality, showing off, pompousness, selfishness",
    "polarity": "care",
@@ -195,8 +273,9 @@
     "rank": 4
    },
    "condition": "maturity = 3 AND multiple 3s",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 3 also appears in your birth date, guard against superficiality, showing off, pompousness and selfishness as you grow older."
   },
   {
    "id": "CHALDEAN-MATURITY-009",
@@ -228,7 +307,29 @@
   {
    "id": "CHALDEAN-MATURITY-010",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       4
+      ]
+     },
+     {
+      "any": [
+       {
+        "karmic": [
+         13
+        ]
+       },
+       {
+        "destinyCompound": [
+         13
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Struggles reaching goals; avoid rigidity, over-work, opinionatedness",
    "polarity": "care",
@@ -245,13 +346,27 @@
     "rank": 4
    },
    "condition": "maturity = 4 AND karmic 13/4",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 13 alongside maturity number 4, you may struggle to reach your goals, so avoid rigidity, overwork and being too opinionated."
   },
   {
    "id": "CHALDEAN-MATURITY-011",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       4
+      ]
+     },
+     {
+      "has": [
+       4
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "May become fanatical about goals, harming health; guard against corruption",
    "polarity": "care",
@@ -269,13 +384,27 @@
     "rank": 4
    },
    "condition": "maturity = 4 AND other 4s",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 4 also appears in your birth date, you may become fanatical about goals in a way that can harm your health, so take care, and guard against corruption."
   },
   {
    "id": "CHALDEAN-MATURITY-012",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       4
+      ]
+     },
+     {
+      "lacks": [
+       4
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Systematic nature brings material success, popularity, wealth",
    "polarity": "good",
@@ -292,8 +421,9 @@
     "rank": 4
    },
    "condition": "maturity = 4 AND 4 new",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 4 is new to your chart, your systematic nature can pave the way for material success, popularity and wealth."
   },
   {
    "id": "CHALDEAN-MATURITY-013",
@@ -326,7 +456,20 @@
   {
    "id": "CHALDEAN-MATURITY-014",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       5
+      ]
+     },
+     {
+      "lacks": [
+       5
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Adaptability and risk-taking, thrive, confidence, tolerance; avoid impatience, abandoning projects",
    "polarity": "mixed",
@@ -343,13 +486,27 @@
     "rank": 4
    },
    "condition": "maturity = 5 AND 5 new",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 5 is new to your chart, adaptability and risk-taking help you thrive with confidence and tolerance; guard against impatience and leaving projects midway."
   },
   {
    "id": "CHALDEAN-MATURITY-015",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       5
+      ]
+     },
+     {
+      "has": [
+       5
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Careless about responsibilities; stay loyal to old relationships",
    "polarity": "care",
@@ -366,13 +523,36 @@
     "rank": 4
    },
    "condition": "maturity = 5 AND other 5s",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 5 also appears in your birth date, you may grow careless about responsibilities, so take care and stay loyal to old relationships."
   },
   {
    "id": "CHALDEAN-MATURITY-016",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       5
+      ]
+     },
+     {
+      "any": [
+       {
+        "karmic": [
+         14
+        ]
+       },
+       {
+        "destinyCompound": [
+         14
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Hard to attain freedom; laziness, sensual indulgence",
    "polarity": "care",
@@ -389,8 +569,9 @@
     "rank": 4
    },
    "condition": "maturity = 5 AND karmic 14/5",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 14 alongside maturity number 5, freedom may be hard to attain, and you may get caught in laziness and sensual indulgence, so take care."
   },
   {
    "id": "CHALDEAN-MATURITY-017",
@@ -418,13 +599,41 @@
     "rank": 4
    },
    "condition": "maturity = 6",
-   "status": "review",
-   "reason": "quote not found word for word in the book text"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As you mature, family welfare, care and community matter more to you; you may be drawn to roles like counsellor, healer or teacher, and handle money and property prudently."
   },
   {
    "id": "CHALDEAN-MATURITY-018",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       6
+      ]
+     },
+     {
+      "any": [
+       {
+        "psychic": [
+         6
+        ]
+       },
+       {
+        "destiny": [
+         6
+        ]
+       },
+       {
+        "nameRoot": [
+         6
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Reflects on past relationships",
    "polarity": "neutral",
@@ -441,13 +650,27 @@
     "rank": 4
    },
    "condition": "maturity = 6 AND 6 repeats in core numbers",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 6 repeats among your core numbers, this maturity number may prompt you to reflect on your past relationships."
   },
   {
    "id": "CHALDEAN-MATURITY-019",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       6
+      ]
+     },
+     {
+      "lacks": [
+       6
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Focus on duties; brings longed-for close relationships",
    "polarity": "good",
@@ -464,8 +687,9 @@
     "rank": 4
    },
    "condition": "maturity = 6 AND 6 new",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 6 is new to your chart, focus on your duties; this number brings the close relationships you have long yearned for."
   },
   {
    "id": "CHALDEAN-MATURITY-020",
@@ -498,7 +722,20 @@
   {
    "id": "CHALDEAN-MATURITY-021",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       7
+      ]
+     },
+     {
+      "has": [
+       7
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Emotional detachment; may leave material world for hermit/meditative life",
    "polarity": "care",
@@ -515,13 +752,27 @@
     "rank": 4
    },
    "condition": "maturity = 7 AND other 7s",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 7 also appears in your birth date, you may become emotionally detached and may even consider leaving the material world for a meditative life."
   },
   {
    "id": "CHALDEAN-MATURITY-022",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       7
+      ]
+     },
+     {
+      "lacks": [
+       7
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Joy exploring depths, gurus, occult",
    "polarity": "good",
@@ -538,13 +789,36 @@
     "rank": 4
    },
    "condition": "maturity = 7 AND 7 new",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 7 is new to your chart, you will find joy in exploring your deeper self, and may be drawn to gurus and the occult."
   },
   {
    "id": "CHALDEAN-MATURITY-023",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       7
+      ]
+     },
+     {
+      "any": [
+       {
+        "karmic": [
+         16
+        ]
+       },
+       {
+        "destinyCompound": [
+         16
+        ]
+       }
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Avoiding responsibility, self-absorbed",
    "polarity": "care",
@@ -561,8 +835,9 @@
     "rank": 4
    },
    "condition": "maturity = 7 AND karmic 16/7",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With karmic number 16 alongside maturity number 7, take care with a tendency to avoid responsibilities and become self-absorbed."
   },
   {
    "id": "CHALDEAN-MATURITY-024",
@@ -595,7 +870,20 @@
   {
    "id": "CHALDEAN-MATURITY-025",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       8
+      ]
+     },
+     {
+      "has": [
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Guard against obsession with money, boasting",
    "polarity": "care",
@@ -612,13 +900,27 @@
     "rank": 4
    },
    "condition": "maturity = 8 AND other 8s",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 8 also appears in your birth date, guard against an obsessive fondness for money and against boasting as you grow older."
   },
   {
    "id": "CHALDEAN-MATURITY-026",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       8
+      ]
+     },
+     {
+      "lacks": [
+       8
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Tremendous success after long effort; recognition",
    "polarity": "good",
@@ -635,8 +937,9 @@
     "rank": 4
    },
    "condition": "maturity = 8 AND 8 new",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 8 is new to your chart, after a long journey of effort you can see tremendous success and recognition."
   },
   {
    "id": "CHALDEAN-MATURITY-027",
@@ -669,7 +972,27 @@
   {
    "id": "CHALDEAN-MATURITY-028",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "maturity": [
+       9
+      ]
+     },
+     {
+      "repeat": {
+       "digit": 9,
+       "times": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      }
+     }
+    ]
+   },
    "period": null,
    "text": "Guard against arrogance and aloofness",
    "polarity": "care",
@@ -686,8 +1009,9 @@
     "rank": 4
    },
    "condition": "maturity = 9 AND 9 recurs",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "As 9 recurs often in your birth date, guard against arrogance and aloofness as you grow older."
   },
   {
    "id": "CHALDEAN-MATURITY-029",
@@ -721,7 +1045,28 @@
   {
    "id": "CHALDEAN-MATURITY-030",
    "set": "maturity",
-   "when": null,
+   "when": {
+    "all": [
+     {
+      "master": [
+       11
+      ]
+     },
+     {
+      "nameCompound": [
+       11,
+       29,
+       38,
+       47,
+       56,
+       65,
+       74,
+       83,
+       92
+      ]
+     }
+    ]
+   },
    "period": null,
    "text": "Like 4; challenging early life, misunderstood, \"black sheep\", self-doubt, nightmares; later confidence, integrity, leadership, great success, possible global fame",
    "polarity": "mixed",
@@ -739,8 +1084,9 @@
     "rank": 4
    },
    "condition": "maturity = 22 (destiny 11 AND name 11)",
-   "status": "review",
-   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+   "status": "approved",
+   "reason": "approved by the owner (10 Oct 2026)",
+   "say": "With life path and name number both 11, your maturity number is 22: early life may be challenging, misunderstood and full of self-doubt, but later can bring confidence, integrity, leadership and great success."
   }
  ]
 }

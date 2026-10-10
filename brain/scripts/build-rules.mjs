@@ -131,6 +131,19 @@ for (const s of [...new Set(rules.map(r => r.set))]) {
   }
 }
 
+// Owner decision (10 Oct 2026): every waiting rule is approved, with the condition and wording in say/approve.json.
+// A "skip" there means the rule has no trigger (background note) or no value we ask for; it is not shown.
+let approve = {};
+try { approve = JSON.parse(readFileSync(join(root, 'say', 'approve.json'), 'utf8')); } catch {}
+for (const r of rules.filter(x => x.status === 'review')) {
+  const a = approve[r.id];
+  if (!a) continue;
+  if (a.skip) { r.status = 'dropped'; r.reason = `not shown: ${a.skip}`; continue; }
+  const over = LIMITS.find(([, re]) => re.test(a.say));
+  if (over) { r.reason = `wording outside the limits: ${over[0]}`; continue; }
+  Object.assign(r, { when: a.when, period: a.period ?? r.period ?? null, say: a.say, status: 'approved', reason: 'approved by the owner (10 Oct 2026)' });
+}
+
 // One file per set, ids unique.
 const ids = new Set();
 for (const r of rules) { if (ids.has(r.id)) throw new Error(`duplicate id ${r.id}`); ids.add(r.id); }
