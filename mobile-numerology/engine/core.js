@@ -95,7 +95,8 @@ export function concernAreas(text, keywords) {
 }
 
 export function createEngine(rulebook) {
-  const { shotgun, yogas, planets, professions, remedies, personalYear: py, conflicts, method, keywords } = rulebook;
+  const { shotgun, yogas, planets, professions, remedies, personalYear: py, conflicts, method, keywords, notFor } = rulebook;
+  const notForByArea = new Map((notFor?.rules ?? []).map(r => [r.area, r]));
   const shotgunByPair = new Map(shotgun.rules.map(r => [r.ordered ? r.pair : [...r.pair].sort().join(''), r]));
   const planetByDigit = new Map(planets.rules.map(r => [r.digit, r]));
   const remedyByBirth = new Map(remedies.rules.map(r => [r.birth_number, r]));
@@ -233,6 +234,25 @@ export function createEngine(rulebook) {
     return { avoid, lookFor };
   }
 
+  // Parts of life the person's own mobile number works against: more of its pairs and yogas need care there than
+  // help (a pattern that does both counts for neither). The birth date is left out: a new number cannot change it.
+  // Their concern's areas come first, then the most one-sided. "uses" (rules/not-for.json) are the things the
+  // owner says not to use such a number for.
+  function notForSection(mobileItems, concernAreas) {
+    const order = Object.keys(keywords.areas);
+    const wanted = new Set(concernAreas);
+    const list = order.map(area => {
+      const touching = mobileItems.filter(x => x.areas?.includes(area));
+      const care = touching.filter(x => x.polarity === 'negative');
+      const help = touching.filter(x => x.polarity === 'positive');
+      const r = notForByArea.get(area);
+      return { area, concern: wanted.has(area), care: care.length, help: help.length, because: care.map(x => x.title),
+        uses: r?.uses ?? [], rule: r?.id ?? null };
+    }).filter(x => x.care > x.help);
+    list.sort((a, b) => (b.concern - a.concern) || ((b.care - b.help) - (a.care - a.help)) || order.indexOf(a.area) - order.indexOf(b.area));
+    return { id: 'not-for', areas: list };
+  }
+
   function compare(cur, plan, areas) {
     const all = f => [...f.pairs, ...f.yogas];
     const ids = list => new Set(list.map(x => x.id));
@@ -302,6 +322,7 @@ export function createEngine(rulebook) {
     if (nameNo) sections.push({ id: 'name', ...nameNo, method: 'Chaldean' });
     const ifKept = mobileItems.filter(x => x.care);
     if (ifKept.length) sections.push({ id: 'if-kept', items: ifKept.map(x => ({ id: x.id, title: x.title, kind: x.kind, text: x.care, areas: x.areas, forConcern: touches(x) })) });
+    sections.push(notForSection(mobileItems, areas));
     sections.push({ id: 'protection', ...protection(dob.value, cur.yogas, dobYogas) });
     sections.push({ id: 'better-number', ...betterNumber(cur, areas) });
     if (planned.length) sections.push({ id: 'compare', current: cur.mobile, comparisons: planned.map(p => compare(cur, mobileFeatures(p), areas)) });

@@ -25,10 +25,12 @@ export default {
         gold: { DEFAULT: v('gold'), soft: v('gold-soft') }
       },
       borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
-      // Titles in the brand face; reading text in the phone's own system font (SF Pro on Apple devices).
+      // Two faces with two jobs. League Spartan (the brand face) for titles and everything you tap, pick or scan;
+      // Literata, a book face made for reading on phone screens, for the sentences of the reading.
       fontFamily: {
         display: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', '"Noto Sans"', '"Helvetica Neue"', 'Arial', 'sans-serif']
+        sans: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        serif: ['Literata', 'Georgia', '"Noto Serif"', '"Times New Roman"', 'serif']
       },
       boxShadow: { soft: '0 1px 2px hsl(240 10% 10% / 0.04), 0 12px 32px hsl(240 10% 10% / 0.08)' },
       keyframes: {

@@ -8,7 +8,9 @@
  * - Saturated colour is reserved: Veshannastro pink for the form's button and the grid (the brand moment),
  *   WhatsApp green for the consultation button (the action that helps most), green/amber dots for strength and
  *   needs care. Nothing else competes with them.
- * - League Spartan only for titles; the phone's own system font for reading. Light theme only.
+ * - Two faces, two jobs: League Spartan (brand) for titles and anything you tap, pick or scan; Literata, a book face
+ *   made for phone screens, for the sentences you read. A reading should feel like a letter, not an app.
+ *   Light theme only.
  */
 :root {
   color-scheme: light;
@@ -55,8 +57,11 @@
 @layer base {
   * { @apply border-border; }
   html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
-  body { @apply bg-background font-sans text-foreground antialiased; font-size: 17px; line-height: 1.47; letter-spacing: -0.01em; }
-  h1, h2, h3 { text-wrap: balance; }
+  body { @apply bg-background font-serif text-foreground antialiased; font-size: 17px; line-height: 1.58; font-variant-numeric: lining-nums; }
+  h1, h2, h3, .t-headline { text-wrap: balance; }
+  p, li { text-wrap: pretty; }
+  /* Interface text in the brand face: titles, the form, buttons, tabs and labels. */
+  h1, h2, h3, h4, button, select, input, textarea, label, legend, summary, nav, header, [role="tab"] { font-family: theme('fontFamily.display'); }
   :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; border-radius: 6px; }
 }
 
@@ -65,9 +70,9 @@
   .t-large { @apply font-display text-[2.125rem] font-bold leading-[1.06] tracking-[-0.02em] text-maroon sm:text-[3.25rem]; }
   .t-title { @apply font-display text-[1.625rem] font-bold leading-[1.12] tracking-[-0.015em] text-maroon sm:text-[2rem]; }
   .t-section { @apply font-display text-[1.375rem] font-bold leading-tight tracking-[-0.01em] text-maroon; }
-  .t-headline { @apply text-[17px] font-semibold leading-snug; }
-  .t-body { @apply text-[16px] leading-[1.5]; }
-  .t-note { @apply text-[13px] leading-snug text-muted-foreground; }
+  .t-headline { @apply font-display text-[17.5px] font-semibold leading-snug; }
+  .t-body { @apply text-[16px] leading-[1.58]; }
+  .t-note { @apply font-display text-[13.5px] leading-snug text-muted-foreground; }
 
   /* Grouped card with hairline-separated rows (iOS inset grouped list) */
   .group-card { @apply overflow-hidden rounded-[20px] border border-border/70 bg-card; }
@@ -77,7 +82,7 @@
   /* Form */
   .field { @apply w-full bg-transparent py-1 text-[17px] leading-tight text-foreground placeholder:text-faint focus:outline-none; }
   .field-label { @apply block text-[13px] font-medium text-muted-foreground; }
-  .error { @apply mt-1 text-[14px] font-medium text-danger-dark; }
+  .error { @apply mt-1 font-display text-[14.5px] font-medium text-danger-dark; }
 
   /* Status dots: strength, needs care, both */
   .dot { @apply mt-[0.45em] inline-block h-2.5 w-2.5 shrink-0 rounded-full; }
@@ -86,11 +91,11 @@
   .dot-mixed { background: linear-gradient(90deg, hsl(var(--success)) 50%, hsl(var(--care)) 50%); }
   .dot-neutral { background: hsl(var(--text-faint)); }
 
-  .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[13px] font-medium; }
-  .digit { @apply grid h-11 w-9 place-items-center rounded-[10px] bg-card text-lg font-semibold tabular-nums text-maroon shadow-[0_0_0_1px_hsl(var(--border))] sm:h-12 sm:w-10 sm:text-xl; }
+  .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-display text-[13.5px] font-medium; }
+  .digit { @apply grid h-11 w-9 font-display place-items-center rounded-[10px] bg-card text-lg font-semibold tabular-nums text-maroon shadow-[0_0_0_1px_hsl(var(--border))] sm:h-12 sm:w-10 sm:text-xl; }
 
   /* Buttons */
-  .btn { @apply inline-flex min-h-[50px] items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-5 text-[17px] font-semibold no-underline transition-colors; }
+  .btn { @apply font-display inline-flex min-h-[50px] items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-5 text-[17px] font-semibold no-underline transition-colors; }
   .btn-primary { @apply btn bg-primary text-primary-foreground shadow-[0_8px_20px_-10px_hsl(var(--primary)/0.8)] hover:bg-primary-dark; }
   .btn-whatsapp { @apply btn bg-whatsapp text-white hover:bg-whatsapp-dark; }
   .btn-plain { @apply btn bg-muted text-foreground hover:bg-border/60; }

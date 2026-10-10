@@ -112,7 +112,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
         <div className="row">
           <label className="field-label" htmlFor="f-mobile">Mobile number</label>
           <div className="flex items-baseline gap-2">
-            <span className="text-[17px] text-muted-foreground">+91</span>
+            <span className="font-display text-[17px] text-muted-foreground">+91</span>
             <input id="f-mobile" className="field" type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="98765 43210"
               value={f.mobile} onChange={set('mobile')} aria-invalid={!!err.mobile} />
           </div>
@@ -147,7 +147,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
       </div>
 
       <div>
-        <p className="mb-2 px-1 text-[13px] font-medium text-muted-foreground">Or tap what fits</p>
+        <p className="mb-2 px-1 font-display text-[13px] font-medium text-muted-foreground">Or tap what fits</p>
         <div className="grid grid-cols-2 gap-2" aria-label="Quick choices">
           {CHIPS.map(c => (
             <button key={c} type="button" onClick={() => addChip(c)}

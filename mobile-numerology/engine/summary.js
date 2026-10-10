@@ -30,6 +30,8 @@ export function readingSummary(reading) {
   if (a) {
     out.push(`Plain answer shown to them: ${a.headline} ${a.why}`);
     out.push(`Next steps shown to them: ${a.steps.map((st, i) => `${i + 1}) ${st.title}: ${st.text}`).join(' ')}`);
+    if (a.notFor?.uses.length) out.push(`Told not to use this number for: ${a.notFor.uses.join('; ')}.`);
+    if (a.notFor?.others.length) out.push(`Also shown: ${a.notFor.othersText}`);
   }
 
   const concern = s.concern;

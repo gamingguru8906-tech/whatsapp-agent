@@ -66,7 +66,7 @@ export default function App() {
         <section className="mx-auto grid max-w-5xl gap-10 px-5 pb-12 pt-8 sm:pt-14 lg:grid-cols-[1fr_minmax(0,440px)] lg:items-start lg:gap-14">
           <div className="min-w-0">
             <h1 className="t-large max-w-[13ch]">What is your mobile number doing to your life?</h1>
-            <p className="mt-4 max-w-[34rem] text-[19px] leading-[1.42] text-muted-foreground">
+            <p className="mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
               Every pair of digits in your number has a meaning, and the shapes your digits make on the Vedic grid form yogas.
               See yours, with your year ahead and how to protect yourself.
             </p>

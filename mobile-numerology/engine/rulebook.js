@@ -9,6 +9,7 @@ import personalYear from '../rules/personal-year.json' with { type: 'json' };
 import conflicts from '../rules/conflicts.json' with { type: 'json' };
 import method from '../rules/method.json' with { type: 'json' };
 import keywords from '../rules/concern-keywords.json' with { type: 'json' };
+import notFor from '../rules/not-for.json' with { type: 'json' };
 import review from '../rules/review.json' with { type: 'json' };
 
 export function applyReview(base, rv = { overrides: {}, conflicts: {} }) {
@@ -26,5 +27,5 @@ export function applyReview(base, rv = { overrides: {}, conflicts: {} }) {
   return book;
 }
 
-export const baseRulebook = { shotgun, yogas, planets, professions, remedies, personalYear, conflicts, method, keywords };
+export const baseRulebook = { shotgun, yogas, planets, professions, remedies, personalYear, conflicts, method, keywords, notFor };
 export const rulebook = applyReview(baseRulebook, review);

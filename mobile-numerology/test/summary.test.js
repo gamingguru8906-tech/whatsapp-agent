@@ -14,6 +14,8 @@ test('summary carries the concern, what the reading showed for it, and the plann
   assert.match(s, /Their concern, in their words: "Paisa nahi tikta"/);
   assert.match(s, /Plain answer shown to them: Your number is working against your money\./);
   assert.match(s, /Next steps shown to them: 1\) Start your protection today: /);
+  assert.match(s, /Told not to use this number for: Bank accounts and UPI; Broker and trading accounts; Loans, investments and big purchases; Tax, GST and other official money work\./);
+  assert.match(s, /Also shown: It isn't suitable for your health, /);
   assert.match(s, /What the reading showed for this concern \(life areas: money\)/);
   assert.match(s, /pair 5-6 \/ 6-5: You may be unable to ask for money, and that is why money gets stuck\./);
   assert.match(s, /Personal year: 2026 = \d, 2027 = \d\./);

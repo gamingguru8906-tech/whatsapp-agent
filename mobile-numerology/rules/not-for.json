@@ -1,0 +1,76 @@
+{
+  "kind": "not_for",
+  "about": "Where a person should not use a mobile number that works against a part of their life, so that part moves to a better number. Shown in 'Your answer' when the number should change and their own mobile number (not their birth date) has more patterns that need care than patterns that help in that part of life. Money is the owner's own list (basis 'owner list'). The other areas apply the owner's same rule, that the number should not be used or registered where that part of life is handled (basis 'owner rule applied'); the owner can edit or remove any line here. Family, health, peace of mind and spiritual life have no list: there is no paperwork to move, and a person should never keep their number off a doctor's or hospital's records.",
+  "source_file": "O01-owner-not-for.md",
+  "rules": [
+    {
+      "id": "NF-MONEY",
+      "area": "money",
+      "basis": "owner list",
+      "quote": "he shouldn't be using this number in their bank statements, with their bank accounts, with their official financial work",
+      "also": [
+        "the number shouldn't be registered with any of brokers in the markets",
+        "do any kind of financial decision with this number. It would harm this."
+      ],
+      "uses": [
+        "Bank accounts and UPI",
+        "Broker and trading accounts",
+        "Loans, investments and big purchases",
+        "Tax, GST and other official money work"
+      ]
+    },
+    {
+      "id": "NF-CAREER",
+      "area": "career",
+      "basis": "owner rule applied",
+      "quote": "this number is not suitable for this, this, this, this work",
+      "uses": [
+        "Job applications and your CV",
+        "Your business card and company papers",
+        "Office, client and business calls"
+      ]
+    },
+    {
+      "id": "NF-RELATIONSHIP",
+      "area": "relationship",
+      "basis": "owner rule applied",
+      "quote": "this number is not suitable for this, this, this, this work",
+      "uses": ["Matrimony sites and your marriage biodata"]
+    },
+    {
+      "id": "NF-LEGAL",
+      "area": "legal",
+      "basis": "owner rule applied",
+      "quote": "this number is not suitable for this, this, this, this work",
+      "uses": ["Court and legal papers"]
+    },
+    {
+      "id": "NF-GOVERNMENT",
+      "area": "government",
+      "basis": "owner rule applied",
+      "quote": "this number is not suitable for this, this, this, this work",
+      "uses": ["Government job and scheme forms"]
+    },
+    {
+      "id": "NF-EDUCATION",
+      "area": "education",
+      "basis": "owner rule applied",
+      "quote": "this number is not suitable for this, this, this, this work",
+      "uses": ["Exam and admission forms"]
+    },
+    {
+      "id": "NF-TRAVEL",
+      "area": "travel",
+      "basis": "owner rule applied",
+      "quote": "this number is not suitable for this, this, this, this work",
+      "uses": ["Visa and passport applications"]
+    },
+    {
+      "id": "NF-HOME",
+      "area": "home",
+      "basis": "owner rule applied",
+      "quote": "this number is not suitable for this, this, this, this work",
+      "uses": ["Property papers and rent agreements"]
+    }
+  ]
+}

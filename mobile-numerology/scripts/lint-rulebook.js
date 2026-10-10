@@ -128,6 +128,19 @@ const kw = json('rules/concern-keywords.json');
 const ruleAreas = new Set([...shotgun.rules, ...yogas.rules, ...professions.rules].flatMap(r => r.areas || []));
 for (const a of ruleAreas) if (!kw.areas[a] && a !== 'personality') fail(`area "${a}" is used by rules but has no concern keywords`);
 
+// Where not to use a number (owner's guidance, sources/O01): one rule per part of life, each quoting the owner.
+const notFor = json('rules/not-for.json');
+const notForAreas = new Set();
+for (const r of notFor.rules) {
+  if (notForAreas.has(r.area)) fail(`${r.id}: area ${r.area} has two not-for rules`);
+  notForAreas.add(r.area);
+  if (!kw.areas[r.area]) fail(`${r.id}: unknown area ${r.area}`);
+  checkQuote(r.id, notFor.source_file, r.quote);
+  for (const q of r.also || []) checkQuote(`${r.id} (also)`, notFor.source_file, q);
+  if (!['owner list', 'owner rule applied'].includes(r.basis)) fail(`${r.id}: basis must be "owner list" or "owner rule applied"`);
+  if (!Array.isArray(r.uses) || !r.uses.length || r.uses.some(u => typeof u !== 'string' || !u.trim())) fail(`${r.id}: uses must be a list of text`);
+}
+
 // Owner approval (filled from the review page). Every rule id must be approved before launch.
 for (const id of Object.keys(review.overrides ?? {})) if (!ids.has(id)) fail(`review override for unknown rule ${id}`);
 const pending = [...ids.keys()].filter(id => !review.approved?.[id]);
@@ -139,4 +152,4 @@ if (errors.length) {
   console.error(`\nRulebook check FAILED: ${errors.length} error(s).`);
   process.exit(1);
 }
-console.log(`Rulebook check passed: ${ids.size} rules (${shotgun.rules.length} shot-gun, ${yogas.rules.length} yogas, ${planets.rules.length} planets, ${professions.rules.length} professions, ${remedies.rules.length} remedies, ${pyIds.size + py.for_everyone.length} personal-year items). Every quote was found in the sources.`);
+console.log(`Rulebook check passed: ${ids.size} rules (${shotgun.rules.length} shot-gun, ${yogas.rules.length} yogas, ${planets.rules.length} planets, ${professions.rules.length} professions, ${remedies.rules.length} remedies, ${pyIds.size + py.for_everyone.length} personal-year items) and ${notFor.rules.length} not-for rules from the owner. Every quote was found in the sources.`);

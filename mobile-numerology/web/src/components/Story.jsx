@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Sparkles, ArrowLeftRight, Briefcase, Cake, CalendarDays, ChevronDown, ChevronRight, Circle, Gem, Grid3x3, Hash, Leaf,
+  Ban, Sparkles, ArrowLeftRight, Briefcase, Cake, CalendarDays, ChevronDown, ChevronRight, Circle, Gem, Grid3x3, Hash, Leaf,
   MessageCircle, PenLine, Search, ShieldCheck, Smartphone
 } from 'lucide-react';
 import VedicGrid from './VedicGrid.jsx';
@@ -45,7 +45,7 @@ function Source({ s, id, owner }) {
 function Line({ kind, children }) {
   const label = { good: 'Strength', care: 'Needs care', trait: 'Your nature', remedy: 'Remedy' }[kind];
   const color = { good: 'text-success-dark', care: 'text-care-dark', trait: 'text-muted-foreground', remedy: 'text-primary-dark' }[kind];
-  return <p className="t-body"><span className={`mr-1.5 font-semibold ${color}`}>{label}</span>{children}</p>;
+  return <p className="t-body"><span className={`mr-1.5 font-display font-semibold ${color}`}>{label}</span>{children}</p>;
 }
 
 // Shows the first few rows; the rest open with one tap. The owner sees everything, to check each line.
@@ -152,8 +152,8 @@ function InlineCta({ href, title, text }) {
 function Answer({ a, href, onCompare }) {
   const total = Math.max(1, a.strengths + a.carePoints);
   const wa = a.change ? 'Get my number chosen' : 'Ask us on WhatsApp';
-  // Keep pair names like 5-6 together on one line.
-  const nb = t => t.replace(/(\d)-(\d)/g, '$1\u2011$2');
+  // Keep pair names like 5-6 / 6-5 together on one line.
+  const nb = t => t.replace(/(\d)-(\d)/g, '$1\u2011$2').replace(/(\d) \/ (\d)/g, '$1\u00a0/\u00a0$2');
   return (
     <section id="r-answer" className="group-card scroll-mt-32 shadow-soft">
       <div className="border-t-[3px] border-t-primary px-5 pb-5 pt-6 sm:px-7 sm:pt-7">
@@ -164,19 +164,21 @@ function Answer({ a, href, onCompare }) {
             <span className="bg-success" style={{ width: `${(a.strengths / total) * 100}%` }} />
             <span className="bg-care" style={{ width: `${(a.carePoints / total) * 100}%` }} />
           </div>
-          <p className="mt-2 flex gap-4 text-[14px] text-muted-foreground">
+          <p className="mt-2 flex gap-4 font-display text-[14px] text-muted-foreground">
             <span><span className="dot dot-good mr-1.5 mt-0 align-middle" aria-hidden="true" />{plural(a.strengths, 'strength', 'strengths')}</span>
             <span><span className="dot dot-care mr-1.5 mt-0 align-middle" aria-hidden="true" />{a.carePoints} {a.carePoints === 1 ? 'needs' : 'need'} care</span>
           </p>
         </div>
       </div>
 
+      {a.notFor && <NotFor n={a.notFor} />}
+
       <div className="border-t border-border/70 px-5 py-5 sm:px-7">
         <h3 className="text-[15px] font-semibold text-maroon">What to do next</h3>
         <ol className="mt-3 grid gap-4">
           {a.steps.map((st, i) => (
             <li key={st.id} className="flex gap-3.5">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-[1.5px] border-maroon/40 text-[14px] font-semibold text-maroon">{i + 1}</span>
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-[1.5px] border-maroon/40 font-display text-[14px] font-semibold text-maroon">{i + 1}</span>
               <div className="min-w-0 flex-1">
                 <p className="t-headline">{st.title}</p>
                 <p className="t-body mt-0.5 text-foreground/80">{nb(st.text)}</p>
@@ -197,6 +199,38 @@ function Answer({ a, href, onCompare }) {
         </ol>
       </div>
     </section>
+  );
+}
+
+// "Don't use this number for": the owner's list of uses for the part of life they asked about, in the calm amber
+// that marks "needs care" everywhere on the page, then the other parts of life the number works against.
+function NotFor({ n }) {
+  const chips = n.otherAreas.length > 0 && (
+    <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Also not suitable for">
+      {n.otherAreas.map(k => <li key={k} className="chip bg-care-soft text-care-dark">{AREA[k] || k}</li>)}
+    </ul>
+  );
+  return (
+    <div className="border-t border-border/70 px-5 py-5 sm:px-7">
+      {n.uses.length > 0 ? (
+        <>
+          <h3 className="text-[15px] font-semibold text-maroon">Don't use this number for</h3>
+          <ul className="mt-3 overflow-hidden rounded-[14px] bg-care-soft/80 shadow-[inset_0_0_0_1px_hsl(var(--care)/0.14)]">
+            {n.uses.map((u, i) => (
+              <li key={u} className={`flex items-start gap-3 px-4 py-3 ${i ? 'shadow-[inset_0_1px_0_hsl(var(--care)/0.14)]' : ''}`}>
+                <Ban size={17} strokeWidth={2.2} className="mt-[0.2em] shrink-0 text-care-dark" aria-hidden="true" />
+                <span className="text-[16px] leading-snug text-foreground">{u}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-[15px] leading-snug text-muted-foreground">Move these to a better number. Step 2 below shows what to look for.</p>
+          {chips && <p className="mt-4 font-display text-[13px] font-medium text-muted-foreground">Also not suitable for</p>}
+        </>
+      ) : (
+        <h3 className="text-[15px] font-semibold text-maroon">{n.also ? 'Also not suitable for' : 'Not suitable for'}</h3>
+      )}
+      {chips}
+    </div>
   );
 }
 
@@ -675,7 +709,7 @@ export default function Story({ result, config, onAgain }) {
   return (
     <div ref={rootRef} className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8 pb-20 sm:pb-0">
       <div>
-        <p className="text-[15px] font-medium text-muted-foreground">Your free reading for {fmt(input.mobile)}</p>
+        <p className="font-display text-[15px] font-medium text-muted-foreground">Your free reading for {fmt(input.mobile)}</p>
         <h2 className="t-title mt-1">{first}, here's your answer</h2>
         {owner && <p className="mt-3 rounded-[12px] bg-accent-soft px-4 py-2.5 text-[14px] text-warning-dark">Owner view: each line shows the rule and source it came from, and every list is open.</p>}
       </div>

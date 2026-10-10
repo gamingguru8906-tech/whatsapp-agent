@@ -1,6 +1,7 @@
 // "Your answer": the reading turned into one plain verdict and three next steps, for people who do not read
 // numerology. Deterministic and honest: it only counts and names what the reading already contains (no new
-// meanings, no lucky numbers). The words are the page's own; the facts are the rulebook's.
+// meanings, no lucky numbers). The words are the page's own; the facts are the rulebook's. When the number should
+// change, it also says what not to use the number for (the owner's list in rules/not-for.json, via the reading).
 //
 //   against  - more points about their concern need care than help        -> change the number
 //   mixed    - as many help as need care                                   -> change the number
@@ -19,6 +20,7 @@ const needsCare = x => x.polarity === 'negative' || x.polarity === 'mixed';
 const helps = x => x.polarity === 'positive' || x.polarity === 'mixed';
 const n = (count, one, many) => `${count} ${count === 1 ? one : many}`;
 const list = items => items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+const listOr = items => items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} or ${items[items.length - 1]}`;
 
 export function clarity(reading) {
   if (!reading?.ok) return null;
@@ -73,6 +75,28 @@ export function clarity(reading) {
     if (change && carePoints) why += ` ${carePoints === 1 ? 'It comes' : 'They come'} from your mobile number, so a new number can remove ${carePoints === 1 ? 'it' : 'them'}.`;
   }
 
+  // "Don't use this number for": only when the answer is to change the number. Built from the reading's not-for
+  // section: the owner's list of uses (rules/not-for.json) for the parts of life they asked about that their own
+  // number works against, and the other parts of life it works against (most one-sided first).
+  let notFor = null;
+  const nf = s['not-for']?.areas || [];
+  if (change && nf.length) {
+    const mine = nf.filter(x => x.concern);
+    const uses = [...new Set(mine.flatMap(x => x.uses || []))].slice(0, 5);
+    const otherAreas = nf.filter(x => !x.concern && AREA_PHRASE[x.area]).map(x => x.area).slice(0, 3);
+    const others = otherAreas.map(a => AREA_PHRASE[a]);
+    const either = mine.length > 0;
+    if (uses.length || others.length) {
+      notFor = {
+        uses,
+        also: either,
+        otherAreas,
+        others,
+        othersText: others.length ? `${either ? 'It isn\'t' : 'This number isn\'t'} suitable for ${listOr(others)}${either ? ' either' : ''}.` : ''
+      };
+    }
+  }
+
   // Step 1: protection they can start today (birth-number remedies from the rulebook).
   const p = s.protection || {};
   const doNow = [
@@ -109,5 +133,5 @@ export function clarity(reading) {
     ? { id: 'consult', title: 'Get a number chosen for your birth date', text: 'In a consultation, we choose a new number that removes these and suits your birth date. Your reading comes with you on WhatsApp.', action: 'whatsapp' }
     : { id: 'consult', title: 'Make the most of it', text: 'Ask us how to strengthen what your number already gives you. Your reading comes with you on WhatsApp.', action: 'whatsapp' });
 
-  return { tone, change, area, headline, why, strengths, carePoints, steps };
+  return { tone, change, area, headline, why, notFor, strengths, carePoints, steps };
 }
