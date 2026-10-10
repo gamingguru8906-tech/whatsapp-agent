@@ -238,7 +238,35 @@ ${own ? '- Never ask again for their name, date of birth, mobile number or conce
 - The reading is guidance, not a guarantee. Stay hopeful: every concern has a way forward, and the consultation is where it is worked out.`;
 }
 
+// Sign in on the numerology website ("My readings"). The page shows a 6-digit code and a WhatsApp button that sends
+// "LOGIN 123456" here. The code is marked as sent from this WhatsApp number, which signs the page in; the website
+// owns the numerology_logins table (mobile-numerology/db/schema.js). Only the exact message is taken, so a
+// birth date or a number in a normal chat is never mistaken for a code.
+const LOGIN_RE = /^\s*login\s*[:#-]?\s*(\d{6})\s*\.?\s*$/i;
+const extractLoginCode = text => (String(text || '').match(LOGIN_RE) || [])[1] || null;
+
+const LOGIN_REPLY = {
+  ok: '✅ You are signed in on the Veshannastro website. Go back to the page: your readings will appear there in a moment.',
+  bad: 'That sign-in code has expired or was already used. Please tap "Sign in with WhatsApp" on the website again to get a new code.',
+  foreign: 'Sign-in on the website works with Indian (+91) WhatsApp numbers only. You can still message us here for your reading or a consultation.'
+};
+
+/** Marks a website sign-in code as sent from this WhatsApp number. Returns 'ok' | 'bad' | 'foreign'. Never throws. */
+async function verifyLogin(pool, phone, code) {
+  if (!localMobile(phone)) return 'foreign';
+  if (!pool || !/^\d{6}$/.test(String(code || ''))) return 'bad';
+  try {
+    const { rows } = await pool.query(`UPDATE numerology_logins SET verified_at = now(), phone = $2
+      WHERE code = $1 AND verified_at IS NULL AND created_at > now() - interval '15 minutes' RETURNING id`, [code, phone]);
+    return rows.length ? 'ok' : 'bad';
+  } catch (e) {
+    if (e.code !== '42P01') console.error('Website sign-in failed:', e.message); // 42P01: no sign-in has been made yet
+    return 'bad';
+  }
+}
+
 module.exports = {
+  extractLoginCode, verifyLogin, LOGIN_REPLY,
   report, parseArgs, formatLead, formatDob, pack, HELP, NO_TABLE, MESSAGE_LIMIT,
   extractReadingId, migrate, rememberReading, findForPerson, fillProfile, promptContext, localMobile
 };

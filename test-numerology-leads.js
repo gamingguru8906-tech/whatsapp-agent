@@ -6,7 +6,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { Pool } = require('pg');
 const { report, parseArgs, formatDob, pack, NO_TABLE, MESSAGE_LIMIT,
-  extractReadingId, migrate, rememberReading, findForPerson, fillProfile, promptContext } = require('./numerology-leads');
+  extractReadingId, migrate, rememberReading, findForPerson, fillProfile, promptContext, extractLoginCode, verifyLogin } = require('./numerology-leads');
 
 const DB = process.env.TEST_DATABASE_URL;
 const skip = DB ? false : 'set TEST_DATABASE_URL to run the database tests';
@@ -210,3 +210,28 @@ test('profile: only empty details are filled, and only from their own reading', 
   assert.deepEqual(other, { name: null, dob: null });
 });
 
+
+test('website sign-in: only an exact "LOGIN 123456" message is a code', () => {
+  assert.equal(extractLoginCode('LOGIN 482915'), '482915');
+  assert.equal(extractLoginCode('  login: 482915. '), '482915');
+  assert.equal(extractLoginCode('my dob is 291088 login 482915 please'), null);
+  assert.equal(extractLoginCode('482915'), null);
+  assert.equal(extractLoginCode('LOGIN 48291'), null);
+});
+
+test('website sign-in: the code is marked as sent from this number once, within 15 minutes', { skip }, async () => {
+  await pool.query('DROP TABLE IF EXISTS numerology_logins');
+  assert.equal(await verifyLogin(pool, '919811045672', '123456'), 'bad'); // no sign-in table yet: never throws
+  // Same table as mobile-numerology/db/schema.js (the website owns it).
+  await pool.query(`CREATE TABLE numerology_logins (id BIGSERIAL PRIMARY KEY, code TEXT NOT NULL, token_hash TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(), verified_at TIMESTAMPTZ, phone TEXT)`);
+  await pool.query("INSERT INTO numerology_logins (code, token_hash) VALUES ('123456', 'h1'), ('654321', 'h2')");
+  await pool.query("UPDATE numerology_logins SET created_at = now() - interval '20 minutes' WHERE code = '654321'");
+  assert.equal(await verifyLogin(pool, '14155550100', '123456'), 'foreign');
+  assert.equal(await verifyLogin(pool, '919811045672', '123456'), 'ok');
+  assert.equal(await verifyLogin(pool, '919999999999', '123456'), 'bad');  // used
+  assert.equal(await verifyLogin(pool, '919811045672', '654321'), 'bad');  // expired
+  const { rows } = await pool.query("SELECT phone FROM numerology_logins WHERE code = '123456'");
+  assert.equal(rows[0].phone, '919811045672');
+  await pool.query('DROP TABLE numerology_logins');
+});
