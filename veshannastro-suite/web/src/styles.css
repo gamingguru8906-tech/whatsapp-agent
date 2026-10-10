@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Same family as the mobile-number site. Colour only where it moves someone to act: WhatsApp green for the
+ * one action (talk to us), Veshannastro pink and maroon in the watch drawing (the brand moment). The rest is
+ * off-white, white and ink. League Spartan for titles and anything you tap; Literata for sentences.
+ */
+:root {
+  color-scheme: light;
+  --background: 33 54% 97%;          /* #FBF7F2 */
+  --foreground: 341 24% 13%;
+  --card: 0 0% 100%;
+  --primary: 340 80% 55%;            /* #E83E7B */
+  --primary-soft: 337 80% 95%;
+  --primary-dark: 338 73% 42%;
+  --maroon: 341 61% 30%;             /* #7A1E3A */
+  --maroon-soft: 342 46% 94%;
+  --muted: 30 37% 93%;
+  --muted-foreground: 339 7% 41%;
+  --border: 27 32% 87%;
+  --success: 146 50% 34%;
+  --success-soft: 140 45% 93%;
+  --success-dark: 146 58% 26%;
+  --whatsapp: 145 72% 37%;
+  --whatsapp-dark: 145 74% 31%;
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+  body { @apply bg-background font-serif text-foreground antialiased; font-size: 17px; line-height: 1.6; font-variant-numeric: lining-nums; }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li { text-wrap: pretty; }
+  h1, h2, h3, h4, button, nav, header, label { font-family: theme('fontFamily.display'); }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 2px; border-radius: 6px; }
+}
+
+@layer components {
+  .t-large { @apply font-display text-[2.375rem] font-bold leading-[1.04] tracking-[-0.025em] text-maroon sm:text-[3.5rem]; }
+  .t-title { @apply font-display text-[1.75rem] font-bold leading-[1.1] tracking-[-0.015em] text-maroon sm:text-[2.25rem]; }
+  .t-head { @apply font-display text-[18px] font-semibold leading-snug text-foreground; }
+
+  .btn { @apply inline-flex min-h-[52px] items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-6 font-display text-[17px] font-semibold transition-colors; }
+  .btn-whatsapp { @apply btn bg-whatsapp text-white shadow-[0_10px_24px_-14px_hsl(var(--whatsapp))] hover:bg-whatsapp-dark; }
+  .btn-plain { @apply btn bg-card text-foreground shadow-[0_0_0_1px_hsl(var(--border))] hover:bg-muted; }
+
+  .group-card { @apply overflow-hidden rounded-[20px] border border-border/70 bg-card; }
+  .rows > * + * { box-shadow: inset 0 1px 0 hsl(var(--border) / 0.8); }
+}
+
+@layer utilities {
+  .material { background: hsl(var(--background) / 0.82); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
+}
+
+/* The page's one moment: the watch's parts light up in turn, each with its name. */
+@keyframes lit { from { opacity: 0; } to { opacity: 1; } }
+.lit { animation: lit 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
