@@ -13,6 +13,10 @@ compatibility_flags = ["nodejs_compat"]
 binding = "HYPERDRIVE"
 id = "c9c1d25736484e64a9ea1122a8273f9f"
 
+# Workers AI: only to read the watch details from a visitor's photo (the reading itself never uses AI).
+[ai]
+binding = "AI"
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"

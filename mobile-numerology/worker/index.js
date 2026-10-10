@@ -9,6 +9,7 @@ import { databaseUrl, withDb } from './db.js';
 import { readingSummary } from '../engine/summary.js';
 import { watchReading, watchSummary, watchConcern } from '../engine/watch.js';
 import { clientIp, verifyTurnstile, withinRateLimit } from './security.js';
+import { checkPhoto, readWatchPhoto } from '../engine/photo.js';
 
 const engine = createEngine(rulebook);
 
@@ -81,6 +82,30 @@ export async function handleReading(request, env, ctx, deps = {}) {
   return json(owner ? { ...result, owner: true, leadRef } : { ...publicView(result), leadRef });
 }
 
+// POST /api/watch-photo { image: data URL } -> { ok, watch, filled }. The model only fills the form's choices; the
+// visitor checks them before asking for the reading. The photo is not stored or logged.
+const PHOTO_ERRORS = {
+  'not-a-watch': 'We could not find a watch in this photo. Try a clear photo of the watch face, or fill in the details below.',
+  'nothing-seen': 'The photo was not clear enough to read. Try a brighter, closer photo, or fill in the details below.',
+  unreadable: 'We could not read this photo. Please fill in the details below.'
+};
+export async function handlePhoto(request, env, deps = {}) {
+  let body;
+  try { body = await request.json(); } catch { return json({ ok: false, error: 'Please choose a photo.' }, 400); }
+  const bad = checkPhoto(body?.image);
+  if (bad) return json({ ok: false, error: bad }, 400);
+  if (!(await withinRateLimit(env, `photo:${clientIp(request)}`))) return json({ ok: false, error: 'Too many photos from this connection. Please wait a minute and try again.' }, 429);
+  const ai = deps.ai ?? env.AI;
+  if (!ai) return json({ ok: false, error: 'Photo reading is not available right now. Please fill in the details below.' }, 503);
+  try {
+    const r = await readWatchPhoto(ai, body.image);
+    return r.ok ? json(r) : json({ ok: false, error: PHOTO_ERRORS[r.error] ?? PHOTO_ERRORS.unreadable }, 422);
+  } catch (e) {
+    console.error('Photo reading failed:', e.message);
+    return json({ ok: false, error: 'Photo reading is not available right now. Please fill in the details below.' }, 503);
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -91,6 +116,10 @@ export default {
     if (url.pathname === '/api/watch') {
       if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
       return handleReading(request, env, ctx, { segment: 'watch' });
+    }
+    if (url.pathname === '/api/watch-photo') {
+      if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
+      return handlePhoto(request, env);
     }
     if (url.pathname === '/api/health') return handleHealth(url, env);
     if (url.pathname === '/api/config') {

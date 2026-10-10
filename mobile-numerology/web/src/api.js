@@ -48,3 +48,35 @@ export async function getWatchReading(payload, ownerKey) {
     return { ok: false, errors: { form: 'No connection. Please check your internet and try again.' } };
   }
 }
+
+// Shrinks a photo in the browser (longest side 1024 px, JPEG) so it uploads fast on mobile data.
+export async function shrinkPhoto(file, max = 1024) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((ok, fail) => { const i = new Image(); i.onload = () => ok(i); i.onerror = fail; i.src = url; });
+    const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.85);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+// Watch photo -> the form's choices ({ ok, watch, filled } or { ok: false, error }).
+export async function readPhoto(image) {
+  if (LOCAL) {
+    // Owner preview has no Worker: a fixed sample answer, to check the form behaviour.
+    await new Promise(r => setTimeout(r, 700));
+    return { ok: true, watch: { dialShape: 'round', dialColour: 'blue', caseMetal: 'gold', markers: 'roman', dateWindow: 'date', datePosition: '3', strapMaterial: 'metal', hands: 'three' },
+      filled: ['dialShape', 'dialColour', 'caseMetal', 'markers', 'dateWindow', 'datePosition', 'strapMaterial', 'hands'] };
+  }
+  try {
+    const res = await fetch('/api/watch-photo', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image }) });
+    const data = await res.json().catch(() => null);
+    return data ?? { ok: false, error: 'We could not read this photo. Please fill in the details below.' };
+  } catch {
+    return { ok: false, error: 'No connection. Please check your internet and try again.' };
+  }
+}
