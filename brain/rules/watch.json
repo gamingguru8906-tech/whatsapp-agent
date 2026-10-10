@@ -29,7 +29,8 @@
     "rank": 3
    },
    "condition": "dial colour = red",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are bold and like to be noticed, with a lot of romance and passion in you. This colour is also linked with anger, so take care with your temper."
   },
   {
    "id": "WATCH-COL-2",
@@ -59,7 +60,8 @@
     "rank": 3
    },
    "condition": "dial colour = orange",
-   "status": "approved"
+   "status": "approved",
+   "say": "You pick and choose what you want and then enjoy it to the fullest, giving your time only to what you have chosen. You can shine brightly or go quietly unnoticed."
   },
   {
    "id": "WATCH-COL-3",
@@ -88,7 +90,8 @@
     "rank": 3
    },
    "condition": "dial colour = yellow",
-   "status": "approved"
+   "status": "approved",
+   "say": "You carry authority yet stay approachable, like the sun: full of life, happiness and friendliness."
   },
   {
    "id": "WATCH-COL-4",
@@ -117,7 +120,8 @@
     "rank": 3
    },
    "condition": "dial colour = green",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have a mindset of growth, abundance and peace, with love for others. Too much of it can bring suspicion, envy and doubt, so keep a check on these."
   },
   {
    "id": "WATCH-COL-5",
@@ -148,7 +152,8 @@
     "rank": 3
    },
    "condition": "dial colour = blue",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have an elevated mindset: you observe and absorb, can lead or follow, prefer deep talk to gossip, seek knowledge and stay gentle, productive and focused on the future."
   },
   {
    "id": "WATCH-COL-6",
@@ -178,7 +183,8 @@
     "rank": 3
    },
    "condition": "dial colour = indigo",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are spiritual and very farsighted, with a great impact on others. Your own inner life can get messy, so take care not to neglect the present and your relationships."
   },
   {
    "id": "WATCH-COL-7",
@@ -207,7 +213,8 @@
     "rank": 3
    },
    "condition": "dial colour = violet",
-   "status": "approved"
+   "status": "approved",
+   "say": "You may not like doing things personally, but you make sure the job gets done through others. You carry a sense of royalty and power."
   },
   {
    "id": "WATCH-COL-8",
@@ -236,7 +243,8 @@
     "rank": 3
    },
    "condition": "dial colour = black",
-   "status": "approved"
+   "status": "approved",
+   "say": "You command respect and carry sophistication and luxury. People look up to you but keep a distance, as you can seem aloof and hard to approach."
   },
   {
    "id": "WATCH-COL-9",
@@ -264,7 +272,8 @@
     "rank": 3
    },
    "condition": "dial colour = white",
-   "status": "approved"
+   "status": "approved",
+   "say": "You accept whatever comes your way, without trying to stop any of it."
   },
   {
    "id": "WATCH-COL-10",
@@ -292,7 +301,8 @@
     "rank": 3
    },
    "condition": "dial colour = grey (black + white)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are an ambivert: deep and reserved, yet light and approachable. You want to say and do a lot, but also enjoy keeping to yourself."
   },
   {
    "id": "WATCH-COL-11",
@@ -320,7 +330,8 @@
     "rank": 3
    },
    "condition": "dial colour = pink (red + white)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are playful and imaginative, with some of red's passion softened by white's quietness."
   },
   {
    "id": "WATCH-COL-12",
@@ -349,7 +360,8 @@
     "rank": 3
    },
    "condition": "dial or case colour = gold (yellow + black)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are authoritative but expressive. You stay reserved with most people, yet become the life of the party among your own kind."
   },
   {
    "id": "WATCH-COL-13",
@@ -379,7 +391,8 @@
     "rank": 3
    },
    "condition": "colour = rose gold (yellow + black + red)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very selective and closely involved in your choices, authoritative yet expressive. You do not mingle easily with just anyone, but once you do, there is no stopping you."
   },
   {
    "id": "WATCH-COL-14",
@@ -407,7 +420,8 @@
     "rank": 3
    },
    "condition": "colour = silver (white + grey)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You would pick a premium crowd to spend time with, but you are comfortable with anyone, and stay selective even within that crowd."
   },
   {
    "id": "WATCH-COL-15",
@@ -435,7 +449,8 @@
     "rank": 3
    },
    "condition": "colour = maroon (red + black + a little yellow)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You blend an authoritative nature with a bold, expressive and happy one."
   },
   {
    "id": "WATCH-COL-16",
@@ -463,7 +478,8 @@
     "rank": 3
    },
    "condition": "colour = brown (yellow + black, mostly black)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You come across as earthy, natural and comforting, yet you are also selective, premium and uncommon."
   },
   {
    "id": "WATCH-COL-17",
@@ -540,7 +556,8 @@
     "rank": 3
    },
    "condition": "worn on right wrist",
-   "status": "approved"
+   "status": "approved",
+   "say": "Wearing your watch on the right wrist tends to attract masculine energy, whatever your gender, easing relations with the men in your life. You think in terms of action and what to do next."
   },
   {
    "id": "WATCH-WR-2",
@@ -570,7 +587,8 @@
     "rank": 3
    },
    "condition": "worn on left wrist",
-   "status": "approved"
+   "status": "approved",
+   "say": "Wearing your watch on the left wrist tends to attract feminine energy, bringing better relations with the women in your life. You think more about feelings and emotional reactions than the action."
   },
   {
    "id": "WATCH-WR-3",
@@ -599,7 +617,8 @@
     "rank": 3
    },
    "condition": "switches wrists often / comfortable on both",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can be moody, getting the best and worst of both energies, so you may connect with and also clash with both men and women. Take care to keep things balanced."
   },
   {
    "id": "WATCH-WR-4",
@@ -629,7 +648,8 @@
     "rank": 3
    },
    "condition": "concern = relationship with father (or a man)",
-   "status": "approved"
+   "status": "approved",
+   "say": "If things are difficult with your father or a man in your life, try wearing your watch on your right wrist regularly for the next few months."
   },
   {
    "id": "WATCH-WR-5",
@@ -692,7 +712,8 @@
     "rank": 3
    },
    "condition": "after switching wrist",
-   "status": "approved"
+   "status": "approved",
+   "say": "After switching wrists, changes tend to show within 3 to 6 months. If nothing changes after 6 months, change the watch itself."
   },
   {
    "id": "WATCH-WR-7",
@@ -769,7 +790,8 @@
     "rank": 3
    },
    "condition": "dial size vs wrist = small",
-   "status": "approved"
+   "status": "approved",
+   "say": "This dial size is linked with lower confidence. You avoid the limelight and drama, stay content and mind your own business, though at work you may not get fair recognition."
   },
   {
    "id": "WATCH-DS-2",
@@ -798,7 +820,8 @@
     "rank": 3
    },
    "condition": "dial size vs wrist = medium",
-   "status": "approved"
+   "status": "approved",
+   "say": "You enjoy social events but are selective about whom you talk to, and you stay reserved. At work you get attention and recognition, though promotions may come slowly."
   },
   {
    "id": "WATCH-DS-3",
@@ -853,7 +876,8 @@
     "rank": 3
    },
    "condition": "dial size vs wrist = large",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are extremely confident and comfortable in the spotlight: the life of the party, a good speaker who takes initiative, speaks your mind even to the boss, and is an asset to any team."
   },
   {
    "id": "WATCH-DS-5",
@@ -882,7 +906,8 @@
     "rank": 3
    },
    "condition": "profession = communication / expression (influencer, branding, marketing)",
-   "status": "approved"
+   "status": "approved",
+   "say": "If your work is about communication or expression, such as influencing, branding or marketing, choosing a large-dial watch can help you gain confidence at work."
   },
   {
    "id": "WATCH-DS-6",
@@ -935,7 +960,8 @@
     "rank": 3
    },
    "condition": "dial size vs wrist = extra-large (too big for the hand)",
-   "status": "approved"
+   "status": "approved",
+   "say": "A dial too big for your wrist is linked with a show-off side and a bigger-than-life image; you may be different in public and private, so take care to stay genuine."
   },
   {
    "id": "WATCH-DS-8",
@@ -987,7 +1013,8 @@
     "rank": 3
    },
    "condition": "dial shape = round",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are idealistic and principled, very organised, accurate and precise. You like to be punctual and ahead, and you stay committed to your relationships and promises."
   },
   {
    "id": "WATCH-SH-2",
@@ -1016,7 +1043,8 @@
     "rank": 3
    },
    "condition": "dial shape = round (downside)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You tend to expect the same care and effort back from others, especially those close to you, so take care that this does not turn into disappointment."
   },
   {
    "id": "WATCH-SH-3",
@@ -1046,7 +1074,8 @@
     "rank": 3
    },
    "condition": "dial shape = square (all sides equal)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a perfectionist in your own work but do not expect the same from others; you focus on improving yourself."
   },
   {
    "id": "WATCH-SH-4",
@@ -1074,7 +1103,8 @@
     "rank": 3
    },
    "condition": "dial shape = square (downside)",
-   "status": "approved"
+   "status": "approved",
+   "say": "This shape can make you a little too mechanical: rigid, structured and black-and-white, so take care not to become numb to emotions."
   },
   {
    "id": "WATCH-SH-5",
@@ -1104,7 +1134,8 @@
     "rank": 3
    },
    "condition": "dial shape = square",
-   "status": "approved"
+   "status": "approved",
+   "say": "This shape is linked with physical focus and an urge to be active; wearing it tends to make you feel the need to be more active than before."
   },
   {
    "id": "WATCH-SH-6",
@@ -1134,7 +1165,8 @@
     "rank": 3
    },
    "condition": "dial shape = rectangle, vertical (taller than wide)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are agile and restless, can't sit still for long, and never have a dull moment. You may commit but under-deliver, and long-term relationships may need extra attention from you."
   },
   {
    "id": "WATCH-SH-7",
@@ -1248,7 +1280,8 @@
     "rank": 3
    },
    "condition": "dial shape = oval, vertical",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can be more focused on yourself, and self-indulgence may make you reluctant to do things. Yet you are also active and enjoy ticking off your to-do list and appointments."
   },
   {
    "id": "WATCH-SH-11",
@@ -1278,7 +1311,8 @@
     "rank": 3
    },
    "condition": "dial shape = oval, horizontal",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are caring and extremely protective, though you can be dominant and possessive about staying involved. You tend to have good hand-eye coordination and do well at sports."
   },
   {
    "id": "WATCH-SH-12",
@@ -1310,7 +1344,8 @@
     "rank": 3
    },
    "condition": "dial shape = hexagon (any orientation)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You value unity and need a close-knit family, caring deeply for friends, family and clients. Take care, as being a people-pleaser can leave you stressed."
   },
   {
    "id": "WATCH-SH-13",
@@ -1338,7 +1373,8 @@
     "rank": 3
    },
    "condition": "dial shape = hexagon, horizontal (flat top and bottom)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are more emotional and democratic, open to hearing and accepting other people's beliefs."
   },
   {
    "id": "WATCH-SH-14",
@@ -1367,7 +1403,8 @@
     "rank": 3
    },
    "condition": "dial shape = hexagon, vertical (points at top and bottom)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are sharp, intelligent and agile, leaning on logic, facts and figures more than emotion. You can be autocratic, so take care to make room for opposing views."
   },
   {
    "id": "WATCH-SH-15",
@@ -1398,7 +1435,8 @@
     "rank": 3
    },
    "condition": "dial shape = hexagon (either)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are good at forming and keeping relationships and feel others' joys and losses as your own. You make a good business partner, always looking for a win-win."
   },
   {
    "id": "WATCH-SH-16",
@@ -1427,7 +1465,8 @@
     "rank": 3
    },
    "condition": "dial shape = octagon",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a multi-talented all-rounder who commands attention and respect and makes a great first impression. Multi-tasking can bring stress and chaos, and your family may feel the daily pressure."
   },
   {
    "id": "WATCH-SH-17",
@@ -1502,7 +1541,8 @@
     "rank": 3
    },
    "condition": "numeral size = large",
-   "status": "approved"
+   "status": "approved",
+   "say": "You naturally have larger intentions; nothing small or trivial for you, and you work beyond your comfort zone."
   },
   {
    "id": "WATCH-DG-2",
@@ -1531,7 +1571,8 @@
     "rank": 3
    },
    "condition": "numeral size = medium",
-   "status": "approved"
+   "status": "approved",
+   "say": "You get many tasks done, but you tend to stay inside your comfort zone."
   },
   {
    "id": "WATCH-DG-3",
@@ -1559,7 +1600,8 @@
     "rank": 3
    },
    "condition": "numeral size = small",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is linked with not doing justice to your own abilities: you have potential but may hold back from acting on it."
   },
   {
    "id": "WATCH-DG-4",
@@ -1588,7 +1630,8 @@
     "rank": 3
    },
    "condition": "numeral size = extra-large",
-   "status": "approved"
+   "status": "approved",
+   "say": "You think of doing a lot and can be a good influencer, but you may promise many things and not deliver all of them, so take care with your commitments."
   },
   {
    "id": "WATCH-DG-5",
@@ -1619,7 +1662,8 @@
     "rank": 3
    },
    "condition": "numerals = Roman",
-   "status": "approved"
+   "status": "approved",
+   "say": "You do unusual things in a good way: friendly, hard-working and willing to take risks, you take on unfamiliar activities, meet new people and enjoy other languages, cultures, cuisines and festivals."
   },
   {
    "id": "WATCH-DG-6",
@@ -1648,7 +1692,8 @@
     "rank": 3
    },
    "condition": "business = marketing or advertising",
-   "status": "approved"
+   "status": "approved",
+   "say": "If you run a marketing or advertising business, a Roman-numeral watch suits you well."
   },
   {
    "id": "WATCH-DG-7",
@@ -1676,7 +1721,8 @@
     "rank": 3
    },
    "condition": "numerals = Arabic 1-12",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are ready to take on activities and work hard for your livelihood; how far you go is shown by the size of the numerals."
   },
   {
    "id": "WATCH-DG-8",
@@ -1705,7 +1751,8 @@
     "rank": 3
    },
    "condition": "numerals = Devanagari or another regional script",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very comfortable with your own community, and you build good relations and are more productive with people of your own region and language."
   },
   {
    "id": "WATCH-DG-9",
@@ -1737,7 +1784,8 @@
     "rank": 3
    },
    "condition": "no numerals (dots, dashes or nothing)",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is linked with doing things in an unorganised or unplanned way. You communicate more through gestures, and your eyes speak louder than words."
   },
   {
    "id": "WATCH-DG-10",
@@ -1765,7 +1813,8 @@
     "rank": 3
    },
    "condition": "hour markers = dashes / lines",
-   "status": "approved"
+   "status": "approved",
+   "say": "Dash markers are linked with gestures that can come across as blunt or angry, so take care with how your expressions land on others."
   },
   {
    "id": "WATCH-DG-11",
@@ -1793,7 +1842,8 @@
     "rank": 3
    },
    "condition": "hour markers = dots",
-   "status": "approved"
+   "status": "approved",
+   "say": "You use your gestures positively, with a bright smile and a friendly look."
   },
   {
    "id": "WATCH-DG-12",
@@ -1823,7 +1873,8 @@
     "rank": 3
    },
    "condition": "hour markers = stars",
-   "status": "approved"
+   "status": "approved",
+   "say": "You enjoy attention and being the focus of others, pampered and recognised. Take care that this does not turn into ego."
   },
   {
    "id": "WATCH-DG-13",
@@ -1851,7 +1902,8 @@
     "rank": 3
    },
    "condition": "diamonds or glittering stones anywhere on the watch",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are deeply connected to nature and very human, earthy at heart, loving equally in all you do and treating everyone without bias."
   },
   {
    "id": "WATCH-DG-14",
@@ -1880,7 +1932,8 @@
     "rank": 3
    },
    "condition": "diamonds as hour markers, OR a single diamond at 12",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have an excellent circle of people, belong to elite groups and are admired and respected. You work hard and expect good results."
   },
   {
    "id": "WATCH-DG-15",
@@ -1908,7 +1961,8 @@
     "rank": 3
    },
    "condition": "glitter on the dial surface",
-   "status": "approved"
+   "status": "approved",
+   "say": "You put in extra effort to earn recognition in society, earn it rightly and enjoy life rightfully."
   },
   {
    "id": "WATCH-DG-16",
@@ -1961,7 +2015,8 @@
     "rank": 3
    },
    "condition": "numerals present = only 3, 6, 9, 12",
-   "status": "approved"
+   "status": "approved",
+   "say": "You focus only on the important things and don't waste energy on small events, but for big occasions you go all out and are a lavish host."
   },
   {
    "id": "WATCH-NUM-2",
@@ -1989,7 +2044,8 @@
     "rank": 3
    },
    "condition": "only one numeral present (e.g. only 12)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You focus on single events, like a birthday or a project, and put all your energy there."
   },
   {
    "id": "WATCH-NUM-3",
@@ -2018,7 +2074,8 @@
     "rank": 3
    },
    "condition": "numeral 12",
-   "status": "approved"
+   "status": "approved",
+   "say": "The 12 on your dial stands for you, yourself."
   },
   {
    "id": "WATCH-NUM-4",
@@ -2093,7 +2150,8 @@
     "rank": 3
    },
    "condition": "numeral 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "The 3 on your dial shows the presence of a mentor or Guru in your life."
   },
   {
    "id": "WATCH-NUM-7",
@@ -2240,7 +2298,8 @@
     "rank": 3
    },
    "condition": "numerals present = only 2, 6, 8, 10 (even)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You tend to be more emotional and comfortable with feminine energy, with more female friends."
   },
   {
    "id": "WATCH-NUM-13",
@@ -2269,7 +2328,8 @@
     "rank": 3
    },
    "condition": "numerals present = only 1, 3, 5, 7 (odd)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You tend to have more male friends, and masculine energy plays a bigger part in your duties."
   },
   {
    "id": "WATCH-NUM-14",
@@ -2310,7 +2370,8 @@
     "rank": 3
    },
    "condition": "plain dial, two hands, no markers at all",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are peaceful and content, though you may seem aloof. You are most active at night on your own, talk only as needed, and your work may go unnoticed as you don't seek recognition."
   },
   {
    "id": "WATCH-NUM-15",
@@ -2384,7 +2445,8 @@
     "rank": 3
    },
    "condition": "has date and day display",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are extremely organised; your mind plans tasks neatly, like boxes on a calendar."
   },
   {
    "id": "WATCH-DT-2",
@@ -2412,7 +2474,8 @@
     "rank": 3
    },
    "condition": "day display only (no date)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are good at planning out activities."
   },
   {
    "id": "WATCH-DT-3",
@@ -2441,7 +2504,8 @@
     "rank": 3
    },
    "condition": "day display AND date display",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are good at planning activities and executing them as well."
   },
   {
    "id": "WATCH-DT-4",
@@ -2505,7 +2569,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 12",
-   "status": "approved"
+   "status": "approved",
+   "say": "This placement is linked with being very concerned about yourself."
   },
   {
    "id": "WATCH-DT-6",
@@ -2547,7 +2612,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a giver in many ways and enjoy caring for others; government-related work suits you."
   },
   {
    "id": "WATCH-DT-7",
@@ -2589,7 +2655,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You know how to handle emotions and communicate well."
   },
   {
    "id": "WATCH-DT-8",
@@ -2631,7 +2698,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a great learner and know which courses and fields to pursue."
   },
   {
    "id": "WATCH-DT-9",
@@ -2672,7 +2740,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are great at marketing and influencing, and you sell, negotiate and buy well."
   },
   {
    "id": "WATCH-DT-10",
@@ -2713,7 +2782,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are good at business matters like stocks and calculations, as well as reading and writing."
   },
   {
    "id": "WATCH-DT-11",
@@ -2754,7 +2824,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "Six is the number of luxury, so you know which brands to buy."
   },
   {
    "id": "WATCH-DT-12",
@@ -2795,7 +2866,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very good at researching what you care about."
   },
   {
    "id": "WATCH-DT-13",
@@ -2837,7 +2909,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have a strong sense of justice and doing what is right, though you can be rigid, with strict rules for yourself and others."
   },
   {
    "id": "WATCH-DT-14",
@@ -2878,7 +2951,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very organised, particular and tidy in life."
   },
   {
    "id": "WATCH-DT-15",
@@ -2919,7 +2993,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 10",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very organised, mostly in your work life."
   },
   {
    "id": "WATCH-DT-16",
@@ -2961,7 +3036,8 @@
     "rank": 3
    },
    "condition": "date/day window nearest 11",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a master networker who knows how, with whom and where to profit."
   },
   {
    "id": "WATCH-DT-17",
@@ -3037,7 +3113,8 @@
     "rank": 3
    },
    "condition": "strap wide/large relative to dial",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have huge intentions and commit to big things, working hard to fulfil them; the wider your strap, the deeper your commitment."
   },
   {
    "id": "WATCH-BS-2",
@@ -3066,7 +3143,8 @@
     "rank": 3
    },
    "condition": "strap = medium",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your effort and emotional involvement tend to be medium; you handle regular commitments at par."
   },
   {
    "id": "WATCH-BS-3",
@@ -3094,7 +3172,8 @@
     "rank": 3
    },
    "condition": "strap = small",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is linked with not going out of your way or making sacrifices for others, so take care to show your important people that they matter."
   },
   {
    "id": "WATCH-BS-4",
@@ -3148,7 +3227,8 @@
     "rank": 3
    },
    "condition": "strap = metal",
-   "status": "approved"
+   "status": "approved",
+   "say": "You build solid, strong relationships and follow through on commitments, but you can be mechanical and show annoyance openly, so take care to show empathy too."
   },
   {
    "id": "WATCH-BM-2",
@@ -3201,7 +3281,8 @@
     "rank": 3
    },
    "condition": "strap = leather",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very emotional and warm in relationships, close only to warm people but kind to all, and a great host."
   },
   {
    "id": "WATCH-BM-4",
@@ -3241,7 +3322,8 @@
     "rank": 3
    },
    "condition": "concern = lack of warmth at work/home AND strap = metal",
-   "status": "approved"
+   "status": "approved",
+   "say": "If you feel a lack of warmth at work or home, swap your metal strap for leather; you may find more acceptance and love from the people around you."
   },
   {
    "id": "WATCH-BM-5",
@@ -3270,7 +3352,8 @@
     "rank": 3
    },
    "condition": "strap = rubber / plastic / silicone",
-   "status": "approved"
+   "status": "approved",
+   "say": "You sit between metal and leather: warmer than metal, less than leather. You are cordial with all but go out of your way only for a special few."
   },
   {
    "id": "WATCH-BM-6",
@@ -3299,7 +3382,8 @@
     "rank": 3
    },
    "condition": "strap = wood",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are loving, caring and nature-minded, but may find it hard to bond, and you may want to do things yet miss your targets."
   },
   {
    "id": "WATCH-BM-7",
@@ -3329,7 +3413,8 @@
     "rank": 3
    },
    "condition": "strap = rock / stone",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are close to the earth, more insightful than others, and more emotional, with strong feminine energy."
   },
   {
    "id": "WATCH-BM-8",
@@ -3357,7 +3442,8 @@
     "rank": 3
    },
    "condition": "strap = crystals",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are close to nature, value life and enjoy the small pleasures of every day."
   },
   {
    "id": "WATCH-BM-9",
@@ -3386,7 +3472,8 @@
     "rank": 3
    },
    "condition": "strap = Velcro",
-   "status": "approved"
+   "status": "approved",
+   "say": "You bond quickly and enter many relationships, but find it very hard to let go, so endings can hurt deeply. Take care not to rush in on impulse."
   },
   {
    "id": "WATCH-BM-10",
@@ -3415,7 +3502,8 @@
     "rank": 3
    },
    "condition": "strap = resin (hard rubber)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You carry qualities of both metal and leather, which can bring inner confusion and make balancing your emotions and relationships difficult."
   },
   {
    "id": "WATCH-BM-11",
@@ -3444,7 +3532,8 @@
     "rank": 3
    },
    "condition": "strap = nylon",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are strong and a little rigid, but you bend to help others. When disappointed, you don't show it; you understand and reschedule."
   },
   {
    "id": "WATCH-BM-12",
@@ -3472,7 +3561,8 @@
     "rank": 3
    },
    "condition": "strap = silicone rubber (soft, smooth)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are soft-spoken and loved by everyone, sensitive and helpful, yet you keep your distance and your own rules and never lose your personality."
   },
   {
    "id": "WATCH-BM-13",
@@ -3501,7 +3591,8 @@
     "rank": 3
    },
    "condition": "strap = cotton / fabric",
-   "status": "approved"
+   "status": "approved",
+   "say": "You love bringing people together, are outgoing, join social groups and events, and care about nature."
   },
   {
    "id": "WATCH-BX-1",
@@ -3529,7 +3620,8 @@
     "rank": 3
    },
    "condition": "strap made of long horizontal solid links/chunks",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a thoughtful and very good gift-giver who tends to give extravagant, expensive gifts."
   },
   {
    "id": "WATCH-BX-2",
@@ -3559,7 +3651,8 @@
     "rank": 3
    },
    "condition": "strap has gaps / holes / cut-outs (beyond buckle holes)",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is linked with trust issues that can cause problems in personal and work relationships, so take care not to look for problems where there are none."
   },
   {
    "id": "WATCH-BX-3",
@@ -3656,7 +3749,8 @@
     "rank": 3
    },
    "condition": "no seconds hand",
-   "status": "approved"
+   "status": "approved",
+   "say": "You may not be vigilant about small daily things and can miss little moments, but you let go of petty issues and small fights easily."
   },
   {
    "id": "WATCH-HD-4",
@@ -3684,7 +3778,8 @@
     "rank": 3
    },
    "condition": "no minute hand",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is linked with missing fairly important events, like a friend's birthday, so take care with important dates."
   },
   {
    "id": "WATCH-HD-5",
@@ -3736,7 +3831,8 @@
     "rank": 3
    },
    "condition": "hand proportions not traditional (hour should be thicker and shorter, minute longer and slimmer, seconds needle-thin)",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is linked with chaotic priorities, making it hard to put tasks in order."
   },
   {
    "id": "WATCH-HD-7",
@@ -3764,7 +3860,8 @@
     "rank": 3
    },
    "condition": "hand tips = sharp (not blunt or round)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very particular about how you carry out your actions."
   },
   {
    "id": "WATCH-HD-8",
@@ -3792,7 +3889,8 @@
     "rank": 3
    },
    "condition": "hands extend past the centre (tails)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can focus too much and attend to unnecessary things."
   },
   {
    "id": "WATCH-TH-1",
@@ -3820,7 +3918,8 @@
     "rank": 3
    },
    "condition": "case thickness = thin",
-   "status": "approved"
+   "status": "approved",
+   "say": "A thin case is linked with slimmer commitment and enthusiasm for doing things."
   },
   {
    "id": "WATCH-TH-2",
@@ -3848,7 +3947,8 @@
     "rank": 3
    },
    "condition": "case thickness = thick",
-   "status": "approved"
+   "status": "approved",
+   "say": "You put much more effort into both relationships and work."
   },
   {
    "id": "WATCH-MP-1",
@@ -3879,7 +3979,8 @@
     "rank": 3
    },
    "condition": "type = smartwatch or sports watch (multipurpose)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a multi-tasker; the people in your life play several roles, and you draw many benefits from your relationships."
   },
   {
    "id": "WATCH-MP-2",
@@ -3908,7 +4009,8 @@
     "rank": 3
    },
    "condition": "type = multipurpose (downside)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Multi-tasking can bring confusion and spread your attention thin, so take care to focus."
   },
   {
    "id": "WATCH-FC-1",
@@ -3937,7 +4039,8 @@
     "rank": 3
    },
    "condition": "watch = first copy (replica)",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is linked with finding it hard to get along with peers, even within a strong group, and feeling small or left out."
   },
   {
    "id": "WATCH-FC-2",
@@ -3990,7 +4093,8 @@
     "rank": 3
    },
    "condition": "watch = original (any brand)",
-   "status": "approved"
+   "status": "approved",
+   "say": "An original watch is linked with authenticity, self-esteem, confidence and self-acceptance, and with being part of social circles."
   },
   {
    "id": "WATCH-GF-1",
@@ -4020,7 +4124,8 @@
     "rank": 3
    },
    "condition": "watch was a gift",
-   "status": "approved"
+   "status": "approved",
+   "say": "The person who gifted you this watch wants to be more closely connected and involved in your life."
   },
   {
    "id": "WATCH-GF-2",
@@ -4118,7 +4223,8 @@
     "rank": 3
    },
    "condition": "gifted watch kept at home but not worn",
-   "status": "approved"
+   "status": "approved",
+   "say": "Keeping a gifted watch at home without wearing it shows you want to stay in touch with the giver, but not let them get too involved."
   },
   {
    "id": "WATCH-GF-6",
@@ -4171,7 +4277,8 @@
     "rank": 3
    },
    "condition": "dial has a printed sentence, quote, phrase, or prominent brand/model text",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are vocal, expressive and articulate, and a good conversationalist."
   },
   {
    "id": "WATCH-DV-2",
@@ -4199,7 +4306,8 @@
     "rank": 3
    },
    "condition": "dial shows a person's face (anyone)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You crave some form of recognition."
   },
   {
    "id": "WATCH-DV-3",
@@ -4250,7 +4358,8 @@
     "rank": 3
    },
    "condition": "dial picture = scenery / landscape",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very close to nature and mindful of your surroundings."
   },
   {
    "id": "WATCH-DV-5",
@@ -4278,7 +4387,8 @@
     "rank": 3
    },
    "condition": "dial picture = animal (image, outline or face)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You share a good relationship with your father and father figures, but you can be easily influenced by tough people."
   },
   {
    "id": "WATCH-DV-6",
@@ -4307,7 +4417,8 @@
     "rank": 3
    },
    "condition": "dial picture = birds",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have strong feminine energy and great relations with the women in your life, along with a strong imagination that can sometimes turn into illusion."
   },
   {
    "id": "WATCH-DV-7",
@@ -4335,7 +4446,8 @@
     "rank": 3
    },
    "condition": "dial picture = plants or flowers",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are close to nature and selective about beauty, keeping your home and clothes beautiful."
   },
   {
    "id": "WATCH-DV-8",
@@ -4363,7 +4475,8 @@
     "rank": 3
    },
    "condition": "dial pattern = vertical lines",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are great at planning things."
   },
   {
    "id": "WATCH-DV-9",
@@ -4391,7 +4504,8 @@
     "rank": 3
    },
    "condition": "dial pattern = horizontal lines",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are great at executing your plans."
   },
   {
    "id": "WATCH-DV-10",
@@ -4419,7 +4533,8 @@
     "rank": 3
    },
    "condition": "dial pattern = spiral",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is linked with work that never seems to end on time and long conversations that eat up time, so take care to wrap things up."
   },
   {
    "id": "WATCH-DV-11",
@@ -4448,7 +4563,8 @@
     "rank": 3
    },
    "condition": "dial design = concentric circles (printed, not sub-dial counters)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You like to keep different parts of your life, like family, friends and work, within separate boundaries without mixing them up."
   },
   {
    "id": "WATCH-DV-12",
@@ -4616,7 +4732,8 @@
     "rank": 3
    },
    "condition": "flip-cover watch",
-   "status": "approved"
+   "status": "review",
+   "reason": "wording: Text is 'Same as OT-1', but WATCH-OT-1 is not approved (in review), so there is no say to reuse. If OT-1 is approved, suggested: \"You like to keep your personal life private, but will show it off on the right occasion.\""
   },
   {
    "id": "WATCH-OT-3",
@@ -4644,7 +4761,8 @@
     "rank": 3
    },
    "condition": "reversible two-dial watch",
-   "status": "approved"
+   "status": "approved",
+   "say": "You tend to lead two lives that may or may not connect, and you switch between them as needed."
   },
   {
    "id": "WATCH-OT-4",
@@ -4695,7 +4813,8 @@
     "rank": 3
    },
    "condition": "compass or map on the dial",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a good guide, mentor and adviser to the people in your life, and you are also open to receiving guidance."
   },
   {
    "id": "WATCH-CH-1",
@@ -4724,7 +4843,8 @@
     "rank": 3
    },
    "condition": "power = solar",
-   "status": "approved"
+   "status": "approved",
+   "say": "You carry the Sun's energy: warm, energetic and resourceful, though sometimes with a strong ego."
   },
   {
    "id": "WATCH-CH-2",
@@ -4753,7 +4873,8 @@
     "rank": 3
    },
    "condition": "power = automatic (self-winding)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are proactive and make things happen, keep up your key relationships and are highly committed to your work."
   },
   {
    "id": "WATCH-CH-3",
@@ -4781,7 +4902,8 @@
     "rank": 3
    },
    "condition": "power = battery (quartz)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You start out with high energy and positivity but can hit a pitfall along the way, needing a boost every few years to recover and move ahead."
   },
   {
    "id": "WATCH-CH-4",
@@ -4809,7 +4931,8 @@
     "rank": 3
    },
    "condition": "power = manual winding",
-   "status": "approved"
+   "status": "approved",
+   "say": "You often need outside help in many areas and like being guided, and you value a personal, handmade touch over mass-made things."
   },
   {
    "id": "WATCH-CH-5",
@@ -4837,7 +4960,8 @@
     "rank": 3
    },
    "condition": "power = daily charging (e.g. smartwatch)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You live in spurts, acting indifferent about something for a while and then suddenly caring too much, whether friends or fitness."
   },
   {
    "id": "WATCH-CH-6",
@@ -4888,7 +5012,8 @@
     "rank": 3
    },
    "condition": "owns several watches and picks by occasion",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have a good heart, sensitive to fine details and emotional effects. You value relationships and go out of your way to please."
   },
   {
    "id": "WATCH-MW-2",
@@ -4917,7 +5042,8 @@
     "rank": 3
    },
    "condition": "owns several watches (caution)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your understanding of people could also be used to manipulate them, so keep your intentions good. Each watch you wear brings its own traits."
   },
   {
    "id": "WATCH-WP-1",
@@ -5018,7 +5144,8 @@
     "rank": 3
    },
    "condition": "dial worn on the inside of the wrist (over the pulse)",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are private and keep your life close to your heart; you watch others but stay tight-lipped."
   },
   {
    "id": "WATCH-WW-2",
@@ -5046,7 +5173,8 @@
     "rank": 3
    },
    "condition": "dial worn on the outside of the wrist",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are open and comfortable sharing details of your life."
   }
  ]
 }

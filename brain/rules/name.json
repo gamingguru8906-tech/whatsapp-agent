@@ -121,7 +121,8 @@
     "rank": 4
    },
    "condition": "full name number in {1, 5, 6}",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your full name number is among the luckiest, as 1, 5 and 6 are considered the most lucky numbers for a full name."
   },
   {
    "id": "CHALDEAN-NAME-006",
@@ -147,7 +148,8 @@
     "rank": 4
    },
    "condition": "full name number = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "A full name number of 9 is considered unpredictable, so it is best avoided. If you keep it, make sure the two digits it comes from are not enemies of each other."
   },
   {
    "id": "CHALDEAN-NAME-007",
@@ -205,7 +207,8 @@
     "rank": 4
    },
    "condition": "psychic = 3 AND destiny = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "With 3 as your birth number and 6 as your destiny number, the number 4 becomes lucky for you."
   },
   {
    "id": "CHALDEAN-NAME-009",
@@ -301,7 +304,8 @@
     "rank": 4
    },
    "condition": "name compound in {24, 42}",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your name total is considered very lucky, as 24 and 42 are seen as very lucky numbers in numerology."
   },
   {
    "id": "CHALDEAN-NAME-013",
@@ -374,7 +378,8 @@
     "rank": 4
    },
    "condition": "name number = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 4 is best used only if you are in business, or when your birth and destiny numbers are 3 and 6."
   },
   {
    "id": "NAMENUM-NAME-001",
@@ -418,7 +423,8 @@
     "rank": 5
    },
    "condition": "name number (reduced) = 1 AND (day number = 1 OR life number = 1)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 1 is allowed and suits you, as 1 is your birth number or destiny number."
   },
   {
    "id": "NAMENUM-NAME-002",
@@ -458,7 +464,8 @@
     "rank": 5
    },
    "condition": "name number = 1 AND day = 1 AND life = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "With 1 as your name, birth and destiny number, this name can bring you the luckiest results."
   },
   {
    "id": "NAMENUM-NAME-003",
@@ -500,7 +507,8 @@
     "rank": 5
    },
    "condition": "name number = 1 AND day = 1 AND life != 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 1 with birth number 1 can give both happy and unhappy results, coloured by your destiny number."
   },
   {
    "id": "NAMENUM-NAME-004",
@@ -544,7 +552,8 @@
     "rank": 5
    },
    "condition": "name number = 1 AND day != 1 AND life != 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 1 does not suit you, as 1 is neither your birth nor your destiny number, and it can land you in problems."
   },
   {
    "id": "NAMENUM-NAME-005",
@@ -573,7 +582,8 @@
     "rank": 5
    },
    "condition": "name compound = 10",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 10 is ruled by the Sun and is linked with a dignified life, steadiness, confidence, lucky breaks, quick fame and honest dealings. Keep restraint and integrity to hold on to it."
   },
   {
    "id": "NAMENUM-NAME-006",
@@ -610,7 +620,8 @@
     "rank": 5
    },
    "condition": "name compound = 10 AND component word totals reduce to 2, 7 or 8 (negative)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your name number 10 can be spoiled because words in your name add up to 2, 7 or 8, which carry negative vibrations."
   },
   {
    "id": "NAMENUM-NAME-007",
@@ -691,7 +702,8 @@
     "rank": 5
    },
    "condition": "name compound = 10 AND name begins with letter D",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your name number 10 can be spoiled because your name begins with the letter D."
   },
   {
    "id": "NAMENUM-NAME-010",
@@ -720,7 +732,8 @@
     "rank": 5
    },
    "condition": "name compound = 19",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 19, the 'Morning Sun', is linked with continuous growth in rank, status and wealth, enthusiasm, plans that succeed and a good spouse. Its blessings come only through righteous ways."
   },
   {
    "id": "NAMENUM-NAME-011",
@@ -741,7 +754,7 @@
    },
    "period": null,
    "text": "Benefits only then; otherwise invites troubles.",
-   "polarity": "good / care",
+   "polarity": "mixed",
    "areas": [
     "general"
    ],
@@ -755,7 +768,8 @@
     "rank": 5
    },
    "condition": "name compound = 19 AND day number = 1 (also some with life/destiny 1)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 19 benefits you because your birth number is 1; without that, it tends to invite trouble."
   },
   {
    "id": "NAMENUM-NAME-012",
@@ -785,7 +799,8 @@
     "rank": 5
    },
    "condition": "name compound = 28",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 28 is considered highly unlucky, linked with early success followed by losses and repeated fresh starts. Be careful with share investments, standing as guarantor and trusting friends or relatives blindly."
   },
   {
    "id": "NAMENUM-NAME-013",
@@ -815,7 +830,8 @@
     "rank": 5
    },
    "condition": "name compound = 37",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 37 is considered very lucky, linked with name, fame, charm, success in love, help from friends, funds for business and luck with money. Guard against scandal and greed."
   },
   {
    "id": "NAMENUM-NAME-014",
@@ -863,7 +879,8 @@
     "rank": 5
    },
    "condition": "name compound = 37 AND (day or life number in 6, 8, 7)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 37 is afflicted when your birth or destiny number is 6, 7 or 8, which can bring sorrows and setbacks. The 7 may even make you give away your fortune or renounce."
   },
   {
    "id": "NAMENUM-NAME-015",
@@ -891,7 +908,8 @@
     "rank": 5
    },
    "condition": "name compound = 46",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 46 can push you to the top in whatever you do, linked with leadership, knowledge, speaking or teaching, and public life. Stay honest to keep its blessings."
   },
   {
    "id": "NAMENUM-NAME-016",
@@ -939,7 +957,8 @@
     "rank": 5
    },
    "condition": "name compound = 46 AND (day or life number in 2, 7, 8)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 46 is afflicted for you, as 2, 7 or 8 is your birth or destiny number."
   },
   {
    "id": "NAMENUM-NAME-017",
@@ -981,7 +1000,8 @@
     "rank": 5
    },
    "condition": "name compound = 46 AND day = 1 AND life in {5, 6, 9}",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 46 works well for you, as your birth number is 1 and your destiny number is 5, 6 or 9."
   },
   {
    "id": "NAMENUM-NAME-018",
@@ -1031,7 +1051,8 @@
     "rank": 5
    },
    "condition": "name compound = 55",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 55 stands for will power and genius, linked with sparkling intelligence, invention, occult knowledge and victory over enemies. Use this power well, as misuse can bring ruin."
   },
   {
    "id": "NAMENUM-NAME-020",
@@ -1043,7 +1064,7 @@
    },
    "period": null,
    "text": "Claims 55 can cure venereal disease. SKIP (medical).",
-   "polarity": "n/a",
+   "polarity": "neutral",
    "areas": [
     "health"
    ],
@@ -1085,7 +1106,8 @@
     "rank": 5
    },
    "condition": "name compound = 55",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 55 needs a flawless initial, first, middle and last name, each in harmony with the others, with no clash inside the name."
   },
   {
    "id": "NAMENUM-NAME-022",
@@ -1112,7 +1134,8 @@
     "rank": 5
    },
    "condition": "name compound = 64",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 64 can make you a great achiever, with sharp intelligence, the strength to overcome enemies, high government posts and respect. Its results mix the effects of Venus, Rahu and the Sun."
   },
   {
    "id": "NAMENUM-NAME-023",
@@ -1147,7 +1170,8 @@
     "rank": 5
    },
    "condition": "name compound = 64 AND day number = 1 (born 1, 10, 19, 28)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 64 gives its favourable results to you, as you were born on the 1st, 10th, 19th or 28th."
   },
   {
    "id": "NAMENUM-NAME-024",
@@ -1185,7 +1209,8 @@
     "rank": 5
    },
    "condition": "name compound = 64 AND day number in {6, 5, 3, 2}",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 64 does not match your birth number of 2, 3, 5 or 6."
   },
   {
    "id": "NAMENUM-NAME-025",
@@ -1222,7 +1247,8 @@
     "rank": 5
    },
    "condition": "name compound in {46, 64} AND day number in {2, 3} (born 2,11,20,29 or 3,12,21,30)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name numbers 46 and 64 lack compatibility with your birth number of 2 or 3, and can weigh on you with heavy demands."
   },
   {
    "id": "NAMENUM-NAME-026",
@@ -1253,7 +1279,8 @@
     "rank": 5
    },
    "condition": "day number in {5, 6, 7, 8, 3, 9}",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your birth number, you can find better name numbers in series other than 1."
   },
   {
    "id": "NAMENUM-NAME-027",
@@ -1282,7 +1309,8 @@
     "rank": 5
    },
    "condition": "day = 1, choosing among 37, 46, 64",
-   "status": "approved"
+   "status": "approved",
+   "say": "As you were born on the 1st, 10th, 19th or 28th, only one of the name numbers 37, 46 and 64 truly suits your energy, and an expert can help you choose it."
   },
   {
    "id": "NAMENUM-NAME-028",
@@ -1311,7 +1339,8 @@
     "rank": 5
    },
    "condition": "name compound = 73",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 73 combines divinity with worldly wisdom, linked with intuition, meditation, comforts, a rise in life, wealth, property and support from government and abroad. Stay honest to keep it working."
   },
   {
    "id": "NAMENUM-NAME-029",
@@ -1387,7 +1416,8 @@
     "rank": 5
    },
    "condition": "name compound = 82",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 82 is highly powerful, linked with hard work that can take you from rags to riches, leadership, followers, property and magnetism. Take care with love entanglements."
   },
   {
    "id": "NAMENUM-NAME-032",
@@ -1438,7 +1468,8 @@
     "rank": 5
    },
    "condition": "name compound = 82",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 82, avoid marrying, starting construction, signing contracts or business trips on days ruled by 8, as these days are linked with failure or accidents for you."
   },
   {
    "id": "NAMENUM-NAME-034",
@@ -1464,7 +1495,8 @@
     "rank": 5
    },
    "condition": "name compound = 82",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 82, numbers in the family of 7, 8 and 9 are unlucky for you, so avoid them."
   },
   {
    "id": "NAMENUM-NAME-035",
@@ -1492,7 +1524,8 @@
     "rank": 5
    },
    "condition": "name compound = 91",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 91 joins the power of Mars with the Sun, linked with hard work, technical skill, leadership, will power, tenacity and much travel, with success in consulting or export-import."
   },
   {
    "id": "NAMENUM-NAME-036",
@@ -1554,7 +1587,8 @@
     "rank": 5
    },
    "condition": "name compound = 91 AND an initial or component word reduces to 2, 7 or 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your name number 91 is weakened because an initial or word in your name adds up to 2, 7 or 8, so a numerology correction of the name is advised."
   },
   {
    "id": "NAMENUM-NAME-038",
@@ -1582,7 +1616,8 @@
     "rank": 5
    },
    "condition": "name compound = 100",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 100 gives intelligence and drive, but the two zeroes may deny you chances to profit from your talents, and others may enjoy what you earn. It also leans towards a spiritual path."
   },
   {
    "id": "NAMENUM-NAME-039",
@@ -1636,7 +1671,8 @@
     "rank": 5
    },
    "condition": "name compound = 11",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 11 is a master number, linked with unselfish, dutiful and intelligent ways, but also moodiness, hidden fears and a soft heart that can get cheated. Take care with drink."
   },
   {
    "id": "NAMENUM-NAME-041",
@@ -1662,7 +1698,8 @@
     "rank": 5
    },
    "condition": "name compound = 11",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 11 is not considered a good name number for you."
   },
   {
    "id": "NAMENUM-NAME-042",
@@ -1709,7 +1746,8 @@
     "rank": 5
    },
    "condition": "name compound = 11 AND (day or life number in 9, 8)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 11 is afflicted by your birth or destiny number 8 or 9, and is linked with wrong deals and doubtful contracts that can harm you, so take care with agreements."
   },
   {
    "id": "NAMENUM-NAME-043",
@@ -1769,7 +1807,8 @@
     "rank": 5
    },
    "condition": "name compound = 11 AND an initial or component word reduces to 9 or 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your name number 11 is weakened because an initial or word in your name adds up to 8 or 9, so a numerology correction of the name is advised."
   },
   {
    "id": "NAMENUM-NAME-045",
@@ -1796,7 +1835,8 @@
     "rank": 5
    },
    "condition": "name compound = 20",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 20 is linked with extremes of sacrifice and revenge. Used unselfishly it can inspire many, but used selfishly it tends to end in defeat."
   },
   {
    "id": "NAMENUM-NAME-046",
@@ -1808,7 +1848,7 @@
    },
    "period": null,
    "text": "Special power to detoxify poison / save snake-bite victims. SKIP (medical).",
-   "polarity": "n/a",
+   "polarity": "neutral",
    "areas": [
     "health"
    ],
@@ -1822,7 +1862,8 @@
     "rank": 5
    },
    "condition": "name compound = 20 (claim)",
-   "status": "approved"
+   "status": "review",
+   "reason": "wording: Medical claim: special power to detoxify poison or save snake-bite victims (marked SKIP); cannot be shown without implying a healing power."
   },
   {
    "id": "NAMENUM-NAME-047",
@@ -1848,7 +1889,8 @@
     "rank": 5
    },
    "condition": "name compound = 20",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 20 is not considered a safe name number."
   },
   {
    "id": "NAMENUM-NAME-048",
@@ -1900,7 +1942,8 @@
     "rank": 5
    },
    "condition": "name compound = 29 (also day of birth = 29)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 29 is seen as quite unlucky, linked with quarrels, a revengeful streak, boasting and legal disputes, so keep calm and patient. It can still bring earnings through business."
   },
   {
    "id": "NAMENUM-NAME-050",
@@ -1974,7 +2017,8 @@
     "rank": 5
    },
    "condition": "name compound = 38",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 38 helps you excel when working for others, with deep faith and support from influential people. Beware of enemies in your own circle; a name correction can prevent an unexpected sad turn later."
   },
   {
    "id": "NAMENUM-NAME-053",
@@ -2026,7 +2070,8 @@
     "rank": 5
    },
    "condition": "name compound = 47",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 47 has little harmony between its parts, linked with talkativeness, unpopularity and love affairs that do not last. You may gain wealth but find it hard to enjoy."
   },
   {
    "id": "NAMENUM-NAME-055",
@@ -2038,7 +2083,7 @@
    },
    "period": null,
    "text": "Claims loss of vision from diabetes or accidents; extra care in eye surgery. SKIP (medical).",
-   "polarity": "n/a",
+   "polarity": "neutral",
    "areas": [
     "health"
    ],
@@ -2052,7 +2097,8 @@
     "rank": 5
    },
    "condition": "name compound = 47 (health claim)",
-   "status": "approved"
+   "status": "review",
+   "reason": "wording: Health prediction of vision loss from diabetes or accidents and advice on eye surgery (marked SKIP); a medical claim tied to a name number."
   },
   {
    "id": "NAMENUM-NAME-056",
@@ -2099,7 +2145,8 @@
     "rank": 5
    },
    "condition": "name compound = 47 AND (day or life in 9 or 8)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 47 clashes with your birth or destiny number 8 or 9, which weakens it, and 8 especially affects harmony in love."
   },
   {
    "id": "NAMENUM-NAME-057",
@@ -2150,7 +2197,8 @@
     "rank": 5
    },
    "condition": "name compound = 56",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 56 has perfect compatibility, and with a perfect name brings charm, name, fame and Lakshmi's blessings. Its drawback is the Moon's unsteadiness, and without a perfect name the charm can vanish suddenly."
   },
   {
    "id": "NAMENUM-NAME-059",
@@ -2218,7 +2266,8 @@
     "rank": 5
    },
    "condition": "name compound = 56 or 65 AND day or life number = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 56 or 65 is not good with your birth or destiny number 3, as Venus and Jupiter clash, and a perfect name can correct this."
   },
   {
    "id": "NAMENUM-NAME-061",
@@ -2293,7 +2342,8 @@
     "rank": 5
    },
    "condition": "name compound = 65",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 65 is linked with mercy, charity, standing up against injustice, support from the wealthy and several incomes. The Moon brings ups and downs in family, money and love, and some risk of injuries."
   },
   {
    "id": "NAMENUM-NAME-063",
@@ -2347,7 +2397,8 @@
     "rank": 5
    },
    "condition": "name compound = 74",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 74 is seen as gloomy, linked with low income, grief, few friends and quarrels or separation in marriage. It is not a good number, and changing it soon is advised."
   },
   {
    "id": "NAMENUM-NAME-065",
@@ -2422,7 +2473,8 @@
     "rank": 5
    },
    "condition": "name compound = 83",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 83 can lift you to enviable positions as a diplomat, judge or leader. Take care in travel and with enemies, as status may weaken later, and prayers to Saturn are advised."
   },
   {
    "id": "NAMENUM-NAME-068",
@@ -2472,7 +2524,8 @@
     "rank": 5
    },
    "condition": "name compound = 92",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 92 has a built-in conflict between 9 and 2, so it needs the support of your birth and destiny numbers."
   },
   {
    "id": "NAMENUM-NAME-070",
@@ -2516,7 +2569,8 @@
     "rank": 5
    },
    "condition": "name compound = 92 AND (day or life = 8)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 92 does not give good results with your birth or destiny number 8."
   },
   {
    "id": "NAMENUM-NAME-071",
@@ -2560,7 +2614,8 @@
     "rank": 5
    },
    "condition": "name compound = 92 AND (day or life = 7)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With birth or destiny number 7, the power of name number 92 is reduced, as 7 sides with 2 against 9."
   },
   {
    "id": "NAMENUM-NAME-072",
@@ -2596,7 +2651,8 @@
     "rank": 5
    },
    "condition": "name compound = 92 AND a component word or initial reduces to 7 or 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 92, a word or initial in your name adding up to 7 or 8 is unlucky, so it is best avoided."
   },
   {
    "id": "NAMENUM-NAME-073",
@@ -2642,7 +2698,8 @@
     "rank": 5
    },
    "condition": "name compound = 92 AND (day or life in 6 or 5)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your birth or destiny number 5 or 6 adds to the good power of name number 92."
   },
   {
    "id": "NAMENUM-NAME-074",
@@ -2677,7 +2734,8 @@
     "rank": 5
    },
    "condition": "name compound = 92 AND a component word reduces to 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 92, a word in your name adding up to 3 is best avoided, as 3 opposes 6."
   },
   {
    "id": "NAMENUM-NAME-075",
@@ -2742,7 +2800,8 @@
     "rank": 5
    },
    "condition": "day, life or name number = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Jupiter's number 3 makes you intelligent, hard-working, honest and disciplined. Whatever you gain tends to come step by step, through your own hard work rather than luck."
   },
   {
    "id": "NAMENUM-NAME-077",
@@ -2795,7 +2854,8 @@
     "rank": 5
    },
    "condition": "name compound = 12",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 12 makes you dynamic, tactful and imaginative, good in thinking, speech and action. You tend to work for others' welfare without seeking reward."
   },
   {
    "id": "NAMENUM-NAME-079",
@@ -2835,7 +2895,8 @@
     "rank": 5
    },
    "condition": "name compound = 12 AND day = 1 AND life = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "With birth number 1 and destiny number 2, name number 12 shows its other side: delays, missed chances, moods and mixed results, with less drive after 40 and a pull towards spiritual practices."
   },
   {
    "id": "NAMENUM-NAME-080",
@@ -2863,7 +2924,8 @@
     "rank": 5
    },
    "condition": "name compound = 21",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 21 tends to favour a job over your own business, with early struggles and less success than 12. You are imaginative and a perfectionist, which can cause delays."
   },
   {
    "id": "NAMENUM-NAME-081",
@@ -2908,7 +2970,8 @@
     "rank": 5
    },
    "condition": "name compound = 21 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 21 is allowed for you, as 3 is your birth or destiny number, though you may still end up working for others' profit."
   },
   {
    "id": "NAMENUM-NAME-082",
@@ -2948,7 +3011,8 @@
     "rank": 5
    },
    "condition": "name compound = 21 AND day = 2 AND life = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "With birth number 2 and destiny number 1, name number 21 has little conflict and can bring you success."
   },
   {
    "id": "NAMENUM-NAME-083",
@@ -2983,7 +3047,8 @@
     "rank": 5
    },
    "condition": "name compound = 21 AND day = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 21 goes against the nature of your birth number 1, which can bring dissatisfaction, mistakes and low moods."
   },
   {
    "id": "NAMENUM-NAME-084",
@@ -3027,7 +3092,8 @@
     "rank": 5
    },
    "condition": "name compound = 21 AND (day or life = 9)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your birth or destiny number 9 clashes with name number 21 and can work against you, so a name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-085",
@@ -3071,7 +3137,8 @@
     "rank": 5
    },
    "condition": "name compound = 21 AND (day or life = 6)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your birth or destiny number 6 does not suit name number 21 and can lead to your own downfall, so a prompt name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-086",
@@ -3117,7 +3184,8 @@
     "rank": 5
    },
    "condition": "name compound = 30 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 30 suits you, as 3 is your birth or destiny number. It is linked with sharp thinking, unselfish service, little interest in money and spiritual strength through meditation."
   },
   {
    "id": "NAMENUM-NAME-087",
@@ -3214,7 +3282,8 @@
     "rank": 5
    },
    "condition": "name compound = 39 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 39 suits your birth or destiny number 3, but others may take credit for your work and health needs care. For material success, correcting the name to 5, 9 or 1 is advised."
   },
   {
    "id": "NAMENUM-NAME-090",
@@ -3241,7 +3310,8 @@
     "rank": 5
    },
    "condition": "name compound = 39",
-   "status": "approved"
+   "status": "review",
+   "reason": "wording: Core of the rule is avoiding other people with 6 (a girl or partner with 6); instructions about other people are not allowed."
   },
   {
    "id": "NAMENUM-NAME-091",
@@ -3293,7 +3363,8 @@
     "rank": 5
    },
    "condition": "name compound = 48",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 48 leans towards religion, renunciation, sharp intelligence and occult study, but is seen as unlucky from a worldly view. A name correction is advised for material success and family life."
   },
   {
    "id": "NAMENUM-NAME-093",
@@ -3337,7 +3408,8 @@
     "rank": 5
    },
    "condition": "name compound = 57 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With birth or destiny number 3, name number 57 may suit you but gives only modest results, so it is still better to avoid it."
   },
   {
    "id": "NAMENUM-NAME-094",
@@ -3381,7 +3453,8 @@
     "rank": 5
    },
    "condition": "name compound = 57 AND day != 3 AND life != 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 57 does not suit your birth and destiny numbers and can bring obstacles and repeated setbacks, so a name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-095",
@@ -3409,7 +3482,8 @@
     "rank": 5
    },
    "condition": "name compound = 57",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 57 is not a safe name number: early progress and fame can fade, and marriage can turn sour. A name correction is advised, including for business names."
   },
   {
    "id": "NAMENUM-NAME-096",
@@ -3455,7 +3529,8 @@
     "rank": 5
    },
    "condition": "name compound = 66 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 66 suits you because 3 is your birth or destiny number. It is linked with speaking skill, political importance, the performing arts, and roles as a mediator or judge."
   },
   {
    "id": "NAMENUM-NAME-097",
@@ -3547,7 +3622,8 @@
     "rank": 5
    },
    "condition": "name compound = 75 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 75 suits your birth or destiny number 3. Early life leans to study and spirituality, with marriage possibly delayed, while later life can bring unexpected fame as a writer or speaker."
   },
   {
    "id": "NAMENUM-NAME-100",
@@ -3637,7 +3713,8 @@
     "rank": 5
    },
    "condition": "name compound = 84 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 84 is permitted for you, as 3 is your birth or destiny number."
   },
   {
    "id": "NAMENUM-NAME-103",
@@ -3666,7 +3743,8 @@
     "rank": 5
    },
    "condition": "name compound = 84",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 84 is linked with hardship from childhood, unrecognised talent, delays and disappointments, and it strengthens Saturn's influence. A name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-104",
@@ -3678,7 +3756,7 @@
    },
    "period": null,
    "text": "\"Chronic or incurable diseases early in life.\" SKIP (medical).",
-   "polarity": "n/a",
+   "polarity": "neutral",
    "areas": [
     "health"
    ],
@@ -3692,7 +3770,8 @@
     "rank": 5
    },
    "condition": "name compound = 84 (health claim)",
-   "status": "approved"
+   "status": "review",
+   "reason": "wording: Predicts chronic or incurable diseases early in life (marked SKIP); a medical claim tied to a name number."
   },
   {
    "id": "NAMENUM-NAME-105",
@@ -3739,7 +3818,8 @@
     "rank": 5
    },
    "condition": "name compound = 93 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 93 is allowed with your birth or destiny number 3, putting bold Mars and wise Jupiter at your service. It can lead to top positions, several incomes and fame in many fields."
   },
   {
    "id": "NAMENUM-NAME-106",
@@ -3788,7 +3868,8 @@
     "rank": 5
    },
    "condition": "name number (reduced) = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "It is not good to have 4 as your name number, and a correction with an expert's help is advised."
   },
   {
    "id": "NAMENUM-NAME-108",
@@ -3823,7 +3904,8 @@
     "rank": 5
    },
    "condition": "day = 4 AND life = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "With 4 as your birth number and 8 as your destiny number, you may face many complications."
   },
   {
    "id": "NAMENUM-NAME-109",
@@ -3883,7 +3965,8 @@
     "rank": 5
    },
    "condition": "life number = 4 AND day != 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "With 4 as your destiny number, your early life follows your birth number, while 4 shapes the important changes, unexpected events and turns in your life."
   },
   {
    "id": "NAMENUM-NAME-111",
@@ -3911,7 +3994,8 @@
     "rank": 5
    },
    "condition": "name compound = 13",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 13 is seen as unlucky, linked with sudden shocks in family and career, so take care in relationships too. The Sun and Jupiter offer rescue, and an honest, flawless name can bring greatness."
   },
   {
    "id": "NAMENUM-NAME-112",
@@ -3986,7 +4070,8 @@
     "rank": 5
    },
    "condition": "name compound = 22",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 22 is linked with a pull towards drink, gambling and bad company, and a risk of being cheated, so keep good advisers. It can earn well through printing, computers, publishing, transport or hotels."
   },
   {
    "id": "NAMENUM-NAME-115",
@@ -4015,7 +4100,8 @@
     "rank": 5
    },
    "condition": "name compound = 31",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 31 is linked with scholarship, a strong memory, independence and spiritual study, but it is not good as a name number: it can bring a peak, then loss, and family strain."
   },
   {
    "id": "NAMENUM-NAME-116",
@@ -4059,7 +4145,8 @@
     "rank": 5
    },
    "condition": "name compound = 31 AND (day or life = 1)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With birth or destiny number 1, name number 31 can bring you name, fame and many admirers."
   },
   {
    "id": "NAMENUM-NAME-117",
@@ -4134,7 +4221,8 @@
     "rank": 5
    },
    "condition": "name compound = 40",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 40 can make you a public figure, with unexpected friendships, fame, money and property. Watch your speech, as people may value you less from your late forties and later life can feel thankless."
   },
   {
    "id": "NAMENUM-NAME-120",
@@ -4223,7 +4311,8 @@
     "rank": 5
    },
    "condition": "day, life or name number = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "Number 5 gives you a lightning-quick mind, love of change and new ventures, and luck and popularity. You tend to succeed in business and earn and spend well, but find secrets hard to keep."
   },
   {
    "id": "NAMENUM-NAME-123",
@@ -4260,7 +4349,8 @@
     "rank": 5
    },
    "condition": "life = 5 AND day != 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "With 5 as your destiny number, early life follows your birth number, and you can become very popular later in life, though fame can sometimes turn to notoriety."
   },
   {
    "id": "NAMENUM-NAME-124",
@@ -4484,7 +4574,8 @@
     "rank": 5
    },
    "condition": "name compound = 14 AND (day or life in 8 or 7)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 14 and birth or destiny number 7 or 8, betrayal by people you confide in can happen often, so choose your confidants carefully."
   },
   {
    "id": "NAMENUM-NAME-132",
@@ -4559,7 +4650,8 @@
     "rank": 5
    },
    "condition": "name compound = 23",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 23 is your luckiest, linked with plans that bear fruit, divine help, big projects, fame and support from important people and the government."
   },
   {
    "id": "NAMENUM-NAME-135",
@@ -4612,7 +4704,8 @@
     "rank": 5
    },
    "condition": "name compound = 32",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 32 brings public support, fresh ideas, high positions, respect and a youthful wit. From around age 38 you may change goals, with some ups and downs."
   },
   {
    "id": "NAMENUM-NAME-137",
@@ -4664,7 +4757,8 @@
     "rank": 5
    },
    "condition": "name compound = 41",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 41 is extremely lucky, linked with many talents, exceptional ability and wide fame. Stay grounded, as success can go to your head and lead to risky choices."
   },
   {
    "id": "NAMENUM-NAME-139",
@@ -4717,7 +4811,8 @@
     "rank": 5
    },
    "condition": "name compound = 50",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 50 makes you brilliant and quick-thinking, with sound judgment and a search for truth. It can lead to academic excellence or success in business, even great wealth."
   },
   {
    "id": "NAMENUM-NAME-141",
@@ -4908,7 +5003,8 @@
     "rank": 5
    },
    "condition": "name compound = 77 AND day != 9 AND life != 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Contrary to popular belief, name number 77 is very good, linked with luck, prosperity and divine help. It also works well as a business name."
   },
   {
    "id": "NAMENUM-NAME-148",
@@ -4956,7 +5052,8 @@
     "rank": 5
    },
    "condition": "name compound = 77 AND (day = 9 OR life = 9, or partner/wife/friend with 9)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 77 and your birth or destiny number 9 do not sit well together, as 7 and 9 do not coexist, so success is hard. Avoid starting a business on dates adding to 9."
   },
   {
    "id": "NAMENUM-NAME-149",
@@ -5009,7 +5106,8 @@
     "rank": 5
    },
    "condition": "name compound = 86",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 86 is not the most successful in its series and is linked with obstacles and delays, yet it brings humility, support from influential people and steady growth. Love affairs can slow your progress."
   },
   {
    "id": "NAMENUM-NAME-151",
@@ -5060,7 +5158,8 @@
     "rank": 5
    },
    "condition": "name compound = 95",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 95 is lucky for you and your business, linked with boldness, discipline, perfectionism and original thinking. It works best with birth and destiny numbers 9 and 5."
   },
   {
    "id": "NAMENUM-NAME-153",
@@ -5106,7 +5205,8 @@
     "rank": 5
    },
    "condition": "name compound = 95 AND (day or life in 2 or 7)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 95 does not suit your birth or destiny number 2 or 7."
   },
   {
    "id": "NAMENUM-NAME-154",
@@ -5172,7 +5272,8 @@
     "rank": 5
    },
    "condition": "day, life or name number = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "Number 6 makes you born lucky, linked with charm, artistic taste, luxury and kindness to strangers. Take care to avoid false promises and overly calculating ways."
   },
   {
    "id": "NAMENUM-NAME-156",
@@ -5247,7 +5348,8 @@
     "rank": 5
    },
    "condition": "name compound = 15",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 15 shapes you for success, with charm, speaking skill and success in fine arts, films, jewellery or textiles, if the name is perfect. Guard against arrogance and greed."
   },
   {
    "id": "NAMENUM-NAME-159",
@@ -5322,7 +5424,8 @@
     "rank": 5
    },
    "condition": "name compound = 24",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 24 is linked with charm, a rich imagination suited to poetry, science or film direction, and a sharp, computer-like memory for information."
   },
   {
    "id": "NAMENUM-NAME-162",
@@ -5363,7 +5466,8 @@
     "rank": 5
    },
    "condition": "name compound = 24 AND day = 6 AND life in {4, 2}",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 24, birth number 6 and destiny number 4 or 2, you can succeed in any business."
   },
   {
    "id": "NAMENUM-NAME-163",
@@ -5404,7 +5508,8 @@
     "rank": 5
    },
    "condition": "name compound = 24 AND life = 6 AND day in {2, 4}",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 24, destiny number 6 and birth number 2 or 4, you can shine in business, even as a well-paid consultant."
   },
   {
    "id": "NAMENUM-NAME-164",
@@ -5444,7 +5549,8 @@
     "rank": 5
    },
    "condition": "name compound = 24 AND life = 6 AND day = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 24, destiny number 6 and birth number 5, this name can work wonders for your ventures, even at the very top."
   },
   {
    "id": "NAMENUM-NAME-165",
@@ -5485,7 +5591,8 @@
     "rank": 5
    },
    "condition": "name compound = 24 AND life = 5 AND day = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 24, destiny number 5 and birth number 6, you can succeed personally and in business, in fields like jewellery, garments, trading or real estate, or as a mediator."
   },
   {
    "id": "NAMENUM-NAME-166",
@@ -5531,7 +5638,8 @@
     "rank": 5
    },
    "condition": "name compound = 24 AND (day or life = 3)",
-   "status": "approved"
+   "status": "review",
+   "reason": "wording: Tells the person to avoid clients/staff/partners/lovers with 3, correct the wife's name and change or rename a partner; instructions about other people are not allowed."
   },
   {
    "id": "NAMENUM-NAME-167",
@@ -5609,7 +5717,8 @@
     "rank": 5
    },
    "condition": "name compound = 33 BUT letters form no meaningful name (e.g. \"PQRLSTOX\")",
-   "status": "approved"
+   "status": "approved",
+   "say": "A name totalling 33 should carry a positive meaning in its roots and sound; a random jumble of letters does not work as a name."
   },
   {
    "id": "NAMENUM-NAME-170",
@@ -5660,7 +5769,8 @@
     "rank": 5
    },
    "condition": "name compound = 42",
-   "status": "approved"
+   "status": "approved",
+   "say": "With a perfect name, name number 42 can bring luck in business and personal life, and a rise from modest beginnings to riches and influence. Trading, shipping, metals, gems or fashion suit you."
   },
   {
    "id": "NAMENUM-NAME-172",
@@ -5672,7 +5782,7 @@
    },
    "period": null,
    "text": "\"42 cures many diseases too.\" SKIP (medical).",
-   "polarity": "n/a",
+   "polarity": "neutral",
    "areas": [
     "health"
    ],
@@ -5738,7 +5848,8 @@
     "rank": 5
    },
    "condition": "name compound = 51",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 51 is the best in its series, linked with mental strength, fast thinking and rapid growth. Beware of overworking and jealous rivals; it works best when your chart supports it."
   },
   {
    "id": "NAMENUM-NAME-175",
@@ -5805,7 +5916,8 @@
     "rank": 5
    },
    "condition": "name compound = 60 AND (day = 3 OR life = 3)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 60 does not suit you, as 3 is your birth or destiny number, and success and the enjoyment of riches may not come."
   },
   {
    "id": "NAMENUM-NAME-177",
@@ -5927,7 +6039,8 @@
     "rank": 5
    },
    "condition": "name compound = 69",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 69 can be a blessing or a burden depending on how the name is built. Its parts should not add up to 2, 3, 7, 8 or 9, or clash with each other."
   },
   {
    "id": "NAMENUM-NAME-182",
@@ -6010,7 +6123,8 @@
     "rank": 5
    },
    "condition": "name compound in {47, 29, 26, 17, 16, 31, 35, 38, 44}",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your name total is considered an unfavourable name number, and correcting the name soon is advised."
   },
   {
    "id": "NAMENUM-NAME-185",
@@ -6038,7 +6152,8 @@
     "rank": 5
    },
    "condition": "name compound = 78",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 78 is seen as the purest and most noble of its series, linked with discipline, faith, slow but sure success, powerful speech and a fine reputation."
   },
   {
    "id": "NAMENUM-NAME-186",
@@ -6165,7 +6280,8 @@
     "rank": 5
    },
    "condition": "name compound = 96",
-   "status": "approved"
+   "status": "approved",
+   "say": "With a flawless name, name number 96 is highly lucky, linked with boldness, charm, top ranks in education, success in love and high positions in the forces, medicine, administration or the arts."
   },
   {
    "id": "NAMENUM-NAME-191",
@@ -6363,7 +6479,8 @@
     "rank": 5
    },
    "condition": "name compound = 25",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 25 is linked with unsteadiness, big dreams without action and obstacles in business. It can deny success in love and material prosperity, so stay practical and patient."
   },
   {
    "id": "NAMENUM-NAME-199",
@@ -6416,7 +6533,8 @@
     "rank": 5
    },
    "condition": "name compound = 34",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 34 makes you honest and simple, but luck tends not to smile: money may not come or last, career growth is slow, and love and family life can be hard."
   },
   {
    "id": "NAMENUM-NAME-201",
@@ -6445,7 +6563,8 @@
     "rank": 5
    },
    "condition": "name compound = 43",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 43 is linked with loneliness, being misunderstood and little success in marriage, work or business, though you may do well teaching religion or philosophy. Changing the name is advised."
   },
   {
    "id": "NAMENUM-NAME-202",
@@ -6520,7 +6639,8 @@
     "rank": 5
    },
    "condition": "name compound = 52",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 52 gives mixed results, linked with delays in money and marriage, misunderstandings, living far away and possible separation. Stay steady in business and go easy on drink."
   },
   {
    "id": "NAMENUM-NAME-205",
@@ -6548,7 +6668,8 @@
     "rank": 5
    },
    "condition": "name compound = 61",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 61 is a blessed number, linked with charm, honesty, leadership and a giving nature, and it works even with an imperfect name. Family and love life may need extra care."
   },
   {
    "id": "NAMENUM-NAME-206",
@@ -6672,7 +6793,8 @@
     "rank": 5
    },
    "condition": "name compound = 88",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 88, every initial, word and surname needs flawless, lucky vibrations, and then the full name too, and an expert can test the options for you."
   },
   {
    "id": "NAMENUM-NAME-211",
@@ -6701,7 +6823,8 @@
     "rank": 5
    },
    "condition": "name compound = 97",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 97 carries a clash between 9 and 7 that makes it unlucky, linked with wrong decisions, bad company, legal trouble and low finances. A name correction is advised."
   },
   {
    "id": "NAMENUM-NAME-212",
@@ -6769,7 +6892,8 @@
     "rank": 5
    },
    "condition": "life = 8 only",
-   "status": "approved"
+   "status": "approved",
+   "say": "With 8 as your destiny number alone, its qualities and struggles tend to come in due course of life."
   },
   {
    "id": "NAMENUM-NAME-214",
@@ -6804,7 +6928,8 @@
     "rank": 5
    },
    "condition": "day = 8 OR name number = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "With 8 as your birth or name number, you may face struggles from your early days and through life."
   },
   {
    "id": "NAMENUM-NAME-215",
@@ -6836,7 +6961,7 @@
    "when": null,
    "period": null,
    "text": "REMEDY: change name into a suitable 5 vibration (14, 23, 32, 41, 50, 59, 68 ...); 5 works \"like a talisman\" against dangers; expert must distinguish 14, 23, 32, 41.",
-   "polarity": "good (remedy)",
+   "polarity": "good",
    "areas": [
     "safety",
     "luck"
@@ -6935,7 +7060,8 @@
     "rank": 5
    },
    "condition": "name compound = 26",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 26 is linked with charm and imagination, but Saturn tends to stop you midway with obstacles, money troubles and stormy love. It is unlucky both as a personal and a business name."
   },
   {
    "id": "NAMENUM-NAME-220",
@@ -6988,7 +7114,8 @@
     "rank": 5
    },
    "condition": "name compound = 35",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 35 is linked with honesty and hard work, yet goals are often missed due to obstacles in studies and career, with half-success in love. A correction to another lucky number is advised."
   },
   {
    "id": "NAMENUM-NAME-222",
@@ -7122,7 +7249,8 @@
     "rank": 5
    },
    "condition": "name compound = 62",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 62 is linked with drink and other vices, castles in the air, weak investments and gambling. It is not suitable for business, so correcting the business name is advised."
   },
   {
    "id": "NAMENUM-NAME-227",
@@ -7151,7 +7279,8 @@
     "rank": 5
    },
    "condition": "name compound = 71",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 71 is linked with a solitary nature, delays in love or marriage, business obstacles, and accidents or thefts, so take extra care. Never use it as a business name."
   },
   {
    "id": "NAMENUM-NAME-228",
@@ -7210,7 +7339,8 @@
     "rank": 5
    },
    "condition": "name compound = 89",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 89 can help you rise from scratch through persistence, with wealth later. Take care against accidents and quarrels at home, and use it for business only if the name is flawless."
   },
   {
    "id": "NAMENUM-NAME-230",
@@ -7283,7 +7413,8 @@
     "rank": 5
    },
    "condition": "day, life or name number = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Number 9 makes you a born fighter, with courage, resilience, patriotism, cool intelligence and careful planning. It suits roles in the forces, police, politics or invention."
   },
   {
    "id": "NAMENUM-NAME-232",
@@ -7354,7 +7485,8 @@
     "rank": 5
    },
    "condition": "name number (reduced) = 9 AND (day in {1, 3, 9} OR life in {1, 3, 9})",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 9 is allowed for you, as your birth or destiny number is 1, 3 or 9, giving you the pure vibration of 9."
   },
   {
    "id": "NAMENUM-NAME-234",
@@ -7429,7 +7561,8 @@
     "rank": 5
    },
    "condition": "name compound = 18",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 18 is seen as undesirable, linked with obstacles, delays, failed financial plans, unpaid loans, anger, fights and enemies. Stay calm and handle money with care."
   },
   {
    "id": "NAMENUM-NAME-237",
@@ -7459,7 +7592,8 @@
     "rank": 5
    },
    "condition": "name compound = 27",
-   "status": "approved"
+   "status": "approved",
+   "say": "With a perfect name, name number 27 brings knowledge, wisdom and sound decisions, and can lead to wealth and fame. It also suits a business if your personal name is lucky."
   },
   {
    "id": "NAMENUM-NAME-238",
@@ -7488,7 +7622,8 @@
     "rank": 5
    },
    "condition": "name compound = 36",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 36 brings hard struggle but eventual success through intellect, charm and business, only with a flawless name. Watch for wrong decisions, anger and enemies, and make time for family."
   },
   {
    "id": "NAMENUM-NAME-239",
@@ -7539,7 +7674,8 @@
     "rank": 5
    },
    "condition": "name compound = 45",
-   "status": "approved"
+   "status": "approved",
+   "say": "With a good name, name number 45 can give a successful life, linked with a sharp memory, popularity and quick thinking. Avoid revealing others' secrets, as it can create enemies."
   },
   {
    "id": "NAMENUM-NAME-241",
@@ -7636,7 +7772,8 @@
     "rank": 5
    },
    "condition": "name compound = 54",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 54 is less lucky than 45, linked with a slow rise with ups and downs, scattered efforts, rash decisions and losses. Correcting personal and business names is advised."
   },
   {
    "id": "NAMENUM-NAME-245",
@@ -7665,7 +7802,8 @@
     "rank": 5
    },
    "condition": "name compound = 63",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 63 is not an enviable number, linked with obstacles, little guidance and bad company, with riches only after trials. A business name in 63 can bring losses, so changing it is advised."
   },
   {
    "id": "NAMENUM-NAME-246",
@@ -7767,7 +7905,8 @@
     "rank": 5
    },
    "condition": "name compound = 81",
-   "status": "approved"
+   "status": "approved",
+   "say": "With a flawless name, name number 81 can bring growth, fame and wealth, but it is linked with accidents. Take care with machinery and travel, and avoid moving alone at night."
   },
   {
    "id": "NAMENUM-NAME-250",
@@ -7818,7 +7957,8 @@
     "rank": 5
    },
    "condition": "name compound = 90",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 90 is linked with tireless work, many skills and incomes, and with a perfect name it can make you very rich. With a flawed name, you may be exploited despite your efforts."
   },
   {
    "id": "NAMENUM-NAME-252",
@@ -7900,7 +8040,8 @@
     "rank": 5
    },
    "condition": "name compound = 108",
-   "status": "approved"
+   "status": "approved",
+   "say": "Name number 108 is linked with difficulties but rescue at the last moment by God's grace. A perfect name can bring wealth, fame and plans that come true, while a flawed one brings losses."
   },
   {
    "id": "NAMENUM-NAME-255",
@@ -7935,7 +8076,8 @@
     "rank": 5
    },
    "condition": "name compound = 10 AND first letter = D",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your name number 10 is spoiled because your name begins with the letter D."
   },
   {
    "id": "NAMENUM-NAME-256",
@@ -7974,7 +8116,8 @@
     "rank": 5
    },
    "condition": "name compound = 13 AND first letter in {P, F, D, M, T}",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 13, starting your name with P, F, D, M or T is best avoided."
   },
   {
    "id": "NAMENUM-NAME-257",
@@ -8012,7 +8155,8 @@
     "rank": 5
    },
    "condition": "name compound = 31 AND first letter in {P, F, O, Z}",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 31, a name starting with P, F, O or Z has poor sound vibrations, so it is best avoided."
   },
   {
    "id": "NAMENUM-NAME-258",
@@ -8051,7 +8195,8 @@
     "rank": 5
    },
    "condition": "name compound = 58 AND an initial in {P, F, O, Z}",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 58, an initial of P, F, O or Z is linked with obstacles everywhere, and a spelling adjustment can help balance this."
   },
   {
    "id": "NAMENUM-NAME-259",
@@ -8092,7 +8237,8 @@
     "rank": 5
    },
    "condition": "name compound = 75 AND an initial in {U, V, W, O, Z, P, F}",
-   "status": "approved"
+   "status": "approved",
+   "say": "With name number 75, an initial of U, V, W, O, Z, P or F weakens its effect."
   },
   {
    "id": "NAMENUM-NAME-260",
@@ -8251,7 +8397,8 @@
     "rank": 6
    },
    "condition": "compound = 10",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number stands for honour and confidence. You earn name or notoriety according to your deeds, and your wishes and ambitions tend to be met."
   },
   {
    "id": "NUMNAME-NN-C11",
@@ -8278,7 +8425,8 @@
     "rank": 6
    },
    "condition": "compound = 11",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is not an auspicious name number, linked with fear and betrayal by others, sometimes from unexpected quarters, so be careful whom you trust."
   },
   {
    "id": "NUMNAME-NN-C12",
@@ -8304,7 +8452,8 @@
     "rank": 6
    },
    "condition": "compound = 12",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with mental tension and pain, and others may sacrifice your interests for their own, so protect your interests."
   },
   {
    "id": "NUMNAME-NN-C13",
@@ -8331,7 +8480,8 @@
     "rank": 6
    },
    "condition": "compound = 13",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number can bring changes of job, goals or place. It is often called unlucky, but it is a power that becomes beneficial when used well."
   },
   {
    "id": "NUMNAME-NN-C14",
@@ -8358,7 +8508,8 @@
     "rank": 6
    },
    "condition": "compound = 14",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with movement and community feeling, and is good for job changes, wealth and speculation. Stay alert to others' actions and to risks from storms or fire."
   },
   {
    "id": "NUMNAME-NN-C15",
@@ -8386,7 +8537,8 @@
     "rank": 6
    },
    "condition": "compound = 15",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with mantras and mysticism and is auspicious for gaining wealth through others. You love music and art and speak well."
   },
   {
    "id": "NUMNAME-NN-C15W",
@@ -8436,7 +8588,8 @@
     "rank": 6
    },
    "condition": "compound = 16",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number can bring prosperity, but a later fall is possible, so stay careful and avoid accidents. You are ambitious, though not every ambition may be met."
   },
   {
    "id": "NUMNAME-NN-C17",
@@ -8492,7 +8645,8 @@
     "rank": 6
    },
    "condition": "compound = 18",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with quarrels and enmity, with disputes inside and outside the family, so keep calm and patient."
   },
   {
    "id": "NUMNAME-NN-C19",
@@ -8518,7 +8672,8 @@
     "rank": 6
    },
    "condition": "compound = 19",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an auspicious name number, a symbol of the Sun, linked with happiness, success, prestige and honour."
   },
   {
    "id": "NUMNAME-NN-C20",
@@ -8544,7 +8699,8 @@
     "rank": 6
    },
    "condition": "compound = 20",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with justice, new plans and ambitions, but success is not certain and hurdles or delays are possible."
   },
   {
    "id": "NUMNAME-NN-C21",
@@ -8571,7 +8727,8 @@
     "rank": 6
    },
    "condition": "compound = 21",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with prosperity, prestige, promotion and success in your work."
   },
   {
    "id": "NUMNAME-NN-C22",
@@ -8597,7 +8754,8 @@
     "rank": 6
    },
    "condition": "compound = 22",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number can make you a dreamer who loses time to daydreams, though you rise to the occasion when problems come. Check your opinions, as some may turn out wrong."
   },
   {
    "id": "NUMNAME-NN-C23",
@@ -8623,7 +8781,8 @@
     "rank": 6
    },
    "condition": "compound = 23",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with prosperity and success through the grace of seniors and higher officials."
   },
   {
    "id": "NUMNAME-NN-C24",
@@ -8651,7 +8810,8 @@
     "rank": 6
    },
    "condition": "compound = 24",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an auspicious name number, linked with help and support from seniors and higher officials in your work."
   },
   {
    "id": "NUMNAME-NN-C25",
@@ -8677,7 +8837,8 @@
     "rank": 6
    },
    "condition": "compound = 25",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number gives strength through experience and learning from others. Success can come after much early struggle, and it is auspicious for the future."
   },
   {
    "id": "NUMNAME-NN-C26",
@@ -8704,7 +8865,8 @@
     "rank": 6
    },
    "condition": "compound = 26",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with trouble and suspicion through others' company or help, and a risk of heavy loss in partnership, marriage or speculation, so take care in these areas."
   },
   {
    "id": "NUMNAME-NN-C27",
@@ -8730,7 +8892,8 @@
     "rank": 6
    },
    "condition": "compound = 27",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with leadership and power, with good results through wisdom. You do best by carrying out your own ideas."
   },
   {
    "id": "NUMNAME-NN-C28",
@@ -8758,7 +8921,8 @@
     "rank": 6
    },
    "condition": "compound = 28",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number shows two forces pulling apart. Be careful with blind trust, trade competition and court matters, as losses are possible there, and stay attentive at work."
   },
   {
    "id": "NUMNAME-NN-C29",
@@ -8784,7 +8948,8 @@
     "rank": 6
    },
    "condition": "compound = 29",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with instability, fear and loss, and friends or partners who may let you down, so be careful whom you trust."
   },
   {
    "id": "NUMNAME-NN-C30",
@@ -8810,7 +8975,8 @@
     "rank": 6
    },
    "condition": "compound = 30",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number makes you highly intelligent and talented, devoted to learning rather than wealth. It is neither lucky nor unlucky."
   },
   {
    "id": "NUMNAME-NN-C31",
@@ -8837,7 +9003,8 @@
     "rank": 6
    },
    "condition": "compound = 31",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with a quiet, aloof and introverted nature, which can keep worldly success at a distance, so it is not considered auspicious."
   },
   {
    "id": "NUMNAME-NN-C32",
@@ -8863,7 +9030,8 @@
     "rank": 6
    },
    "condition": "compound = 32",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a wonderful name number for the future, linked with people and community. You succeed by following your own ideas and should avoid foolish advice."
   },
   {
    "id": "NUMNAME-NN-C33",
@@ -8889,7 +9057,8 @@
     "rank": 6
    },
    "condition": "compound = 33",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an auspicious name number, linked with help and support from seniors and higher officials in your work."
   },
   {
    "id": "NUMNAME-NN-C34",
@@ -8915,7 +9084,8 @@
     "rank": 6
    },
    "condition": "compound = 34",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number gives strength through experience and learning from others. Success can come after much early struggle, and it is auspicious for the future."
   },
   {
    "id": "NUMNAME-NN-C35",
@@ -8941,7 +9111,8 @@
     "rank": 6
    },
    "condition": "compound = 35",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with trouble and suspicion through others' company or help, and a risk of heavy loss in partnership, marriage or speculation, so take care in these areas."
   },
   {
    "id": "NUMNAME-NN-C36",
@@ -8967,7 +9138,8 @@
     "rank": 6
    },
    "condition": "compound = 36",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with leadership and power, with good results through wisdom. You do best by carrying out your own ideas."
   },
   {
    "id": "NUMNAME-NN-C37",
@@ -8994,7 +9166,8 @@
     "rank": 6
    },
    "condition": "compound = 37",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number carries real power: your fortune rises through love and affection, and anything done in partnership tends to go well."
   },
   {
    "id": "NUMNAME-NN-C38",
@@ -9020,7 +9193,8 @@
     "rank": 6
    },
    "condition": "compound = 38",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with instability, fear and loss, and friends or partners who may let you down, so be careful whom you trust."
   },
   {
    "id": "NUMNAME-NN-C39",
@@ -9046,7 +9220,8 @@
     "rank": 6
    },
    "condition": "compound = 39",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number makes you highly intelligent and talented, devoted to learning rather than wealth. It is neither lucky nor unlucky."
   },
   {
    "id": "NUMNAME-NN-C40",
@@ -9072,7 +9247,8 @@
     "rank": 6
    },
    "condition": "compound = 40",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with a quiet, aloof and introverted nature, which can keep worldly success at a distance, so it is not considered auspicious."
   },
   {
    "id": "NUMNAME-NN-C41",
@@ -9098,7 +9274,8 @@
     "rank": 6
    },
    "condition": "compound = 41",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a wonderful name number for the future, linked with people and community. You succeed by following your own ideas and should avoid foolish advice."
   },
   {
    "id": "NUMNAME-NN-C42",
@@ -9124,7 +9301,8 @@
     "rank": 6
    },
    "condition": "compound = 42",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an auspicious name number, linked with help and support from seniors and higher officials in your work."
   },
   {
    "id": "NUMNAME-NN-C43",
@@ -9150,7 +9328,8 @@
     "rank": 6
    },
    "condition": "compound = 43",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an inauspicious name number, linked with failure, hurdles, quarrels and revolt, so move with patience and care."
   },
   {
    "id": "NUMNAME-NN-C44",
@@ -9176,7 +9355,8 @@
     "rank": 6
    },
    "condition": "compound = 44",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with trouble and suspicion through others' company or help, and a risk of heavy loss in partnership, marriage or speculation, so take care in these areas."
   },
   {
    "id": "NUMNAME-NN-C45",
@@ -9202,7 +9382,8 @@
     "rank": 6
    },
    "condition": "compound = 45",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with leadership and power, with good results through wisdom. You do best by carrying out your own ideas."
   },
   {
    "id": "NUMNAME-NN-C46",
@@ -9228,7 +9409,8 @@
     "rank": 6
    },
    "condition": "compound = 46",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number carries real power: your fortune rises through love and affection, and anything done in partnership tends to go well."
   },
   {
    "id": "NUMNAME-NN-C47",
@@ -9254,7 +9436,8 @@
     "rank": 6
    },
    "condition": "compound = 47",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with instability, fear and loss, and friends or partners who may let you down, so be careful whom you trust."
   },
   {
    "id": "NUMNAME-NN-C48",
@@ -9280,7 +9463,8 @@
     "rank": 6
    },
    "condition": "compound = 48",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number makes you highly intelligent and talented, devoted to learning rather than wealth. It is neither lucky nor unlucky."
   },
   {
    "id": "NUMNAME-NN-C49",
@@ -9306,7 +9490,8 @@
     "rank": 6
    },
    "condition": "compound = 49",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with a quiet, aloof and introverted nature, which can keep worldly success at a distance, so it is not considered auspicious."
   },
   {
    "id": "NUMNAME-NN-C50",
@@ -9332,7 +9517,8 @@
     "rank": 6
    },
    "condition": "compound = 50",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a wonderful name number for the future, linked with people and community. You succeed by following your own ideas and should avoid foolish advice."
   },
   {
    "id": "NUMNAME-NN-C51",
@@ -9358,7 +9544,8 @@
     "rank": 6
    },
    "condition": "compound = 51",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a very powerful name number of courage and victory, especially good for leaders and the armed forces. Be careful of enemies who may try to frighten or harm you."
   },
   {
    "id": "NUMNAME-NN-C52",
@@ -9385,7 +9572,8 @@
     "rank": 6
    },
    "condition": "compound = 52",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an inauspicious name number, linked with failures, hurdles, quarrels, fights and revolts, so move with patience and care."
   },
   {
    "id": "NUMNAME-NN-C53",
@@ -9412,7 +9600,8 @@
     "rank": 6
    },
    "condition": "compound = 53",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number can help you do well in detective work or as a commander in the armed forces, and is linked with prosperity."
   },
   {
    "id": "NUMNAME-NN-C54",
@@ -9440,7 +9629,8 @@
     "rank": 6
    },
    "condition": "compound = 54",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with honour, good speaking, wealth and scholarship. There is also a possible weakness in the legs, so take good care of your health."
   },
   {
    "id": "NUMNAME-NN-C55",
@@ -9468,7 +9658,8 @@
     "rank": 6
    },
    "condition": "compound = 55",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number makes you a leader of others, sharp-witted, religious and generous."
   },
   {
    "id": "NUMNAME-NN-C56",
@@ -9495,7 +9686,8 @@
     "rank": 6
    },
    "condition": "compound = 56",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is both lucky and unlucky: you are usually fortunate and like to lead, but can feel uneasy or panicky, so practise self-control."
   },
   {
    "id": "NUMNAME-NN-C57",
@@ -9521,7 +9713,8 @@
     "rank": 6
    },
    "condition": "compound = 57",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with success in work and trade, and a cheerful, active nature."
   },
   {
    "id": "NUMNAME-NN-C58",
@@ -9547,7 +9740,8 @@
     "rank": 6
    },
    "condition": "compound = 58",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number can make you a good doctor, with an open and affectionate nature."
   },
   {
    "id": "NUMNAME-NN-C59",
@@ -9575,7 +9769,8 @@
     "rank": 6
    },
    "condition": "compound = 59",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with freedom from fear, many trades, much travel and victory, with sea voyages, banking or brokerage proving fruitful. Avoid speculation and keep your dealings honest."
   },
   {
    "id": "NUMNAME-NN-C60",
@@ -9601,7 +9796,8 @@
     "rank": 6
    },
    "condition": "compound = 60",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number gives you a happy nature and can bring success as a doctor, compounder or nurse."
   },
   {
    "id": "NUMNAME-NN-C61",
@@ -9627,7 +9823,8 @@
     "rank": 6
    },
    "condition": "compound = 61",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number gives you a love of travel and a peaceful, self-controlled nature."
   },
   {
    "id": "NUMNAME-NN-C62",
@@ -9653,7 +9850,8 @@
     "rank": 6
    },
    "condition": "compound = 62",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number can help you do well in detective work or as a commander in the armed forces, and is linked with prosperity."
   },
   {
    "id": "NUMNAME-NN-C63",
@@ -9680,7 +9878,8 @@
     "rank": 6
    },
    "condition": "compound = 63",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number makes you healthy, generous and glad at others' progress, and successful in business, though you tend to spend freely."
   },
   {
    "id": "NUMNAME-NN-C64",
@@ -9707,7 +9906,8 @@
     "rank": 6
    },
    "condition": "compound = 64",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number suits a job rather than business, such as doctor or advocate, along with literary interests. You may resist ties like marriage."
   },
   {
    "id": "NUMNAME-NN-C65",
@@ -9734,7 +9934,8 @@
     "rank": 6
    },
    "condition": "compound = 65",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number brings the patronage of powerful people and a happy married life. There is some risk of accident or injury, so stay careful."
   },
   {
    "id": "NUMNAME-NN-C66",
@@ -9760,7 +9961,8 @@
     "rank": 6
    },
    "condition": "compound = 66",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with success in work and trade, and a cheerful, active nature."
   },
   {
    "id": "NUMNAME-NN-C67",
@@ -9786,7 +9988,8 @@
     "rank": 6
    },
    "condition": "compound = 67",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number can make you a good doctor, with an open and affectionate nature."
   },
   {
    "id": "NUMNAME-NN-C68",
@@ -9812,7 +10015,8 @@
     "rank": 6
    },
    "condition": "compound = 68",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with freedom from fear, many trades, much travel and victory, with sea voyages, banking or brokerage proving fruitful. Avoid speculation and keep your dealings honest."
   },
   {
    "id": "NUMNAME-NN-C69",
@@ -9838,7 +10042,8 @@
     "rank": 6
    },
    "condition": "compound = 69",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with prestige, honour, luck and fame."
   },
   {
    "id": "NUMNAME-NN-C70",
@@ -9864,7 +10069,8 @@
     "rank": 6
    },
    "condition": "compound = 70",
-   "status": "approved"
+   "status": "approved",
+   "say": "This name number is linked with good luck, though not very strong."
   },
   {
    "id": "NUMNAME-NN-CX",
@@ -9872,7 +10078,7 @@
    "when": null,
    "period": null,
    "text": "Not covered (1-9 are \"in the chapter of radical number\", not in this file)",
-   "polarity": "-",
+   "polarity": "neutral",
    "areas": [
     "-"
    ],

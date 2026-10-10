@@ -28,7 +28,8 @@
     "rank": 4
    },
    "condition": "karmic debt (any)",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your birth date reflects a plan shaped by destiny and karma from past lives. Talents misused in past lives can bring failures, hardship and losses now."
   },
   {
    "id": "CHALDEAN-KARMIC-002",
@@ -54,7 +55,8 @@
     "rank": 4
    },
    "condition": "karmic = 13",
-   "status": "approved"
+   "status": "approved",
+   "say": "You may need to put in exceptional effort for any task and face constant challenges. When success is slow, you may feel like giving up or turn pessimistic."
   },
   {
    "id": "CHALDEAN-KARMIC-003",
@@ -80,7 +82,8 @@
     "rank": 4
    },
    "condition": "karmic = 13",
-   "status": "approved"
+   "status": "approved",
+   "say": "Take care of blaming others for your limits, being rigid or controlling ('my way or the highway'), pessimism and laziness."
   },
   {
    "id": "CHALDEAN-KARMIC-004",
@@ -106,7 +109,8 @@
     "rank": 4
    },
    "condition": "karmic = 13",
-   "status": "approved"
+   "status": "approved",
+   "say": "Focus on one goal within a set time, stay ethical and sincere, and avoid shortcuts. Keep discipline with timetables and commitments, keep things clean, and do not procrastinate."
   },
   {
    "id": "CHALDEAN-KARMIC-005",
@@ -132,7 +136,8 @@
     "rank": 4
    },
    "condition": "karmic = 14",
-   "status": "approved"
+   "status": "approved",
+   "say": "This number is linked with misused freedom in past births, so you must adapt to constant change. Take great care, as there is an acute danger of addictions like drugs, alcohol or food."
   },
   {
    "id": "CHALDEAN-KARMIC-006",
@@ -159,7 +164,8 @@
     "rank": 4
    },
    "condition": "karmic = 14",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your craving for freedom can harm relationships and bring boredom and commitment issues. Take care of addictions like overeating or gambling, poor self-control and feeling trapped."
   },
   {
    "id": "CHALDEAN-KARMIC-007",
@@ -185,7 +191,8 @@
     "rank": 4
    },
    "condition": "karmic = 14",
-   "status": "approved"
+   "status": "approved",
+   "say": "Practise moderation, stay emotionally stable and keep supportive people close; be focused, flexible and committed to truth. Avoid needless spending and instant gratification, and you can progress materially and spiritually."
   },
   {
    "id": "CHALDEAN-KARMIC-008",
@@ -212,7 +219,8 @@
     "rank": 4
    },
    "condition": "karmic = 16",
-   "status": "approved"
+   "status": "approved",
+   "say": "This number brings deep change from old to new, and your plans may get blocked. In defeat your ego may crumble, leading to humility, surrender and spiritual rebirth."
   },
   {
    "id": "CHALDEAN-KARMIC-009",
@@ -238,7 +246,8 @@
     "rank": 4
    },
    "condition": "karmic = 16",
-   "status": "approved"
+   "status": "approved",
+   "say": "You may be aloof, self-absorbed and keep too much to yourself, finding it hard to connect emotionally. Many of your relationships may not have worked out."
   },
   {
    "id": "CHALDEAN-KARMIC-010",
@@ -264,7 +273,8 @@
     "rank": 4
    },
    "condition": "karmic = 16",
-   "status": "approved"
+   "status": "approved",
+   "say": "Let go of ego and accept divine will; apologise and repent for any hurt you have caused. Surrender to God, accepting that your life's purpose is divine."
   },
   {
    "id": "CHALDEAN-KARMIC-011",
@@ -319,7 +329,8 @@
     "rank": 4
    },
    "condition": "karmic = 19",
-   "status": "approved"
+   "status": "approved",
+   "say": "Linked with tendencies like selfishness, ego, manipulation, stubbornness, over-dependence, laziness and a love of show. Take care not to seek personal gain at others' cost."
   },
   {
    "id": "CHALDEAN-KARMIC-013",
@@ -345,7 +356,8 @@
     "rank": 4
    },
    "condition": "karmic = 19",
-   "status": "approved"
+   "status": "approved",
+   "say": "Build meaningful bonds of trust that work both ways, and embrace empathy, remembering that we are all connected."
   },
   {
    "id": "NUMNAME-NN-KD-1",

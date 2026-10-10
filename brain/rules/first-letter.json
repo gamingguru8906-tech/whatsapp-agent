@@ -26,7 +26,8 @@
     "rank": 4
    },
    "condition": "first letter = A",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are honest, independent, creative, ambitious and original, deep yet sociable. You prefer honesty over diplomacy, are firm, dislike meddling, and stay loyal."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-002",
@@ -53,7 +54,8 @@
     "rank": 4
    },
    "condition": "first letter = B",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are sensitive, observant and diplomatic but shy and slow to trust, and an affectionate, loyal partner. You can be moody, need emotional support, and love silence and soft music."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-003",
@@ -79,7 +81,8 @@
     "rank": 4
    },
    "condition": "first letter = C",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have high energy with good emotional control and strong intuition. Ruled by Jupiter, you are ambitious and social and like working independently, though sometimes scattered."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-004",
@@ -106,7 +109,8 @@
     "rank": 4
    },
    "condition": "first letter = D",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are self-assured, practical, patient, disciplined and faithful, a good advisor who finds solutions. You speak few words with authority, keep a small circle, and believe in live and let live."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-005",
@@ -132,7 +136,8 @@
     "rank": 4
    },
    "condition": "first letter = E",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are open, friendly, deep and versatile, a planner and good communicator who loves travel and freedom. Your thoughts and moods can fluctuate, and you get bored easily."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-006",
@@ -158,7 +163,8 @@
     "rank": 4
    },
    "condition": "first letter = F",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are composed, authoritative, intellectual, responsible, loyal, calm and humorous, and you love home life. Take care of being impulsive, opinionated, critical, inflexible or argumentative."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-007",
@@ -185,7 +191,8 @@
     "rank": 4
    },
    "condition": "first letter = G",
-   "status": "approved"
+   "status": "approved",
+   "say": "You may seem active and social, but inside you are quiet, shy, sensitive and introspective. Gentle and somewhat secretive, you take responsibility well."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-008",
@@ -211,7 +218,8 @@
     "rank": 4
    },
    "condition": "first letter = H",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are sociable, intelligent, adaptable, humorous and nurturing, and you love freedom, music, food and the arts. You can be over-ambitious or selfish, and you tire easily physically."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-009",
@@ -237,7 +245,8 @@
     "rank": 4
    },
    "condition": "first letter = I",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are open, progressive, intelligent, spiritual and imaginative, with a direct approach to life and strong intuition you often ignore. Take care of impatience and self-centredness."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-010",
@@ -265,7 +274,8 @@
     "rank": 4
    },
    "condition": "first letter = J",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have a pure heart and are creative, energetic, sociable, spiritual and a natural leader who values freedom. You can excel as a preacher, painter or writer, but may get distracted easily."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-011",
@@ -292,7 +302,8 @@
     "rank": 4
    },
    "condition": "first letter = K",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are cooperative, charismatic, intuitive and inspiring, nurturing people and gardens, and can be fortunate with money. Take care, as sudden losses or accidents are possible."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-012",
@@ -318,7 +329,8 @@
     "rank": 4
    },
    "condition": "first letter = L",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are honest, direct, intelligent, philosophical and logical, adaptable and joyful. Stay calm under stress to help prevent accidents."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-013",
@@ -345,7 +357,8 @@
     "rank": 4
    },
    "condition": "first letter = M",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are reliable, trustworthy, analytical and meticulous, and you keep your promises and put work first. Versatile and decisive, you love mystery; take care not to seem two-faced or to use people."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-014",
@@ -372,7 +385,8 @@
     "rank": 4
    },
    "condition": "first letter = N",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are confident, charming, creative and popular, and protective of your family. Slow and steady, you may face ongoing obstacles; avoid repeating mistakes and leaning on others emotionally."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-015",
@@ -400,7 +414,8 @@
     "rank": 4
    },
    "condition": "first letter = O",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are compassionate, romantic, very reliable and respected, with your own principles and a love of solitude. You suit roles like trainer, researcher or guru, but can be secretive, domineering or resist change."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-016",
@@ -427,7 +442,8 @@
     "rank": 4
    },
    "condition": "first letter = P",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very intelligent, artistic and analytical, a perfectionist who is honest and loyal. You have good money sense but may under-earn, and can be stubborn, possessive or dictatorial."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-017",
@@ -453,7 +469,8 @@
     "rank": 4
    },
    "condition": "first letter = Q",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are quirky and unconventional, curious, creative, humorous and intuitive. You can also come across as complex, directionless, sarcastic or cold."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-018",
@@ -479,7 +496,8 @@
     "rank": 4
    },
    "condition": "first letter = R",
-   "status": "approved"
+   "status": "approved",
+   "say": "You stand for righteousness and know right from wrong; you are tenacious, loyal, compassionate, forgiving and spiritual. Take care of low motivation, self-pity and impatience."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-019",
@@ -506,7 +524,8 @@
     "rank": 4
    },
    "condition": "first letter = S",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are sensitive, intelligent, playful and charming, fiercely independent, with talent for writing, fashion or film. Take care that charm does not slip into deception, manipulation or unfaithfulness."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-020",
@@ -533,7 +552,8 @@
     "rank": 4
    },
    "condition": "first letter = T",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are curious, investigative and caring, always seeking knowledge and experience, but find it hard to express your feelings. Take care of being unfocused, unreliable or high-strung."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-021",
@@ -559,7 +579,8 @@
     "rank": 4
    },
    "condition": "first letter = U",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are warm, calm, helpful, loyal and patient, with a dual nature and belief in the divine. You can also be evasive, judgemental, sarcastic or secretive."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-022",
@@ -587,7 +608,8 @@
     "rank": 4
    },
    "condition": "first letter = V",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a perfectionist and diligent learner, sincere, loyal, ethical and ambitious, seeking fame and respect. Take care of rigidity, pride and nervous tension; you are either devoted to your spouse or stay unmarried."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-023",
@@ -613,7 +635,8 @@
     "rank": 4
    },
    "condition": "first letter = W",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are likeable, resilient, reliable and loyal, with lifelong friends, and a faithful partner. Take care of obsessiveness, indecision, poor communication, depression and addictive tendencies."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-024",
@@ -640,7 +663,8 @@
     "rank": 4
    },
    "condition": "first letter = X",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are sociable, intelligent and adaptable, the life of the party, and you love travel and diverse people while challenging norms. You can get bored easily and lose focus."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-025",
@@ -667,7 +691,8 @@
     "rank": 4
    },
    "condition": "first letter = Y",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are ambitious and business-minded with an impressive aura, hungry for reputation, financial security and fame. Always busy and talking work, you may seem aloof."
   },
   {
    "id": "CHALDEAN-FIRST-LETTER-026",
@@ -694,7 +719,8 @@
     "rank": 4
    },
    "condition": "first letter = Z",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very versatile, emotional and intelligent, curious and quick to learn languages. Popular and diplomatic, you make friends easily and build lasting connections."
   }
  ]
 }

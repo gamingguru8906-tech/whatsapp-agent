@@ -1,27 +1,285 @@
 {
  "about": "What the Wristwatch Numerology segment asks about a watch (picked by hand now, read from a photo later). Every value maps to rules in the watch book; nothing here is read without a rule behind it.",
  "attributes": [
-  { "key": "wrist", "q": "Which wrist do you wear it on?", "options": { "right": "Right", "left": "Left", "both": "I switch" } },
-  { "key": "dialShape", "q": "Dial shape", "options": { "round": "Round", "square": "Square", "rectVertical": "Rectangle, tall", "rectHorizontal": "Rectangle, wide", "roundedRect": "Rounded square (smartwatch-like)", "ovalVertical": "Oval, tall", "ovalHorizontal": "Oval, wide", "hexHorizontal": "Hexagon, flat top", "hexVertical": "Hexagon, pointed top", "octagon": "Octagon", "other": "Other" } },
-  { "key": "dialSize", "q": "Dial size on your wrist", "options": { "small": "Small", "medium": "Medium", "large": "Large", "extraLarge": "Bigger than my wrist" } },
-  { "key": "dialColour", "q": "Dial colour", "options": { "black": "Black", "white": "White", "blue": "Blue", "green": "Green", "gold": "Gold", "silver": "Silver", "grey": "Grey", "red": "Red", "maroon": "Maroon", "pink": "Pink", "roseGold": "Rose gold", "yellow": "Yellow", "orange": "Orange", "brown": "Brown", "violet": "Violet / purple", "indigo": "Indigo", "other": "Other" } },
-  { "key": "markers", "q": "What marks the hours?", "options": { "arabic": "Numbers 1-12", "roman": "Roman numerals", "regional": "Hindi or another script", "dashes": "Lines / dashes", "dots": "Dots", "stars": "Stars", "diamonds": "Diamonds or stones", "none": "Nothing, just hands" } },
-  { "key": "numeralsShown", "q": "Which hours have a number?", "options": { "all": "All 12", "quarters": "Only 12, 3, 6, 9", "onlyTwelve": "Only 12", "even": "Only even (2, 6, 8, 10)", "odd": "Only odd (1, 3, 5, 7)", "noneShown": "None" } },
-  { "key": "numeralSize", "q": "Size of the numbers or marks", "options": { "small": "Small", "medium": "Medium", "large": "Large", "extraLarge": "Very large" } },
-  { "key": "dateWindow", "q": "Date or day window", "options": { "none": "None", "date": "Date only", "day": "Day only", "dayDate": "Day and date" } },
-  { "key": "datePosition", "q": "Which hour is the window nearest?", "options": { "1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7", "8": "8", "9": "9", "10": "10", "11": "11", "12": "12" }, "onlyIf": { "dateWindow": ["date", "day", "dayDate"] } },
-  { "key": "strapMaterial", "q": "Strap material", "options": { "metal": "Metal", "leather": "Leather", "rubber": "Rubber or plastic", "silicone": "Soft silicone", "resin": "Hard resin", "nylon": "Nylon", "fabric": "Cloth / cotton", "velcro": "Velcro", "wood": "Wood", "stone": "Stone", "crystal": "Crystal" } },
-  { "key": "strapWidth", "q": "Strap width compared with the dial", "options": { "wide": "Wide", "medium": "Medium", "narrow": "Narrow" } },
-  { "key": "strapStructure", "q": "Strap pattern", "options": { "solid": "Solid", "longLinks": "Long solid links", "gaps": "Gaps, holes or cut-outs" } },
-  { "key": "hands", "q": "Hands", "options": { "three": "Hour, minute and seconds", "noSeconds": "No seconds hand", "noMinute": "No minute hand", "digital": "Digital, no hands" } },
-  { "key": "handStyle", "q": "Hand style", "options": { "classic": "Classic", "sharp": "Sharp, pointed tips", "tails": "Extend past the centre", "odd": "Unusual sizes (hour hand longer, etc.)" } },
-  { "key": "thickness", "q": "Thickness", "options": { "thin": "Thin", "regular": "Regular", "thick": "Thick" } },
-  { "key": "watchType", "q": "Type", "options": { "classic": "Regular watch", "smart": "Smartwatch", "sports": "Sports / fitness watch", "pocketFlip": "Flip cover", "reversible": "Reversible two-dial" } },
-  { "key": "power", "q": "How it runs", "options": { "battery": "Battery", "automatic": "Automatic", "manual": "Hand-wound", "solar": "Solar", "charging": "Charged daily" } },
-  { "key": "original", "q": "Original or copy?", "options": { "original": "Original", "firstCopy": "First copy" } },
-  { "key": "gift", "q": "Was it a gift?", "options": { "no": "No", "worn": "Yes, I wear it", "kept": "Yes, but I keep it at home" } },
-  { "key": "howWorn", "q": "How you wear it", "options": { "outside": "Dial on top of the wrist", "inside": "Dial on the inside of the wrist" } },
-  { "key": "watchCount", "q": "How many watches do you own?", "options": { "one": "One", "several": "Several, I pick by occasion" } },
-  { "key": "dialArt", "q": "Anything printed on the dial?", "multi": true, "options": { "text": "Words or a quote", "face": "A face", "scenery": "Scenery", "animal": "An animal", "birds": "Birds", "plants": "Plants or flowers", "verticalLines": "Vertical lines", "horizontalLines": "Horizontal lines", "spiral": "A spiral", "circles": "Circles inside circles", "glitter": "Glitter", "compass": "A compass or map" } }
+  {
+   "key": "wrist",
+   "q": "Which wrist do you wear it on?",
+   "options": {
+    "right": "Right",
+    "left": "Left",
+    "both": "I switch"
+   }
+  },
+  {
+   "key": "dialShape",
+   "q": "Dial shape",
+   "options": {
+    "round": "Round",
+    "square": "Square",
+    "rectVertical": "Rectangle, tall",
+    "rectHorizontal": "Rectangle, wide",
+    "roundedRect": "Rounded square (smartwatch-like)",
+    "ovalVertical": "Oval, tall",
+    "ovalHorizontal": "Oval, wide",
+    "hexHorizontal": "Hexagon, flat top",
+    "hexVertical": "Hexagon, pointed top",
+    "octagon": "Octagon",
+    "other": "Other"
+   }
+  },
+  {
+   "key": "dialSize",
+   "q": "Dial size on your wrist",
+   "options": {
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "extraLarge": "Bigger than my wrist"
+   }
+  },
+  {
+   "key": "dialColour",
+   "q": "Dial colour",
+   "options": {
+    "black": "Black",
+    "white": "White",
+    "blue": "Blue",
+    "green": "Green",
+    "gold": "Gold",
+    "silver": "Silver",
+    "grey": "Grey",
+    "red": "Red",
+    "maroon": "Maroon",
+    "pink": "Pink",
+    "roseGold": "Rose gold",
+    "yellow": "Yellow",
+    "orange": "Orange",
+    "brown": "Brown",
+    "violet": "Violet / purple",
+    "indigo": "Indigo",
+    "other": "Other"
+   }
+  },
+  {
+   "key": "markers",
+   "q": "What marks the hours?",
+   "options": {
+    "arabic": "Numbers 1-12",
+    "roman": "Roman numerals",
+    "regional": "Hindi or another script",
+    "dashes": "Lines / dashes",
+    "dots": "Dots",
+    "stars": "Stars",
+    "diamonds": "Diamonds or stones",
+    "none": "Nothing, just hands"
+   }
+  },
+  {
+   "key": "numeralsShown",
+   "q": "Which hours have a number?",
+   "options": {
+    "all": "All 12",
+    "quarters": "Only 12, 3, 6, 9",
+    "onlyTwelve": "Only 12",
+    "even": "Only even (2, 6, 8, 10)",
+    "odd": "Only odd (1, 3, 5, 7)",
+    "noneShown": "None"
+   }
+  },
+  {
+   "key": "numeralSize",
+   "q": "Size of the numbers or marks",
+   "options": {
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "extraLarge": "Very large"
+   }
+  },
+  {
+   "key": "dateWindow",
+   "q": "Date or day window",
+   "options": {
+    "none": "None",
+    "date": "Date only",
+    "day": "Day only",
+    "dayDate": "Day and date"
+   }
+  },
+  {
+   "key": "datePosition",
+   "q": "Which hour is the window nearest?",
+   "options": {
+    "1": "1",
+    "2": "2",
+    "3": "3",
+    "4": "4",
+    "5": "5",
+    "6": "6",
+    "7": "7",
+    "8": "8",
+    "9": "9",
+    "10": "10",
+    "11": "11",
+    "12": "12"
+   },
+   "onlyIf": {
+    "dateWindow": [
+     "date",
+     "day",
+     "dayDate"
+    ]
+   }
+  },
+  {
+   "key": "strapMaterial",
+   "q": "Strap material",
+   "options": {
+    "metal": "Metal",
+    "leather": "Leather",
+    "rubber": "Rubber or plastic",
+    "silicone": "Soft silicone",
+    "resin": "Hard resin",
+    "nylon": "Nylon",
+    "fabric": "Cloth / cotton",
+    "velcro": "Velcro",
+    "wood": "Wood",
+    "stone": "Stone",
+    "crystal": "Crystal"
+   }
+  },
+  {
+   "key": "strapWidth",
+   "q": "Strap width compared with the dial",
+   "options": {
+    "wide": "Wide",
+    "medium": "Medium",
+    "narrow": "Narrow"
+   }
+  },
+  {
+   "key": "strapStructure",
+   "q": "Strap pattern",
+   "options": {
+    "solid": "Solid",
+    "longLinks": "Long solid links",
+    "gaps": "Gaps, holes or cut-outs"
+   }
+  },
+  {
+   "key": "hands",
+   "q": "Hands",
+   "options": {
+    "three": "Hour, minute and seconds",
+    "noSeconds": "No seconds hand",
+    "noMinute": "No minute hand",
+    "digital": "Digital, no hands"
+   }
+  },
+  {
+   "key": "handStyle",
+   "q": "Hand style",
+   "options": {
+    "classic": "Classic",
+    "sharp": "Sharp, pointed tips",
+    "tails": "Extend past the centre",
+    "odd": "Unusual sizes (hour hand longer, etc.)"
+   }
+  },
+  {
+   "key": "thickness",
+   "q": "Thickness",
+   "options": {
+    "thin": "Thin",
+    "regular": "Regular",
+    "thick": "Thick"
+   }
+  },
+  {
+   "key": "watchType",
+   "q": "Type",
+   "options": {
+    "classic": "Regular watch",
+    "smart": "Smartwatch",
+    "sports": "Sports / fitness watch",
+    "pocketFlip": "Flip cover",
+    "reversible": "Reversible two-dial"
+   }
+  },
+  {
+   "key": "power",
+   "q": "How it runs",
+   "options": {
+    "battery": "Battery",
+    "automatic": "Automatic",
+    "manual": "Hand-wound",
+    "solar": "Solar",
+    "charging": "Charged daily"
+   }
+  },
+  {
+   "key": "original",
+   "q": "Original or copy?",
+   "options": {
+    "original": "Original",
+    "firstCopy": "First copy"
+   }
+  },
+  {
+   "key": "gift",
+   "q": "Was it a gift?",
+   "options": {
+    "no": "No",
+    "worn": "Yes, I wear it",
+    "kept": "Yes, but I keep it at home"
+   }
+  },
+  {
+   "key": "howWorn",
+   "q": "How you wear it",
+   "options": {
+    "outside": "Dial on top of the wrist",
+    "inside": "Dial on the inside of the wrist"
+   }
+  },
+  {
+   "key": "watchCount",
+   "q": "How many watches do you own?",
+   "options": {
+    "one": "One",
+    "several": "Several, I pick by occasion"
+   }
+  },
+  {
+   "key": "dialArt",
+   "q": "Anything printed on the dial?",
+   "multi": true,
+   "options": {
+    "text": "Words or a quote",
+    "face": "A face",
+    "scenery": "Scenery",
+    "animal": "An animal",
+    "birds": "Birds",
+    "plants": "Plants or flowers",
+    "verticalLines": "Vertical lines",
+    "horizontalLines": "Horizontal lines",
+    "spiral": "A spiral",
+    "circles": "Circles inside circles",
+    "glitter": "Glitter",
+    "compass": "A compass or map"
+   }
+  },
+  {
+   "key": "goal",
+   "q": "What would you like to improve?",
+   "multi": true,
+   "options": {
+    "men": "My relationship with my father or a man in my life",
+    "women": "My relationship with my mother, spouse or a woman",
+    "confidence": "Confidence in work that needs me to speak or be seen",
+    "marketing": "My marketing or advertising business",
+    "warmth": "More warmth and acceptance at home or work"
+   }
+  }
  ]
 }

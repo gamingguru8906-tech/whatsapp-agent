@@ -65,7 +65,8 @@
     "rank": 4
    },
    "condition": "(psychic, destiny) in {1-8, 8-1, 2-8, 8-2, 3-6, 6-3, 4-4, 4-8, 8-4, 2-9}",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your psychic number (Mulank) and destiny number (Bhagyank) form an 'anti' combination, which is considered unfavourable and can create struggle in life."
   },
   {
    "id": "CHALDEAN-PAIRS-002",
@@ -179,7 +180,8 @@
     "rank": 4
    },
    "condition": "(psychic, destiny) in {7-7, 9-9, 4-1, 1-4}",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your psychic and destiny numbers are 'opposite numbers', not enemies, and need no special remedy. If you wish, your Lo Shu grid, name spelling and missing numbers can be looked at."
   }
  ]
 }

@@ -27,7 +27,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 1 is linked with little ego, low self-confidence, an introverted nature and difficulty sharing your experiences openly. It can also bring problems in certain careers."
   },
   {
    "id": "CHALDEAN-MISSING-002",
@@ -54,7 +55,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 2 is linked with problems in love, less stability and patience, and difficulty following a routine. You may live in imagination and lack intuition and confidence."
   },
   {
    "id": "CHALDEAN-MISSING-003",
@@ -80,7 +82,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 3 is linked with less grace of Guru and God, problems in promotion and growth, and weaker creative thinking and decisions. You may feel low in confidence and distracted."
   },
   {
    "id": "CHALDEAN-MISSING-004",
@@ -107,7 +110,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 4 is linked with less financial stability and growth, more struggle and a lack of direction. Your intuition and thought power may be weaker, and you may be forgetful."
   },
   {
    "id": "CHALDEAN-MISSING-005",
@@ -135,7 +139,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 5 is linked with less stability and confidence, trouble starting work, business losses and problems building your own house. Take care of stomach and back pain."
   },
   {
    "id": "CHALDEAN-MISSING-006",
@@ -164,7 +169,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 6 is linked with less money and luxury, more struggle and few good friends. Family support may come late, and being introverted can cause problems in love."
   },
   {
    "id": "CHALDEAN-MISSING-007",
@@ -191,7 +197,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 7 is linked with hurdles in work and studies, little family support and mental disturbance. You may see less success for the effort you put in."
   },
   {
    "id": "CHALDEAN-MISSING-008",
@@ -218,7 +225,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 8 is linked with difficulty in financial decisions, low motivation, ups and downs and less perfection in work. Take care of your health and wealth."
   },
   {
    "id": "CHALDEAN-MISSING-009",
@@ -245,7 +253,8 @@
     "rank": 4
    },
    "condition": "DOB lacks 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Missing 9 is linked with low energy and enthusiasm, weak willpower, ups and downs and less reputation. Take care to stay mindful of others' feelings."
   }
  ]
 }

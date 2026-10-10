@@ -1,0 +1,109 @@
+// The brain's reading: everything the books say about a person (birth date, name, Lo Shu grid, timing) and, for the
+// watch segment, about their watch. Both segments call this and show the same words for the same facts.
+// Deterministic: same input, same output. Only approved rules with visitor wording are used.
+
+import * as c from './calc.js';
+import { personFacts, matchRules } from './match.js';
+import { RULES } from './rules/index.js';
+import { WATCH_ATTRIBUTES } from './watch.js';
+
+const APPROVED = RULES.filter(r => r.status === 'approved' && r.say);
+const bySet = set => APPROVED.filter(r => r.set === set);
+const MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// What a visitor sees for one rule; the owner view adds where it came from.
+const item = (r, owner) => ({
+  id: r.id, say: r.say, polarity: r.polarity, areas: r.areas,
+  ...(owner ? { source: { book: r.source.book, pages: r.source.pages, quote: r.source.quote } } : {})
+});
+
+// A timing rule's period in words, and whether `today` falls inside it.
+function periodOf(p, today) {
+  const m = today.getUTCMonth() + 1, d = today.getUTCDate();
+  const md = m * 100 + d;
+  if (p.month) {
+    return { label: p.month.map(x => MONTH[x - 1]).join(', '), now: p.month.includes(m) };
+  }
+  if (p.dateIn) {
+    const now = p.dateIn.some(([[m1, d1], [m2, d2]]) => {
+      const a = m1 * 100 + d1, b = m2 * 100 + d2;
+      return a <= b ? md >= a && md <= b : md >= a || md <= b; // ranges may wrap the year end
+    });
+    const label = p.dateIn.map(([[m1, d1], [m2, d2]]) => `${d1} ${MONTH[m1 - 1]} to ${d2} ${MONTH[m2 - 1]}`).join(' and ');
+    return { label, now };
+  }
+  return null;
+}
+
+// The number relation, in words a visitor understands.
+const REL = { friend: 'friendly', neutral: 'neutral', enemy: 'unfriendly', mixed: 'mixed' };
+
+export function brainReading({ dob, name, year, today = new Date(), watch = null, owner = false }) {
+  const f = personFacts({ dob, name, year });
+  if (watch) f.watch = watch;
+  const pick = set => matchRules(bySet(set), f).filter(r => !r.period).map(r => item(r, owner));
+  const cnt = f.dobCounts;
+
+  // Your numbers
+  const numbers = {
+    psychic: { value: f.psychic, planet: c.PLANET[f.psychic], items: pick('psychic') },
+    destiny: { value: f.destiny, planet: c.PLANET[f.destiny], items: pick('destiny') },
+    master: f.master ? { value: f.master, items: pick('master') } : null,
+    karmic: f.karmic ? { value: f.karmic, items: pick('karmic') } : null,
+    pair: { relation: REL[c.relation(f.psychic, f.destiny)] ?? null, items: pick('pairs') },
+    personality: f.personality ? { value: f.personality, items: pick('personality') } : null,
+    maturity: f.maturity ? { value: f.maturity, items: pick('maturity') } : null
+  };
+
+  // Timing: good and difficult periods for the birth number, with the one running today marked.
+  const timing = matchRules(bySet('psychic').concat(bySet('destiny')), f).filter(r => r.period)
+    .map(r => ({ ...item(r, owner), period: periodOf(r.period, today) })).filter(t => t.period);
+
+  // Lo Shu grid (birth date): planes, missing numbers, repeated numbers
+  const loshu = {
+    layout: c.LOSHU_GRID, counts: cnt,
+    planes: c.loShuPlanes(cnt),
+    missing: f.missing,
+    repeats: c.repeats(cnt).filter(x => x.times > 1),
+    items: {
+      planes: pick('planes'), missing: pick('missing'), repeats: pick('repeats'), present: pick('present')
+    }
+  };
+
+  // Name
+  let nameReading = null;
+  if (name && f.nameCompound) {
+    const n = c.nameNumbers(name);
+    nameReading = {
+      total: n.total, root: n.root, parts: n.parts, firstLetter: n.firstLetter,
+      withBirth: REL[c.relation(f.psychic, n.root)] ?? null,
+      withDestiny: REL[c.relation(f.destiny, n.root)] ?? null,
+      items: pick('name'), firstLetterItems: pick('first-letter')
+    };
+  }
+
+  // Watch: grouped by the detail they read, in the form's order; therapy (what to change) separate.
+  let watchReading = null;
+  if (watch) {
+    const ws = matchRules(bySet('watch'), f);
+    const groups = WATCH_ATTRIBUTES.map(a => ({
+      key: a.key, label: a.q, value: watch[a.key] ?? null,
+      valueLabel: Array.isArray(watch[a.key]) ? watch[a.key].map(v => a.options[v]).join(', ') : a.options[watch[a.key]] ?? null,
+      items: ws.filter(r => r.kind !== 'therapy' && Object.keys(flatWatch(r.when)).includes(a.key)).map(r => item(r, owner))
+    })).filter(g => g.items.length);
+    // A rule that reads two details (e.g. date window + where it sits) is shown once, under its first detail.
+    const seen = new Set();
+    for (const g of groups) g.items = g.items.filter(i => !seen.has(i.id) && seen.add(i.id));
+    watchReading = { groups: groups.filter(g => g.items.length), therapy: ws.filter(r => r.kind === 'therapy').map(r => item(r, owner)) };
+  }
+
+  return { facts: { psychic: f.psychic, destiny: f.destiny, personalYear: f.personalYear }, numbers, timing, loshu, name: nameReading, watch: watchReading };
+}
+
+function flatWatch(when, out = {}) {
+  if (!when) return out;
+  if (when.all) when.all.forEach(w => flatWatch(w, out));
+  else if (when.any) when.any.forEach(w => flatWatch(w, out));
+  else if (when.watch) Object.assign(out, when.watch);
+  return out;
+}

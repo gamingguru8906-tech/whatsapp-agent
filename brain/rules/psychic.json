@@ -25,7 +25,8 @@
     "rank": 4
    },
    "condition": "psychic = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a born leader whose presence is felt wherever you go. Confident, ambitious, bold and straightforward, you may sometimes be mistaken as proud, but you are warm-hearted."
   },
   {
    "id": "CHALDEAN-PSYCHIC-002",
@@ -52,7 +53,8 @@
     "rank": 4
    },
    "condition": "psychic = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You want to be number 1 in whatever you do and work very hard to lead. Stubborn at times, you are innovative and a persuasive speaker, and friends come to you for advice."
   },
   {
    "id": "CHALDEAN-PSYCHIC-003",
@@ -78,7 +80,8 @@
     "rank": 4
    },
    "condition": "psychic = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You enjoy a royal lifestyle and can spend lavishly. Keep a check on your savings and avoid overspending on possessions."
   },
   {
    "id": "CHALDEAN-PSYCHIC-004",
@@ -105,7 +108,8 @@
     "rank": 4
    },
    "condition": "psychic = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are mindful of your public image and often become the centre of attraction, even without trying. You are a loyal friend in need, with a charismatic aura."
   },
   {
    "id": "CHALDEAN-PSYCHIC-005",
@@ -132,7 +136,8 @@
     "rank": 4
    },
    "condition": "psychic = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You love your freedom and dislike being dominated; you believe in being your own boss."
   },
   {
    "id": "CHALDEAN-PSYCHIC-006",
@@ -159,7 +164,8 @@
     "rank": 4
    },
    "condition": "psychic = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "Take care not to dictate to family and friends or let ego and overconfidence steer your life. Try to see others' point of view, and accept delays and failures."
   },
   {
    "id": "CHALDEAN-PSYCHIC-007",
@@ -185,7 +191,8 @@
     "rank": 4
    },
    "condition": "psychic = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can feel discouraged when you do not achieve what you wanted. Try to accept failure as experience."
   },
   {
    "id": "CHALDEAN-PSYCHIC-008",
@@ -224,7 +231,8 @@
     "rank": 4
    },
    "condition": "psychic = 1 AND date in 21 Mar - 20 Aug",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is your most favourable time, when the Sun is strongest for you. It is a good time to start new ventures, investments, plans and auspicious work."
   },
   {
    "id": "CHALDEAN-PSYCHIC-009",
@@ -264,7 +272,8 @@
     "rank": 4
    },
    "condition": "psychic = 1 AND date in 15 Oct - 25 Dec",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an unfavourable time as the Sun is weak for you, so avoid new starts, big decisions and investments. It can bring delays, stress, health issues, losses or false allegations, so take care."
   },
   {
    "id": "CHALDEAN-PSYCHIC-010",
@@ -290,7 +299,8 @@
     "rank": 4
    },
    "condition": "psychic = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "Red and shades of red are lucky for you. You can use them in clothes, home decor, your phone cover or wallpaper, bottle and keychain."
   },
   {
    "id": "CHALDEAN-PSYCHIC-011",
@@ -316,7 +326,8 @@
     "rank": 4
    },
    "condition": "psychic = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are nurturing, caring, sensitive and intuitive, with a calm, soothing nature and motherly instincts. Harsh words can hurt you easily."
   },
   {
    "id": "CHALDEAN-PSYCHIC-012",
@@ -342,7 +353,8 @@
     "rank": 4
    },
    "condition": "psychic = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You love peace and avoid arguments; you are forgiving and a loyal friend who gives emotional support. You find it hard to say no."
   },
   {
    "id": "CHALDEAN-PSYCHIC-013",
@@ -371,7 +383,8 @@
     "rank": 4
    },
    "condition": "psychic = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a wonderful counsellor who knows how to make others feel loved. Romantic and selfless in love, you have a fine sense of beauty and are family-oriented."
   },
   {
    "id": "CHALDEAN-PSYCHIC-014",
@@ -397,7 +410,8 @@
     "rank": 4
    },
    "condition": "psychic = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are imaginative and artistic but can find it hard to put plans into action. A reliable partner helps you execute ideas, and you need reassurance, so do ask for help."
   },
   {
    "id": "CHALDEAN-PSYCHIC-015",
@@ -423,7 +437,8 @@
     "rank": 4
    },
    "condition": "psychic = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can be indecisive due to self-doubt, and you may hide your feelings to avoid quarrels. Like the Moon, your moods can rise and fall."
   },
   {
    "id": "CHALDEAN-PSYCHIC-016",
@@ -454,7 +469,8 @@
     "rank": 4
    },
    "condition": "psychic = 2 AND month in {Jun, Jul}",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is your most favourable time, when the Moon is strongest for you. It is good for starting new ventures, investments and plans, and for self-discovery."
   },
   {
    "id": "CHALDEAN-PSYCHIC-017",
@@ -488,7 +504,8 @@
     "rank": 4
    },
    "condition": "psychic = 2 AND month in {Dec, Jan, Feb}",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an unfavourable time as the Moon is weak for you, so avoid big decisions. You may feel anxious, over-emotional or imagine false scenarios, and growth can be slow; meditation is recommended."
   },
   {
    "id": "CHALDEAN-PSYCHIC-018",
@@ -514,7 +531,8 @@
     "rank": 4
    },
    "condition": "psychic = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "White and shades of white are lucky for you. You can use them in clothes, home decor, your phone, wallpaper and keychain."
   },
   {
    "id": "CHALDEAN-PSYCHIC-019",
@@ -540,7 +558,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very ambitious and self-motivated, and hard work gives you pleasure. Devoted and disciplined, you do not settle for subordinate roles."
   },
   {
    "id": "CHALDEAN-PSYCHIC-020",
@@ -566,7 +585,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "You tend to start your career early. Hardship in the early years can set you up for success later."
   },
   {
    "id": "CHALDEAN-PSYCHIC-021",
@@ -593,7 +613,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are social, cheerful and humorous, with faith in God. You like the spotlight and make an optimistic manager."
   },
   {
    "id": "CHALDEAN-PSYCHIC-022",
@@ -620,7 +641,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a great multitasker but lean towards work over home. Take care, as your work-life balance can suffer."
   },
   {
    "id": "CHALDEAN-PSYCHIC-023",
@@ -648,7 +670,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a caring provider, but you can be bossy with your partner and family. Keep your authority in check."
   },
   {
    "id": "CHALDEAN-PSYCHIC-024",
@@ -674,7 +697,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are suited to leadership and can be an orator, advisor, teacher or writer. You speak well, but can be too straightforward and short-tempered."
   },
   {
    "id": "CHALDEAN-PSYCHIC-025",
@@ -700,7 +724,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "review",
+   "reason": "wording: About pre-marital physical relationships with partners of certain numbers; a remark on sexuality (rule 6)."
   },
   {
    "id": "CHALDEAN-PSYCHIC-026",
@@ -727,7 +752,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Give time to your family, and take care of over-ambition, impatience, excessive optimism and extravagance. You may also tend to exaggerate the truth or gossip."
   },
   {
    "id": "CHALDEAN-PSYCHIC-027",
@@ -791,7 +817,8 @@
     "rank": 4
    },
    "condition": "psychic = 3 AND date in 15 Oct - 25 Dec",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an unfavourable time for you, so avoid starting new and important work or investments."
   },
   {
    "id": "CHALDEAN-PSYCHIC-029",
@@ -817,7 +844,8 @@
     "rank": 4
    },
    "condition": "psychic = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Yellow, golden and their shades are lucky for you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-030",
@@ -844,7 +872,8 @@
     "rank": 4
    },
    "condition": "psychic = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are rebellious yet practical, analytical, organised and hard-working. You are brainy and come up with unique, out-of-the-box ideas."
   },
   {
    "id": "CHALDEAN-PSYCHIC-031",
@@ -870,7 +899,8 @@
     "rank": 4
    },
    "condition": "psychic = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "You believe nothing without logic and hold firm, sometimes stubborn opinions. You are often misunderstood, even by your family and friends."
   },
   {
    "id": "CHALDEAN-PSYCHIC-032",
@@ -896,7 +926,8 @@
     "rank": 4
    },
    "condition": "psychic = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are bold and straightforward and cannot sugar-coat, so you may seem harsh though you are kind-hearted. You keep few but quality friends, and may sometimes feel lonely."
   },
   {
    "id": "CHALDEAN-PSYCHIC-033",
@@ -922,7 +953,8 @@
     "rank": 4
    },
    "condition": "psychic = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "You live with purpose and are not money-minded, valuing knowledge and experience more. You spend on your wishes and on helping others."
   },
   {
    "id": "CHALDEAN-PSYCHIC-034",
@@ -948,7 +980,8 @@
     "rank": 4
    },
    "condition": "psychic = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can be a great revolutionary, hard to beat in debate, and you stand up for the underdog. You become self-made after struggles."
   },
   {
    "id": "CHALDEAN-PSYCHIC-035",
@@ -974,7 +1007,8 @@
     "rank": 4
    },
    "condition": "psychic = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "Listen to others, avoid harsh words to win an argument, and try to be flexible."
   },
   {
    "id": "CHALDEAN-PSYCHIC-036",
@@ -1071,7 +1105,8 @@
     "rank": 4
    },
    "condition": "psychic = 4 AND date in 20 Mar - 20 Apr OR 10 Jul - 20 Aug",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a favourable time for you to start a new venture or job, make investments and travel."
   },
   {
    "id": "CHALDEAN-PSYCHIC-039",
@@ -1104,7 +1139,8 @@
     "rank": 4
    },
    "condition": "psychic = 4 AND month in {Oct, Nov, Dec}",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an unfavourable time, so avoid new projects, big decisions and investments. You may feel low, tired or gloomy, so take care of your stomach and skin."
   },
   {
    "id": "CHALDEAN-PSYCHIC-040",
@@ -1130,7 +1166,8 @@
     "rank": 4
    },
    "condition": "psychic = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "Black, grey and their shades are lucky for you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-041",
@@ -1156,7 +1193,8 @@
     "rank": 4
    },
    "condition": "psychic = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You carry a childlike energy that makes others happy, and you adapt to any situation with ease."
   },
   {
    "id": "CHALDEAN-PSYCHIC-042",
@@ -1183,7 +1221,8 @@
     "rank": 4
    },
    "condition": "psychic = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a great, convincing communicator and can run a successful business with your speaking skills and risk-taking. You are always thinking of new ways to earn and invest."
   },
   {
    "id": "CHALDEAN-PSYCHIC-043",
@@ -1209,7 +1248,8 @@
     "rank": 4
    },
    "condition": "psychic = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You love learning but get bored quickly and dislike monotony, so you may switch jobs when bored. You tend to have more than one source of income."
   },
   {
    "id": "CHALDEAN-PSYCHIC-044",
@@ -1235,7 +1275,8 @@
     "rank": 4
    },
    "condition": "psychic = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are popular, but you may not get good advice when you need it. After betrayals, your friend circle can shrink with age."
   },
   {
    "id": "CHALDEAN-PSYCHIC-045",
@@ -1261,7 +1302,8 @@
     "rank": 4
    },
    "condition": "psychic = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are highly intuitive and can sense people's true intentions; meditation sharpens this gift. You never give up and always bounce back."
   },
   {
    "id": "CHALDEAN-PSYCHIC-046",
@@ -1288,7 +1330,8 @@
     "rank": 4
    },
    "condition": "psychic = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "Take care of laziness, which can lead to weight gain, and keep your spending in control. Your anger tends to be short-lived."
   },
   {
    "id": "CHALDEAN-PSYCHIC-047",
@@ -1321,7 +1364,8 @@
     "rank": 4
    },
    "condition": "psychic = 5 AND month in {May, Aug, Sep}",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a favourable time to start a new venture or job and make plans. It is also good for buying property and investing."
   },
   {
    "id": "CHALDEAN-PSYCHIC-048",
@@ -1370,7 +1414,8 @@
     "rank": 4
    },
    "condition": "psychic = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "Green and shades of green are lucky for you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-050",
@@ -1396,7 +1441,8 @@
     "rank": 4
    },
    "condition": "psychic = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have a magnetic aura and polite manners. You like neat, artistic surroundings, and beauty matters a lot to you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-051",
@@ -1422,7 +1468,8 @@
     "rank": 4
    },
    "condition": "psychic = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are helpful and kind, ready to sacrifice for your loved ones, and deeply family-oriented."
   },
   {
    "id": "CHALDEAN-PSYCHIC-052",
@@ -1449,7 +1496,8 @@
     "rank": 4
    },
    "condition": "psychic = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You follow your heart over your head, and people may take advantage of your sensitivity. True friends can be hard to find, and being cheated can leave you with trust issues."
   },
   {
    "id": "CHALDEAN-PSYCHIC-053",
@@ -1475,7 +1523,8 @@
     "rank": 4
    },
    "condition": "psychic = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You love luxury, brands and fragrances, and there is a good chance you are a shopaholic."
   },
   {
    "id": "CHALDEAN-PSYCHIC-054",
@@ -1501,7 +1550,8 @@
     "rank": 4
    },
    "condition": "psychic = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a true empath with a motherly nature who loves children and animals. Music works like therapy for you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-055",
@@ -1527,7 +1577,8 @@
     "rank": 4
    },
    "condition": "psychic = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You may fall in love at least twice before marriage, and you often do not get back the same effort you give."
   },
   {
    "id": "CHALDEAN-PSYCHIC-056",
@@ -1554,7 +1605,8 @@
     "rank": 4
    },
    "condition": "psychic = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "Set boundaries and practise self-love; when low, take care to avoid alcohol or smoking, and limit lavish spending. You are prone to the evil eye, so don't share plans until they are done."
   },
   {
    "id": "CHALDEAN-PSYCHIC-057",
@@ -1604,7 +1656,8 @@
     "rank": 4
    },
    "condition": "psychic = 6 AND date in 20 Apr - 20 May OR 20 Sep - 20 Oct (best 20-30 Apr, 1-20 Oct)",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a favourable time to start a new venture or job, move to a new property, or buy a house or vehicle. Good news can come your way."
   },
   {
    "id": "CHALDEAN-PSYCHIC-058",
@@ -1654,7 +1707,8 @@
     "rank": 4
    },
    "condition": "psychic = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "White and rainbow colours are lucky for you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-060",
@@ -1680,7 +1734,8 @@
     "rank": 4
    },
    "condition": "psychic = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are calm, composed and big-hearted, caring by nature and a lover of animals."
   },
   {
    "id": "CHALDEAN-PSYCHIC-061",
@@ -1706,7 +1761,8 @@
     "rank": 4
    },
    "condition": "psychic = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are reserved and slow to open up, so people may first think you rude or arrogant, but you have a golden heart. You help others emotionally or financially, but shouldn't overdo it."
   },
   {
    "id": "CHALDEAN-PSYCHIC-062",
@@ -1732,7 +1788,8 @@
     "rank": 4
    },
    "condition": "psychic = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are intuitive, get premonitions and judge character well, and occult sciences like astrology, numerology and tarot interest you. Meditation and a guru's guidance can help you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-063",
@@ -1759,7 +1816,8 @@
     "rank": 4
    },
    "condition": "psychic = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can be an exceptional healer and teacher, suited to teaching, consulting, psychiatry, arts, politics or research."
   },
   {
    "id": "CHALDEAN-PSYCHIC-064",
@@ -1785,7 +1843,8 @@
     "rank": 4
    },
    "condition": "psychic = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are sensitive, spiritual and home-loving, but may lack confidence in big groups and overthink. Exercise, nature, meditation and living in the present help you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-065",
@@ -1841,7 +1900,8 @@
     "rank": 4
    },
    "condition": "psychic = 7 AND month in {Jan, Feb}",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is an unfavourable time, so avoid big decisions. Take care of aimlessness, dependence, misunderstandings, impulsive purchases and losses, and stay close to your faith."
   },
   {
    "id": "CHALDEAN-PSYCHIC-067",
@@ -1867,7 +1927,8 @@
     "rank": 4
    },
    "condition": "psychic = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "Black, grey and their shades are lucky for you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-068",
@@ -1893,7 +1954,8 @@
     "rank": 4
    },
    "condition": "psychic = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very hard-working, disciplined and focused, ruled by Saturn, the planet of rules and justice. Growth may feel slow for your effort, but success tends to come after much struggle."
   },
   {
    "id": "CHALDEAN-PSYCHIC-069",
@@ -1946,7 +2008,8 @@
     "rank": 4
    },
    "condition": "psychic = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are kind and generous, but focusing on career can make you neglect family. Take care, as you may find yourself alone when you need help."
   },
   {
    "id": "CHALDEAN-PSYCHIC-071",
@@ -1974,7 +2037,8 @@
     "rank": 4
    },
    "condition": "psychic = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are professional, detail-oriented, a great manager and planner, and a natural money manager. Careers in land, property and legal cases suit you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-072",
@@ -2001,7 +2065,8 @@
     "rank": 4
    },
    "condition": "psychic = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are prone to overthinking, which can lead to depression, so keep up fitness or a sport."
   },
   {
    "id": "CHALDEAN-PSYCHIC-073",
@@ -2027,7 +2092,8 @@
     "rank": 4
    },
    "condition": "psychic = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Betrayal can make you bitter or revengeful, so stay patient. Saturn is quick to punish cheating or wrongdoing, so keep your dealings honest."
   },
   {
    "id": "CHALDEAN-PSYCHIC-074",
@@ -2067,7 +2133,8 @@
     "rank": 4
    },
    "condition": "psychic = 8 AND date in 20 Sep - 20 Oct",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a favourable time for you to start new ventures and make investments."
   },
   {
    "id": "CHALDEAN-PSYCHIC-075",
@@ -2117,7 +2184,8 @@
     "rank": 4
    },
    "condition": "psychic = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Blue and shades of blue are lucky for you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-077",
@@ -2143,7 +2211,8 @@
     "rank": 4
    },
    "condition": "psychic = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are charismatic, energetic and physically active, a powerhouse with a natural sense of authority and control."
   },
   {
    "id": "CHALDEAN-PSYCHIC-078",
@@ -2169,7 +2238,8 @@
     "rank": 4
    },
    "condition": "psychic = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Careers like sports, politics, the army, IAS or boxing suit you. In a desk job you want to lead, or you can feel frustrated."
   },
   {
    "id": "CHALDEAN-PSYCHIC-079",
@@ -2195,7 +2265,8 @@
     "rank": 4
    },
    "condition": "psychic = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are loving and humanitarian, and so devoted to your partner that you can lose your individuality, so be careful. You also tend to repay bad behaviour in kind."
   },
   {
    "id": "CHALDEAN-PSYCHIC-080",
@@ -2244,7 +2315,8 @@
     "rank": 4
    },
    "condition": "psychic = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can be short-tempered, especially when you see injustice."
   },
   {
    "id": "CHALDEAN-PSYCHIC-082",
@@ -2270,7 +2342,8 @@
     "rank": 4
    },
    "condition": "psychic = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are punctual, disciplined and a great leader, best as your own boss or in business. Arts like acting, singing and dancing, and entertainment, also suit you."
   },
   {
    "id": "CHALDEAN-PSYCHIC-083",
@@ -2296,7 +2369,8 @@
     "rank": 4
    },
    "condition": "psychic = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You tend to be secretive and hide your weaknesses. Suppressing feelings is not good for your mental health, so confide in someone you trust."
   },
   {
    "id": "CHALDEAN-PSYCHIC-084",
@@ -2323,7 +2397,8 @@
     "rank": 4
    },
    "condition": "psychic = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Channel your energy into sport, or it can turn into quarrels. Fights can lead to accidents or court cases, so meditate and stay calm."
   },
   {
    "id": "CHALDEAN-PSYCHIC-085",
@@ -2374,7 +2449,8 @@
     "rank": 4
    },
    "condition": "psychic = 9 AND date in 20 Mar - 25 Apr OR 20 Oct - 25 Nov",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a favourable time for ventures, investments and taking risks, and for buying land, property or a vehicle."
   },
   {
    "id": "CHALDEAN-PSYCHIC-086",
@@ -2423,7 +2499,8 @@
     "rank": 4
    },
    "condition": "psychic = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Dark red, blood red and their shades are lucky for you."
   }
  ]
 }

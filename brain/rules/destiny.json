@@ -25,7 +25,8 @@
     "rank": 4
    },
    "condition": "destiny = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a natural leader who manages and motivates people and becomes popular without trying. You can head teams, organisations or a business."
   },
   {
    "id": "CHALDEAN-DESTINY-002",
@@ -52,7 +53,8 @@
     "rank": 4
    },
    "condition": "destiny = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are farsighted and make wise, prompt decisions, and you may enjoy unexpected money gains. Patience, organisation and persistence serve you well."
   },
   {
    "id": "CHALDEAN-DESTINY-003",
@@ -79,7 +81,8 @@
     "rank": 4
    },
    "condition": "destiny = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can achieve worldly success and a royal lifestyle, and if you turn spiritual, you can become a great spiritual leader. You are logical and a giver who helps others."
   },
   {
    "id": "CHALDEAN-DESTINY-004",
@@ -105,7 +108,8 @@
     "rank": 4
    },
    "condition": "destiny = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "Commitment and punctuality are your remedy, so build them into your daily life."
   },
   {
    "id": "CHALDEAN-DESTINY-005",
@@ -137,7 +141,8 @@
     "rank": 4
    },
    "condition": "destiny = 1 AND month in {Oct, Nov, Dec}",
-   "status": "approved"
+   "status": "approved",
+   "say": "This is a weaker phase as the Sun is weak, and it can bring disappointment, low moods and setbacks. Be patient through it."
   },
   {
    "id": "CHALDEAN-DESTINY-006",
@@ -164,7 +169,8 @@
     "rank": 4
    },
    "condition": "destiny = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "Ruled by the Moon, you are emotional, sensitive and peace-loving, and family is everything to you. You have strong home ties, self-respect and good manners."
   },
   {
    "id": "CHALDEAN-DESTINY-007",
@@ -190,7 +196,8 @@
     "rank": 4
    },
    "condition": "destiny = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your life can see swings, and opportunities may slip away just when success is in sight."
   },
   {
    "id": "CHALDEAN-DESTINY-008",
@@ -264,7 +271,8 @@
     "rank": 4
    },
    "condition": "destiny = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can shine in the arts as a performer, painter, actor, singer, poet, host or dancer. Setbacks can leave you feeling helpless, and you may feel insecure in romance and face heartbreak."
   },
   {
    "id": "CHALDEAN-DESTINY-011",
@@ -291,7 +299,8 @@
     "rank": 4
    },
    "condition": "destiny = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You can do well as a doctor, psychologist, therapist, marriage counsellor or in healing work. After 35, you may feel drawn to the occult or religion."
   },
   {
    "id": "CHALDEAN-DESTINY-012",
@@ -317,7 +326,8 @@
     "rank": 4
    },
    "condition": "destiny = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "Acknowledge and respect others' emotions; this can work miracles for you."
   },
   {
    "id": "CHALDEAN-DESTINY-013",
@@ -343,7 +353,8 @@
     "rank": 4
    },
    "condition": "destiny = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Ruled by Jupiter, the teacher, you love learning and sharing knowledge and get noticed in any group. Creative and intuitive, you make a good advisor and storyteller, and love travel."
   },
   {
    "id": "CHALDEAN-DESTINY-014",
@@ -370,7 +381,8 @@
     "rank": 4
    },
    "condition": "destiny = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Hard work can bring heavy pressure, stress and anxiety, which may affect your family, health and relationships. Take care that your knowledge does not turn into show-off."
   },
   {
    "id": "CHALDEAN-DESTINY-015",
@@ -398,7 +410,8 @@
     "rank": 4
    },
    "condition": "destiny = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Take care of pride and overspending, which can lead to money troubles. Critical speech can breed resentment, you may struggle to voice deep feelings, and love may bring failures."
   },
   {
    "id": "CHALDEAN-DESTINY-016",
@@ -425,7 +438,8 @@
     "rank": 4
    },
    "condition": "destiny = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "Keep adding value in your job or business; this is your remedy."
   },
   {
    "id": "CHALDEAN-DESTINY-017",
@@ -451,7 +465,8 @@
     "rank": 4
    },
    "condition": "destiny = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "Ruled by Rahu, you have strong mental power, intellect and practicality. You read between the lines, understand motives and plan ahead carefully."
   },
   {
    "id": "CHALDEAN-DESTINY-018",
@@ -477,7 +492,8 @@
     "rank": 4
    },
    "condition": "destiny = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "People often misunderstand you, and after a certain age you may have only a handful of friends."
   },
   {
    "id": "CHALDEAN-DESTINY-019",
@@ -505,7 +521,8 @@
     "rank": 4
    },
    "condition": "destiny = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "Rahu can bring disappointment in at least one area of life, field-hopping, missed chances through doubt, and health concerns. Big plans may end differently, and your brain counts more than physical effort."
   },
   {
    "id": "CHALDEAN-DESTINY-020",
@@ -531,7 +548,8 @@
     "rank": 4
    },
    "condition": "destiny = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are unconventional and revolutionary, though your ideas may meet rejection."
   },
   {
    "id": "CHALDEAN-DESTINY-021",
@@ -557,7 +575,8 @@
     "rank": 4
    },
    "condition": "destiny = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "Use your brain more than physical effort, criticise only when needed, and do activities that build your focus."
   },
   {
    "id": "CHALDEAN-DESTINY-022",
@@ -583,7 +602,8 @@
     "rank": 4
    },
    "condition": "destiny = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "Ruled by Mercury, you are intelligent, quick and resilient like a rubber ball. Life may give you hard knocks until about 28, but you do not give in."
   },
   {
    "id": "CHALDEAN-DESTINY-023",
@@ -609,7 +629,8 @@
     "rank": 4
    },
    "condition": "destiny = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You love change and may switch jobs, departments or fields. Adaptable by nature, you are childlike with children and mature with adults."
   },
   {
    "id": "CHALDEAN-DESTINY-024",
@@ -636,7 +657,8 @@
     "rank": 4
    },
    "condition": "destiny = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have strong business skills and a flood of ideas, so write them down, and you bond quickly with people. Do not treat relationships as transactions."
   },
   {
    "id": "CHALDEAN-DESTINY-025",
@@ -664,7 +686,8 @@
     "rank": 4
    },
    "condition": "destiny = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are kind, wise, intuitive and optimistic, with luck in romance and recognition. You may get a chance to live or work abroad, and favours from relatives, government and authorities."
   },
   {
    "id": "CHALDEAN-DESTINY-026",
@@ -718,7 +741,8 @@
     "rank": 4
    },
    "condition": "destiny = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your destiny number 5 is considered the most powerful number, linked with pioneers and inventors."
   },
   {
    "id": "CHALDEAN-DESTINY-028",
@@ -745,7 +769,8 @@
     "rank": 4
    },
    "condition": "destiny = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "Ruled by Venus, you love luxury, beauty and fashion. You give a lot in love but may not get the same back, and your heart may break more than once."
   },
   {
    "id": "CHALDEAN-DESTINY-029",
@@ -771,7 +796,8 @@
     "rank": 4
    },
    "condition": "destiny = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You have upscale taste and are a dependable carer for your family, though it can feel endless. You are peace-loving, diplomatic and convincing."
   },
   {
    "id": "CHALDEAN-DESTINY-030",
@@ -797,7 +823,8 @@
     "rank": 4
    },
    "condition": "destiny = 6",
-   "status": "approved"
+   "status": "review",
+   "reason": "wording: About unwanted sexual relationships and being taken advantage of sexually; a remark on sexuality (rule 6)."
   },
   {
    "id": "CHALDEAN-DESTINY-031",
@@ -870,7 +897,8 @@
     "rank": 4
    },
    "condition": "destiny = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "Buy the luxury you need, not recklessly, and add beauty and luxury to your product or service. Your savings tend to be low, so prefer assets over bank balance."
   },
   {
    "id": "CHALDEAN-DESTINY-034",
@@ -896,7 +924,8 @@
     "rank": 4
    },
    "condition": "destiny = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "Ruled by Ketu, the planet of spirituality and intuition, your destiny number multiplies the qualities of your psychic number."
   },
   {
    "id": "CHALDEAN-DESTINY-035",
@@ -922,7 +951,8 @@
     "rank": 4
    },
    "condition": "destiny = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You adapt easily, pick up good traits and are everyone's favourite. Your intuition peaks from your late 20s to 40s, you read people well from your early 30s, and your best ideas come from dreams."
   },
   {
    "id": "CHALDEAN-DESTINY-036",
@@ -948,7 +978,8 @@
     "rank": 4
    },
    "condition": "destiny = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a healer and suit careers in mental or physical healing. Confusion can make you run away from things unless someone pushes you."
   },
   {
    "id": "CHALDEAN-DESTINY-037",
@@ -975,7 +1006,8 @@
     "rank": 4
    },
    "condition": "destiny = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are wise, humble yet lively, a good speaker and problem-solver. Later, spirituality or the occult can become your career, and recognition may come from abroad."
   },
   {
    "id": "CHALDEAN-DESTINY-038",
@@ -1002,7 +1034,8 @@
     "rank": 4
    },
    "condition": "destiny = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "Linked with problems in romance and marriage, including a chance of affairs. Marrying after 28 is more likely to bring a successful marriage."
   },
   {
    "id": "CHALDEAN-DESTINY-039",
@@ -1079,7 +1112,8 @@
     "rank": 4
    },
    "condition": "destiny = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Ruled by Saturn, you may face heavy pressure, delays, obstacles and even humiliation before you shine, like coal turning into a diamond. You perform best under pressure."
   },
   {
    "id": "CHALDEAN-DESTINY-042",
@@ -1106,7 +1140,8 @@
     "rank": 4
    },
    "condition": "destiny = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are linked with money, power and high positions. Most of your wealth tends to come in your early to mid thirties."
   },
   {
    "id": "CHALDEAN-DESTINY-043",
@@ -1162,7 +1197,8 @@
     "rank": 4
    },
    "condition": "destiny = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "You lean towards the occult, and the more spiritual you are, the better your results. After disappointment you may lose faith or feel tempted by intoxication, so take care."
   },
   {
    "id": "CHALDEAN-DESTINY-045",
@@ -1188,7 +1224,8 @@
     "rank": 4
    },
    "condition": "destiny = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Linked with solitude, rejection and weak romance, and a turbulent marriage that can lead to separation or divorce. Take extra care in your relationships."
   },
   {
    "id": "CHALDEAN-DESTINY-046",
@@ -1262,7 +1299,8 @@
     "rank": 4
    },
    "condition": "destiny = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Avoid bad habits, work smart and remove greed, as big risks can bring sudden failure. Stay alert in legal matters, plan well, and work with people whose numbers are friendly to yours."
   },
   {
    "id": "CHALDEAN-DESTINY-049",
@@ -1288,7 +1326,8 @@
     "rank": 4
    },
    "condition": "destiny = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your number gives endurance and is linked with innovators, social reformers and wealth creators."
   },
   {
    "id": "CHALDEAN-DESTINY-050",
@@ -1315,7 +1354,8 @@
     "rank": 4
    },
    "condition": "destiny = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Ruled by Mars, you have energy and passion, and 9 magnifies your psychic number. If your psychic number is not friendly with 9, it can bring complications in life."
   },
   {
    "id": "CHALDEAN-DESTINY-051",
@@ -1364,7 +1404,8 @@
     "rank": 4
    },
    "condition": "destiny = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are very energetic, and too much rest makes you restless. Channel your energy through physical or mental activity and meditation."
   },
   {
    "id": "CHALDEAN-DESTINY-053",
@@ -1390,7 +1431,8 @@
     "rank": 4
    },
    "condition": "destiny = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your inner voice is your best asset. You are humanitarian, love nature and animals, and love beauty, art and knowledge."
   },
   {
    "id": "CHALDEAN-DESTINY-054",
@@ -1416,7 +1458,8 @@
     "rank": 4
    },
    "condition": "destiny = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a passionate lover, 'zero or a hundred', with no middle ground. If cheated, you may seek revenge."
   },
   {
    "id": "CHALDEAN-DESTINY-055",
@@ -1442,7 +1485,8 @@
     "rank": 4
    },
    "condition": "destiny = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are a natural teacher, and can be a spiritual teacher too."
   },
   {
    "id": "CHALDEAN-DESTINY-056",
@@ -1468,7 +1512,8 @@
     "rank": 4
    },
    "condition": "destiny = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are straightforward but can get angry over small matters, quarrel or seek revenge, so take care. Your vivid imagination can also create worrying pictures in your mind."
   },
   {
    "id": "CHALDEAN-DESTINY-057",
@@ -1494,7 +1539,8 @@
     "rank": 4
    },
    "condition": "destiny = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your number has produced great philanthropists, humanitarians and artists."
   }
  ]
 }

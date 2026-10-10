@@ -25,7 +25,8 @@
     "rank": 4
    },
    "condition": "maturity = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "As you grow older, your desire for independence, standing and recognition increases. You may resist teamwork when challenged, feel lonely or misunderstood, and find failure or a junior role harder to handle."
   },
   {
    "id": "CHALDEAN-MATURITY-002",
@@ -98,7 +99,8 @@
     "rank": 4
    },
    "condition": "maturity = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "With age you become a harmoniser: aggression fades as cooperation, tact and diplomacy grow. You become more organised and build networks, though you may need to accept less fame."
   },
   {
    "id": "CHALDEAN-MATURITY-005",
@@ -170,7 +172,8 @@
     "rank": 4
    },
    "condition": "maturity = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "This number is a blessing: later in life you become radiant, outgoing and creative in writing, painting, acting or music. Recognition, fame and happiness may come, with roles as advisor or mentor."
   },
   {
    "id": "CHALDEAN-MATURITY-008",
@@ -219,7 +222,8 @@
     "rank": 4
    },
    "condition": "maturity = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "With age you become more practical and organised, focused on material achievement and turning ideas into reality. You care about legacy, family and community welfare, and stay loyal."
   },
   {
    "id": "CHALDEAN-MATURITY-010",
@@ -316,7 +320,8 @@
     "rank": 4
    },
    "condition": "maturity = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "Your later years can be a thrilling roller coaster of freedom, adventure, socialising and travel, with good verbal skills and creativity. Stay focused and take care not to become reckless."
   },
   {
    "id": "CHALDEAN-MATURITY-014",
@@ -487,7 +492,8 @@
     "rank": 4
    },
    "condition": "maturity = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "With age you become philosophical and wise, drawn to reading and contemplation, with sharper intuition. You value privacy and solitude, though not too much, and scepticism can cause friction."
   },
   {
    "id": "CHALDEAN-MATURITY-021",
@@ -583,7 +589,8 @@
     "rank": 4
    },
    "condition": "maturity = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "Later life can bring material achievement, a public profile and responsibility, with comfortable finances through discipline and saving. You may take up social causes; do not cling to power, money or ego."
   },
   {
    "id": "CHALDEAN-MATURITY-025",
@@ -656,7 +663,8 @@
     "rank": 4
    },
    "condition": "maturity = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "This number is considered a divine gift of completion: after struggle you grow close to higher powers and in harmony with the five elements. You become an agent of change for public welfare."
   },
   {
    "id": "CHALDEAN-MATURITY-028",
@@ -707,7 +715,8 @@
     "rank": 4
    },
    "condition": "maturity = 11",
-   "status": "approved"
+   "status": "approved",
+   "say": "Like maturity 2, you grow into a harmoniser, but with your intuition greatly amplified, even clairvoyant. You can become a healer, occult practitioner or researcher, with premonitions and deep spirituality."
   },
   {
    "id": "CHALDEAN-MATURITY-030",

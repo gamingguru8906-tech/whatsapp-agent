@@ -25,7 +25,8 @@
     "rank": 4
    },
    "condition": "personality = 1",
-   "status": "approved"
+   "status": "approved",
+   "say": "People see you as strong, composed and competent, with vibrant energy, and know you cannot be easily swayed. You admire courage."
   },
   {
    "id": "CHALDEAN-PERSONALITY-002",
@@ -51,7 +52,8 @@
     "rank": 4
    },
    "condition": "personality = 2",
-   "status": "approved"
+   "status": "approved",
+   "say": "You come across as friendly, approachable and soft, and people see you as a gentle, safe haven."
   },
   {
    "id": "CHALDEAN-PERSONALITY-003",
@@ -77,7 +79,8 @@
     "rank": 4
    },
    "condition": "personality = 3",
-   "status": "approved"
+   "status": "approved",
+   "say": "You come across as vibrant, charming, witty and inspiring, and you easily become the centre of attention."
   },
   {
    "id": "CHALDEAN-PERSONALITY-004",
@@ -103,7 +106,8 @@
     "rank": 4
    },
    "condition": "personality = 4",
-   "status": "approved"
+   "status": "approved",
+   "say": "You put your family above all and act as its caretaker and guardian, though your family may overlook your efforts."
   },
   {
    "id": "CHALDEAN-PERSONALITY-005",
@@ -129,7 +133,8 @@
     "rank": 4
    },
    "condition": "personality = 5",
-   "status": "approved"
+   "status": "approved",
+   "say": "You bring fresh ideas, quick wit and charm, and social gatherings come alive in your presence."
   },
   {
    "id": "CHALDEAN-PERSONALITY-006",
@@ -155,7 +160,8 @@
     "rank": 4
    },
    "condition": "personality = 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You come across as understanding and compassionate, and people see you as warm and fair. Those who need support are drawn to you."
   },
   {
    "id": "CHALDEAN-PERSONALITY-007",
@@ -181,7 +187,8 @@
     "rank": 4
    },
    "condition": "personality = 7",
-   "status": "approved"
+   "status": "approved",
+   "say": "You carry an air of mystery and uniqueness and are seen as serious, studious and independent. Your intelligence earns respect."
   },
   {
    "id": "CHALDEAN-PERSONALITY-008",
@@ -207,7 +214,8 @@
     "rank": 4
    },
    "condition": "personality = 8",
-   "status": "approved"
+   "status": "approved",
+   "say": "You give off strength, power and natural authority, which can impress or even intimidate. You attract resourceful people."
   },
   {
    "id": "CHALDEAN-PERSONALITY-009",
@@ -233,7 +241,8 @@
     "rank": 4
    },
    "condition": "personality = 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You carry yourself with dignity and a noble, aristocratic air, and you control your own image well."
   },
   {
    "id": "CHALDEAN-PERSONALITY-010",
@@ -259,7 +268,8 @@
     "rank": 4
    },
    "condition": "personality = 11",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are highly perceptive, creative and intellectual, and people see you as gentle and intellectual."
   },
   {
    "id": "CHALDEAN-PERSONALITY-011",
@@ -286,7 +296,8 @@
     "rank": 4
    },
    "condition": "personality = 22",
-   "status": "approved"
+   "status": "approved",
+   "say": "You come across as dependable and steadfast, and people see you as a pillar of any business."
   },
   {
    "id": "CHALDEAN-PERSONALITY-012",
@@ -312,7 +323,8 @@
     "rank": 4
    },
    "condition": "personality = 33",
-   "status": "approved"
+   "status": "approved",
+   "say": "You inspire confidence and have a fine sense of justice. You keep harmony around you, even at the cost of your own desires."
   }
  ]
 }

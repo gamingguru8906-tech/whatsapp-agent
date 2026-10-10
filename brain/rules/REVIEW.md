@@ -1,9 +1,10 @@
 # Rules waiting for the owner
 
-Built from the book notes: 890 rules, 577 approved, 287 waiting for you, 26 dropped.
+Built from the book notes: 890 rules, 569 approved, 295 waiting for you, 26 dropped.
 
-## psychic: 77 approved, 10 to review, 0 dropped
+## psychic: 76 approved, 11 to review, 0 dropped
 
+- **CHALDEAN-PSYCHIC-025** (review: wording: About pre-marital physical relationships with partners of certain numbers; a remark on sexuality (rule 6).) — when psychic = 3: Life partner attractive and loyal; may have pre-marital relations with partners of psychic 1,3,6,9; respectful to partners
 - **CHALDEAN-PSYCHIC-027** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when psychic = 3 AND date in mid-Feb - mid-Mar OR 25 Nov - 25 Dec: Favourable: start ventures, investments; good for travel
 - **CHALDEAN-PSYCHIC-036** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when psychic = 4 AND partner psychic in {1,6,7} (also 2,5): Good friends/partners: 1, 6, 7; also 2 and 5 compatible
 - **CHALDEAN-PSYCHIC-037** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when psychic = 4 AND partner psychic in {4,8}: Avoid romantic or business partnership with 4 and 8
@@ -15,11 +16,12 @@ Built from the book notes: 890 rules, 577 approved, 287 waiting for you, 26 drop
 - **CHALDEAN-PSYCHIC-080** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when psychic = 9 AND other psychic = 5: Straightforward, dislikes diplomacy, so does not get along well with psychic 5
 - **CHALDEAN-PSYCHIC-086** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when psychic = 9 AND (month in {Mar, May, Jun} OR date in 1-20 Oct OR 25 Nov - 25 Dec): Unfavourable: misunderstandings, betrayal, cheating, accidents, ill health, losses; control anger
 
-## destiny: 46 approved, 10 to review, 1 dropped
+## destiny: 45 approved, 11 to review, 1 dropped
 
 - **CHALDEAN-DESTINY-008** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when destiny = 2 AND gender = male: Love and support of women (family, work, women in high positions); righteous mother; marries attractive woman; loves plants, redecorating; first serious relationship/marriage may not last
 - **CHALDEAN-DESTINY-009** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when destiny = 2 AND gender = female: Very attractive, dresses well; devoted to partner; over-emotional in relationships; strong and resilient; blamed for things not done
 - **CHALDEAN-DESTINY-026** (review: quote not found word for word in the book text) — when destiny = 5: Care: ideas misused -> gambling, fast money, manipulation; overuse of mind -> headaches, stomach issues; boredom in relationships
+- **CHALDEAN-DESTINY-030** (review: wording: About unwanted sexual relationships and being taken advantage of sexually; a remark on sexuality (rule 6).) — when destiny = 6: Situations of unwanted sexual relationships / being taken advantage of sexually
 - **CHALDEAN-DESTINY-031** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when destiny = 6 AND gender = female: More favourable to women; look younger; if not married early, harder later; give partner space
 - **CHALDEAN-DESTINY-032** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when destiny = 6 AND gender = male: Sexual problems may come; take precautions
 - **CHALDEAN-DESTINY-039** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when destiny = 7 AND gender = female: Sociable, attractive, intelligent, sometimes sentimental; career-oriented, assertive; bonds with women; seen as less romantic
@@ -153,7 +155,7 @@ Built from the book notes: 890 rules, 577 approved, 287 waiting for you, 26 drop
 - **CHALDEAN-MATURITY-028** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when maturity = 9 AND 9 recurs: Guard against arrogance and aloofness
 - **CHALDEAN-MATURITY-030** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when maturity = 22 (destiny 11 AND name 11): Like 4; challenging early life, misunderstood, "black sheep", self-doubt, nightmares; later confidence, integrity, leadership, great success, possible global fame
 
-## name: 206 approved, 115 to review, 21 dropped
+## name: 201 approved, 120 to review, 21 dropped
 
 - **CHALDEAN-NAME-001** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when full name reduces to 4 or 8: Not allowed
 - **CHALDEAN-NAME-002** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when first name reduces to 4 or 8: Not allowed
@@ -175,10 +177,12 @@ Built from the book notes: 890 rules, 577 approved, 287 waiting for you, 26 drop
 - **NAMENUM-NAME-036** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 91 AND (day or life, or person met / wife / partner number in 2, 7, 8): Afflicted: obstacles, enemies; avoid appointments with them; correct wife's name; remove partner or change his name.
 - **NAMENUM-NAME-039** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 100 AND (initial or component word = 8, or partner/wife day/life/name number = 8): Evil; correct name, remove partner or change her/his name.
 - **NAMENUM-NAME-043** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 11 AND (wife or business partner day/life/name number in 9, 8): They turn against you; get their names changed or remove partner.
+- **NAMENUM-NAME-046** (review: wording: Medical claim: special power to detoxify poison or save snake-bite victims (marked SKIP); cannot be shown without implying a healing power.) — when name compound = 20 (claim): Special power to detoxify poison / save snake-bite victims. SKIP (medical).
 - **NAMENUM-NAME-048** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 20 AND (day or life in 9, 8) / wife or partner in 9, 8 / initial or component in 9, 8: Same affliction text as 11: wrong deals; change spouse/partner name; correct name.
 - **NAMENUM-NAME-050** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when (day, life) = (2, 9) or (9, 2): Unlucky combination; numbers fight each other.
 - **NAMENUM-NAME-051** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when spouse number 2 and own number 9 (or vice versa): Unhappy married life.
 - **NAMENUM-NAME-053** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 38 AND birth-date compatibility afflicted: Effects worse.
+- **NAMENUM-NAME-055** (review: wording: Health prediction of vision loss from diabetes or accidents and advice on eye surgery (marked SKIP); a medical claim tied to a name number.) — when name compound = 47 (health claim): Claims loss of vision from diabetes or accidents; extra care in eye surgery. SKIP (medical).
 - **NAMENUM-NAME-057** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when (any) numbers 7 and 9, or 2 and 9: No love compatibility.
 - **NAMENUM-NAME-059** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when number 5 (general): 5 is central, not inimical to any number 1-9.
 - **NAMENUM-NAME-061** (dropped: outside the limits: death prediction) — when name compound = 56 AND (day or life number = 8): Can ruin success; 8 can cause fatal accidents.
@@ -190,11 +194,13 @@ Built from the book notes: 890 rules, 577 approved, 287 waiting for you, 26 drop
 - **NAMENUM-NAME-077** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when day number = 3 AND (life or name number conflicts with 3): Weakened 3: settle as clerk/accountant; lazy, gambling, unjust acts, borrowing, unlawful activity. Correct name.
 - **NAMENUM-NAME-087** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound in 3-series (3, 12, 21, 30 ...): Avoid 6 in any form: day/life 6, partner or spouse with 6, business/product/brand name in 6, days ruled by 6, Friday, gems of 6 (emerald), dates 6/15/24.
 - **NAMENUM-NAME-088** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 30 AND an initial or component reduces to 6, or partner = 6: Evil; correct name; remove or rename partner.
+- **NAMENUM-NAME-090** (review: wording: Core of the rule is avoiding other people with 6 (a girl or partner with 6); instructions about other people are not allowed.) — when name compound = 39: Avoid 6 in all dealings: girl with 6, partner with 6, business name in 6.
 - **NAMENUM-NAME-091** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when (method): A name number can be spelled thousands of ways; author picks by numerology + astrology + bioenergetics (not computable).
 - **NAMENUM-NAME-097** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 66 AND a component reduces to 8: 8 unlucky; no component in 8.
 - **NAMENUM-NAME-098** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 66 AND name contains syllables ban, war, end, none, no, gone, run, trick, fleece: Defective name.
 - **NAMENUM-NAME-100** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 75 AND any part of name reduces to 8, 6 or 9: Afflicted by Saturn / Venus / Mars: mental anguish, isolation, glory stolen, fleeced by relatives.
 - **NAMENUM-NAME-101** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 75 AND (syllables war, end, gone OR an initial in U, V, W, O, Z, P, F): Afflicted; correct immediately. (U V W = 6, O Z = 7, P F = 8 in Chaldean.)
+- **NAMENUM-NAME-104** (review: wording: Predicts chronic or incurable diseases early in life (marked SKIP); a medical claim tied to a name number.) — when name compound = 84 (health claim): "Chronic or incurable diseases early in life." SKIP (medical).
 - **NAMENUM-NAME-106** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 93 AND benefits absent: Negative letters, syllables or components present; correct by adding "an alphabet or two".
 - **NAMENUM-NAME-109** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when (day, life) contain 4 with 2, 9 or 7: 2&4 not good; 4&9 does not work; 4&7 "still more dangerous".
 - **NAMENUM-NAME-112** (dropped: outside the limits: death prediction) — when name compound = 13 AND name contains war, ash, die, di, end, bar, dra, ku, mar: Spoils the name.
@@ -228,6 +234,7 @@ Built from the book notes: 890 rules, 577 approved, 287 waiting for you, 26 drop
 - **NAMENUM-NAME-157** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name number = 6 AND (day or life in 7, 8, 4) AND name not correct: Affected to a great extent; rectify with an expert.
 - **NAMENUM-NAME-159** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 15 AND (name components contain no, war, end, die, sad, mad OR parts reduce to 3, 7, 8): Afflicted; 3, 7, 8 evil to you.
 - **NAMENUM-NAME-160** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 15 AND wife/kid/partner birth number = 3: Incompatible; correct their names; check staff/partner numbers before hiring.
+- **NAMENUM-NAME-166** (review: wording: Tells the person to avoid clients/staff/partners/lovers with 3, correct the wife's name and change or rename a partner; instructions about other people are not allowed.) — when name compound = 24 AND (day or life = 3): Life and business messed up, progress halts; avoid clients/staff/partners/lovers with 3; correct wife's name; change or rename partner.
 - **NAMENUM-NAME-167** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 24 AND name parts reduce to 7, 8 or 3: Problems; success stunted.
 - **NAMENUM-NAME-168** (dropped: outside the limits: crime accusation) — when name compound = 33: Very lucky; Jupiter (twice) dominates Venus, so Venus "remains silent"; auspicious in mantras; demands virtue (no womanizing, lies, fraud); wealth with little effort, houses, estates, farmland. Name must be flawless.
 - **NAMENUM-NAME-170** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when name compound = 33 AND too many component sixes (e.g. first 6, middle 15, initials 6, last 6) OR parts in 7 or 8: Afflicted (Venus strengthened against Jupiter).
@@ -305,7 +312,7 @@ Built from the book notes: 890 rules, 577 approved, 287 waiting for you, 26 drop
 - **LOSHU-LS-S7** (review: quote not found word for word in the book text) — when DOB grid has 7: Disappointments: sacrifice; heart rules the head; learns through losses or disappointments in love, emotions, health and finance
 - **LOSHU-LS-S8** (review: quote not found word for word in the book text) — when DOB grid has 8: Discipline and organisation: attention to detail
 
-## watch: 128 approved, 48 to review, 1 dropped
+## watch: 127 approved, 49 to review, 1 dropped
 
 - **WATCH-COL-17** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when colour not listed: Read it as a mixture of the listed colours
 - **WATCH-COL-18** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when wall clock colour = gold: Vintage, nostalgic: the person is emotional, wants to stay bound to their roots; keeps old sentimental things (differs from COL-12)
@@ -351,6 +358,7 @@ Built from the book notes: 890 rules, 577 approved, 287 waiting for you, 26 drop
 - **WATCH-DV-15** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when Roman numerals separated by lines (clock example): Segmented lives; different roles, clearly prioritised
 - **WATCH-DV-16** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when landmark picture (Eiffel Tower) on clock: Likes to stand out, be unique and recognised in the long run
 - **WATCH-OT-1** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when pocket or neck watch with cover flap: Keeps personal life very private but shows it off on the right occasion
+- **WATCH-OT-2** (review: wording: Text is 'Same as OT-1', but WATCH-OT-1 is not approved (in review), so there is no say to reuse. If OT-1 is approved, suggested: "You like to keep your personal life private, but will show it off on the right occasion.") — when flip-cover watch: Same as OT-1
 - **WATCH-OT-4** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when projector watch: Likes to help others but also needs help
 - **WATCH-CH-6** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when use-and-throw watch: Nobody chooses it unless obliged; no trait given
 - **WATCH-WP-1** (review: condition needs a person (partner, gender, profession, wording) or is not computable) — when water rating = water-resistant: Handles huge pressure at home and work; money flows like water, so may face money problems but withstands them; fights, doesn't break down

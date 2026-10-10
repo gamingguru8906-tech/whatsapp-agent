@@ -26,7 +26,8 @@
     "rank": 4
    },
    "condition": "Lo Shu missing plane 4-9-2 (Mental)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your mental plane (4-9-2) missing, your intellect is good when young, but memory and retention can fade later in life."
   },
   {
    "id": "CHALDEAN-PLANES-002",
@@ -53,7 +54,8 @@
     "rank": 4
    },
    "condition": "Lo Shu missing plane 3-5-7 (Emotional)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your emotional plane (3-5-7) missing, you may feel lonely and be less emotional towards yourself and others."
   },
   {
    "id": "CHALDEAN-PLANES-003",
@@ -81,7 +83,8 @@
     "rank": 4
    },
    "condition": "Lo Shu missing plane 8-1-6 (Physical)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your physical plane (8-1-6) missing, you may face losses, less success and luxury, and the failure of big plans."
   },
   {
    "id": "CHALDEAN-PLANES-004",
@@ -108,7 +111,8 @@
     "rank": 4
    },
    "condition": "Lo Shu missing plane 4-3-8 (Vision)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your vision plane (4-3-8) missing, you may feel confused, without a clear goal or planning."
   },
   {
    "id": "CHALDEAN-PLANES-005",
@@ -136,7 +140,8 @@
     "rank": 4
    },
    "condition": "Lo Shu missing plane 9-5-1 (Will)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your will plane (9-5-1) missing, you may lack the desire to succeed, and think a lot but struggle to decide."
   },
   {
    "id": "CHALDEAN-PLANES-006",
@@ -163,7 +168,8 @@
     "rank": 4
    },
    "condition": "Lo Shu missing plane 2-7-6 (Action)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your action plane (2-7-6) missing, you may feel apathy and laziness, avoid risks and lack the energy to fight back."
   },
   {
    "id": "CHALDEAN-PLANES-007",
@@ -190,7 +196,8 @@
     "rank": 4
    },
    "condition": "Lo Shu missing plane 2-5-8 (Silver)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your silver plane (2-5-8) missing, you may face frustration, obstacles everywhere, constant hustle and repeated failure."
   },
   {
    "id": "CHALDEAN-PLANES-008",
@@ -217,7 +224,8 @@
     "rank": 4
    },
    "condition": "Lo Shu missing plane 4-5-6 (Golden)",
-   "status": "approved"
+   "status": "approved",
+   "say": "With your golden plane (4-5-6) missing, you may be suspicious, have trust issues and find it hard to work with others."
   },
   {
    "id": "LOSHU-LS-P1",

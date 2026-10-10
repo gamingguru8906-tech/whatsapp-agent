@@ -166,7 +166,8 @@
     "rank": 7
    },
    "condition": "DOB grid has 6",
-   "status": "approved"
+   "status": "approved",
+   "say": "You are creative, helpful and friendly, with a deep love for home and family. You can feel very insecure about your home and family, especially your children."
   },
   {
    "id": "LOSHU-LS-S7",
@@ -251,7 +252,8 @@
     "rank": 7
    },
    "condition": "DOB grid has 9",
-   "status": "approved"
+   "status": "approved",
+   "say": "You carry a humanitarian spirit, with idealism, courage and ambition."
   }
  ]
 }
