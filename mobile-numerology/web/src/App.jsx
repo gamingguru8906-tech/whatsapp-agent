@@ -52,7 +52,6 @@ export default function App() {
           <a href="/" className="font-display text-[19px] font-bold tracking-tight text-maroon no-underline">
             Veshannastro<span className="text-primary">.</span>
           </a>
-          <span className="text-[13px] font-medium text-muted-foreground">Free reading, no login</span>
         </div>
       </header>
 
@@ -77,10 +76,6 @@ export default function App() {
                 Your digits light up on this grid. Where they line up, they form yogas.
               </p>
             </div>
-            <p className="mt-8 inline-flex items-center gap-2 rounded-full bg-card/80 px-4 py-2 text-[14px] text-maroon shadow-[0_0_0_1px_hsl(var(--border))]">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-gold" aria-hidden="true" />
-              Free, always. Every line comes from a fixed numerology rulebook, not AI.
-            </p>
           </div>
           <div className="min-w-0 scroll-mt-20" id="reading-form">
             <ReadingForm config={config} status={status} errors={errors} onSubmit={submit} />

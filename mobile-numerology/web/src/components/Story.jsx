@@ -248,7 +248,7 @@ function Why({ by, mobile, area }) {
           <div className="min-w-0 flex-1 basis-40">
             <p className="t-headline">“{concern.text}”</p>
             {concern.areas.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5">{concern.areas.map(a => <span key={a} className="chip bg-muted text-foreground">{AREA[a] || a}</span>)}</div>}
-            {!concern.areas.length && <p className="mt-1 text-[15px] text-muted-foreground">No rule speaks to this directly, so your answer looks at your whole number.</p>}
+            {!concern.areas.length && <p className="mt-1 text-[15px] text-muted-foreground">Your reading has nothing that speaks to this directly, so your answer looks at your whole number.</p>}
             {concern.areas.length > 0 && !top.length && <p className="mt-1 text-[15px] text-muted-foreground">Nothing in your number or birth date speaks directly to this, so your answer looks at your whole number.</p>}
           </div>
         </div>
