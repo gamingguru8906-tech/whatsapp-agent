@@ -1,0 +1,700 @@
+{
+ "set": "first-letter",
+ "rules": [
+  {
+   "id": "CHALDEAN-FIRST-LETTER-001",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "A"
+    ]
+   },
+   "period": null,
+   "text": "Honest, independent, creative, ambitious, original, deep, sociable; blunt over diplomatic; firm, dislikes meddling; loyal",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     147,
+     148
+    ],
+    "quote": "They tend to be straightforward in their communication, preferring honesty over diplomacy.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = A",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-002",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "B"
+    ]
+   },
+   "period": null,
+   "text": "Introvert, sensitive, secretive, observant; diplomatic; slow to trust, shy; affectionate loyal partner; moody, needs emotional support; likes silence, soft music",
+   "polarity": "mixed",
+   "areas": [
+    "personality",
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     148
+    ],
+    "quote": "They do not readily trust others",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = B",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-003",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "C"
+    ]
+   },
+   "period": null,
+   "text": "High energy with emotional control; strong intuition, \"supernatural abilities\"; ruled by Jupiter, works independently; ambitious; social; sometimes scattered",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     148
+    ],
+    "quote": "Being governed by Jupiter, they prefer to work independently.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = C",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-004",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "D"
+    ]
+   },
+   "period": null,
+   "text": "Self-assured, practical, patient, faithful; good advisor; disciplined, organised; small circle; solution-oriented, willpower; few words with authority; dignity; live and let live",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     148,
+     149
+    ],
+    "quote": "They excel as advisors and possess good judgment.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = D",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-005",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "E"
+    ]
+   },
+   "period": null,
+   "text": "Open, friendly, deep, versatile; moody; loves travel; planner, advisor; unconventional, needs freedom; fluctuating thoughts; communicator; bores easily",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     149
+    ],
+    "quote": "They easily get bored and are constantly seeking variety",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = E",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-006",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "F"
+    ]
+   },
+   "period": null,
+   "text": "Composed, authoritative; intellectual, responsible, loyal, humorous, domestic, calm; negatives: impersonal, impulsive, opinionated, critical, inflexible, argumentative, temperamental",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     149
+    ],
+    "quote": "They exhibit a composed and authoritative nature.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = F",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-007",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "G"
+    ]
+   },
+   "period": null,
+   "text": "Seems active/social but quiet and shy inside; sensitive, introspective, gentle; secretive; takes responsibility well",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     149,
+     150
+    ],
+    "quote": "Getting to truly understand their inner selves can be challenging",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = G",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-008",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "H"
+    ]
+   },
+   "period": null,
+   "text": "Sociable, intelligent, freedom-loving, adaptable; humour; nurturing; loves music, food, drinks, arts; can be over-ambitious, selfish; tires easily physically",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     150
+    ],
+    "quote": "They highly prioritize freedom and independence",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = H",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-009",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "I"
+    ]
+   },
+   "period": null,
+   "text": "Strong intuition often ignored; open, progressive; intelligent, spiritual, imaginative; impatient, egocentric, selfish; linear direct approach",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     150
+    ],
+    "quote": "Their straight \\\"I\\\" indicates a linear and direct approach to life.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = I",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-010",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "J"
+    ]
+   },
+   "period": null,
+   "text": "Pure heart, creative, energetic, sociable, spiritual; values freedom, leader; easily distracted; preacher, painter, writer; whimsical; drops tasks below their standard",
+   "polarity": "mixed",
+   "areas": [
+    "personality",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     150,
+     151
+    ],
+    "quote": "They have the potential to excel as a preacher, painter, or writer.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = J",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-011",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "K"
+    ]
+   },
+   "period": null,
+   "text": "Cooperative, charismatic, intuitive, entertaining; nurtures people and gardens; inspires; sudden losses or accidents possible; fortunate with money, can become wealthy",
+   "polarity": "mixed",
+   "areas": [
+    "money",
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     151
+    ],
+    "quote": "they may also encounter unexpected events in life, such as sudden losses or accidents",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = K",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-012",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "L"
+    ]
+   },
+   "period": null,
+   "text": "Honest, direct, intelligent; philosophical, logical; adaptable, joyful; progressive; stay calm under stress to prevent accidents",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     151
+    ],
+    "quote": "To prevent accidents, it is important for them to maintain a calm demeanor",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = L",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-013",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "M"
+    ]
+   },
+   "period": null,
+   "text": "Reliable, trustworthy, work-first; balanced in relationships; analytical, meticulous, likes routine; keeps promises; mystery-lover; wants love, often fortunate; versatile, decisive; can seem dualistic/using people",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     151,
+     152
+    ],
+    "quote": "They consistently keep their promises",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = M",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-014",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "N"
+    ]
+   },
+   "period": null,
+   "text": "Confident, charming, creative; popular, many friends; family joy, protective, possessive; \"slow and steady\"; ongoing obstacles; repeats mistakes, emotional dependence",
+   "polarity": "mixed",
+   "areas": [
+    "social",
+    "family"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     152
+    ],
+    "quote": "Throughout their lives, they encounter ongoing obstacles and challenges.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = N",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-015",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "O"
+    ]
+   },
+   "period": null,
+   "text": "Compassionate, romantic; prefers solitude; very reliable; own principles; trainers, researchers, gurus; intuitive, respected; secretive, domineering, resists change",
+   "polarity": "mixed",
+   "areas": [
+    "personality",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     152,
+     153
+    ],
+    "quote": "They excel in roles such as trainers, researchers, and gurus",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = O",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-016",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "P"
+    ]
+   },
+   "period": null,
+   "text": "Very intelligent, artistic and analytical; perfectionist; emotionally stable; good financial sense but under-earns; reliable, honest, loyal; stubborn, uncommunicative, possessive, dictatorial",
+   "polarity": "mixed",
+   "areas": [
+    "personality",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     153
+    ],
+    "quote": "they often do not fully utilize their abilities and intelligence to maximize their earnings",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = P",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-017",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "Q"
+    ]
+   },
+   "period": null,
+   "text": "Quirky, unconventional; curious, creative, humorous, intuitive; eccentric; complex, directionless, sarcastic, arrogant, cold",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     153
+    ],
+    "quote": "often characterized as having a quirky nature",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = Q",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-018",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "R"
+    ]
+   },
+   "period": null,
+   "text": "Righteousness; knows right from wrong; progressive, tenacious, loyal, compassionate, forgiving; dark side: low motivation, passivity, self-pity, self-destructive, impatient; spiritual, detached",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     154
+    ],
+    "quote": "The letter \\\"R\\\" represents righteousness.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = R",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-019",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "S"
+    ]
+   },
+   "period": null,
+   "text": "Sensitive, intelligent, playful, cunning, seductive; charming, can be deceptive; talented in writing, fashion, film; fiercely independent, dislike orders; can be sneaky, unfaithful, manipulative, shallow",
+   "polarity": "mixed",
+   "areas": [
+    "personality",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     154
+    ],
+    "quote": "possess great potential in writing, fashion, and film careers",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = S",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-020",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "T"
+    ]
+   },
+   "period": null,
+   "text": "Curious, seeks knowledge and experience; protective, caring; finds it hard to express; investigative; unfocused, unreliable, high-strung, unstable",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     154,
+     155
+    ],
+    "quote": "it can prove challenging for them to express their thoughts and emotions openly",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = T",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-021",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "U"
+    ]
+   },
+   "period": null,
+   "text": "Warm, calm, friendly, social, helpful, efficient, loyal, patient, domestic; dual nature; sensitive; evasive, judgemental, sarcastic, secretive; believe in divine",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     155
+    ],
+    "quote": "They exhibit a dual nature, representing two sides of one character.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = U",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-022",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "V"
+    ]
+   },
+   "period": null,
+   "text": "Perfectionist, diligent learner; sincere, loyal, successful; seek fame and respect; ethical, ambitious; rigid, proud, superiority complex, nervous tension; devoted to spouse or stay unmarried",
+   "polarity": "mixed",
+   "areas": [
+    "personality",
+    "marriage"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     155,
+     156
+    ],
+    "quote": "they either show deep devotion to their spouse or choose to remain unmarried",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = V",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-023",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "W"
+    ]
+   },
+   "period": null,
+   "text": "Likable, loyal lifelong friends; reliable employee, faithful partner; resilient; adaptable, objective; obsessive, poor communication, depression, distant, indecisive, addictive tendencies",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     156
+    ],
+    "quote": "they maintain a down-to-earth nature even in the face of traumatic events",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = W",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-024",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "X"
+    ]
+   },
+   "period": null,
+   "text": "Sociable, adaptable, loves travel and diverse people; intelligent, flexible; challenges norms; life of the party; bored easily, poor focus",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     156,
+     157
+    ],
+    "quote": "They prefer to challenge societal norms and conservative attitudes",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = X",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-025",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "Y"
+    ]
+   },
+   "period": null,
+   "text": "Ambitious, impressive aura; business-minded, wants high reputation; hungry for financial security and fame; busy; work-only talk; may seem aloof, snobbish",
+   "polarity": "mixed",
+   "areas": [
+    "career",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     157
+    ],
+    "quote": "They are highly business-minded",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = Y",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-FIRST-LETTER-026",
+   "set": "first-letter",
+   "when": {
+    "firstLetter": [
+     "Z"
+    ]
+   },
+   "period": null,
+   "text": "Very versatile; emotional and intelligent; makes friends easily; curious, learns languages; popular; diplomatic; helpful, strategic lasting connections",
+   "polarity": "good",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     157,
+     158
+    ],
+    "quote": "These individuals possess a multitude of talents, making them exceptionally versatile.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "first letter = Z",
+   "status": "approved"
+  }
+ ]
+}

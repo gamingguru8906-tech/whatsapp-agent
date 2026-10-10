@@ -1,0 +1,737 @@
+{
+ "set": "maturity",
+ "rules": [
+  {
+   "id": "CHALDEAN-MATURITY-001",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "With age more desire for independence, standing, recognition; resists collaboration if challenged; may feel lonely and misunderstood; harder to handle failure or a subordinate role",
+   "polarity": "mixed",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     104
+    ],
+    "quote": "you will discover an increased desire for independence and individuality",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-002",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Beware becoming authoritative and intimidating",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     104
+    ],
+    "quote": "be cautious of becoming overly authoritative and intimidating",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 1 AND chart has multiple 1s",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-003",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Ego a persistent issue; facing challenges alone",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     104
+    ],
+    "quote": "your ego may become a persistent issue",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 1 AND karmic 19/1",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-004",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Harmoniser; aggression fades; cooperation, tact, diplomacy; more organised later; building and consolidating; networking; accept not getting fame",
+   "polarity": "good",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     104,
+     105
+    ],
+    "quote": "you will become aware of your innate ability to harmonize situations",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-005",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Oversensitive, moody, indecisive",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     105
+    ],
+    "quote": "you may become oversensitive, moody, and indecisive",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 2 AND multiple 2s",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-006",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Helps productive collaborations",
+   "polarity": "good",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     105
+    ],
+    "quote": "it will greatly assist you in establishing more productive",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 2 AND 2 is new in chart",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-007",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Radiance, extroversion, creative expression (writing, painting, acting, music); public recognition; better communication; advisor, mentor; religion, politics; fame possible; \"a blessing\", happiness later",
+   "polarity": "good",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     105
+    ],
+    "quote": "Maturity number 3 is a blessing in your life",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-008",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Guard against superficiality, showing off, pompousness, selfishness",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     105
+    ],
+    "quote": "be mindful of guarding against pompousness and selfishness",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 3 AND multiple 3s",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-009",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Practical, organised, material achievement; turning ideas into reality; legacy; family and community welfare; loyalty",
+   "polarity": "good",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     106
+    ],
+    "quote": "a shift towards practicality, organization, and a greater concern for material achievements",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-010",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Struggles reaching goals; avoid rigidity, over-work, opinionatedness",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     106
+    ],
+    "quote": "if your karmic number is 13/4, there might be struggles",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 4 AND karmic 13/4",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-011",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "May become fanatical about goals, harming health; guard against corruption",
+   "polarity": "care",
+   "areas": [
+    "later life",
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     106
+    ],
+    "quote": "potentially compromising your health",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 4 AND other 4s",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-012",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Systematic nature brings material success, popularity, wealth",
+   "polarity": "good",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     106
+    ],
+    "quote": "will pave the way for material success, popularity, and wealth",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 4 AND 4 new",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-013",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Later life a thrilling roller coaster; freedom, adventure, socialising, travel; verbal skills, creativity; needs focus; risk of recklessness",
+   "polarity": "mixed",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     106,
+     107
+    ],
+    "quote": "a thrilling roller coaster ride in the later years of your life",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-014",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Adaptability and risk-taking, thrive, confidence, tolerance; avoid impatience, abandoning projects",
+   "polarity": "mixed",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     107
+    ],
+    "quote": "guard against impatience and abandoning projects midway",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 5 AND 5 new",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-015",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Careless about responsibilities; stay loyal to old relationships",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     107
+    ],
+    "quote": "a possibility of becoming careless and nonchalant about responsibilities",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 5 AND other 5s",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-016",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Hard to attain freedom; laziness, sensual indulgence",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     107
+    ],
+    "quote": "being entangled in laziness and sensual indulgences",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 5 AND karmic 14/5",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-017",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Family welfare and care; community; counsellor, healer, teacher; social change; magnetism; prudent money and property, savings",
+   "polarity": "good",
+   "areas": [
+    "later life",
+    "family"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     107,
+     108
+    ],
+    "quote": "You may be drawn towards roles such as a counselor, healer, or teacher",
+    "quoteFound": false,
+    "rank": 4
+   },
+   "condition": "maturity = 6",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-018",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Reflects on past relationships",
+   "polarity": "neutral",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     108
+    ],
+    "quote": "prompt you to reflect on your past relationships",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 6 AND 6 repeats in core numbers",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-019",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Focus on duties; brings longed-for close relationships",
+   "polarity": "good",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     108
+    ],
+    "quote": "This number will bring you the close relationships you have long yearned for",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 6 AND 6 new",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-020",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Philosophical, wise; reading, contemplation, metaphysics; scepticism can cause friction; privacy, solitude (not excessive); sharper intuition",
+   "polarity": "mixed",
+   "areas": [
+    "later life",
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     108
+    ],
+    "quote": "this number carries a philosophical and inherently wise energy",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-021",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Emotional detachment; may leave material world for hermit/meditative life",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     109
+    ],
+    "quote": "consider leaving the material world behind",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 7 AND other 7s",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-022",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Joy exploring depths, gurus, occult",
+   "polarity": "good",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     109
+    ],
+    "quote": "you will find joy in exploring your deeper dimensions",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 7 AND 7 new",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-023",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Avoiding responsibility, self-absorbed",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     109
+    ],
+    "quote": "a tendency to avoid responsibilities and a self-absorbed temperament",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 7 AND karmic 16/7",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-024",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Material achievement, public profile; discipline; comfortable later finances; frugal, saving; positions of responsibility; social/political causes; don't cling to power, money, ego",
+   "polarity": "good",
+   "areas": [
+    "later life",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     109
+    ],
+    "quote": "Financially, this number offers a comfortable lifestyle in the later years.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-025",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Guard against obsession with money, boasting",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     109
+    ],
+    "quote": "guard against developing an obsessive fondness for money",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 8 AND other 8s",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-026",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Tremendous success after long effort; recognition",
+   "polarity": "good",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     109
+    ],
+    "quote": "after a long journey of effort, you will experience tremendous success",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 8 AND 8 new",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-027",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "\"Divine gift\", completion; close to Higher Powers after struggle; oneness, agent of change, Panchmahabhoota harmony; public welfare, global issues, arts patron; wisdom",
+   "polarity": "good",
+   "areas": [
+    "later life",
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     110
+    ],
+    "quote": "The maturity number 9 is considered a divine gift",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-028",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Guard against arrogance and aloofness",
+   "polarity": "care",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     110
+    ],
+    "quote": "guard against arrogance and aloofness if the number 9 recurs frequently",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 9 AND 9 recurs",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-029",
+   "set": "maturity",
+   "when": {
+    "maturity": [
+     11
+    ]
+   },
+   "period": null,
+   "text": "Like 2 but intuition amplified; clairvoyance, predictions; train the clair-sense; healer, occult practitioner, researcher; premonitions; deep spirituality",
+   "polarity": "good",
+   "areas": [
+    "later life",
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     110,
+     111
+    ],
+    "quote": "You will develop a heightened clairvoyant ability",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 11",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MATURITY-030",
+   "set": "maturity",
+   "when": null,
+   "period": null,
+   "text": "Like 4; challenging early life, misunderstood, \"black sheep\", self-doubt, nightmares; later confidence, integrity, leadership, great success, possible global fame",
+   "polarity": "mixed",
+   "areas": [
+    "later life"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     111,
+     112
+    ],
+    "quote": "The maturity number 22 is only possible when the life path number and name number are both 11.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "maturity = 22 (destiny 11 AND name 11)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  }
+ ]
+}

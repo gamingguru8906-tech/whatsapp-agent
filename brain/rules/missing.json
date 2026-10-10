@@ -1,0 +1,251 @@
+{
+ "set": "missing",
+ "rules": [
+  {
+   "id": "CHALDEAN-MISSING-001",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "No ego; problems in select careers; low self-confidence; introvert; can't express experiences openly",
+   "polarity": "care",
+   "areas": [
+    "career",
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     61,
+     62
+    ],
+    "quote": "Such people face a lot of problems in select careers.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MISSING-002",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Problems in love; lack of stability, patience; don't follow timetable; live in imagination; lack intuition and confidence",
+   "polarity": "care",
+   "areas": [
+    "love",
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     62
+    ],
+    "quote": "Such people face problems in their love relations.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MISSING-003",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Less grace of Guru/God; problems in promotion and growth; lack creative thinking and decisions; low confidence, distracted",
+   "polarity": "care",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     62
+    ],
+    "quote": "The grace of the Guru and lord is less",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MISSING-004",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Lack of financial stability and growth; lack of intuition; more struggle; directionless; weak thought power, forgetful",
+   "polarity": "care",
+   "areas": [
+    "money",
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     62
+    ],
+    "quote": "Lack of financial stability and growth",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MISSING-005",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Lack of stability, confidence; stomach and back pain; trouble starting work; business loss; problems building own house",
+   "polarity": "care",
+   "areas": [
+    "health",
+    "business",
+    "property"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     62
+    ],
+    "quote": "Health problems related to stomach and back pain.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MISSING-006",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Lack of money and luxury; struggle; few good friends; family support late; love problems from introversion",
+   "polarity": "care",
+   "areas": [
+    "money",
+    "family",
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     62,
+     63
+    ],
+    "quote": "Lack of money and luxurious life.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MISSING-007",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Hindrance in work and studies; no family support; little success despite effort; mental disturbance",
+   "polarity": "care",
+   "areas": [
+    "career",
+    "education"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     63
+    ],
+    "quote": "The struggle is more and Success is less.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MISSING-008",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Difficult financial decisions; no perfection in work; low motivation; ups and downs; poor health and wealth",
+   "polarity": "care",
+   "areas": [
+    "money",
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     63
+    ],
+    "quote": "Such peoples find it difficult to make financial decisions",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MISSING-009",
+   "set": "missing",
+   "when": {
+    "lacks": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Low energy and enthusiasm; ups and downs; weak will and action; lack of reputation/fame; doesn't care about others' feelings",
+   "polarity": "care",
+   "areas": [
+    "career",
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     63
+    ],
+    "quote": "Lack of energy and enthusiasm.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "DOB lacks 9",
+   "status": "approved"
+  }
+ ]
+}

@@ -1,0 +1,1029 @@
+{
+ "set": "karmic",
+ "rules": [
+  {
+   "id": "CHALDEAN-KARMIC-001",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     13,
+     14,
+     16,
+     19
+    ]
+   },
+   "period": null,
+   "text": "Birth date is set by destiny and past-life karma; misuse of talents in past lives brings failures, hardship, losses now",
+   "polarity": "care",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     71
+    ],
+    "quote": "a result of a predetermined plan by Destiny, influenced by our Karma from previous lives",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic debt (any)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-002",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     13
+    ]
+   },
+   "period": null,
+   "text": "Must work exceptionally hard for any task; constant challenges; low success rate tempts giving up; pessimism",
+   "polarity": "care",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     71
+    ],
+    "quote": "will need to exert exceptional effort to achieve any task",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 13",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-003",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     13
+    ]
+   },
+   "period": null,
+   "text": "Traits: blames others for limits and failures; authoritative, rigid, \"my way or the highway\"; controlling; pessimistic; lazy",
+   "polarity": "care",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     72
+    ],
+    "quote": "Adopting an \\\"it's my way or the highway\\\" mentality",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 13",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-004",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     13
+    ]
+   },
+   "period": null,
+   "text": "Keys: focus on one goal in a set time; ethics and sincerity, no shortcuts; discipline (timetable, appointments, commitments); cleanliness, no procrastination",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     72
+    ],
+    "quote": "resist the temptation of choosing the easy or expedient path",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 13",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-005",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     14
+    ]
+   },
+   "period": null,
+   "text": "Abused freedom in past births; must adapt to constant change; acute danger of addictions (drugs, alcohol, food, sex)",
+   "polarity": "care",
+   "areas": [
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     73
+    ],
+    "quote": "Acute danger of falling prey to traps and addictions",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 14",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-006",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     14
+    ]
+   },
+   "period": null,
+   "text": "Traits: craving freedom undermines relationships; boredom in jobs and relationships, commitment issues; excess sexual interest; addictions incl. overeating, gambling; feels trapped; poor self-control",
+   "polarity": "care",
+   "areas": [
+    "love",
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     73
+    ],
+    "quote": "Struggling with commitment issues.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 14",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-007",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     14
+    ]
+   },
+   "period": null,
+   "text": "Keys: moderation; emotional stability and supportive people; focus, flexibility; commitment to truth; avoid unnecessary expense and instant gratification; can achieve material and spiritual progress",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     74
+    ],
+    "quote": "consciously engage in activities with moderation",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 14",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-008",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     16
+    ]
+   },
+   "period": null,
+   "text": "Old to new, profound transformation; plans blocked; ego crumbles in defeat; surrender to higher force; spiritual rebirth, humility",
+   "polarity": "mixed",
+   "areas": [
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     74,
+     75
+    ],
+    "quote": "In times of defeat, your ego will undergo a painful process of crumbling",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 16",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-009",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     16
+    ]
+   },
+   "period": null,
+   "text": "Traits: aloof, excessive solitude, many failed relationships, self-absorbed, hard to connect emotionally",
+   "polarity": "care",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     75
+    ],
+    "quote": "You have encountered numerous unsuccessful relationships.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 16",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-010",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     16
+    ]
+   },
+   "period": null,
+   "text": "Keys: drop egotism; accept divine will; apologise and repent for hurt caused; accept life's purpose is divine, surrender to God",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     75
+    ],
+    "quote": "Apologize and Repent for the Hurt You've Caused",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 16",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-011",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     19
+    ]
+   },
+   "period": null,
+   "text": "Learning independence and right use of power; support doesn't come, so learns self-reliance; must not refuse help or advice; self-made prison, hard to open to love",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     75,
+     76
+    ],
+    "quote": "avoid stubbornly refusing help or disregarding well-meaning advice",
+    "quoteFound": false,
+    "rank": 4
+   },
+   "condition": "karmic = 19",
+   "status": "dropped",
+   "reason": "outside the limits: crime accusation"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-012",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     19
+    ]
+   },
+   "period": null,
+   "text": "Traits: selfish, manipulative, egotistical, low confidence, over-dependent, stubborn, can't assert, driven excluding others, appearance-focused, materialistic show, narcissistic, lazy, superficial",
+   "polarity": "care",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     76,
+     77
+    ],
+    "quote": "Selfishness - Being focused on personal gain at the expense of others.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 19",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-KARMIC-013",
+   "set": "karmic",
+   "when": {
+    "karmic": [
+     19
+    ]
+   },
+   "period": null,
+   "text": "Keys: build reciprocal bonds of trust; embrace empathy, we are all interconnected",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     77
+    ],
+    "quote": "establishing meaningful and reciprocal bonds of trust is crucial",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "karmic = 19",
+   "status": "approved"
+  },
+  {
+   "id": "NUMNAME-NN-KD-1",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Karmic debt: selfishness in love, power, work or freedom in past lives; now is the chance to set it right",
+   "polarity": "care",
+   "areas": [
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     15
+    ],
+    "quote": "numbers 13, 14, 16, and 19 (karmic debt numbers) are about selfishness in love, power, work, or freedom in past lives",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X in {13, 14, 16, 19}",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-KD-2",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Signals working with issues from the past; most significant in personal year, destiny, birthday",
+   "polarity": "care",
+   "areas": [
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     16,
+     17
+    ],
+    "quote": "These numbers will show up as your birthday number or destiny number, it’s a signal that you’re working with issues from the past.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "birthday or destiny in {13, 14, 16, 19} before reducing",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-KD-3",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "The 3 in 13: creativity and joy turned into frivolity and superficiality",
+   "polarity": "care",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     17
+    ],
+    "quote": "The number 3 in 13: creativity energy and joyfulness turn into frivolity and superficiality.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 13",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-KD-4",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "The 4 in 14: discipline and stability turned into rebelliousness and indulgence",
+   "polarity": "care",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     17
+    ],
+    "quote": "The number 4 in 14: discipline, hard work, accountability, and stability turn into rebelliousness and indulgence",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 14",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-KD-5",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "The 6 in 16: love and commitment forsaken",
+   "polarity": "care",
+   "areas": [
+    "relationship"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     17
+    ],
+    "quote": "The number 6 in 16: love and commitment have been forsaken.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 16",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-KD-6",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "The 9 in 19: wisdom, spiritual knowledge and power used for personal gain",
+   "polarity": "care",
+   "areas": [
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     17
+    ],
+    "quote": "The number 9 in 19: wisdom, spiritual knowledge, and power have been used for personal gain.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 19",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K10-1",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Karmic completion and rebirth: the debt is paid, free to begin again; a chance to stand on your own and use the good traits of 1-9",
+   "polarity": "good",
+   "areas": [
+    "spiritual",
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     17,
+     18
+    ],
+    "quote": "The number 10 means karmic completion, and is the number of rebirth.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 10 (also check 1s that are really 10/1)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K10-2",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Fortunate; promise of victory in difficult situations; go forth with courage",
+   "polarity": "good",
+   "areas": [
+    "-"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     18
+    ],
+    "quote": "The 10 is considered a fortunate number and holds the promise of victory in difficult situations.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 10",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K10-3",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Usually shows a past misuse of personal power; now use courage, independence and leadership",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     18
+    ],
+    "quote": "the 10 usually indicates there has been a past misuse of personal power",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 10",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K13-1",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Not bad luck but hard work everywhere; discipline in expression and practical matters; no shortcuts",
+   "polarity": "care",
+   "areas": [
+    "career",
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     18
+    ],
+    "quote": "While the number 13 is usually associated with bad luck, when it appears as a karmic debt number, it’s not about luck.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 13",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K13-2",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Often shows the negative traits of 4: rigid, controlling, dogmatic, blaming others for limits",
+   "polarity": "care",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     18
+    ],
+    "quote": "Usually people with 13/4 will exhibit the negative traits of the 4",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 13",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K13-3",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Success by keeping order: keep appointments, follow through on commitments, keep the house tidy, never procrastinate; steady effort brings reward",
+   "polarity": "good",
+   "areas": [
+    "career",
+    "home"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     19
+    ],
+    "quote": "If you make a steady and consistent effort, you will find reward and success.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 13",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K13-4",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Do not despair: many famous people have 13 birthdays",
+   "polarity": "good",
+   "areas": [
+    "-"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     18
+    ],
+    "quote": "Many famous people carry karmic 13 birthdays.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "DOB day = 13 or destiny 13/4",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K14-1",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Past lives abused freedom; rebellious free spirit; huge risks for sensual pursuits",
+   "polarity": "care",
+   "areas": [
+    "relationship"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     19
+    ],
+    "quote": "The karmic number 14/5 involves past lifetimes where freedom was abused.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 14",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K14-2",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Negative traits of 5: jumping between relationships or jobs, seeking pleasure (food, sugar, sex, drugs); craving the new over steady work",
+   "polarity": "care",
+   "areas": [
+    "career",
+    "relationship",
+    "health"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     19
+    ],
+    "quote": "jumping from relationship to relationship or job to job, for example- with no sense of accomplishment or goal firmly in mind.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 14",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K14-3",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "The key is commitment, moderation, order and temperance; stay flexible, do not become rigid",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     20
+    ],
+    "quote": "The key to this karmic debt number is commitment",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 14",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K14-4",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Expect emotional upsets and delays",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     20
+    ],
+    "quote": "If you have 14 as your Personal Year Number, you might expect emotional upsets and delays.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "personal year (compound) = 14",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K14-5",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Lessons through setbacks, disappointments, reversal of fortune; must make commitments and ride the ups and downs",
+   "polarity": "care",
+   "areas": [
+    "career",
+    "money"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     20
+    ],
+    "quote": "If 14 is your Destiny Number, then you’ll possibly learn these lessons through setbacks, disappointments, and reversal of fortune",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "destiny (compound) = 14",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K14-6",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Here to learn to let go, resist indulgence, allow change, steer a steady course",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     20
+    ],
+    "quote": "If 14 is the number of your Date of Birth, you are here to learn to let go, resist the temptations of indulgence",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "DOB day = 14",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K14-7",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "\"Universal Law #5\": you are never given more than you can handle; temperance in all things",
+   "polarity": "good",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     20
+    ],
+    "quote": "You’re never given more than you can handle.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 14",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K16-1",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Past illicit love affairs that hurt others; failure to act responsibly in love",
+   "polarity": "care",
+   "areas": [
+    "relationship"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     20
+    ],
+    "quote": "The karmic debt of the 16/7 arises from past involvement in illicit love affairs that caused suffering to others",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 16",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K16-2",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Negative traits of 7: indifference, aloofness, withdrawal, hard to approach, privacy over others' feelings, intellectualising emotion",
+   "polarity": "care",
+   "areas": [
+    "personality",
+    "relationship"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     21
+    ],
+    "quote": "Indifference • Analytical aloofness • Withdrawal • Difficult to approach",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 16",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K16-3",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Tarot Tower: sudden falls and rebirth; humility is the key to future success; key word \"awaken\"; spiritual growth",
+   "polarity": "mixed",
+   "areas": [
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     21
+    ],
+    "quote": "it’s precisely this humility that’s the key to future success.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 16",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K16-4",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Will know alienation and loneliness; tends to look down on others",
+   "polarity": "care",
+   "areas": [
+    "relationship",
+    "mind"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     21
+    ],
+    "quote": "the 16/7 won’t be a stranger to alienation and loneliness in this lifetime.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 16",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K16-5",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Life is a series of falls and rises until the spiritual lesson is learned",
+   "polarity": "care",
+   "areas": [
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     21
+    ],
+    "quote": "your life will be a series of events that bring you to the bottom, only to rise up again, to fall again, and so on.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "destiny or birthday = 16",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K19-1",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Past abuse of power, completely self-centred; lesson is standing on your own and using power properly",
+   "polarity": "care",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     22
+    ],
+    "quote": "the karmic debt of this number stems from past abuses of acting in a completely self-centered manner",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 19",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K19-2",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Negative traits of 1: selfishness, intimidation, dependence, not standing up for oneself, refusing help, egotism, laziness, aggression",
+   "polarity": "care",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     22
+    ],
+    "quote": "Selfishness • Intimidation • Dependence",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 19",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "NUMNAME-NN-K19-3",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Often left to stand alone; refusing help can become a self-imposed prison; blames others for own dependence",
+   "polarity": "care",
+   "areas": [
+    "relationship"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     22,
+     23
+    ],
+    "quote": "Because of a tendency to stubbornly resist help from others, you may find yourself in a self-imposed prison.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 19",
+   "status": "dropped",
+   "reason": "outside the limits: crime accusation"
+  },
+  {
+   "id": "NUMNAME-NN-K19-4",
+   "set": "karmic",
+   "when": null,
+   "period": null,
+   "text": "Success by looking past your own needs to others'; work toward independence; the 1 promises a new beginning",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-NUMNAME",
+    "pages": [
+     23
+    ],
+    "quote": "Success comes from looking past your own needs to the needs of others.",
+    "quoteFound": true,
+    "rank": 6
+   },
+   "condition": "X = 19",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  }
+ ]
+}

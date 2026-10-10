@@ -1,0 +1,257 @@
+{
+ "set": "present",
+ "rules": [
+  {
+   "id": "LOSHU-LS-S1",
+   "set": "present",
+   "when": {
+    "has": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Communication: how you react to and communicate with others",
+   "polarity": "neutral",
+   "areas": [
+    "communication"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     10
+    ],
+    "quote": "It relates how an individual reacts and communicates with others.",
+    "quoteFound": false,
+    "rank": 7
+   },
+   "condition": "DOB grid has 1",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "LOSHU-LS-S2",
+   "set": "present",
+   "when": {
+    "has": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Sensitivity and intuition: how sensitive and intuitive you are",
+   "polarity": "neutral",
+   "areas": [
+    "intuition"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     10
+    ],
+    "quote": "It relates how sensitive and intuitive an individual is.",
+    "quoteFound": false,
+    "rank": 7
+   },
+   "condition": "DOB grid has 2",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "LOSHU-LS-S3",
+   "set": "present",
+   "when": {
+    "has": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Planning and imagination: intellectual capacity, memory, clear and logical thinking",
+   "polarity": "good",
+   "areas": [
+    "intellect"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     10
+    ],
+    "quote": "It relates the intellectual capacity of an individual, and the memory and ability to think clearly and logically.",
+    "quoteFound": false,
+    "rank": 7
+   },
+   "condition": "DOB grid has 3",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "LOSHU-LS-S4",
+   "set": "present",
+   "when": {
+    "has": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Discipline and organisation: neat, tidy, good with details, practical and hard-working; order and balance",
+   "polarity": "good",
+   "areas": [
+    "work"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     10
+    ],
+    "quote": "It relates to neat, tidy and good with details.",
+    "quoteFound": false,
+    "rank": 7
+   },
+   "condition": "DOB grid has 4",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "LOSHU-LS-S5",
+   "set": "present",
+   "when": {
+    "has": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Balance (emotional and mental): emotional stability; freedom",
+   "polarity": "good",
+   "areas": [
+    "emotions"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     10
+    ],
+    "quote": "It relates to balance and emotional stability of an individual. Also relates to freedom.",
+    "quoteFound": false,
+    "rank": 7
+   },
+   "condition": "DOB grid has 5",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "LOSHU-LS-S6",
+   "set": "present",
+   "when": {
+    "has": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Home and family: creativity, love of home and family, helpful, friendly; very insecure about home and family, especially children",
+   "polarity": "mixed",
+   "areas": [
+    "family"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     10
+    ],
+    "quote": "These individuals are very insecure for their home and family particularly for their children.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "DOB grid has 6",
+   "status": "approved"
+  },
+  {
+   "id": "LOSHU-LS-S7",
+   "set": "present",
+   "when": {
+    "has": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Disappointments: sacrifice; heart rules the head; learns through losses or disappointments in love, emotions, health and finance",
+   "polarity": "care",
+   "areas": [
+    "love",
+    "money",
+    "health"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     11
+    ],
+    "quote": "Their heart rules over head. They learn through there losses or disappointments of four kinds",
+    "quoteFound": false,
+    "rank": 7
+   },
+   "condition": "DOB grid has 7",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "LOSHU-LS-S8",
+   "set": "present",
+   "when": {
+    "has": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Discipline and organisation: attention to detail",
+   "polarity": "good",
+   "areas": [
+    "work"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     10
+    ],
+    "quote": "It is associated with discipline & organized. It relates to attention to detail.",
+    "quoteFound": false,
+    "rank": 7
+   },
+   "condition": "DOB grid has 8",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "LOSHU-LS-S9",
+   "set": "present",
+   "when": {
+    "has": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Humanitarian: idealism, valour, ambition",
+   "polarity": "good",
+   "areas": [
+    "values"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     9,
+     11
+    ],
+    "quote": "It relates to idealism, valor, and ambition.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "DOB grid has 9",
+   "status": "approved"
+  }
+ ]
+}

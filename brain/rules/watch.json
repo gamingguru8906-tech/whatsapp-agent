@@ -1,0 +1,5052 @@
+{
+ "set": "watch",
+ "rules": [
+  {
+   "id": "WATCH-COL-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "red"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Bold, attention-seeking; romance, passion, feminine energy, love and lust; also anger and aggression",
+   "polarity": "mixed",
+   "areas": [
+    "personality",
+    "love",
+    "temper"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     35
+    ],
+    "quote": "the personality of red is one that is both bold, and attention seeking.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = red",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "orange"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Selective: picks what they want and enjoys it fully; gives time only to what they chose; can be bright or go unnoticed",
+   "polarity": "neutral",
+   "areas": [
+    "choices",
+    "attention"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     35,
+     36
+    ],
+    "quote": "orange would be that person who picks and chooses what he or she wants, and then enjoys it to the fullest!",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = orange",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "yellow"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Authority that stays approachable; life, happiness, friendliness (colour of the sun); changes when mixed",
+   "polarity": "good",
+   "areas": [
+    "leadership",
+    "social"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     36
+    ],
+    "quote": "Yellow can be analyzed as the authoritative figure that is, despite his position of power, approachable.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = yellow",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-4",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "green"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Dual: growth, abundance, peace, love for others; too much brings suspicion, envy, doubt",
+   "polarity": "mixed",
+   "areas": [
+    "growth",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     36
+    ],
+    "quote": "a mindset of growth, or abundance; while at the same time too much of it, makes represents the emotions of suspicion and envy.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = green",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-5",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "blue"
+     ]
+    }
+   },
+   "period": null,
+   "text": "\"Highest\" colour: elevated mindset; observes and absorbs; can lead or follow; deep talk over gossip; seeks knowledge; productive; future-focused; gentle",
+   "polarity": "good",
+   "areas": [
+    "mind",
+    "knowledge",
+    "leadership"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     36,
+     37
+    ],
+    "quote": "blue is what represents an elevated mindset.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = blue",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-6",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "indigo"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Spiritual; immense farsightedness; great impact on others, but own inner life often a mess; neglects present and relationships",
+   "polarity": "mixed",
+   "areas": [
+    "spirituality",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     37,
+     38
+    ],
+    "quote": "their own internal lives are most often a mess.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = indigo",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-7",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "violet"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Influence: gets the job done through others; royalty, power",
+   "polarity": "mixed",
+   "areas": [
+    "power",
+    "delegation"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     38
+    ],
+    "quote": "will not like doing things personally, but will ensure that the job is done.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = violet",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-8",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "black"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Commands respect; sophistication, luxury; aspired to but kept at a distance; aloof, seems unapproachable (like judges)",
+   "polarity": "mixed",
+   "areas": [
+    "status",
+    "social distance"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     38
+    ],
+    "quote": "black represents the personality of someone who commands respect.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = black",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-9",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "white"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Accepts everything that comes, stops nothing (opposite of black, which builds a barrier)",
+   "polarity": "neutral",
+   "areas": [
+    "openness"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     38
+    ],
+    "quote": "white accepts anything and everything that comes its way, without doing anything to stop it at all.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = white",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-10",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "grey"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Ambivert: deep and reserved, also light and approachable; wants to say and do a lot but enjoys keeping to self",
+   "polarity": "neutral",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     39
+    ],
+    "quote": "grey exhibits the personality of an ambi-vert.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = grey (black + white)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-11",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "pink"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Playful; some of red's passion with white's quiet; imagination",
+   "polarity": "good",
+   "areas": [
+    "creativity"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     39
+    ],
+    "quote": "if red is manifestation, pink is imagination.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial colour = pink (red + white)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-12",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "gold"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Authoritative but expressive; reserved with most, life of the party with their own kind (VIP-lounge type)",
+   "polarity": "mixed",
+   "areas": [
+    "status",
+    "social"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     39
+    ],
+    "quote": "would be authoritative, but expressive.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial or case colour = gold (yellow + black)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-13",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "roseGold"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Very selective and involved in choices; authoritative and expressive; slow to mingle, unstoppable once they do",
+   "polarity": "mixed",
+   "areas": [
+    "social",
+    "choices"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     39,
+     40
+    ],
+    "quote": "They do not mingle easily with just anyone, but when they do, there's no stopping them.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "colour = rose gold (yellow + black + red)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-14",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "silver"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Leans to white; would pick a premium crowd but is comfortable with anyone; selective within the crowd",
+   "polarity": "neutral",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     40
+    ],
+    "quote": "would pick a premium crowd to hang with, but is also comfortable with anyone.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "colour = silver (white + grey)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-15",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "maroon"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Authoritarian blended with bold, expressive, happy",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     40
+    ],
+    "quote": "a blend of an authoritarian personality with a bold, expressive, and happy one.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "colour = maroon (red + black + a little yellow)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-16",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialColour": [
+      "brown"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Earthy, natural, comforting, yet selective, premium, uncommon",
+   "polarity": "neutral",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     40
+    ],
+    "quote": "might be seen as earthy, natural, and comforting, but is as the same time selective, premium, and uncommon.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "colour = brown (yellow + black, mostly black)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-COL-17",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Read it as a mixture of the listed colours",
+   "polarity": "neutral",
+   "areas": [
+    "method"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     40
+    ],
+    "quote": "most of these are combinations of two or more of the colours discussed above.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "colour not listed",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-COL-18",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Vintage, nostalgic: the person is emotional, wants to stay bound to their roots; keeps old sentimental things (differs from COL-12)",
+   "polarity": "neutral",
+   "areas": [
+    "family",
+    "roots"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     125
+    ],
+    "quote": "the colour gold gives a vintage or nostalgic feeling telling us that this person is emotional and wants to be bound to their roots.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "wall clock colour = gold",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-WR-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "wrist": [
+      "right"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Attracts masculine energy whatever your gender: easy relations with men (father, father figure, male spouse, uncle, brother, colleague, boss, employee, friend); action-oriented, thinks about what must be done next",
+   "polarity": "good",
+   "areas": [
+    "men",
+    "father",
+    "action"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     49
+    ],
+    "quote": "wearing a watch on your right hand begins to help attract masculine energy, irrespective of your gender.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "worn on right wrist",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-WR-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "wrist": [
+      "left"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Attracts feminine energy: better relations with women (mother, sister, spouse, friend, colleague); more emotional, thinks about feelings and emotional reactions rather than the action",
+   "polarity": "good",
+   "areas": [
+    "women",
+    "mother",
+    "emotion"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     49
+    ],
+    "quote": "wearing a wristwatch on your left hand begins to attract feminine energy.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "worn on left wrist",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-WR-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "wrist": [
+      "both"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Moody; gets the best and worst of both energies: attracts and also clashes with both men and women",
+   "polarity": "mixed",
+   "areas": [
+    "relationships",
+    "mood"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     50
+    ],
+    "quote": "you are a moody person who gets the best and worst of both",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "switches wrists often / comfortable on both",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-WR-4",
+   "set": "watch",
+   "kind": "therapy",
+   "when": {
+    "watch": {
+     "goal": [
+      "men"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Wear the watch on the right wrist regularly for the next few months",
+   "polarity": "good",
+   "areas": [
+    "father",
+    "men"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     50
+    ],
+    "quote": "If you are having an issue with your father and would like to fix it, try to wear your watch on your right hand",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "concern = relationship with father (or a man)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-WR-5",
+   "set": "watch",
+   "kind": "therapy",
+   "when": {
+    "watch": {
+     "goal": [
+      "women"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Wear the watch on the left wrist for the next few months",
+   "polarity": "good",
+   "areas": [
+    "mother",
+    "spouse",
+    "women"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     50
+    ],
+    "quote": "if you are facing an issue with your mum, or spouse, or a woman at work, try wearing your watch in your left hand",
+    "quoteFound": false,
+    "rank": 3
+   },
+   "condition": "concern = relationship with mother, spouse or a woman at work",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "WATCH-WR-6",
+   "set": "watch",
+   "kind": "therapy",
+   "when": {
+    "watch": {
+     "goal": [
+      "men",
+      "women"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Changes show in 3-6 months; if nothing changes after 6 months, change the watch itself",
+   "polarity": "neutral",
+   "areas": [
+    "therapy timing"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     50,
+     51
+    ],
+    "quote": "you will begin to see these changes within a span of 3 to 6 months.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "after switching wrist",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-WR-7",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Most people wear on the left because most are right-handed (free hand, less wear); now habit, not a conscious choice",
+   "polarity": "neutral",
+   "areas": [
+    "none"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     48
+    ],
+    "quote": "this trend was established because a majority of the people are right handed.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "(background)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-WR-8",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Basis for the wrist theory",
+   "polarity": "neutral",
+   "areas": [
+    "none"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     47
+    ],
+    "quote": "People with a dominant left side of the brain end up being \"lefties\"",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "(claim) left-brain dominant people are left-handed; left brain = creative/feminine",
+   "status": "dropped",
+   "reason": "the reader marked it SKIP"
+  },
+  {
+   "id": "WATCH-DS-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialSize": [
+      "small"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Lower self-esteem or confidence; avoids the limelight, finds a quiet corner; avoids drama and trouble; content, happy-go-lucky, minds own business; at work keeps to self, may not get fair recognition",
+   "polarity": "care",
+   "areas": [
+    "confidence",
+    "social",
+    "career"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     52,
+     53
+    ],
+    "quote": "you are someone with a lower self-esteem or confidence.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial size vs wrist = small",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DS-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialSize": [
+      "medium"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Enjoys social events but is selective about whom they talk to (they must be \"worthy\"); reserved; at work gets attention and recognition but promotions are slow",
+   "polarity": "mixed",
+   "areas": [
+    "social",
+    "career"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     53
+    ],
+    "quote": "you will be selective about the people you interact with.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial size vs wrist = medium",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DS-3",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Should own a medium-dial watch",
+   "polarity": "good",
+   "areas": [
+    "career",
+    "privacy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     53,
+     54
+    ],
+    "quote": "should consider owning a watch with a medium dial.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "in the limelight for long but handles private information (politicians, celebrities, fashion people)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DS-4",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialSize": [
+      "large"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Extremely confident, comfortable in the spotlight; life of the party; orator; experiments; takes initiative; speaks their mind to anyone, even the boss; brainstorms; team asset",
+   "polarity": "good",
+   "areas": [
+    "confidence",
+    "career",
+    "speech"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     54
+    ],
+    "quote": "you are someone who is extremely confident, and comfortable about being in the spotlight.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial size vs wrist = large",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DS-5",
+   "set": "watch",
+   "kind": "therapy",
+   "when": {
+    "watch": {
+     "goal": [
+      "confidence"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Choose a large-dial watch to gain confidence at work",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     54
+    ],
+    "quote": "dealing with professions related to voicing out expression or communication, should choose a watch like this",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "profession = communication / expression (influencer, branding, marketing)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DS-6",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "May feel hyper-vigilant, overactive, anxious, worried, over-effort: step down to a medium or small dial",
+   "polarity": "care",
+   "areas": [
+    "stress"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     55
+    ],
+    "quote": "it is recommended that you turn it down a notch with a medium, or even small sized dial",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial = large AND person feels it is unnatural or straining",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DS-7",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialSize": [
+      "extraLarge"
+     ]
+    }
+   },
+   "period": null,
+   "text": "A bit of a show-off; projects a bigger-than-life image knowingly; goes to big gatherings but can't hold an audience long; different in public and private; keeps up a façade",
+   "polarity": "care",
+   "areas": [
+    "image",
+    "social"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     55,
+     56
+    ],
+    "quote": "a person with a dial that is too big for their hand, is someone who is a bit of a show off.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial size vs wrist = extra-large (too big for the hand)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DS-8",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Choose dial size to match your present confidence, mood and needs",
+   "polarity": "neutral",
+   "areas": [
+    "therapy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     55
+    ],
+    "quote": "you can choose a watch where the dial size matches your level of confidence, mood, and requirement.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "(general)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-SH-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "round"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Idealistic, principled, wants to be punctual, committed to relationships and commitments, likes to be ahead, very organised, accurate and precise",
+   "polarity": "good",
+   "areas": [
+    "discipline",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     57
+    ],
+    "quote": "if your watch dial is a circle, you are someone who is a very idealistic person.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = round",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "round"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Expects the same from others, especially close ones (e.g. calls at midnight for a birthday and expects the same back)",
+   "polarity": "care",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     57,
+     58
+    ],
+    "quote": "you expect the same behavior from everyone else around you too",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = round (downside)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "square"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Perfectionist in own work but does not expect it from others (not bothered if others are late); focuses on improving self",
+   "polarity": "good",
+   "areas": [
+    "work",
+    "self"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     58,
+     59
+    ],
+    "quote": "unlike the former, they do not have the same expectation from those around them.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = square (all sides equal)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-4",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "square"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Can become too mechanical: rigid, structured, black-and-white, numb to emotions",
+   "polarity": "care",
+   "areas": [
+    "emotions"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     58
+    ],
+    "quote": "sometimes it tends to make the person too mechanical",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = square (downside)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-5",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "square"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Physical focus, lean approach, urge to be active (why smart/fitness watches are square); wearing one makes you feel the need to be more active",
+   "polarity": "good",
+   "areas": [
+    "fitness",
+    "action"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     58,
+     59
+    ],
+    "quote": "it will tend to make you feel the need to be more active than before.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = square",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-6",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "rectVertical"
+     ]
+    }
+   },
+   "period": null,
+   "text": "More agile; lives fitter; restless; commits but under-delivers (keeps starting the next thing); can't sit still even at a desk job; oblivious in relationships, hard to keep long-term relationships or start them; never a dull moment",
+   "polarity": "mixed",
+   "areas": [
+    "energy",
+    "commitments",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     60
+    ],
+    "quote": "They might also be the kind to commit to things but under-deliver when it comes to it",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = rectangle, vertical (taller than wide)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-7",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "rectHorizontal"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Laid back, maybe lazy; under-promises and over-delivers; one thing at a time; can sit for hours; orders food in; good at maintaining relationships because they focus on what is in front of them. (Book also says \"chubbier\": drop that)",
+   "polarity": "mixed",
+   "areas": [
+    "commitments",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     60,
+     61
+    ],
+    "quote": "they are the kind that will under-promise and over-deliver.",
+    "quoteFound": false,
+    "rank": 3
+   },
+   "condition": "dial shape = rectangle, horizontal (wider than tall)",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "WATCH-SH-8",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "roundedRect"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Focused, committed, hard-working; tries to truly understand you; soft-spoken but adds value when they speak; flexible, empathetic; also attends to own presentation",
+   "polarity": "good",
+   "areas": [
+    "work",
+    "empathy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     61
+    ],
+    "quote": "a focused, committed, hard-working individual who puts in the effort to try and truly understand you.",
+    "quoteFound": false,
+    "rank": 3
+   },
+   "condition": "dial shape = rounded rectangle / rounded square (Apple-Watch-like)",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "WATCH-SH-9",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Rectangle = angular = masculine, \"Execution\"; oval = curvy = feminine, \"Thought\" (diagram)",
+   "polarity": "neutral",
+   "areas": [
+    "energy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     62,
+     63
+    ],
+    "quote": "the oval dials, more curvilinear in nature, represent energy that is more feminine.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "oval vs rectangle (energy)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-SH-10",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "ovalVertical"
+     ]
+    }
+   },
+   "period": null,
+   "text": "More self-centred; self-indulgence can make them reluctant to do things; but also active, likes ticking off to-do lists and appointments. (Weight-gain remark: drop)",
+   "polarity": "mixed",
+   "areas": [
+    "self",
+    "action"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     63
+    ],
+    "quote": "the vertical ellipse talks of someone being more selfish in nature.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = oval, vertical",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-11",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "ovalHorizontal"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Caring but dominant; wishes you well but is possessive and wants to be involved; extremely protective; less agile; good hand-eye coordination, good at sports (cricket, table tennis)",
+   "polarity": "mixed",
+   "areas": [
+    "relationships",
+    "sport"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     63,
+     64
+    ],
+    "quote": "those wearing a horizontal ellipse tend to be more caring towards others, but are also more dominant in nature.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = oval, horizontal",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-12",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "hexHorizontal",
+      "hexVertical"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Unity, togetherness: a \"family man / family woman\" who needs a close-knit family; cares for friends, family, clients; downside: people-pleaser, stressed",
+   "polarity": "mixed",
+   "areas": [
+    "family",
+    "clients",
+    "stress"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     64,
+     65
+    ],
+    "quote": "they end up being people-pleasers which can tend to make them quite stressed out at times.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = hexagon (any orientation)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-13",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "hexHorizontal"
+     ]
+    }
+   },
+   "period": null,
+   "text": "More emotional and democratic; open to hearing and accepting your beliefs",
+   "polarity": "good",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     65
+    ],
+    "quote": "more emotional and democratic in nature.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = hexagon, horizontal (flat top and bottom)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-14",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "hexVertical"
+     ]
+    }
+   },
+   "period": null,
+   "text": "More autocratic; hard time accepting opposing views; agile; less emotional, leans to logic, facts, figures; sharp and intelligent",
+   "polarity": "mixed",
+   "areas": [
+    "decisions",
+    "intellect"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     65
+    ],
+    "quote": "the individual tends to be more autocratic in nature.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = hexagon, vertical (points at top and bottom)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-15",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "hexHorizontal",
+      "hexVertical"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Good at forming and keeping relations; fits colonies, societies, families; feels others' joys and losses as own; good business partners, seeks win-win",
+   "polarity": "good",
+   "areas": [
+    "community",
+    "business"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     65,
+     66
+    ],
+    "quote": "they work to ensure a win-win situation at all times",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = hexagon (either)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-16",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialShape": [
+      "octagon"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Multi-talented all-rounder, multi-tasker; stress and chaos from it; workaholic; commands attention and respect; makes a great first impression, looks like one of the \"greats\"; family sees the daily pressure",
+   "polarity": "mixed",
+   "areas": [
+    "career",
+    "stress"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     66
+    ],
+    "quote": "individuals who wear these tend to be multi-talented.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = octagon",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-SH-17",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "\"Similar characteristics on the whole\" to hexagon and octagon (not said which)",
+   "polarity": "neutral",
+   "areas": [
+    "—"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     66,
+     67
+    ],
+    "quote": "will also showcase similar characteristics on the whole.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = triangle, pentagon (point up or down) or similar polygon",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-SH-18",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Listed as shapes; no meaning given",
+   "polarity": "neutral",
+   "areas": [
+    "—"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     57
+    ],
+    "quote": "diagonal squares (like a diamond), rectangles, florals, quirky abstracts",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shape = diagonal square (diamond), floral, abstract",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DG-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralSize": [
+      "large"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Larger intentions; nothing small or trivial; works beyond their comfort zone",
+   "polarity": "good",
+   "areas": [
+    "ambition"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     69
+    ],
+    "quote": "The person in this case, will naturally have larger intentions.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral size = large",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralSize": [
+      "medium"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Does many tasks but stays inside the comfort zone",
+   "polarity": "neutral",
+   "areas": [
+    "action"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     69,
+     70
+    ],
+    "quote": "will be hesitant to leave his or her comfort zone.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral size = medium",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralSize": [
+      "small"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Does injustice to own abilities: doesn't act despite potential",
+   "polarity": "care",
+   "areas": [
+    "potential"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     70
+    ],
+    "quote": "someone who is doing complete injustice to his or her abilities.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral size = small",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-4",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralSize": [
+      "extraLarge"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Promises many things but doesn't deliver all; good influencers; thinks of doing a lot",
+   "polarity": "mixed",
+   "areas": [
+    "commitments",
+    "influence"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     70
+    ],
+    "quote": "are the kinds to promise many things, but not deliver all of them.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral size = extra-large",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-5",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "roman"
+     ]
+    }
+   },
+   "period": null,
+   "text": "\"Foreign\" feel: does unusual things in a good way; takes on unfamiliar activities, meets new people; friendly, hard-working, risk-taking; learns languages, likes other cultures, cuisines, festivals",
+   "polarity": "good",
+   "areas": [
+    "social",
+    "learning",
+    "risk"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     70,
+     71
+    ],
+    "quote": "They are extremely good at taking on activities unfamiliar to them and meeting new people.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numerals = Roman",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-6",
+   "set": "watch",
+   "kind": "therapy",
+   "when": {
+    "watch": {
+     "goal": [
+      "marketing"
+     ]
+    }
+   },
+   "period": null,
+   "text": "A Roman-numeral watch suits you",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     71
+    ],
+    "quote": "if you have a marketing or advertising business, then it would be great for you to have this kind of watch.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "business = marketing or advertising",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-7",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "arabic"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Ready to take on activities, works hard for a living; how far depends on numeral size",
+   "polarity": "good",
+   "areas": [
+    "work"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     71
+    ],
+    "quote": "tend to be ready to undertake activities, and work hard for their livelihood.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numerals = Arabic 1-12",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-8",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "regional"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Comfortable with own community; good relations and more productive with people of own tribe, region, religion, dialect; holds for regional scripts worldwide",
+   "polarity": "neutral",
+   "areas": [
+    "community"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     71,
+     72
+    ],
+    "quote": "People wearing watches of these digits are very comfortable with their own community.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numerals = Devanagari or another regional script",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-9",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "none",
+      "dots",
+      "dashes"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Activities unorganised or unplanned, as if the wish or emotion behind them is missing; communicates by gesture; eyes speak louder than words",
+   "polarity": "care",
+   "areas": [
+    "planning",
+    "communication"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     72,
+     73
+    ],
+    "quote": "end up conducting their activities in an unorganized or unplanned manner",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "no numerals (dots, dashes or nothing)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-10",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "dashes"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Uses gestures rudely: blunt, angry",
+   "polarity": "care",
+   "areas": [
+    "communication"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     73
+    ],
+    "quote": "Dash means that the person uses these gestures to behave rudely.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "hour markers = dashes / lines",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-11",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "dots"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Uses gestures positively: bright smile, friendly look",
+   "polarity": "good",
+   "areas": [
+    "communication"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     73
+    ],
+    "quote": "Dots conduct these gestures in a very positive manner.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "hour markers = dots",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-12",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "stars"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Craves attention; happy to be focus of others; pampered, recognised; may be egoistic",
+   "polarity": "mixed",
+   "areas": [
+    "recognition",
+    "ego"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     73,
+     74
+    ],
+    "quote": "it means that these people crave attention.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "hour markers = stars",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-13",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "diamonds"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Deeply connected to nature, \"more human\", earthy; loves equally in all actions; treats everyone without bias",
+   "polarity": "good",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     74
+    ],
+    "quote": "you are deeply connected to nature and are more human.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "diamonds or glittering stones anywhere on the watch",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-14",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "markers": [
+      "diamonds"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Excellent circle of people; part of elite groups; admired and revered; works hard and expects good results",
+   "polarity": "good",
+   "areas": [
+    "social status",
+    "work"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     74
+    ],
+    "quote": "a single diamond at the position of 12 digits, you will have an excellent circle of people.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "diamonds as hour markers, OR a single diamond at 12",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-15",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "glitter"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Puts in extra effort to earn recognition in society, earns it rightly, enjoys life rightfully",
+   "polarity": "good",
+   "areas": [
+    "recognition"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     75
+    ],
+    "quote": "you are a person who puts in extra efforts to get recognition in society.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "glitter on the dial surface",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DG-16",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Adds beauty to all actions; does good deeds and wants them noticed",
+   "polarity": "mixed",
+   "areas": [
+    "recognition"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     75
+    ],
+    "quote": "they tend to add an element of beauty to all their actions.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "specific chosen gemstones on the watch",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "quarters"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Focuses only on important things; prioritises, doesn't waste energy on small events; goes all out for big events, lavish host",
+   "polarity": "mixed",
+   "areas": [
+    "priorities",
+    "events"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     75,
+     76
+    ],
+    "quote": "These kinds of people will tend to focus only on important things.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numerals present = only 3, 6, 9, 12",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-NUM-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "onlyTwelve"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Focuses on single events (a birthday, a project) and puts all energy there",
+   "polarity": "neutral",
+   "areas": [
+    "focus"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     76
+    ],
+    "quote": "this kind of person will focus only on singular events.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "only one numeral present (e.g. only 12)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-NUM-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "quarters",
+      "onlyTwelve"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Represents you, yourself, your entity",
+   "polarity": "neutral",
+   "areas": [
+    "self"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     76
+    ],
+    "quote": "the number 12 is representative of you.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral 12",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-NUM-4",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Ability to act; does a lot of whatever they do (donates a lot)",
+   "polarity": "good",
+   "areas": [
+    "action",
+    "giving"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     76
+    ],
+    "quote": "the number 1 focuses on your ability to take actions.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral 1",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-5",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "More emotional; activates feminine energy",
+   "polarity": "neutral",
+   "areas": [
+    "emotion"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     76
+    ],
+    "quote": "For number 2, it will be more emotional and focuses on activating the feminine-like energies.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral 2",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-6",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "quarters"
+     ]
+    }
+   },
+   "period": null,
+   "text": "A mentor or Guru is present in life",
+   "polarity": "good",
+   "areas": [
+    "mentor"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77
+    ],
+    "quote": "Number 3 denotes the presence of a mentor or Guru in their lives.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral 3",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-NUM-7",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "No Guru; may face problems dealing with government matters",
+   "polarity": "care",
+   "areas": [
+    "mentor",
+    "government"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77
+    ],
+    "quote": "they do not have any Guru and may face problems dealing with government activities.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "all numerals except 3",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-8",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Artistic faculties; finding and trying new things",
+   "polarity": "good",
+   "areas": [
+    "creativity"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77
+    ],
+    "quote": "The number four is related to artistic facilities and the ability to find and try new things.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral 4",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-9",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Great in research fields",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77
+    ],
+    "quote": "they will be great at working in fields related to research.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "only numeral 4 present",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-10",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Calculating mind, writing ability",
+   "polarity": "good",
+   "areas": [
+    "calculation",
+    "writing"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77
+    ],
+    "quote": "Number 5 will have a good mindset of calculating stuff and writing-related abilities.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numeral 5",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-11",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Can't speak freely with others; may struggle with calculations",
+   "polarity": "care",
+   "areas": [
+    "speech",
+    "calculation"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77
+    ],
+    "quote": "this person will not be able to speak more freely with other people.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "only numeral 5 missing",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-12",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "even"
+     ]
+    }
+   },
+   "period": null,
+   "text": "More emotional; comfortable with feminine energy; more female friends",
+   "polarity": "neutral",
+   "areas": [
+    "friends",
+    "emotion"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77
+    ],
+    "quote": "if you only have the numbers 2,6,8, and 10, then these people are more emotional.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numerals present = only 2, 6, 8, 10 (even)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-NUM-13",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "numeralsShown": [
+      "odd"
+     ]
+    }
+   },
+   "period": null,
+   "text": "More male friends; masculine duties dominate",
+   "polarity": "neutral",
+   "areas": [
+    "friends",
+    "duties"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77
+    ],
+    "quote": "if your watch has only 1, 3, 5, and 7 then you will have more male friends",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "numerals present = only 1, 3, 5, 7 (odd)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-NUM-14",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "markers": [
+        "none"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "numeralsShown": [
+        "noneShown"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Peaceful, content, may seem aloof; most active at night alone; talks only as needed; no need to react or give opinions; sleeps peacefully; work goes unnoticed, doesn't seek recognition",
+   "polarity": "mixed",
+   "areas": [
+    "social",
+    "recognition"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     77,
+     78
+    ],
+    "quote": "most active at night when they are truly all by themselves.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "plain dial, two hands, no markers at all",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-NUM-15",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "That numeral's area isn't enjoyed (reader: neither luxury (6) nor action (9))",
+   "polarity": "care",
+   "areas": [
+    "per numeral"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     78
+    ],
+    "quote": "neither able to enjoy luxury, nor does she enjoy the action because the 9 and 6 are off.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "a numeral is placed off its position (e.g. 9 and 6 set higher)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-NUM-16",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "\"Huge impact\": communication becomes difficult; person misses out a lot in life",
+   "polarity": "care",
+   "areas": [
+    "communication"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     115
+    ],
+    "quote": "it is not the correct Roman numeral for the number 4.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "a numeral is written wrongly (e.g. a Roman 4 that reads as 3)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DT-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dateWindow": [
+      "dayDate"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Extremely organised (a calendar makes the mind plan tasks into boxes)",
+   "polarity": "good",
+   "areas": [
+    "organisation"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     109
+    ],
+    "quote": "People who wear watches with the date and day displayed on the dial tend to be extremely organized people.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "has date and day display",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dateWindow": [
+      "day"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Good at planning activities",
+   "polarity": "good",
+   "areas": [
+    "planning"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     109
+    ],
+    "quote": "If your watch displays only the days on the screen, not dates, it means that you are good at planning out activities",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "day display only (no date)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dateWindow": [
+      "dayDate"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Good at planning and executing",
+   "polarity": "good",
+   "areas": [
+    "planning",
+    "execution"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     109
+    ],
+    "quote": "you are good at planning and executing those activities as well.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "day display AND date display",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-4",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Careful about who trains them; trains only under the best, most popular names",
+   "polarity": "good",
+   "areas": [
+    "learning"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     110
+    ],
+    "quote": "He will choose to train under only the best and most popular names in the industry.",
+    "quoteFound": false,
+    "rank": 3
+   },
+   "condition": "brand name printed near 3 (in place of a date)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DT-5",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "12"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Very concerned about themselves",
+   "polarity": "care",
+   "areas": [
+    "self"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     111
+    ],
+    "quote": "makes you someone who is very concerned about themselves",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 12",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-6",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "1"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "A giver; enjoys caring for others; government-related work suits",
+   "polarity": "good",
+   "areas": [
+    "giving",
+    "government"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     111
+    ],
+    "quote": "this makes you a giver in many ways.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 1",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-7",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "2"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Handles emotions and communicates well",
+   "polarity": "good",
+   "areas": [
+    "emotion",
+    "communication"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     111
+    ],
+    "quote": "This person will know how to handle emotions and communicate well",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 2",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-8",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "3"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Great learner; knows which courses and fields to pursue",
+   "polarity": "good",
+   "areas": [
+    "learning"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     109,
+     111
+    ],
+    "quote": "If the date is placed near the number 3, then it means that you will be a great learner.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 3",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-9",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "4"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Great at marketing, influencing; sells, negotiates, buys well",
+   "polarity": "good",
+   "areas": [
+    "marketing"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     112
+    ],
+    "quote": "This person will be great at marketing.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 4",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-10",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "5"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Great at business things: stocks, calculations, reading, writing",
+   "polarity": "good",
+   "areas": [
+    "business"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     112
+    ],
+    "quote": "great at many things related to business like stocks, calculations, reading, and writing too",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 5",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-11",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "6"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "6 = luxury: knows which brands to buy",
+   "polarity": "neutral",
+   "areas": [
+    "luxury"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     112
+    ],
+    "quote": "Six is the number for luxury.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 6",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-12",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "7"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Very good at research into what they care about",
+   "polarity": "good",
+   "areas": [
+    "research"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     113
+    ],
+    "quote": "This person is very good at research",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 7",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-13",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "8"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Strong sense of justice; can be rigid, strict rules for self and others",
+   "polarity": "mixed",
+   "areas": [
+    "justice",
+    "rigidity"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     113
+    ],
+    "quote": "These people have a strong affinity towards justice and doing what is right.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 8",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-14",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "9"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Very organised, particular, tidy",
+   "polarity": "good",
+   "areas": [
+    "organisation"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     113
+    ],
+    "quote": "These people are very organized in life.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 9",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-15",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "10"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Very organised, mostly at work",
+   "polarity": "good",
+   "areas": [
+    "work"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     113
+    ],
+    "quote": "this aspect is more relevant to their work life",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 10",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-16",
+   "set": "watch",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "dateWindow": [
+        "date",
+        "day",
+        "dayDate"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "datePosition": [
+        "11"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Master networker; knows how, with whom and where to profit",
+   "polarity": "good",
+   "areas": [
+    "networking",
+    "money"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     113
+    ],
+    "quote": "These people are masters of networking.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "date/day window nearest 11",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DT-17",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Avoids fights, keeps emotions to self; plans ahead; entrepreneurial streak but not very successful on own",
+   "polarity": "mixed",
+   "areas": [
+    "conflict",
+    "business"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     114
+    ],
+    "quote": "an individual that does not like to pick a fight with others.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "day-of-week arc between 9 and 10 (one worked example)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DT-18",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "This position analysis is for wristwatches, not smartwatches (those are \"multipurpose\")",
+   "polarity": "neutral",
+   "areas": [
+    "scope"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     111
+    ],
+    "quote": "the analysis I am speaking of here is only to do with wristwatches, not smartwatches.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "scope",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-BS-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapWidth": [
+      "wide"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Huge intentions; outperforms self; commits to big things and works to fulfil them; commitment proportional to strap size",
+   "polarity": "good",
+   "areas": [
+    "commitment"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     79,
+     80
+    ],
+    "quote": "The degree of your commitment or dedication to anything will be directly proportionate to the size of your belt.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap wide/large relative to dial",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BS-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapWidth": [
+      "medium"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Medium effort and emotional involvement; regular commitments done at par (a mid-range gift)",
+   "polarity": "neutral",
+   "areas": [
+    "commitment"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     80,
+     81
+    ],
+    "quote": "If the Belt size is medium, then their efforts will also be medium only.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = medium",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BS-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapWidth": [
+      "narrow"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Doesn't go out of the way for others or sacrifice; nominal gifts to important people, none to others",
+   "polarity": "care",
+   "areas": [
+    "generosity"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     81
+    ],
+    "quote": "If the Belt size is small, then these people do not bother going out of their way or for others.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = small",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BS-4",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Fewer commitments to the outside world, fewer friends, lost touch with school/college mates",
+   "polarity": "care",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     81
+    ],
+    "quote": "these women have lesser commitments to the world outside than the men in the family.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = very thin (book: common among married Indian women)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-BM-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "metal"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Solid, rigid relationships; strong connections, commitments and follow-through; but mechanical, may lose other emotions; shows resentment openly without empathy (e.g. if you are late)",
+   "polarity": "mixed",
+   "areas": [
+    "relationships",
+    "commitment"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     82,
+     85,
+     91
+    ],
+    "quote": "Metallic belts signify solid, rigid relationships with people.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = metal",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-2",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Outspoken, welcoming; in harmony with nature; thinks about the environment and others' feelings",
+   "polarity": "good",
+   "areas": [
+    "relationships",
+    "nature"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     82
+    ],
+    "quote": "the people wearing it are outspoken and welcoming of other people apart from being very much in harmony with nature.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = earthy material (stone)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-BM-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "leather"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Very emotional, warm relationships; close only to warm people but kind to all; great hosts",
+   "polarity": "good",
+   "areas": [
+    "relationships",
+    "warmth"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     86
+    ],
+    "quote": "They are very, very emotional and display a sense of warmth in their relationships.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = leather",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-4",
+   "set": "watch",
+   "kind": "therapy",
+   "when": {
+    "all": [
+     {
+      "watch": {
+       "goal": [
+        "warmth"
+       ]
+      }
+     },
+     {
+      "watch": {
+       "strapMaterial": [
+        "metal"
+       ]
+      }
+     }
+    ]
+   },
+   "period": null,
+   "text": "Swap the metal strap for leather: more acceptance and love from people",
+   "polarity": "good",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     86
+    ],
+    "quote": "by swapping it with a leather belt, you will realize that you are getting more acceptance and love from people around you.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "concern = lack of warmth at work/home AND strap = metal",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-5",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "rubber"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Between metal and leather: warmer than metal, less than leather; selective; goes out of the way only for a special few, cordial with all",
+   "polarity": "mixed",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     86,
+     87
+    ],
+    "quote": "Rubber, plastic, and silicone belts all fall under this category.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = rubber / plastic / silicone",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-6",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "wood"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Loving, caring, nature-minded, but finds it hard to bond; a dryness, liveliness missing in relationships; wants to do things but misses targets",
+   "polarity": "mixed",
+   "areas": [
+    "relationships",
+    "goals"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     87
+    ],
+    "quote": "care deeply about nature, but find it difficult to bond well with others despite their personality.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = wood",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-7",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "stone"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Close to the earth; more insightful; more feminine energy, more emotional",
+   "polarity": "good",
+   "areas": [
+    "insight",
+    "emotion"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     87,
+     88
+    ],
+    "quote": "they will be more insightful than others.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = rock / stone",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-8",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "crystal"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Close to nature; values life; enjoys small daily pleasures",
+   "polarity": "good",
+   "areas": [
+    "contentment"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     88
+    ],
+    "quote": "They value life and enjoy the smaller pleasures",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = crystals",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-9",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "velcro"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Enters many relationships, bonds quickly, but finds it very hard to let go; separation very painful; impulsive, gets hurt when things end",
+   "polarity": "mixed",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     88,
+     89
+    ],
+    "quote": "they find it very difficult to let go and find peace or closure.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = Velcro",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-10",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "resin"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Qualities of both metal and leather; inner confusion about which to use; hard to balance emotions and relationships",
+   "polarity": "care",
+   "areas": [
+    "emotions",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     89
+    ],
+    "quote": "creating a balance in emotions and relationships is usually difficult for these people.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = resin (hard rubber)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-11",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "nylon"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Strong like metal (rigid, little warmth) but flexible: bends a little to help; feels disappointment but doesn't show it, understands and reschedules",
+   "polarity": "mixed",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     90,
+     91
+    ],
+    "quote": "They might be rigid at first, but will still try to bend a little to be of help to others.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = nylon",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-12",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "silicone"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Soft-spoken, loved by all; sensitive, helps others but keeps distance and own rules; never loses own personality",
+   "polarity": "good",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     91
+    ],
+    "quote": "People wearing bands made of Silicone Rubber are generally soft-spoken, but loved by everyone.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = silicone rubber (soft, smooth)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BM-13",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapMaterial": [
+      "fabric"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Brings people together; outgoing; joins social groups and events; cares about nature",
+   "polarity": "good",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     91,
+     92
+    ],
+    "quote": "you will be the kind of person who will want to bring people together.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = cotton / fabric",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BX-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapStructure": [
+      "longLinks"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Very good gift-givers; thoughtful; tend to give extravagant, expensive gifts",
+   "polarity": "good",
+   "areas": [
+    "generosity"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     92
+    ],
+    "quote": "longer horizontal strips of solid material, are very good at giving gifts to others.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap made of long horizontal solid links/chunks",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BX-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "strapStructure": [
+      "gaps"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Many trust issues; problems in personal and work relationships; looks for problems where there are none; gap between reality and expectation",
+   "polarity": "care",
+   "areas": [
+    "trust",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     92,
+     93
+    ],
+    "quote": "if your strap has gaps/holes/cutouts in it, then it can mean that you tend to have a lot of trust issues.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap has gaps / holes / cut-outs (beyond buckle holes)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-BX-3",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "All other strap readings assume a solid strap",
+   "polarity": "neutral",
+   "areas": [
+    "scope"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     92
+    ],
+    "quote": "All the analysis shared above is for watches where the belts are solids.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "strap = solid (default)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-HD-1",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Hands = the action and its manner; hour = big decisions, minute = medium, second = small actions",
+   "polarity": "neutral",
+   "areas": [
+    "decisions"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     96
+    ],
+    "quote": "The type of hands in a watch, refer to the action, and the manner in which the person wearing it carries out the action.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "(analog) hands",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-HD-2",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Lacks attention to that size of decision",
+   "polarity": "care",
+   "areas": [
+    "attention"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     96
+    ],
+    "quote": "you are lacking attention to that aspect of your life",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "any hand missing",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-HD-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "hands": [
+      "noSeconds"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Not vigilant about small daily things, misses small moments; but lets go of petty issues and small fights easily (for a wall clock: the whole family)",
+   "polarity": "mixed",
+   "areas": [
+    "daily life"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     97
+    ],
+    "quote": "the entire family is not careful or vigilant about the smaller things in life on a daily basis.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "no seconds hand",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-HD-4",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "hands": [
+      "noMinute"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Misses relatively important events (a friend's birthday)",
+   "polarity": "care",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     97
+    ],
+    "quote": "he/she misses out on the little things in life like forgetting a friend's birthday",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "no minute hand",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-HD-5",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Misses big life events (own wedding day, a promotion)",
+   "polarity": "care",
+   "areas": [
+    "life events"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     97
+    ],
+    "quote": "they will tend to miss out on the bigger events of their life much more easily.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "no hour hand",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-HD-6",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "handStyle": [
+      "odd"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Chaotic priorities; hard to prioritise tasks",
+   "polarity": "care",
+   "areas": [
+    "priorities"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     97,
+     98
+    ],
+    "quote": "When it is mismatched, the priorities of that individual get chaotic too.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "hand proportions not traditional (hour should be thicker and shorter, minute longer and slimmer, seconds needle-thin)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-HD-7",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "handStyle": [
+      "sharp"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Very particular about how they carry out actions (reader: arrowhead = adamant, rigid)",
+   "polarity": "neutral",
+   "areas": [
+    "style of action"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     98
+    ],
+    "quote": "it reflects that these people are very particular about how they carry out actions.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "hand tips = sharp (not blunt or round)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-HD-8",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "handStyle": [
+      "tails"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Focuses too much; attends to unnecessary things",
+   "polarity": "care",
+   "areas": [
+    "focus"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     98
+    ],
+    "quote": "When the hands extend to the other side from the centre, people wearing those watches focus too much on things.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "hands extend past the centre (tails)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-TH-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "thickness": [
+      "thin"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Slimmer commitment and enthusiasm",
+   "polarity": "care",
+   "areas": [
+    "commitment"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     101
+    ],
+    "quote": "If a person wears a very thin dial, then their commitment level or enthusiasm to do things will be slimmer.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "case thickness = thin",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-TH-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "thickness": [
+      "thick"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Much more effort, in relationships and work",
+   "polarity": "good",
+   "areas": [
+    "commitment"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     101
+    ],
+    "quote": "If the dial is thicker, then the efforts that this person puts in will be much higher.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "case thickness = thick",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-MP-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "watchType": [
+      "smart",
+      "sports"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Multi-tasker; people in their life serve several roles; draws many benefits from relationships (a teacher who teaches several subjects)",
+   "polarity": "mixed",
+   "areas": [
+    "work",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     101,
+     102
+    ],
+    "quote": "A person wearing a multi-purpose watch by default tends to be a multi-tasker.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "type = smartwatch or sports watch (multipurpose)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-MP-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "watchType": [
+      "smart",
+      "sports"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Confusion; attention spread thin",
+   "polarity": "care",
+   "areas": [
+    "focus"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     102
+    ],
+    "quote": "the downside of this multi-tasking is a sense of confusion.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "type = multipurpose (downside)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-FC-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "original": [
+      "firstCopy"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Finds it hard to get along with peers despite a strong group; feels small or left out",
+   "polarity": "care",
+   "areas": [
+    "social",
+    "self-worth"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     102
+    ],
+    "quote": "People who wear first copy watches often face difficulties in getting along with their peers",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "watch = first copy (replica)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-FC-2",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Don't just throw it away (its effect stays because it still \"belongs\" to you): sell it, even for one rupee, then buy an original you can afford",
+   "polarity": "neutral",
+   "areas": [
+    "therapy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     102,
+     103
+    ],
+    "quote": "the best option is to sell the watch. Irrespective of how much you sell it for",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "watch = first copy (remedy)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-FC-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "original": [
+      "original"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Authenticity; self-esteem and confidence; part of social circles; self-acceptance",
+   "polarity": "good",
+   "areas": [
+    "self-worth",
+    "social"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     103
+    ],
+    "quote": "Wearing an original watch of any brand has an impact on your authenticity as well.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "watch = original (any brand)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-GF-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "gift": [
+      "worn",
+      "kept"
+     ]
+    }
+   },
+   "period": null,
+   "text": "The giver wants to be more closely connected and involved in your life",
+   "polarity": "neutral",
+   "areas": [
+    "relationship with giver"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     106,
+     107
+    ],
+    "quote": "they are trying to imply that they would like to be more closely connected with you",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "watch was a gift",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-GF-2",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Your side of involvement in that relationship drops",
+   "polarity": "care",
+   "areas": [
+    "relationship with giver"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     107
+    ],
+    "quote": "your involvement in the relationship will not be at the same level from your side.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "lost a gifted watch (on purpose or by accident)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-GF-3",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "The bond becomes stronger",
+   "polarity": "good",
+   "areas": [
+    "relationship with giver"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     107
+    ],
+    "quote": "the bond between the two of you will become even stronger",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "lost a gifted watch AND the giver brings it up",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-GF-4",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Giver may want to use you (personal, work, money, emotional); the watch is a burden: get rid of it by selling",
+   "polarity": "care",
+   "areas": [
+    "relationship with giver"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     107
+    ],
+    "quote": "there is a chance that the person wants to be using you for their own needs",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "gift = first copy",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-GF-5",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "gift": [
+      "kept"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Want to stay in touch with the giver but not let them get too involved",
+   "polarity": "neutral",
+   "areas": [
+    "relationship with giver"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     107,
+     108
+    ],
+    "quote": "Not using the watch, but still keeping it at home translates into you wanting to stay in touch with the person",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "gifted watch kept at home but not worn",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-GF-6",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "There is no perfect gift watch; use all the elements to choose one that helps the person; it only helps if they wear it (Shani decides the rest)",
+   "polarity": "neutral",
+   "areas": [
+    "gifting"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     106,
+     108
+    ],
+    "quote": "the answer is NONE.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "choosing a watch as a gift",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DV-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "text"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Vocal, expressive, articulate, good conversationalist",
+   "polarity": "good",
+   "areas": [
+    "speech"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     115,
+     116
+    ],
+    "quote": "people with dials that have sentences in them are more vocal.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial has a printed sentence, quote, phrase, or prominent brand/model text",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "face"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Craves recognition",
+   "polarity": "care",
+   "areas": [
+    "recognition"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     116
+    ],
+    "quote": "the person wearing it craves some form of recognition.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shows a person's face (anyone)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-3",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Artistic, creative",
+   "polarity": "good",
+   "areas": [
+    "creativity"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     116
+    ],
+    "quote": "it points to the individual being artistic or creative.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial shows a picture",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DV-4",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "scenery"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Very close to nature, mindful of surroundings",
+   "polarity": "good",
+   "areas": [
+    "nature"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     116
+    ],
+    "quote": "the individual is someone who is very close to nature.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial picture = scenery / landscape",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-5",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "animal"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Good relationship with father and father figures; easily influenced by tough people",
+   "polarity": "mixed",
+   "areas": [
+    "father"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     117
+    ],
+    "quote": "these people share a good relationship with their father and fatherly figures in their life",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial picture = animal (image, outline or face)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-6",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "birds"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Strong feminine energy, great relations with women (mother, grandmother, colleagues); strong imagination or illusion",
+   "polarity": "mixed",
+   "areas": [
+    "women",
+    "imagination"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     117
+    ],
+    "quote": "have a stronger connection with the feminine energy and therefore share great relations with the women in their lives",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial picture = birds",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-7",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "plants"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Close to nature and selective about beauty; home and clothes beautiful",
+   "polarity": "good",
+   "areas": [
+    "aesthetics"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     118
+    ],
+    "quote": "close to nature, but also selective in terms of the aesthetic of it.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial picture = plants or flowers",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-8",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "verticalLines"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Great at planning",
+   "polarity": "good",
+   "areas": [
+    "planning"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     118
+    ],
+    "quote": "People having vertical lines on their dials would be great at planning things",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial pattern = vertical lines",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-9",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "horizontalLines"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Great at executing plans",
+   "polarity": "good",
+   "areas": [
+    "execution"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     118
+    ],
+    "quote": "people having horizontal lines on their dials, would be great at executing their plans.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial pattern = horizontal lines",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-10",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "spiral"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Never-ending: doesn't finish work on time; endless conversations that waste time",
+   "polarity": "care",
+   "areas": [
+    "time management"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     118
+    ],
+    "quote": "They will most probably not be able to finish their work in time",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial pattern = spiral",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-11",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "circles"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Keeps life areas in separate boundaries (family, friends, work, acquaintances, strangers...), one per circle",
+   "polarity": "neutral",
+   "areas": [
+    "boundaries"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     118,
+     119
+    ],
+    "quote": "this person likes to keep different aspects of their life in different boundaries without mixing them up.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial design = concentric circles (printed, not sub-dial counters)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-DV-12",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Wants to be beautiful, sophisticated, classy at all times",
+   "polarity": "neutral",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     120
+    ],
+    "quote": "People with diamonds on the dial of their watch aspire to be beautiful, sophisticated, and classy at all times.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "diamonds on the dial surface",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DV-13",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Many things happen naturally for the person, with nature's help",
+   "polarity": "good",
+   "areas": [
+    "ease",
+    "manifestation"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     130,
+     131
+    ],
+    "quote": "many things happen naturally, or automatically, for the person.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "golden-ratio / Fibonacci spiral on the dial",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DV-14",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Won't work; a metal watch with the golden ratio is best",
+   "polarity": "neutral",
+   "areas": [
+    "therapy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     131
+    ],
+    "quote": "A metal watch with a golden ratio is best to manifest all the powers within nature.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "golden-ratio dial AND (plastic OR first copy)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DV-15",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Segmented lives; different roles, clearly prioritised",
+   "polarity": "neutral",
+   "areas": [
+    "roles"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     125
+    ],
+    "quote": "the partitions in the Roman numbers points to people in the space leading very segmented lives.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "Roman numerals separated by lines (clock example)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-DV-16",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Likes to stand out, be unique and recognised in the long run",
+   "polarity": "good",
+   "areas": [
+    "recognition"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     125
+    ],
+    "quote": "the person likes to stand out from the crowd by being unique and recognized for their work in the longer run.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "landmark picture (Eiffel Tower) on clock",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-OT-1",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Keeps personal life very private but shows it off on the right occasion",
+   "polarity": "neutral",
+   "areas": [
+    "privacy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     132
+    ],
+    "quote": "want to keep the details of their personal lives very private, but will not hesitate to show them off at an appropriate occasion",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "pocket or neck watch with cover flap",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-OT-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "watchType": [
+      "pocketFlip"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Same as OT-1",
+   "polarity": "neutral",
+   "areas": [
+    "privacy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     143
+    ],
+    "quote": "a flip watch is worn by people who like to keep their private life private",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "flip-cover watch",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-OT-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "watchType": [
+      "reversible"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Leads two lives that may not connect; flipping = switching lives (politicians, diplomats, celebrities)",
+   "polarity": "neutral",
+   "areas": [
+    "dual life"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     143
+    ],
+    "quote": "People who wear these watches tend to lead two lives that may or may not be interconnected",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "reversible two-dial watch",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-OT-4",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Likes to help others but also needs help",
+   "polarity": "neutral",
+   "areas": [
+    "help"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     144
+    ],
+    "quote": "generally like to be of help to others, but also require some help themselves.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "projector watch",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-OT-5",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "dialArt": [
+      "compass"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Good guide, mentor, adviser; also open to receiving guidance",
+   "polarity": "good",
+   "areas": [
+    "mentoring"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     142
+    ],
+    "quote": "People wearing these watches are known to be good guides, mentors, or advisors to the people in their lives.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "compass or map on the dial",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-CH-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "power": [
+      "solar"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Manifestation of the Sun: warm, energetic, resourceful; sometimes a strong ego",
+   "polarity": "mixed",
+   "areas": [
+    "energy",
+    "ego"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     134
+    ],
+    "quote": "the person would be warm, energetic, and resourceful in nature, however, could also have a strong element of ego",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "power = solar",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-CH-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "power": [
+      "automatic"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Proactive; makes things happen; maintains key relationships; highly committed to work",
+   "polarity": "good",
+   "areas": [
+    "drive",
+    "commitment"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     134
+    ],
+    "quote": "people wearing this kind of watch are more pro-active in life.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "power = automatic (self-winding)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-CH-3",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "power": [
+      "battery"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Starts with high energy, hits a pitfall, needs a boost every few years to recover and succeed",
+   "polarity": "mixed",
+   "areas": [
+    "energy cycles"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     135
+    ],
+    "quote": "these people start out with high energy and positivity, but invariable fall prey to some pitfall in the way",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "power = battery (quartz)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-CH-4",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "power": [
+      "manual"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Needs outside help in most areas, likes being guided; values a personal touch (handicraft over mass-made)",
+   "polarity": "mixed",
+   "areas": [
+    "independence"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     135
+    ],
+    "quote": "often require external assistance in most aspects of their life.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "power = manual winding",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-CH-5",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "power": [
+      "charging"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Lives in spurts: indifferent for a while, then suddenly cares too much (friends, fitness)",
+   "polarity": "mixed",
+   "areas": [
+    "consistency"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     136
+    ],
+    "quote": "tend to live life in spurts where they behave like they don't care about something for a while, and suddenly care too much",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "power = daily charging (e.g. smartwatch)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-CH-6",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Nobody chooses it unless obliged; no trait given",
+   "polarity": "neutral",
+   "areas": [
+    "—"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     134
+    ],
+    "quote": "nobody really chooses these unless they are obligated to",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "use-and-throw watch",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-MW-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "watchCount": [
+      "several"
+     ]
+    }
+   },
+   "period": null,
+   "text": "\"Good heart\": sensitive to fine details and emotional effects; values relationships and roles; goes out of the way to please",
+   "polarity": "good",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     137
+    ],
+    "quote": "people having many watches have a good heart.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "owns several watches and picks by occasion",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-MW-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "watchCount": [
+      "several"
+     ]
+    }
+   },
+   "period": null,
+   "text": "That same understanding can be used to manipulate people; keep intentions good. Each watch's own traits apply when worn",
+   "polarity": "care",
+   "areas": [
+    "ethics"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     137,
+     138
+    ],
+    "quote": "puts you in a position where you can easily choose to manipulate or misuse people for your gains.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "owns several watches (caution)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-WP-1",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Handles huge pressure at home and work; money flows like water, so may face money problems but withstands them; fights, doesn't break down",
+   "polarity": "mixed",
+   "areas": [
+    "pressure",
+    "money"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     140
+    ],
+    "quote": "they might face multiple financial problems in their life, but will be able to withstand them effectively.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "water rating = water-resistant",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-WP-2",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Fearless; unaffected by pressure; firm grip on emotions; observant, anticipates problems; but can harden, feel little; may get money trouble from this detachment",
+   "polarity": "mixed",
+   "areas": [
+    "pressure",
+    "money",
+    "emotion"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     140
+    ],
+    "quote": "They might also end up with a lot of financial trouble because of this detachment.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "water rating = waterproof",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-WP-3",
+   "set": "watch",
+   "when": null,
+   "period": null,
+   "text": "Gift or suggest a water-resistant watch: problems stay, but they gain strength to handle them",
+   "polarity": "good",
+   "areas": [
+    "money (coping)"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     140,
+     141
+    ],
+    "quote": "although their problems won't go away, they will gain the strength and attitude to handle them better.",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "someone has many money problems",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "WATCH-WW-1",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "howWorn": [
+      "inside"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Private; keeps life close to heart; watches others but stays tight-lipped",
+   "polarity": "neutral",
+   "areas": [
+    "privacy"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     141
+    ],
+    "quote": "People wearing the former, are more private in nature",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial worn on the inside of the wrist (over the pulse)",
+   "status": "approved"
+  },
+  {
+   "id": "WATCH-WW-2",
+   "set": "watch",
+   "when": {
+    "watch": {
+     "howWorn": [
+      "outside"
+     ]
+    }
+   },
+   "period": null,
+   "text": "Open; comfortable sharing life details",
+   "polarity": "good",
+   "areas": [
+    "openness"
+   ],
+   "source": {
+    "book": "B-WATCH",
+    "pages": [
+     141
+    ],
+    "quote": "People wearing the latter, you might have guessed, are more open in nature",
+    "quoteFound": true,
+    "rank": 3
+   },
+   "condition": "dial worn on the outside of the wrist",
+   "status": "approved"
+  }
+ ]
+}

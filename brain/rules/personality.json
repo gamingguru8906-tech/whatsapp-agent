@@ -1,0 +1,318 @@
+{
+ "set": "personality",
+ "rules": [
+  {
+   "id": "CHALDEAN-PERSONALITY-001",
+   "set": "personality",
+   "when": {
+    "personality": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Vibrant, effective energy; composed and competent; admires courage; seen as strong, not easily swayed",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     58
+    ],
+    "quote": "People perceive your strength and recognize that you cannot be easily swayed",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-002",
+   "set": "personality",
+   "when": {
+    "personality": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Friendly, approachable, soft exterior; seen as gentle safe haven",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     58
+    ],
+    "quote": "People view you as a gentle and secure haven",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-003",
+   "set": "personality",
+   "when": {
+    "personality": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Vital, vibrant, inspiring; charming, witty, centre of attention",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     58
+    ],
+    "quote": "Your wit and sparkling character make you the center of attention",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-004",
+   "set": "personality",
+   "when": {
+    "personality": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Family above all; caretaker and guardian; family may overlook your efforts",
+   "polarity": "mixed",
+   "areas": [
+    "family"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     59
+    ],
+    "quote": "You prioritize your family above all else.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-005",
+   "set": "personality",
+   "when": {
+    "personality": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Stimulates others; brings fresh ideas to gatherings; quick wit and charm",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     59
+    ],
+    "quote": "Social gatherings come alive in your presence",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-006",
+   "set": "personality",
+   "when": {
+    "personality": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Understanding, compassionate, seen as warm and fair; attracts people needing support",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     59
+    ],
+    "quote": "people readily perceive as warm and fair",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-007",
+   "set": "personality",
+   "when": {
+    "personality": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Mysterious, unique; seen as serious and studious; independent; intelligence earns respect",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     59
+    ],
+    "quote": "You exude an air of mystery and uniqueness",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-008",
+   "set": "personality",
+   "when": {
+    "personality": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Strength and power; impressive, can intimidate; natural authority; attracts resourceful people",
+   "polarity": "mixed",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     60
+    ],
+    "quote": "Your natural authority is unmistakable.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-009",
+   "set": "personality",
+   "when": {
+    "personality": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Dignified, aristocratic, noble bearing; controls own image",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     60
+    ],
+    "quote": "exuding an air of aristocracy",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-010",
+   "set": "personality",
+   "when": {
+    "personality": [
+     11
+    ]
+   },
+   "period": null,
+   "text": "Highly perceptive; creative and intellectual; seen as gentle and intellectual",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     60
+    ],
+    "quote": "People perceive you gentle and intellectual person.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 11",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-011",
+   "set": "personality",
+   "when": {
+    "personality": [
+     22
+    ]
+   },
+   "period": null,
+   "text": "Dependable, steadfast; seen as a pillar of a business",
+   "polarity": "good",
+   "areas": [
+    "image",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     60
+    ],
+    "quote": "People perceive you as a pillar within a business",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 22",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PERSONALITY-012",
+   "set": "personality",
+   "when": {
+    "personality": [
+     33
+    ]
+   },
+   "period": null,
+   "text": "Inspires confidence; sense of justice; keeps harmony, sacrifices own desires",
+   "polarity": "good",
+   "areas": [
+    "image"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     61
+    ],
+    "quote": "You have a fine sense of justice.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "personality = 33",
+   "status": "approved"
+  }
+ ]
+}

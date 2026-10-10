@@ -1,0 +1,185 @@
+{
+ "set": "pairs",
+ "rules": [
+  {
+   "id": "CHALDEAN-PAIRS-001",
+   "set": "pairs",
+   "when": {
+    "pair": [
+     [
+      1,
+      8
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      2,
+      8
+     ],
+     [
+      8,
+      2
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      6,
+      3
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      2,
+      9
+     ]
+    ]
+   },
+   "period": null,
+   "text": "\"Anti\" combination: considered bad, creates struggle in life",
+   "polarity": "care",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     100,
+     101
+    ],
+    "quote": "some combinations of Mulank and Bhagyank are considered as bad and can create struggle",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "(psychic, destiny) in {1-8, 8-1, 2-8, 8-2, 3-6, 6-3, 4-4, 4-8, 8-4, 2-9}",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PAIRS-002",
+   "set": "pairs",
+   "when": null,
+   "period": null,
+   "text": "Remedies: (1) Kumbh Vivah; (2) chant the Venus (Shukra) mantra \"Himakunda mrinalabham...\" 108 times - wake 3:40 am (Brahma muhurta), bathe, wear white, puja at home mandir sitting on floor, bow to Venus; (3) name correction \"as per the chart\"; (4) wear an opal",
+   "polarity": "neutral",
+   "areas": [
+    "love",
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     101
+    ],
+    "quote": "Some anti-number combinations give struggle in relationships",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "anti pair AND struggle in relationships",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PAIRS-003",
+   "set": "pairs",
+   "when": null,
+   "period": null,
+   "text": "Remedies: (1) name correction \"is Must\"; (2) donations for good karma; (3) wear a number \"24\" gold pendant; (4) wear 7 Mukhi + 6 Mukhi Rudraksha together; (5) chant Sarva Karya Siddhi mantra 108 times daily",
+   "polarity": "neutral",
+   "areas": [
+    "career",
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     101,
+     102
+    ],
+    "quote": "In this case Name Correction is Must.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "anti pair AND struggle in career (business / foreign settlement / daily life)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PAIRS-004",
+   "set": "pairs",
+   "when": null,
+   "period": null,
+   "text": "Remedies: (1) keep 1/2 kg lapis lazuli in bedroom; (2) Dhanwantari Yantra (\"as discussed in Yantra Class\"); (3) Maha Mrityunjay jaap if the issue is very big",
+   "polarity": "neutral",
+   "areas": [
+    "health",
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     102
+    ],
+    "quote": "Keep ½ Kg Lapis Lazuli Stone in your Bedroom.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "anti pair AND struggle in health",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PAIRS-005",
+   "set": "pairs",
+   "when": {
+    "pair": [
+     [
+      7,
+      7
+     ],
+     [
+      9,
+      9
+     ],
+     [
+      4,
+      1
+     ],
+     [
+      1,
+      4
+     ]
+    ]
+   },
+   "period": null,
+   "text": "\"Opposite numbers\": not anti/enemy; no special remedy; read the Lo-Shu grid, adjust name spelling, suggest missing-number remedies, as the person wants",
+   "polarity": "neutral",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     102
+    ],
+    "quote": "not exactly anti or enemy of each other but considered as Opposite Numbers",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "(psychic, destiny) in {7-7, 9-9, 4-1, 1-4}",
+   "status": "approved"
+  }
+ ]
+}

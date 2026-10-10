@@ -1,0 +1,391 @@
+{
+ "set": "planes",
+ "rules": [
+  {
+   "id": "CHALDEAN-PLANES-001",
+   "set": "planes",
+   "when": {
+    "plane": {
+     "id": "LS-492",
+     "state": "missing"
+    }
+   },
+   "period": null,
+   "text": "Good intellect when young but retention fades later",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     63
+    ],
+    "quote": "retention power diminishes in a later age",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "Lo Shu missing plane 4-9-2 (Mental)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PLANES-002",
+   "set": "planes",
+   "when": {
+    "plane": {
+     "id": "LS-357",
+     "state": "missing"
+    }
+   },
+   "period": null,
+   "text": "Loneliness; less emotional towards self and others",
+   "polarity": "care",
+   "areas": [
+    "emotions"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     64
+    ],
+    "quote": "Loneliness, Less Emotional towards oneself and Others",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "Lo Shu missing plane 3-5-7 (Emotional)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PLANES-003",
+   "set": "planes",
+   "when": {
+    "plane": {
+     "id": "LS-816",
+     "state": "missing"
+    }
+   },
+   "period": null,
+   "text": "Loss, lack of success, lack of luxury, masterplan failure",
+   "polarity": "care",
+   "areas": [
+    "money",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     64
+    ],
+    "quote": "Loss, Lack of Success, Lack of Luxury, Masterplan Failure",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "Lo Shu missing plane 8-1-6 (Physical)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PLANES-004",
+   "set": "planes",
+   "when": {
+    "plane": {
+     "id": "LS-438",
+     "state": "missing"
+    }
+   },
+   "period": null,
+   "text": "Plane of confusion; no clear goal, no planning",
+   "polarity": "care",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     64
+    ],
+    "quote": "Plane of Confusion. No Clear Goal, No Planning",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "Lo Shu missing plane 4-3-8 (Vision)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PLANES-005",
+   "set": "planes",
+   "when": {
+    "plane": {
+     "id": "LS-951",
+     "state": "missing"
+    }
+   },
+   "period": null,
+   "text": "No desire to succeed; lots of thinking but indecisive",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     64,
+     65
+    ],
+    "quote": "Lack of Desire to Be Successful, Lots of thinking but indecisiveness",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "Lo Shu missing plane 9-5-1 (Will)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PLANES-006",
+   "set": "planes",
+   "when": {
+    "plane": {
+     "id": "LS-276",
+     "state": "missing"
+    }
+   },
+   "period": null,
+   "text": "Apathy, no risk-taking, no energy to fight back, laziness",
+   "polarity": "care",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     65
+    ],
+    "quote": "Apathy, No Risk-Taking Capacity, No energy to Fight Back, Laziness",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "Lo Shu missing plane 2-7-6 (Action)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PLANES-007",
+   "set": "planes",
+   "when": {
+    "plane": {
+     "id": "LS-258",
+     "state": "missing"
+    }
+   },
+   "period": null,
+   "text": "Frustration, obstacles everywhere, hustle, consistent failure",
+   "polarity": "care",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     65
+    ],
+    "quote": "Frustration, Obstacles everywhere, Hustle, Consistent Failure",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "Lo Shu missing plane 2-5-8 (Silver)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PLANES-008",
+   "set": "planes",
+   "when": {
+    "plane": {
+     "id": "LS-456",
+     "state": "missing"
+    }
+   },
+   "period": null,
+   "text": "Suspicious, trust issues, won't collaborate easily",
+   "polarity": "care",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     65
+    ],
+    "quote": "Suspicious, has Trust issues, and Will not Collaborate with anyone Easily.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "Lo Shu missing plane 4-5-6 (Golden)",
+   "status": "approved"
+  },
+  {
+   "id": "LOSHU-LS-P1",
+   "set": "planes",
+   "when": null,
+   "period": null,
+   "text": "Thinking, creating, imagining and analysing",
+   "polarity": "neutral",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     3,
+     9
+    ],
+    "quote": "the top row can be regarded as the Mental plane. It encompasses thinking, creating, imagining and analyzing.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "Lo Shu top row 4-9-2 (Mental plane, head)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "LOSHU-LS-P2",
+   "set": "planes",
+   "when": null,
+   "period": null,
+   "text": "Spirituality, intuition, feelings and emotions",
+   "polarity": "neutral",
+   "areas": [
+    "emotions",
+    "spirituality"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     3,
+     9
+    ],
+    "quote": "The middle row is called the Emotional plane. This plane includes spirituality, intuition, feelings and emotions.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "middle row 3-5-7 (Emotional plane, body)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "LOSHU-LS-P3",
+   "set": "planes",
+   "when": null,
+   "period": null,
+   "text": "Physical labour, creativity, being practical in everyday life; feet on the ground",
+   "polarity": "neutral",
+   "areas": [
+    "practical life"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     3,
+     9
+    ],
+    "quote": "This encompasses physical labor, creativity, and the ability to be practical in everyday life.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "bottom row 8-1-6 (Practical plane, feet)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "LOSHU-LS-P4",
+   "set": "planes",
+   "when": null,
+   "period": null,
+   "text": "Ability to come up with ideas, create things and carry them through",
+   "polarity": "neutral",
+   "areas": [
+    "ideas"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     3,
+     8
+    ],
+    "quote": "This reveals the person's ability to come up with ideas, create things and carry them through to fruition.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "left column 4-3-8 (Thought plane)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "LOSHU-LS-P5",
+   "set": "planes",
+   "when": null,
+   "period": null,
+   "text": "Determination and persistence to succeed; planning happens here",
+   "polarity": "neutral",
+   "areas": [
+    "determination"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     4,
+     8
+    ],
+    "quote": "This gives determination and persistence to succeed.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "middle column 9-5-1 (Will plane)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "LOSHU-LS-P6",
+   "set": "planes",
+   "when": null,
+   "period": null,
+   "text": "Ability to put thoughts into action",
+   "polarity": "neutral",
+   "areas": [
+    "action"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     4,
+     8
+    ],
+    "quote": "This shows the person's ability to put his thoughts into action.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "right column 2-7-6 (Action plane)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "LOSHU-LS-P7",
+   "set": "planes",
+   "when": null,
+   "period": null,
+   "text": "Natural progression: idea (Thought) → determination and planning (Will) → action (Action); without Will the idea is never acted on",
+   "polarity": "neutral",
+   "areas": [
+    "—"
+   ],
+   "source": {
+    "book": "B-LOSHU",
+    "pages": [
+     4
+    ],
+    "quote": "The three vertical rows make a natural progression.",
+    "quoteFound": true,
+    "rank": 7
+   },
+   "condition": "(all three columns)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  }
+ ]
+}

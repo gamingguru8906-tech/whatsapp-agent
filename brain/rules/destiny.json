@@ -1,0 +1,1500 @@
+{
+ "set": "destiny",
+ "rules": [
+  {
+   "id": "CHALDEAN-DESTINY-001",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Natural leader, manages and motivates people, becomes popular without trying; heads teams/organisations/business",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     32
+    ],
+    "quote": "People with Destiny Number (DN) 1 are natural leaders.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-002",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Farsighted, wise decisions, prompt; \"uncertain and unexpected monetary gains\"; patience, organisation, persistence",
+   "polarity": "good",
+   "areas": [
+    "money",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     32
+    ],
+    "quote": "They also enjoy uncertain and unexpected monetary gains.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-003",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Worldly accomplishments, royal lifestyle; if spiritually inclined becomes a great spiritual leader; logical; givers who help others",
+   "polarity": "good",
+   "areas": [
+    "spiritual",
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     32
+    ],
+    "quote": "if a person with this destiny number gets spiritually inclined, they end up being a great spiritual leader",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-004",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Remedy/advice: cultivate commitment and punctuality",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     32
+    ],
+    "quote": "Destiny Number 1 demands commitment and punctuality - this can be used as a remedy",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-005",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     1
+    ]
+   },
+   "period": {
+    "month": [
+     10,
+     11,
+     12
+    ]
+   },
+   "text": "Disappointment, low phases, setbacks when Sun is weak; develop patience",
+   "polarity": "care",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     32
+    ],
+    "quote": "during the period when Sun is weak like in October, November, and December",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 1 AND month in {Oct, Nov, Dec}",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-006",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Moon: emotions, attractiveness, rapid change; family is everything; emotional and sensitive; strong domestic ties; peace-lover; self-respect, mannerly",
+   "polarity": "good",
+   "areas": [
+    "family",
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     33
+    ],
+    "quote": "People with DN as 2 are family-oriented and love their families.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-007",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Swings in life; opportunities slip away when success is in sight",
+   "polarity": "care",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     33
+    ],
+    "quote": "experiencing opportunities pass them right by when success is within sight",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-008",
+   "set": "destiny",
+   "when": null,
+   "period": null,
+   "text": "Love and support of women (family, work, women in high positions); righteous mother; marries attractive woman; loves plants, redecorating; first serious relationship/marriage may not last",
+   "polarity": "mixed",
+   "areas": [
+    "love",
+    "family"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     33
+    ],
+    "quote": "Their first serious relationship or marriage might not last long.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 2 AND gender = male",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-009",
+   "set": "destiny",
+   "when": null,
+   "period": null,
+   "text": "Very attractive, dresses well; devoted to partner; over-emotional in relationships; strong and resilient; blamed for things not done",
+   "polarity": "mixed",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     33
+    ],
+    "quote": "they would cry but they are resilient in taking care of themselves",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 2 AND gender = female",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-010",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Rule the arts (performers, painters, actors, singers, poets, hosts, dancers); helplessness after setbacks, insecurity in romance; heartbreak commonly observed",
+   "polarity": "mixed",
+   "areas": [
+    "career",
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     34
+    ],
+    "quote": "When it comes to art, people with Destiny number 2 are known to rule that space.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-011",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Good doctors, psychologists, therapists, marriage counsellors, healing fields; after 35 inclined to occult/religion",
+   "polarity": "good",
+   "areas": [
+    "career",
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     34
+    ],
+    "quote": "Past the age of 35, they may develop a deep inclination toward the occult sciences",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-012",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Remedy/advice: acknowledge and respect others' emotions",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     34
+    ],
+    "quote": "acknowledging others' emotions and respecting them will lead to miracles",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-013",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Jupiter, teacher; knowledge and value addition; noticed in any group; loves learning and sharing; advisor; creative, intuitive, storyteller, loves travel",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     35
+    ],
+    "quote": "Destiny number 3 represents knowledge and value addition.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-014",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Hard work brings excess pressure, stress, anxiety -> family, health, relationship issues; knowledge can turn into show-off",
+   "polarity": "care",
+   "areas": [
+    "health",
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     35
+    ],
+    "quote": "excessive work pressure resulting in high-stress levels",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-015",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Uncontrolled sexual desire can be a weakness; pride; overspending leads to financial crises; tongue-tied with deep emotions; critical speech breeds resentment/betrayal; failures in love",
+   "polarity": "care",
+   "areas": [
+    "love",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     35,
+     36
+    ],
+    "quote": "Splurging and spending very much on items and experiences may plunge your finances",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-016",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Remedy/advice: keep adding value in job/business",
+   "polarity": "good",
+   "areas": [
+    "remedy",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     36
+    ],
+    "quote": "Destiny Number 3 demands value addition.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-017",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Rahu: mental power, intellect, practicality; reads between lines, reads motives; careful, plans ahead",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     37
+    ],
+    "quote": "Destiny number 4 represents mental power, intellectual prowess, and practicality.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-018",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Often misunderstood; only a handful of friends after a certain age",
+   "polarity": "care",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     37
+    ],
+    "quote": "people often misunderstand you",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-019",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Rahu effects: big career plans end in something different; something always missing; disappointment in at least one area; job/field hopping; health concerns; physical labour unnoticed (brain over brawn); fluttering focus; disrupted masterplans; misses opportunities through scepticism; extra responsibilities",
+   "polarity": "care",
+   "areas": [
+    "career",
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     37,
+     38
+    ],
+    "quote": "Rahu brings disappointment in at least one facet of your life.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-020",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Unconventional, revolutionary; ideas meet rejection",
+   "polarity": "mixed",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     38
+    ],
+    "quote": "the number 4 also represents unconventional ways, revolutions",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-021",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Remedy/advice: use brain over brawn; criticise only when needed; do focus-building activities",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     38
+    ],
+    "quote": "The more you rely and utilize on your brain over brawn, the faster you accomplish your goals.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-022",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Mercury: intelligence, speed, change; resilient \"rubber ball\"; hard knocks up to age 28",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     39
+    ],
+    "quote": "usually up until the age of 28, but you do not give in",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-023",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Loves change; job/department/field switching; adaptable; childlike with children, mature with adults",
+   "polarity": "neutral",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     39
+    ],
+    "quote": "You like changes the most.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-024",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Business skills and ideas; don't treat relationships as transactions; flood of ideas, write them down; bonds fast (\"When in Rome\")",
+   "polarity": "good",
+   "areas": [
+    "career",
+    "business"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     39
+    ],
+    "quote": "Destiny Number 5 rewards you with business skills and ideas.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-025",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Kindness, wisdom, intuition, optimism, good luck; luck in romance; recognition; chance to live/work abroad; favours from relatives, government, authorities",
+   "polarity": "good",
+   "areas": [
+    "love",
+    "travel",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     40
+    ],
+    "quote": "It also awards you the opportunity to live in a foreign country and work there.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-026",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Care: ideas misused -> gambling, fast money, manipulation; overuse of mind -> headaches, stomach issues; boredom in relationships",
+   "polarity": "care",
+   "areas": [
+    "health",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     40
+    ],
+    "quote": "you may find yourself indulging in gambling, fast-money-making ways",
+    "quoteFound": false,
+    "rank": 4
+   },
+   "condition": "destiny = 5",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-027",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "\"Most powerful number\"; pioneers, inventors",
+   "polarity": "good",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     40
+    ],
+    "quote": "In numerology, 5 is considered the most powerful number.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-028",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Venus: luxury, beauty; attractive, fashionable; giver in love but not repaid equally; heartbreak more than once",
+   "polarity": "mixed",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     40,
+     41
+    ],
+    "quote": "You may find your heart breaking more than once.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-029",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Upscale taste; dependable carer for family (can feel endless); peace-lover, diplomatic, convincing",
+   "polarity": "good",
+   "areas": [
+    "family"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     41
+    ],
+    "quote": "You are a peace-lover and you always opt for a peaceful solution",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-030",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Situations of unwanted sexual relationships / being taken advantage of sexually",
+   "polarity": "care",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     41
+    ],
+    "quote": "Destiny Number 6 will keep creating situations wherein you might find yourself getting desires to indulge in unwanted sexual relationships",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-031",
+   "set": "destiny",
+   "when": null,
+   "period": null,
+   "text": "More favourable to women; look younger; if not married early, harder later; give partner space",
+   "polarity": "mixed",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     41
+    ],
+    "quote": "DN 6 is more favorable to you than it is to men.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 6 AND gender = female",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-032",
+   "set": "destiny",
+   "when": null,
+   "period": null,
+   "text": "Sexual problems may come; take precautions",
+   "polarity": "care",
+   "areas": [
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     42
+    ],
+    "quote": "If you are a man with Destiny Number 6, sexual problems may come your way.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 6 AND gender = male",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-033",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Advice: buy luxury you need (not reckless); add beauty/luxury to your product or service; prefer assets over bank balance (savings low)",
+   "polarity": "good",
+   "areas": [
+    "money",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     42
+    ],
+    "quote": "Whatever you do, add beauty to it to make it look luxurious.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-034",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Ketu: spirituality, intuition; multiplies the qualities of the psychic number",
+   "polarity": "good",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     42
+    ],
+    "quote": "The greatest attribute of DN 7 is its power to enhance the qualities of your Psychic Number manyfold.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-035",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Adaptable; picks up good traits; everyone's favourite; intuition peaks late 20s to 40s; reads people from early 30s; best ideas from dreams/daydreams",
+   "polarity": "good",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     43
+    ],
+    "quote": "as you enter your late twenties, you become highly intuitive",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-036",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Healer; careers in mental/physical healing; confusion leads to running away unless pushed",
+   "polarity": "mixed",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     43
+    ],
+    "quote": "Destiny Number 7 also makes you a healer.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-037",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Wisdom, good orator; humble yet lively; problem-solver; later spirituality/occult as career; recognition abroad",
+   "polarity": "good",
+   "areas": [
+    "career",
+    "travel"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     44
+    ],
+    "quote": "Destiny Number 7 brings recognition in foreign countries.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-038",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Marital/romantic problems, possibility of affairs; marriage after 28 more likely successful",
+   "polarity": "care",
+   "areas": [
+    "love",
+    "marriage"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     44
+    ],
+    "quote": "if people get married after 28, they are more likely to enjoy a successful marriage",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-039",
+   "set": "destiny",
+   "when": null,
+   "period": null,
+   "text": "Sociable, attractive, intelligent, sometimes sentimental; career-oriented, assertive; bonds with women; seen as less romantic",
+   "polarity": "neutral",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     44
+    ],
+    "quote": "If you have been told that you are not as romantic, it's because of the DN 7.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 7 AND gender = female",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-040",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Successful in spirituality, mental health, teaching, dispute resolution, diplomacy",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     44
+    ],
+    "quote": "DN 7 prolifically produces highly successful individuals in the field of spirituality",
+    "quoteFound": false,
+    "rank": 4
+   },
+   "condition": "destiny = 7",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-041",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Saturn: discipline; heavy pressure before shining (coal to diamond); delays, obstacles, failures, humiliation; performs best under pressure",
+   "polarity": "mixed",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     44,
+     45
+    ],
+    "quote": "like a chunk of coal put under pressure before it turns into a diamond",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-042",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Money and power; high positions; most wealth in early-to-mid thirties",
+   "polarity": "good",
+   "areas": [
+    "money",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     45
+    ],
+    "quote": "DN 8 blesses you with most of your share of wealth in your early thirties or mid-thirties.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-043",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Losses through fraud, theft, embezzlement; caution with legal cases, motor accidents, early ageing",
+   "polarity": "care",
+   "areas": [
+    "money",
+    "legal",
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     45
+    ],
+    "quote": "DN 8 also brings financial losses through fraud, theft, embezzlement, and swindling.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8",
+   "status": "dropped",
+   "reason": "outside the limits: crime accusation"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-044",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Occult inclination; more spiritual = better results; may lose faith; temptation to intoxication after disappointment",
+   "polarity": "care",
+   "areas": [
+    "spiritual",
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     45
+    ],
+    "quote": "the more spiritual you get, the better the results in your life",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-045",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Solitude; problems, rejection as companions; romance weak; turbulent marriage, possible separation/divorce",
+   "polarity": "care",
+   "areas": [
+    "marriage"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     46
+    ],
+    "quote": "turbulent married life which sometimes leads to separation and even divorce",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-046",
+   "set": "destiny",
+   "when": null,
+   "period": null,
+   "text": "Inherits/accumulates property that may face disputes; real estate later the safest earning; right partner delayed but found; turbulence in marriage not from her side; stronger faith after marriage",
+   "polarity": "mixed",
+   "areas": [
+    "property",
+    "marriage"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     46
+    ],
+    "quote": "You would probably inherit or accumulate property or estate.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8 AND gender = female",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-047",
+   "set": "destiny",
+   "when": null,
+   "period": null,
+   "text": "May not respect spouse as deserved; main cause of turbulent marriage",
+   "polarity": "care",
+   "areas": [
+    "marriage"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     46
+    ],
+    "quote": "it will likely make you not respect your partner or spouse the way they deserve it",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8 AND gender = male",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-048",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Advice: avoid bad habits, work smart; big risks brought sudden failure; remove greed; vigilance in legal matters; great planner; work with people friendly to your destiny and psychic numbers",
+   "polarity": "mixed",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     46,
+     47
+    ],
+    "quote": "Uproot greed from your endeavors, and you would find the key to success.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-049",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Endurance; innovators, social reformers, wealth creators",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     47
+    ],
+    "quote": "It blesses the world with innovators, social reformers",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-050",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Mars: energy, passion; 9 x any number reduces to 9 (36 -> 9); magnifies the psychic number; if psychic is not friendly with 9, complications",
+   "polarity": "mixed",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     47,
+     48
+    ],
+    "quote": "If the Psychic number is not friendly with it, that may lead to several complications in life.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-051",
+   "set": "destiny",
+   "when": null,
+   "period": null,
+   "text": "Complications in life (computable via chart 3.2: 9's friends are 1,3,5; enemies 2,4)",
+   "polarity": "care",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     48
+    ],
+    "quote": "magnifies the importance of the Physic Number",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 9 AND relation(psychic, 9) not friend",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-052",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Very energetic; rest makes them restless; channel energy via physical/mental activity, meditation",
+   "polarity": "neutral",
+   "areas": [
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     48
+    ],
+    "quote": "getting a great deal of rest makes you restless",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-053",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Inner voice is best asset; humanitarian; nature/animal lover; loves beauty, art, knowledge",
+   "polarity": "good",
+   "areas": [
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     48
+    ],
+    "quote": "You would find your best asset is the inner voice",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-054",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Passionate lover, \"zero or a hundred\"; revenge if cheated",
+   "polarity": "mixed",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     48
+    ],
+    "quote": "you would want to be either zero or a hundred",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-055",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Natural teacher, spiritual teacher",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     49
+    ],
+    "quote": "You would find you are a natural at teaching.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-056",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Anger over small matters, revengeful, quarrelsome; vivid imagination can create worrying images; straightforward",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     49
+    ],
+    "quote": "It causes anger, sometimes over small matters.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-DESTINY-057",
+   "set": "destiny",
+   "when": {
+    "destiny": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Philanthropists, humanitarians, artists",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     49
+    ],
+    "quote": "Destiny Number 9 has produced great philanthropists",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "destiny = 9",
+   "status": "approved"
+  }
+ ]
+}

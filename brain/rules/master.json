@@ -1,0 +1,274 @@
+{
+ "set": "master",
+ "rules": [
+  {
+   "id": "CHALDEAN-MASTER-001",
+   "set": "master",
+   "when": {
+    "master": [
+     11,
+     22,
+     33
+    ]
+   },
+   "period": null,
+   "text": "Master numbers bring powerful positives and negatives; difficulty and great strength",
+   "polarity": "mixed",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     50
+    ],
+    "quote": "a Master Number can mean difficulty but also great strength",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master in {11,22,33}",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MASTER-002",
+   "set": "master",
+   "when": {
+    "master": [
+     11
+    ]
+   },
+   "period": null,
+   "text": "\"Master of Intuitiveness\": spiritual, interest in occult; analytical, logical; independent; courageous; moral, old-school; natural leader; support system for others",
+   "polarity": "good",
+   "areas": [
+    "spiritual",
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     50,
+     51
+    ],
+    "quote": "The natives of this number turn out to be quite spiritually inclined",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 11",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MASTER-003",
+   "set": "master",
+   "when": {
+    "master": [
+     11
+    ]
+   },
+   "period": null,
+   "text": "Sensitive, empathetic, trusting (trust gets them hurt); loyal, romantic partner; strong sexual desire; won't compromise until perfect match",
+   "polarity": "mixed",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     51
+    ],
+    "quote": "Their trusting nature is what gets the natives hurt the most.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 11",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MASTER-004",
+   "set": "master",
+   "when": {
+    "master": [
+     11
+    ]
+   },
+   "period": null,
+   "text": "Strong intuition; \"dreamers but not doers\"; should follow gut; overthinker, anxiety, stress, frequent anxiety attacks",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     51,
+     52
+    ],
+    "quote": "They are dreamers but not doers",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 11",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MASTER-005",
+   "set": "master",
+   "when": {
+    "master": [
+     22
+    ]
+   },
+   "period": null,
+   "text": "\"Master Builder\": generous, self-improving, builds for self and others; \"dreamer and a Doer\"; confident, responsible",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     52
+    ],
+    "quote": "we can say they are the dreamer and a Doers",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 22",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MASTER-006",
+   "set": "master",
+   "when": {
+    "master": [
+     22
+    ]
+   },
+   "period": null,
+   "text": "Creative; creative career: \"success is guaranteed\" (guaranteed promise - SKIP the guarantee wording)",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     52
+    ],
+    "quote": "it is suggested that the natives take this up as a career as success is guaranteed",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 22",
+   "status": "dropped",
+   "reason": "outside the limits: guaranteed wealth"
+  },
+  {
+   "id": "CHALDEAN-MASTER-007",
+   "set": "master",
+   "when": {
+    "master": [
+     22
+    ]
+   },
+   "period": null,
+   "text": "Intelligent, perfectionist; seeks balanced life, achieved later; considered very lucky, others jealous; optimistic, hard-working, finishes tasks",
+   "polarity": "good",
+   "areas": [
+    "general"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     52,
+     53
+    ],
+    "quote": "The natives also are considered very lucky.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 22",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MASTER-008",
+   "set": "master",
+   "when": {
+    "master": [
+     22
+    ]
+   },
+   "period": null,
+   "text": "Negative: aggression, poor anger control, impulsiveness",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     53
+    ],
+    "quote": "They will have little to no control over their anger",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 22",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MASTER-009",
+   "set": "master",
+   "when": {
+    "master": [
+     33
+    ]
+   },
+   "period": null,
+   "text": "\"Master of Spirituality\"/\"Master Preachers\": nurturing, kind, compassionate, helps all; learned, shares knowledge; optimistic; human magnet; hidden creative genius; humanitarian, trusts easily, gets hurt",
+   "polarity": "good",
+   "areas": [
+    "spiritual",
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     53,
+     54
+    ],
+    "quote": "Master number 33 is also associated with the term Master Preachers.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 33",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-MASTER-010",
+   "set": "master",
+   "when": {
+    "master": [
+     33
+    ]
+   },
+   "period": null,
+   "text": "Negative: silently judgemental; superiority complex; panic and anxiety attacks from over-attachment",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     54
+    ],
+    "quote": "might even suffer from the well-known 'Superiority Complex.'",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "master = 33",
+   "status": "approved"
+  }
+ ]
+}

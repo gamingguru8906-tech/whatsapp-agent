@@ -1,0 +1,2429 @@
+{
+ "set": "psychic",
+ "rules": [
+  {
+   "id": "CHALDEAN-PSYCHIC-001",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Born leader, presence felt everywhere, \"life of the party\"; confident, high self-esteem, ambitious, bold, straightforward; can be mistaken as egoistic/arrogant but warm-hearted",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     4
+    ],
+    "quote": "Sun makes you a born leader, it makes your presence felt wherever you go",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-002",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Wants to be number 1, stubborn, works very hard, takes leadership in any sphere; innovative, charming persuasive speaker; friends come for advice",
+   "polarity": "good",
+   "areas": [
+    "career",
+    "social"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     4
+    ],
+    "quote": "you want to become number 1 in whatever you do",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-003",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Desires royal lifestyle, spends extravagantly; advice: watch savings, don't overspend on possessions",
+   "polarity": "care",
+   "areas": [
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     4
+    ],
+    "quote": "Advice for you would be to keep a check on your savings and finances",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-004",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Conscious of public image, centre of attraction even when not wanting it; loyal \"friend in need\"; charismatic aura",
+   "polarity": "good",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     4,
+     5
+    ],
+    "quote": "You enjoy being the center of attraction just like your ruling planet",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-005",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Freedom lover, dislikes being dominated, \"be your own boss\"",
+   "polarity": "neutral",
+   "areas": [
+    "career",
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     5
+    ],
+    "quote": "You believe in being your Boss.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-006",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Care: don't dictate to family/friends; don't let overconfidence/ego steer life; try to see others' view; accept delays and failures",
+   "polarity": "care",
+   "areas": [
+    "family",
+    "relationships"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     5
+    ],
+    "quote": "you must not dictate to others or let your authoritative nature overpower",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-007",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Gets discouraged when not achieving; accept failure as experience",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     5
+    ],
+    "quote": "you tend to become discouraged and downhearted when you do not achieve",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-008",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       3,
+       21
+      ],
+      [
+       8,
+       20
+      ]
+     ]
+    ]
+   },
+   "text": "Most favourable period (Sun strongest): start ventures, investments, plans, auspicious work",
+   "polarity": "good",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     5
+    ],
+    "quote": "The most favorable time for you is the period between March 21st to August 20th",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1 AND date in 21 Mar - 20 Aug",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-009",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       10,
+       15
+      ],
+      [
+       12,
+       25
+      ]
+     ]
+    ]
+   },
+   "text": "Unfavourable (Sun weak): avoid new starts, big decisions, investments; may bring delays, stress, health issues, losses, false allegations",
+   "polarity": "care",
+   "areas": [
+    "timing",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     6
+    ],
+    "quote": "avoid starting any new and important activity ... from October 15th to December 25th",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1 AND date in 15 Oct - 25 Dec",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-010",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     1
+    ]
+   },
+   "period": null,
+   "text": "Lucky colour red and shades of red: clothes, decor, red phone/cover, red lock-screen/home-screen wallpaper, bottle, keychain",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     6
+    ],
+    "quote": "Red and shades of red are auspicious for you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 1",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-011",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Nurturing, caring, sentimental, sensitive, intuitive; easily hurt by harsh words; calm and soothing; \"motherly instincts\"",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     7
+    ],
+    "quote": "The moon shapes you to be very nurturing and caring",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-012",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Peace-loving, avoids arguments, forgiving, loyal friend, emotional support, cannot say no",
+   "polarity": "good",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     7
+    ],
+    "quote": "Peace is your love language and you dislike engaging in arguments",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-013",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Impeccable counsellor; romantic and selfless in love; physically attractive; sense of aesthetics; family-oriented",
+   "polarity": "good",
+   "areas": [
+    "love",
+    "family",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     7,
+     8
+    ],
+    "quote": "You are an impeccable counselor and know how to make others feel loved",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-014",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Dreamer, imaginative, artistic, but struggles to execute; needs a reliable partner to execute ideas; needs constant assurance; shy, should ask for help",
+   "polarity": "care",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     8
+    ],
+    "quote": "finds it difficult to put your plans into action or reality",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-015",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Indecisive (self-doubt, fickle mind); suppresses feelings to avoid quarrels; emotional ups and downs like the Moon; moody",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     8
+    ],
+    "quote": "You can tend to be extremely moody and your sentiments mostly overpower you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-016",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     2
+    ]
+   },
+   "period": {
+    "month": [
+     6,
+     7
+    ]
+   },
+   "text": "Most favourable (Moon strongest): start ventures, investments, plans; good for self-discovery",
+   "polarity": "good",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     8
+    ],
+    "quote": "The most favorable and beneficial time for you is the month of June and July",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 2 AND month in {Jun, Jul}",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-017",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     2
+    ]
+   },
+   "period": {
+    "month": [
+     12,
+     1,
+     2
+    ]
+   },
+   "text": "Unfavourable (Moon weak): avoid big decisions; anxiety, false scenarios in mind, over-emotional, slow growth; meditation recommended",
+   "polarity": "care",
+   "areas": [
+    "timing",
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     8,
+     9
+    ],
+    "quote": "avoid making any important decisions during December, January, and February",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 2 AND month in {Dec, Jan, Feb}",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-018",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     2
+    ]
+   },
+   "period": null,
+   "text": "Lucky colour white and shades of white (clothes, decor, phone, wallpaper, keychain)",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     9
+    ],
+    "quote": "White and shades of white are auspicious for you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 2",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-019",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Very ambitious, self-motivated, hard work gives pleasure; won't settle for subordinate roles; devoted, disciplined",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     10
+    ],
+    "quote": "It will not be wrong to say that hard work gives you pleasure.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-020",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Starts career early, hardship in early years sets up later success",
+   "polarity": "mixed",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     10
+    ],
+    "quote": "Psychic number 3 individuals start their careers early and might have to face hardship",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-021",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Social, cheerful, good humour; religious/faith in Supreme Power; likes spotlight; optimistic manager",
+   "polarity": "good",
+   "areas": [
+    "social",
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     10
+    ],
+    "quote": "You are religious and have faith in God",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-022",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Great multitasker but leans to work over home; work-life balance suffers",
+   "polarity": "care",
+   "areas": [
+    "family",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     10
+    ],
+    "quote": "sometimes you find it difficult to draw the line between personal and professional lives",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-023",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Caring provider, but bossy/dictatorial with partner and family; keep authority in check",
+   "polarity": "care",
+   "areas": [
+    "family",
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     10,
+     11
+    ],
+    "quote": "your partner will also have to experience your bossy and dictatorial nature",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-024",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Suited to leadership, orator, advisor, teacher, writer; articulate; can be too straightforward and short-tempered",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     11
+    ],
+    "quote": "You can easily take up a leadership role, become an orator, an advisor, a teacher, or a writer.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-025",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Life partner attractive and loyal; may have pre-marital relations with partners of psychic 1,3,6,9; respectful to partners",
+   "polarity": "neutral",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     11
+    ],
+    "quote": "You may have physical relationships with your partner having psychic numbers 1,3,6 or 9 before marriage.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-026",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Care: give time to family; avoid over-ambition, impatience, excessive optimism, extravagance; tends to exaggerate/gossip",
+   "polarity": "care",
+   "areas": [
+    "family",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     11
+    ],
+    "quote": "psychic number 3 usually exaggerates the truth and creates false realities",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-027",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Favourable: start ventures, investments; good for travel",
+   "polarity": "good",
+   "areas": [
+    "timing",
+    "travel"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     11,
+     12
+    ],
+    "quote": "Mid-February to Mid-March and November 25th to December 25th",
+    "quoteFound": false,
+    "rank": 4
+   },
+   "condition": "psychic = 3 AND date in mid-Feb - mid-Mar OR 25 Nov - 25 Dec",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-028",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       10,
+       15
+      ],
+      [
+       12,
+       25
+      ]
+     ]
+    ]
+   },
+   "text": "Unfavourable: avoid new starts/investments (text is copied from number 1 and even says \"the Sun is weak\")",
+   "polarity": "care",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     12
+    ],
+    "quote": "from October 15th to December 25th as the Sun is weak during that phase",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3 AND date in 15 Oct - 25 Dec",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-029",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     3
+    ]
+   },
+   "period": null,
+   "text": "Lucky colours yellow, golden and shades",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     12
+    ],
+    "quote": "Yellow, Golden, and shades of yellow and golden are auspicious for you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 3",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-030",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Rebellious, practical, analytical, organised, disciplined, hard-working, brainy; unique out-of-the-box ideas",
+   "polarity": "good",
+   "areas": [
+    "personality",
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     13
+    ],
+    "quote": "You are known to be rebellious and someone who is very practical and analytical",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-031",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Believes nothing without logic; firm opinions, stubborn; often misunderstood by family/friends",
+   "polarity": "care",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     13
+    ],
+    "quote": "you are often misunderstood by not only your acquaintances but also your family",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-032",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Bold, straightforward, can't sugar-coat; kind-hearted but seems harsh; few friends, quality over quantity; may feel lonely",
+   "polarity": "mixed",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     13
+    ],
+    "quote": "This trait of yours often leads you to feel lonely and isolated.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-033",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Purposeful; not money-minded, prefers knowledge/experience; spends on wishes and helping others",
+   "polarity": "neutral",
+   "areas": [
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     14
+    ],
+    "quote": "people with psychic number 4 are not money-minded",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-034",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Can be a great revolutionary; hard to beat in debate; supports underdogs; self-made after struggles",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     14
+    ],
+    "quote": "you can prove to be a great revolutionary",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-035",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Advice: listen to others, avoid harsh words, be flexible",
+   "polarity": "care",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     14
+    ],
+    "quote": "try avoiding the use of harsh and hurtful words to win over an argument",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-036",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Good friends/partners: 1, 6, 7; also 2 and 5 compatible",
+   "polarity": "good",
+   "areas": [
+    "love",
+    "business"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     14
+    ],
+    "quote": "choose friends and partners whose psychic numbers are 1, 6, or 7",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4 AND partner psychic in {1,6,7} (also 2,5)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-037",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Avoid romantic or business partnership with 4 and 8",
+   "polarity": "care",
+   "areas": [
+    "love",
+    "business"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     14
+    ],
+    "quote": "Avoid romantic or business partnerships with individuals with psychic numbers 4 and 8",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4 AND partner psychic in {4,8}",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-038",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       3,
+       20
+      ],
+      [
+       4,
+       20
+      ]
+     ],
+     [
+      [
+       7,
+       10
+      ],
+      [
+       8,
+       20
+      ]
+     ]
+    ]
+   },
+   "text": "Favourable: new venture/job, investments, travel",
+   "polarity": "good",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     15
+    ],
+    "quote": "March 20th to April 20th and July 10th to August 20th",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4 AND date in 20 Mar - 20 Apr OR 10 Jul - 20 Aug",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-039",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": {
+    "month": [
+     10,
+     11,
+     12
+    ]
+   },
+   "text": "Unfavourable: avoid new projects, decisions, investments; low motivation, fatigue, gloom; stomach or skin issues",
+   "polarity": "care",
+   "areas": [
+    "timing",
+    "health"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     15
+    ],
+    "quote": "avoid starting any new and important project, or task during October, November, and December",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4 AND month in {Oct, Nov, Dec}",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-040",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     4
+    ]
+   },
+   "period": null,
+   "text": "Lucky colours black, grey and shades",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     15
+    ],
+    "quote": "Black, grey, and shades of black and grey are auspicious for you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 4",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-041",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Childlike energy; makes others happy; adapts to any situation with ease; looks younger than age",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     16
+    ],
+    "quote": "You carry childlike energy and aura around you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-042",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Great communicator, convincing; can run a successful business with oratory and risk-taking; always thinking of ways to earn/invest",
+   "polarity": "good",
+   "areas": [
+    "career",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     16
+    ],
+    "quote": "You are a great communicator and possess exemplary communication skills.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-043",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Lifelong learner but bores quickly; switches jobs if bored; dislikes monotony; multiple income sources",
+   "polarity": "mixed",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     16
+    ],
+    "quote": "if their present job turns out to be boring ... they would not think twice before changing",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-044",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Popular, but doesn't get good advice when needed; friend circle shrinks with age after betrayals",
+   "polarity": "care",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     16
+    ],
+    "quote": "over time your social circle becomes smaller and smaller",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-045",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Highly intuitive, senses true intentions; meditation sharpens it; never gives up, bounces back",
+   "polarity": "good",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     17
+    ],
+    "quote": "You are highly intuitive and can sense other people's true intentions.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-046",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Care: laziness can cause weight gain; control spending; short-lived anger",
+   "polarity": "care",
+   "areas": [
+    "health",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     17
+    ],
+    "quote": "being lethargic could lead to weight gain",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-047",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": {
+    "month": [
+     5,
+     8,
+     9
+    ]
+   },
+   "text": "Favourable: new venture/job, plans; good to buy property and invest",
+   "polarity": "good",
+   "areas": [
+    "timing",
+    "property"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     17
+    ],
+    "quote": "The most favorable time for you is the months of May, August, and September.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5 AND month in {May, Aug, Sep}",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-048",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Unfavourable: avoid new starts, decisions, investments; isolation, doubting people, self-doubt",
+   "polarity": "care",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     17
+    ],
+    "quote": "avoid starting any new and important projects ... in January, April, and December and during Mercury Retrograde",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5 AND (month in {Jan, Apr, Dec} OR Mercury retrograde)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-049",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     5
+    ]
+   },
+   "period": null,
+   "text": "Lucky colour green and shades",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     18
+    ],
+    "quote": "Green and shades of green are auspicious for you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 5",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-050",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Beautiful, youthful, magnetic; polite; neat, artistic surroundings; aesthetics important",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     19
+    ],
+    "quote": "You are beautiful, youthful, and have a magnetic aura.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-051",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Helpful, kind, sacrifices for loved ones; family-oriented",
+   "polarity": "good",
+   "areas": [
+    "family"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     19
+    ],
+    "quote": "You are family oriented and cherish spending time",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-052",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Heart over head, hypersensitive; hard to find true friends especially later; people take advantage; trust issues and isolation after being cheated",
+   "polarity": "care",
+   "areas": [
+    "relationships",
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     19
+    ],
+    "quote": "You listen to your heart more than to your head.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-053",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Loves luxury, brands, fragrance; likely shopaholic",
+   "polarity": "care",
+   "areas": [
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     19
+    ],
+    "quote": "There is a high possibility that you are a shopaholic",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-054",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Empath, motherly, loves children and animals; music is therapeutic",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     19
+    ],
+    "quote": "You are a true empath",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-055",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Falls in love at least twice before marriage; often does not get back equal effort",
+   "polarity": "care",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     20
+    ],
+    "quote": "psychic number 6 individuals fall in love at least twice before tying the knot",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-056",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Advice: boundaries, self-love; risk of alcohol/smoking when dejected; limit lavish spending; prone to evil eye, don't share plans until done",
+   "polarity": "care",
+   "areas": [
+    "health",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     20
+    ],
+    "quote": "You are highly prone to the evil eye",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-057",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       4,
+       20
+      ],
+      [
+       5,
+       20
+      ]
+     ],
+     [
+      [
+       9,
+       20
+      ],
+      [
+       10,
+       20
+      ]
+     ]
+    ]
+   },
+   "text": "Favourable: new venture/job, move to new property, buy house or vehicle; good news",
+   "polarity": "good",
+   "areas": [
+    "timing",
+    "property"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     20
+    ],
+    "quote": "April 20th to May 20th and September 20th to October 20th",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6 AND date in 20 Apr - 20 May OR 20 Sep - 20 Oct (best 20-30 Apr, 1-20 Oct)",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-058",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Unfavourable: avoid new starts/investments; health, bad news, hindrances, indecision, jealousy; decide with head not heart",
+   "polarity": "care",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     20,
+     21
+    ],
+    "quote": "in April, October, November, and during Venus Retrograde",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6 AND (month in {Apr, Oct, Nov} OR Venus retrograde)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-059",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     6
+    ]
+   },
+   "period": null,
+   "text": "Lucky colours white and rainbow colours",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     21
+    ],
+    "quote": "White and rainbow colors are auspicious for you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 6",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-060",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Calm, composed, big-hearted, caring, animal lover",
+   "polarity": "good",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     22
+    ],
+    "quote": "You possess a calm and composed demeanor with a big heart.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-061",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Reserved, introvert, slow to open up; seen as rude/arrogant at first; golden heart; serves others emotionally or financially but shouldn't overdo it",
+   "polarity": "mixed",
+   "areas": [
+    "social"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     22
+    ],
+    "quote": "most people ruled by psychic number 7 are introverts",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-062",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Intuitive; drawn to occult (astrology, numerology, tarot); premonitions; good judge of character; meditate, seek a guru",
+   "polarity": "good",
+   "areas": [
+    "spiritual"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     22
+    ],
+    "quote": "Occult sciences like Astrology, Numerology, Tarot ... interest you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-063",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Healers and teachers; suited to teaching, consulting, psychiatry, arts, politics, research",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     22,
+     23
+    ],
+    "quote": "Psychic number 7 ruled individuals are known to be exceptional healers and teachers",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-064",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Sensitive, spiritual, home-loving; low self-esteem in big groups; anxiety/overthinking; exercise, nature, meditation, live in present",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     23
+    ],
+    "quote": "you struggle with low self-esteem and lack confidence",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-065",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Favourable: new ventures, opportunities, skills, lifestyle",
+   "polarity": "good",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     23,
+     24
+    ],
+    "quote": "especially the period between June 20th to July 20th",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 7 AND month in {Jun, Jul} (esp. 20 Jun - 20 Jul)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-066",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     7
+    ]
+   },
+   "period": {
+    "month": [
+     1,
+     2
+    ]
+   },
+   "text": "Unfavourable: avoid big decisions; aimlessness, dependence, misunderstandings, impulsive purchases, losses, drift from faith",
+   "polarity": "care",
+   "areas": [
+    "timing",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     24
+    ],
+    "quote": "avoid making any important decisions during January and February",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 7 AND month in {Jan, Feb}",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-067",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     7
+    ]
+   },
+   "period": null,
+   "text": "Lucky colours black, grey and shades (same text as 4)",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     24
+    ],
+    "quote": "Black, grey, and shades of black and grey are auspicious for you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 7",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-068",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Very hard-working, disciplined, focused; Saturn = ethics, rules, justice, delays; growth slow relative to effort; success after much struggle",
+   "polarity": "mixed",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     25
+    ],
+    "quote": "people ruled by psychic number 8 attain success after a lot of blood, sweat, and tears",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-069",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Resilient; will see big success late if they persist; hard work not luck",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     25
+    ],
+    "quote": "For you, \\\"Hard work is the key to Success\\\"",
+    "quoteFound": false,
+    "rank": 4
+   },
+   "condition": "psychic = 8",
+   "status": "review",
+   "reason": "quote not found word for word in the book text"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-070",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Kind and generous but career focus can neglect family; alone when they need help",
+   "polarity": "care",
+   "areas": [
+    "family"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     25
+    ],
+    "quote": "you would find yourself alone when you seek assistance",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-071",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Professional, detail-oriented (sometimes slow), multitasker; great manager/planner; \"quintessential money manager\"; land, property, law suit careers",
+   "polarity": "good",
+   "areas": [
+    "career",
+    "money"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     25,
+     26
+    ],
+    "quote": "Psychic number 8 is known to be a quintessential money manager.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-072",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Should do fitness/sport; prone to depression from overthinking",
+   "polarity": "care",
+   "areas": [
+    "health",
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     26
+    ],
+    "quote": "You are prone to depression due to these constant thoughts",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-073",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Betrayal can make them bitter/revengeful; Saturn punishes cheating/illegal acts quickly; patience",
+   "polarity": "care",
+   "areas": [
+    "ethics"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     26
+    ],
+    "quote": "Saturn takes absolutely no time in punishing them gravely",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-074",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       9,
+       20
+      ],
+      [
+       10,
+       20
+      ]
+     ]
+    ]
+   },
+   "text": "Favourable: start ventures, investments",
+   "polarity": "good",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     26,
+     27
+    ],
+    "quote": "the period between September 20th to October 20th",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 8 AND date in 20 Sep - 20 Oct",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-075",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Unfavourable: avoid decisions; defamation, humiliation, losses, stomach/lower body issues; avoid arguments, love/business decisions, signing legal documents, moving house; avoid greed",
+   "polarity": "care",
+   "areas": [
+    "timing",
+    "legal"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     27
+    ],
+    "quote": "from January 15th to February 15th, March, April, and December",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 8 AND (date in 15 Jan - 15 Feb OR month in {Mar, Apr, Dec})",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-076",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     8
+    ]
+   },
+   "period": null,
+   "text": "Lucky colour blue and shades",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     27
+    ],
+    "quote": "Blue and shades of blue are auspicious for you.",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 8",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-077",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Charismatic, energetic, physically active; authority, dominance, control",
+   "polarity": "mixed",
+   "areas": [
+    "personality"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     28
+    ],
+    "quote": "makes you charismatic and a powerhouse of energy",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-078",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Careers: sports, politics, soldiers, IAS officers, boxers; in desk jobs wants to lead, else frustrated",
+   "polarity": "neutral",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     28
+    ],
+    "quote": "professions such as sports, politics, soldiers, IAS officers, boxers",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-079",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Humanitarian, loving; devoted to partner to the point of losing individuality; repays misbehaviour",
+   "polarity": "mixed",
+   "areas": [
+    "love"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     28
+    ],
+    "quote": "you start to lose your individuality, so be careful about that",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-080",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Straightforward, dislikes diplomacy, so does not get along well with psychic 5",
+   "polarity": "care",
+   "areas": [
+    "relationships"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     28
+    ],
+    "quote": "psychic number 9 natives do not get along very well with psychic number 5",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9 AND other psychic = 5",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-081",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Short-tempered; anger at injustice",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     28
+    ],
+    "quote": "Psychic number 9 is known for their anger",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-082",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Punctual, disciplined, great leader; best as own boss/business; arts (acting, singing, dancing), entertainment",
+   "polarity": "good",
+   "areas": [
+    "career"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     29
+    ],
+    "quote": "psychic number 9 should opt for being in a profession where they can be their boss",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-083",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Secretive, hides weakness; should confide in a trusted person",
+   "polarity": "care",
+   "areas": [
+    "mind"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     29
+    ],
+    "quote": "suppressing feelings and emotions is not good for your mental health",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-084",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Channel energy into sport, else quarrels; prone to fights leading to accidents or court cases; meditate",
+   "polarity": "care",
+   "areas": [
+    "health",
+    "legal"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     29
+    ],
+    "quote": "could further lead to serious situations like accidents or court cases",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-085",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": {
+    "dateIn": [
+     [
+      [
+       3,
+       20
+      ],
+      [
+       4,
+       25
+      ]
+     ],
+     [
+      [
+       10,
+       20
+      ],
+      [
+       11,
+       25
+      ]
+     ]
+    ]
+   },
+   "text": "Favourable: ventures, investments, risks; acquire land, property, vehicle",
+   "polarity": "good",
+   "areas": [
+    "timing",
+    "property"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     29,
+     30
+    ],
+    "quote": "March 20th to April 25th and October 20th to November 25th",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9 AND date in 20 Mar - 25 Apr OR 20 Oct - 25 Nov",
+   "status": "approved"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-086",
+   "set": "psychic",
+   "when": null,
+   "period": null,
+   "text": "Unfavourable: misunderstandings, betrayal, cheating, accidents, ill health, losses; control anger",
+   "polarity": "care",
+   "areas": [
+    "timing"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     30
+    ],
+    "quote": "during March, May, and June and from October 1st to October 20th",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9 AND (month in {Mar, May, Jun} OR date in 1-20 Oct OR 25 Nov - 25 Dec)",
+   "status": "review",
+   "reason": "condition needs a person (partner, gender, profession, wording) or is not computable"
+  },
+  {
+   "id": "CHALDEAN-PSYCHIC-087",
+   "set": "psychic",
+   "when": {
+    "psychic": [
+     9
+    ]
+   },
+   "period": null,
+   "text": "Lucky colours dark red and blood red, and shades",
+   "polarity": "good",
+   "areas": [
+    "remedy"
+   ],
+   "source": {
+    "book": "B-CHALDEAN",
+    "pages": [
+     30
+    ],
+    "quote": "Dark red and Blood red are auspicious for you",
+    "quoteFound": true,
+    "rank": 4
+   },
+   "condition": "psychic = 9",
+   "status": "approved"
+  }
+ ]
+}
