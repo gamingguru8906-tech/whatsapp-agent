@@ -27,6 +27,7 @@ const crm = require('./crm');
 const voiceNote = require('./voice-note');
 const voiceAgent = require('./voice-agent');
 const growth = require('./growth');
+const numerologyLeads = require('./numerology-leads');
 
 // No outside call may hang forever (WhatsApp, Meta media, website). Calls that need longer pass their own timeout.
 axios.defaults.timeout = 60000;
@@ -219,6 +220,7 @@ const dbReady = pool ? (async () => {
       await crm.migrate(pool);
       await voiceAgent.migrate(pool);
       await growth.migrate(pool);
+      await numerologyLeads.migrate(pool);
       dbIsReady = true;
       console.log('✅ PostgreSQL connected & table ready.');
       return true;
@@ -1808,9 +1810,22 @@ async function handleInboundMessage(msg) {
     // A source tag like "(Ref: IG-DIWALI)" from a website button or ad is saved silently and never shown to Kamala.
     const tagged = msg.type === 'text' ? growth.extractRef(msg.text?.body) : { ref: null };
     if (tagged.ref) msg.text.body = tagged.clean || 'Namaste';
+    // "Reading ID: NM-xxxxxxxx" from the numerology website's WhatsApp button: remember which reading they came from
+    // (saved below, once their user row exists) and keep the ID itself out of Kamala's view.
+    const webReadingId = msg.type === 'text' ? numerologyLeads.extractReadingId(msg.text?.body) : { id: null };
+    if (webReadingId.id) msg.text.body = webReadingId.clean || 'Namaste';
     const inboundText = msg.type === 'text' ? String(msg.text?.body || '').trim()
       : msg.type === 'button' ? String(msg.button?.text || '').trim()
       : msg.type === 'interactive' ? String(msg.interactive?.button_reply?.title || msg.interactive?.list_reply?.title || '').trim() : '';
+
+    // "LOGIN 123456" from the numerology website's sign-in button: sign that page in and stop here (no AI reply,
+    // nothing saved to the chat history).
+    const loginCode = msg.type === 'text' ? numerologyLeads.extractLoginCode(inboundText) : null;
+    if (loginCode) {
+      const outcome = await numerologyLeads.verifyLogin(pool, from, loginCode);
+      await sendTextMessage(from, numerologyLeads.LOGIN_REPLY[outcome]);
+      return;
+    }
 
     // Bring back the saved conversation after a restart (Render sleeps when idle), before anything reads it.
     let lastTurnAt = 'ongoing';
@@ -1827,6 +1842,7 @@ async function handleInboundMessage(msg) {
       RETURNING (SELECT last_inbound_at FROM prev) AS previous`, [from])
       .catch(e => { console.error('Inbound record failed:', e.message); return { rows: [] }; })).rows[0]?.previous || null;
     await growth.recordInbound(pool, from, { ref: tagged.ref, referral: msg.referral, text: inboundText }).catch(e => console.error('Lead source failed:', e.message));
+    if (webReadingId.id) await numerologyLeads.rememberReading(pool, from, webReadingId.id).catch(e => console.error('Reading ID save failed:', e.message));
     if (pool && from !== normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || '')) {
       // After Kamala has replied and saved any new details, refresh the lead score (and alert on hot leads).
       setTimeout(() => growth.updateLeadScore(pool, from, notifyOwner).catch(e => console.error('Lead score failed:', e.message)), 25000).unref?.();
@@ -1877,6 +1893,13 @@ async function handleInboundMessage(msg) {
 
     const restoredUser = await restoreProfileFromSheet(from, dbUser);
     if (restoredUser) dbUser = restoredUser;
+
+    // Someone who used the free numerology website: their reading, and the details they entered there (filled in
+    // only where Kamala does not know them yet, so she never asks again).
+    const webReading = await numerologyLeads.findForPerson(pool, from);
+    if (webReading.lead && await numerologyLeads.fillProfile(pool, from, dbUser, webReading.lead).catch(e => {
+      console.error('Profile fill from website reading failed:', e.message); return false;
+    })) dbUser = { ...dbUser, ...((await getUser(from)) || {}), message_count: dbUser.message_count };
 
     // Links promised on a phone call go out once the caller messages us (their "Hi" opens WhatsApp's 24-hour window).
     if (await hasPendingCallMessages(from)) {
@@ -1978,6 +2001,13 @@ async function handleInboundMessage(msg) {
         } catch (e) {
           await sendTextMessage(from, `❌ Analytics update failed: ${e.message}`);
         }
+        return;
+      }
+
+      if (lowerCmd === '/numerology' || lowerCmd.startsWith('/numerology ')) {
+        // Leads from the free mobile-numerology website, read from this database (table numerology_leads).
+        if (!isOwner) return await sendTextMessage(from, 'That command is available to the business owner only.');
+        for (const text of await numerologyLeads.report(pool, command.split(/\s+/).slice(1))) await sendTextMessage(from, text);
         return;
       }
 
@@ -2155,7 +2185,9 @@ async function handleInboundMessage(msg) {
 
 ${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []), lastTurnAt)}
 
-${crm.readingContext(dbUser)}`;
+${crm.readingContext(dbUser)}
+
+${numerologyLeads.promptContext(webReading, from, { firstChat: lastTurnAt === null })}`;
       
       const userParts = [];
       if (text) {
