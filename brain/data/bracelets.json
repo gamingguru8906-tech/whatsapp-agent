@@ -1,0 +1,69 @@
+{
+ "about": "Birth-number bracelet from Veshannastro's own shop (owner decision 19, 10 Oct 2026). Matches the stone the sources name for each birth number where the shop has it; 2 (Moon howlite / sphatik in P01) -> White Moonstone, 6 (opal) -> the Libra bracelet (opal / tourmaline). Prices as on the shop page on 10 Oct 2026.",
+ "shop": "https://www.veshannastro.co.in/bracelet-fusion.html",
+ "byBirthNumber": {
+  "1": {
+   "sku": "VA-BR-RJ-007",
+   "name": "Red Jasper Bracelet",
+   "gemstones": "Red Jasper",
+   "price": 799,
+   "mrp": 1139
+  },
+  "2": {
+   "sku": "VA-BR-WM-015",
+   "name": "White Moonstone Bracelet",
+   "gemstones": "White Moonstone",
+   "price": 1399,
+   "mrp": 1999
+  },
+  "3": {
+   "sku": "VA-BR-CT-005",
+   "name": "Citrine Natural Bracelet",
+   "gemstones": "Natural Citrine",
+   "price": 1199,
+   "mrp": 1709
+  },
+  "4": {
+   "sku": "VA-BR-TE-008",
+   "name": "Tiger Eye Bracelet",
+   "gemstones": "Tiger Eye",
+   "price": 799,
+   "mrp": 1139
+  },
+  "5": {
+   "sku": "VA-BR-GA-010",
+   "name": "Green Aventurine Bracelet",
+   "gemstones": "Green Aventurine",
+   "price": 899,
+   "mrp": 1279
+  },
+  "6": {
+   "sku": "ZO-007",
+   "name": "Libra Bracelet",
+   "gemstones": "Opal / Tourmaline",
+   "price": 949,
+   "mrp": 1299
+  },
+  "7": {
+   "sku": "VA-BR-7C-013",
+   "name": "7 Chakra Bracelet",
+   "gemstones": "7 Chakra mixed gemstones",
+   "price": 1099,
+   "mrp": 1569
+  },
+  "8": {
+   "sku": "VA-BR-AM-002",
+   "name": "Amethyst Bracelet",
+   "gemstones": "Amethyst",
+   "price": 999,
+   "mrp": 1429
+  },
+  "9": {
+   "sku": "VA-BR-RJ-007",
+   "name": "Red Jasper Bracelet",
+   "gemstones": "Red Jasper",
+   "price": 799,
+   "mrp": 1139
+  }
+ }
+}

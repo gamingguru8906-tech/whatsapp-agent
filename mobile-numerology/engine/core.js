@@ -6,6 +6,8 @@ export const GRID = [[3, 1, 9], [6, 7, 5], [2, 8, 4]];
 export const MAX_PLANNED = 3;
 
 // Shared calculations come from the brain (../../brain/calc.js), so both segments count exactly the same way.
+import { brainReading } from '../../brain/read.js';
+import { braceletFor, BRACELET_SHOP } from '../../brain/calc.js';
 import { digitSum, reduce, parseDob, digitsNoZero, counts, dobDigits, birthNumber, destinyNumber, personalYear, nameNumbers } from '../../brain/calc.js';
 export { digitSum, reduce, parseDob, digitsNoZero, dobDigits, birthNumber, destinyNumber, personalYear };
 export const gridCounts = counts;
@@ -170,7 +172,9 @@ export function createEngine(rulebook) {
       .map(y => ({ id: y.id, title: y.title, text: y.remedy }));
     return {
       birthNumber: b, destinyNumber: dest,
-      screenSaver: savers, bracelet: r.bracelet, mani: r.mani,
+      // The bracelet is Veshannastro's own (owner decision 19); the sources' stone is kept for the owner view.
+      screenSaver: savers, bracelet: braceletFor(b)?.name ?? r.bracelet, sourceBracelet: r.bracelet, mani: r.mani,
+      shop: braceletFor(b) ? { ...braceletFor(b), url: BRACELET_SHOP } : null,
       yogaRemedies, source: { file: remedies.source_file, ref: r.ref, quote: r.quote }
     };
   }
@@ -289,6 +293,8 @@ export function createEngine(rulebook) {
     sections.push({ id: 'protection', ...protection(dob.value, cur.yogas, dobYogas) });
     sections.push({ id: 'better-number', ...betterNumber(cur, areas) });
     if (planned.length) sections.push({ id: 'compare', current: cur.mobile, comparisons: planned.map(p => compare(cur, mobileFeatures(p), areas)) });
+    // Everything the books add about the person (numbers, timing, Lo Shu grid, name), shared with the watch segment.
+    sections.push({ id: 'brain', ...brainReading({ dob: dob.value, name, year, today: input.today ?? new Date(), owner: true }) });
     sections.push({ id: 'cta', healthNote: showsHealth });
 
     return {

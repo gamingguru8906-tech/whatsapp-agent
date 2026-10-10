@@ -15,7 +15,7 @@ test('money concern with more points that need care: working against, change the
   assert.equal(c.headline, 'Your number is working against your money.');
   assert.equal(c.why, '9 parts of your reading touch your money, and 8 of them need care. 7 of them come from your mobile number, so a new number can remove them. 1 comes from your birth date and stays; your protection helps with it.');
   assert.deepEqual(c.steps.map(s => s.id), ['protect', 'change', 'consult']);
-  assert.equal(c.steps[0].text, 'Set the phone screen saver shown for you, wear the Moon howlite bracelet (or sphatik) and keep Chandramani.');
+  assert.equal(c.steps[0].text, 'Set the phone screen saver shown for you, wear the White Moonstone Bracelet and keep Chandramani.');
   assert.deepEqual(c.steps[1].avoid, ['1-4 / 4-1', '5-6 / 6-5', 'Sun Moon Rahu']);
   assert.match(c.steps[1].text, /^Pick a number without 1-4 \/ 4-1, 5-6 \/ 6-5 and Sun Moon Rahu, and look for /);
   assert.equal(c.steps[2].action, 'whatsapp');

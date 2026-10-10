@@ -4,7 +4,7 @@ export const GRID = [[3, 1, 9], [6, 7, 5], [2, 8, 4]];
 
 // counts: digit -> how many times it appears (filled cells). present/absent: a yoga's pattern (absent cells crossed).
 // lightOrder: digits in the order they should light up (the page's one animated moment); omit for a still grid.
-export default function VedicGrid({ counts, present = [], absent = [], size = 'md', label, lightOrder }) {
+export default function VedicGrid({ counts, present = [], absent = [], size = 'md', label, lightOrder, layout = GRID }) {
   const cell = {
     sm: 'h-7 w-7 rounded-[7px] text-xs',
     md: 'h-12 w-12 rounded-[12px] text-lg',
@@ -14,8 +14,8 @@ export default function VedicGrid({ counts, present = [], absent = [], size = 'm
   const gap = { sm: 'gap-[3px]', md: 'gap-1.5', lg: 'gap-2', xl: 'gap-2.5 sm:gap-3' }[size];
   const order = lightOrder ? [...new Set(lightOrder)] : null;
   return (
-    <div className={`grid shrink-0 grid-cols-3 self-start ${gap}`} role="img" aria-label={label || describe(counts, present, absent)}>
-      {GRID.flat().map(d => {
+    <div className={`grid shrink-0 grid-cols-3 self-start ${gap}`} role="img" aria-label={label || describe(counts, present, absent, layout)}>
+      {layout.flat().map(d => {
         const on = counts ? counts[d] > 0 : present.includes(d);
         const off = !counts && absent.includes(d);
         const n = counts?.[d] ?? 0;
@@ -33,7 +33,7 @@ export default function VedicGrid({ counts, present = [], absent = [], size = 'm
   );
 }
 
-function describe(counts, present, absent) {
-  if (counts) return `Grid: ${GRID.flat().filter(d => counts[d] > 0).join(', ')} present`;
+function describe(counts, present, absent, layout = GRID) {
+  if (counts) return `Grid: ${layout.flat().filter(d => counts[d] > 0).join(', ')} present`;
   return `Needs ${present.join(', ')}${absent.length ? `, without ${absent.join(', ')}` : ''}`;
 }

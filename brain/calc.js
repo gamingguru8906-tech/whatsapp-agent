@@ -127,3 +127,8 @@ export function relation(own, other) {
   for (const k of ['friend', 'neutral', 'enemy', 'mixed']) if (row[k].includes(other)) return k;
   return null;
 }
+
+// ---------- Veshannastro's own bracelet for a birth number (owner decision 19) ----------
+import bracelets from './data/bracelets.json' with { type: 'json' };
+export const BRACELET_SHOP = bracelets.shop;
+export const braceletFor = birth => bracelets.byBirthNumber[String(birth)] ?? null;
