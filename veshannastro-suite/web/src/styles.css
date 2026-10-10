@@ -45,6 +45,7 @@
 
   .btn { @apply inline-flex min-h-[52px] items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-6 font-display text-[17px] font-semibold transition-colors; }
   .btn-whatsapp { @apply btn bg-whatsapp text-white shadow-[0_10px_24px_-14px_hsl(var(--whatsapp))] hover:bg-whatsapp-dark; }
+  .btn-primary { @apply btn bg-primary text-white shadow-[0_8px_20px_-10px_hsl(var(--primary)/0.8)] hover:bg-primary-dark; }
   .btn-plain { @apply btn bg-card text-foreground shadow-[0_0_0_1px_hsl(var(--border))] hover:bg-muted; }
 
   .group-card { @apply overflow-hidden rounded-[20px] border border-border/70 bg-card; }

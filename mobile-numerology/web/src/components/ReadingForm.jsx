@@ -3,13 +3,13 @@ import { ChevronDown } from 'lucide-react';
 import Turnstile from './Turnstile.jsx';
 
 const CHIPS = ['Money is not staying with me', 'Career growth / job', 'Business not working', 'Marriage delay', 'Relationship problems', 'Debt and loans', 'Health worries', 'Stress and anxiety'];
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const istNow = () => new Date(Date.now() + 5.5 * 3600e3);
-const YEARS = (() => { const y = istNow().getUTCFullYear(); return Array.from({ length: y - 1900 + 1 }, (_, i) => y - i); })();
+export const YEARS = (() => { const y = istNow().getUTCFullYear(); return Array.from({ length: y - 1900 + 1 }, (_, i) => y - i); })();
 const pad = n => String(n).padStart(2, '0');
 
 // Day, month and year as three pickers (a browser date box can show mm/dd/yyyy and get entered wrongly).
-function dobFrom(d) {
+export function dobFrom(d) {
   if (!d.day || !d.month || !d.year) return '';
   const iso = `${d.year}-${pad(d.month)}-${pad(d.day)}`;
   const t = new Date(`${iso}T00:00:00Z`);
@@ -17,7 +17,7 @@ function dobFrom(d) {
 }
 
 // A native picker (the phone's own wheel or list) styled as a quiet field with a chevron.
-function Picker({ id, value, onChange, label, invalid, children }) {
+export function Picker({ id, value, onChange, label, invalid, children }) {
   return (
     <span className="relative mt-1 block">
       <select id={id} value={value} onChange={onChange} aria-label={label} aria-invalid={invalid}
@@ -29,7 +29,7 @@ function Picker({ id, value, onChange, label, invalid, children }) {
   );
 }
 
-function Switch({ id, checked, onChange, children, hint }) {
+export function Switch({ id, checked, onChange, children, hint }) {
   return (
     <label htmlFor={id} className="row flex cursor-pointer items-center justify-between gap-4">
       <span>

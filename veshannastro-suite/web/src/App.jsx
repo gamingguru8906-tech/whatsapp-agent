@@ -6,7 +6,7 @@ import Watch from './Watch.jsx';
 // the mobile-number reading (live) is one tap away. "(Ref: ...)" tags the lead's source in Kamala's CRM.
 const WHATSAPP = '917646952745';
 const wa = text => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
-const NOTIFY = wa('Hi, please tell me when the watch reading opens. (Ref: WEB-WATCH)');
+const WATCH = 'https://veshannastro-numerology.veshannastro.workers.dev/watch';
 const CONSULT = wa('Hi, I would like a watch and numerology consultation. (Ref: WEB-SUITE)');
 const MOBILE = 'https://veshannastro-numerology.veshannastro.workers.dev';
 const MAIN_SITE = 'https://veshannastro.co.in';
@@ -16,14 +16,14 @@ const WaIcon = ({ size = 20 }) => (
 );
 
 const STEPS = [
-  ['Photograph your watch', 'On your wrist, with the dial facing the camera.'],
-  ['Check what we see', 'Dial colour, shape, metal, strap and numerals. Change anything we got wrong.'],
+  ['Describe your watch', 'Pick its dial colour, shape, metal, strap and the wrist you wear it on.'],
+  ['Add the finer details', 'Numerals, date window, hands and strap pattern, if you know them.'],
   ['Add your birth date', 'It gives your birth number and your personal year.'],
   ['Read your answer', 'What your watch says about you, whether it suits your year, and what to change.']
 ];
 
 const READINGS = [
-  { name: 'Wristwatch Analyzer', text: "What your watch's dial, colour, metal and strap say about you, and whether it suits your year.", status: 'Opens soon' },
+  { name: 'Wristwatch Analyzer', text: "What your watch's dial, colour, metal and strap say about you, and whether it suits your year.", status: 'Open now', href: WATCH },
   { name: 'Mobile Number Reading', text: 'What your mobile number is doing to your money, work and relationships, and whether to change it.', status: 'Open now', href: MOBILE },
   { name: 'Signature Analysis', text: 'What your signature shows about the way you decide and lead.', status: 'Coming later' },
   { name: 'Symbolism Mapper', text: 'What the symbols you carry and live with mean for you.', status: 'Coming later' }
@@ -75,13 +75,12 @@ export default function App() {
             <h1 className="t-large max-w-[12ch]">What does your watch say about you?</h1>
             <p className="mt-5 max-w-[34rem] text-[18px] leading-[1.6] text-muted-foreground">
               The colour of the dial, the metal, the strap and the wrist you wear it on all carry meaning in numerology.
-              Send one photo and see what your watch says, and whether it suits your year.
+              Describe your watch and see what it says about you, and whether it suits your year.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href={NOTIFY} target="_blank" rel="noopener noreferrer" className="btn-whatsapp"><WaIcon />Tell me when it opens</a>
+              <a href={WATCH} className="btn-primary">Read my watch</a>
               <a href={MOBILE} className="btn-plain">Read my mobile number now</a>
             </div>
-            <p className="mt-4 text-[15px] text-muted-foreground">The watch reading opens soon. The mobile number reading is open now.</p>
           </div>
           <Watch className="mx-auto w-full max-w-[420px]" />
         </section>
@@ -97,7 +96,7 @@ export default function App() {
               <div>
                 <h2 className="text-[17px] font-semibold text-maroon">The free watch reading</h2>
                 <ul className="mt-3 grid gap-2 text-[16px]">
-                  <li className="flex gap-3"><Dot className="bg-primary" />What your dial, metal and strap say about you, from one photo</li>
+                  <li className="flex gap-3"><Dot className="bg-primary" />What your dial, metal and strap say about you</li>
                   <li className="flex gap-3"><Dot className="bg-primary" />Whether your watch suits your personal year</li>
                   <li className="flex gap-3"><Dot className="bg-primary" />What to change, if anything</li>
                 </ul>

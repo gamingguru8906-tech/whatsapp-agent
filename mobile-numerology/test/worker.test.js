@@ -246,3 +246,22 @@ test('the real connection path (DATABASE_URL, no deps.run): lead saved; a dead d
   assert.match((await health.json()).database, /^error:/);
 });
 
+
+test('wristwatch: /api/watch saves one lead with the watch summary, visitors get no sources, the route answers', { skip }, async () => {
+  const body = { name: 'Rahul Sharma', mobile: '9811045672', dob: '1988-10-29', consent: true,
+    watch: { dialColour: 'blue', dialShape: 'round', caseMetal: 'steel', strapMaterial: 'metal' } };
+  const req = () => new Request('https://site.test/api/watch', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  const res = await handleReading(req(), env, undefined, { run, fetchImpl: sheet.fetch, sleep: async () => {}, year: 2026, segment: 'watch' });
+  assert.equal(res.status, 200);
+  const out = await res.json();
+  assert.equal(out.ok, true);
+  assert.match(out.leadRef, /^NM-[0-9a-f]{8}$/);
+  assert.ok(!JSON.stringify(out).includes('"quote"'));
+  const [row] = await run('SELECT * FROM numerology_leads');
+  assert.match(row.concern, /^Wristwatch: /);
+  assert.match(row.reading_summary, /Watch named for 2026 \(personal year 4\)/);
+  await handleReading(req(), env, undefined, { run, fetchImpl: sheet.fetch, sleep: async () => {}, year: 2026, segment: 'watch' });
+  assert.equal(await count(), 1);
+  const viaRoute = await worker.fetch(new Request('https://site.test/api/watch', { method: 'GET' }), {}, {});
+  assert.equal(viaRoute.status, 405);
+});

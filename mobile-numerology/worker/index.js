@@ -7,6 +7,7 @@ import { rulebook } from '../engine/rulebook.js';
 import { saveLead, flushUnsynced, dedupeKey, readingId, ensureTable } from './store.js';
 import { databaseUrl, withDb } from './db.js';
 import { readingSummary } from '../engine/summary.js';
+import { watchReading, watchSummary, watchConcern } from '../engine/watch.js';
 import { clientIp, verifyTurnstile, withinRateLimit } from './security.js';
 
 const engine = createEngine(rulebook);
@@ -53,13 +54,19 @@ export async function handleReading(request, env, ctx, deps = {}) {
   }
   if (body.consent !== true) return json({ ok: false, errors: { consent: 'Please tick the box to agree, so we can show your reading.' } }, 400);
 
-  const result = engine.reading({
-    name: body.name, mobile: body.mobile, dob: body.dob, concern: body.concern,
-    planned: Array.isArray(body.planned) ? body.planned.slice(0, 5) : [], year: deps.year ?? istYear()
-  });
+  const watch = deps.segment === 'watch';
+  const result = watch
+    ? watchReading(rulebook, { name: body.name, mobile: body.mobile, dob: body.dob, watch: body.watch, year: deps.year ?? istYear() })
+    : engine.reading({
+      name: body.name, mobile: body.mobile, dob: body.dob, concern: body.concern,
+      planned: Array.isArray(body.planned) ? body.planned.slice(0, 5) : [], year: deps.year ?? istYear()
+    });
   if (!result.ok) return json({ ok: false, errors: result.errors }, 400);
 
-  const lead = { ...result.input, consent: true, waOptIn: body.waOptIn === true, readingSummary: readingSummary(result) };
+  const lead = watch
+    ? { name: result.input.name, mobile: result.input.mobile, dob: result.input.dob, concern: watchConcern(result), planned: [],
+      consent: true, waOptIn: body.waOptIn === true, readingSummary: watchSummary(result) }
+    : { ...result.input, consent: true, waOptIn: body.waOptIn === true, readingSummary: readingSummary(result) };
   // The visitor's WhatsApp button carries this ID, so Kamala can find this exact reading (same details = same ID).
   const leadRef = readingId(await dedupeKey(lead));
   if (deps.run || databaseUrl(env)) {
@@ -80,6 +87,10 @@ export default {
     if (url.pathname === '/api/reading') {
       if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
       return handleReading(request, env, ctx);
+    }
+    if (url.pathname === '/api/watch') {
+      if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
+      return handleReading(request, env, ctx, { segment: 'watch' });
     }
     if (url.pathname === '/api/health') return handleHealth(url, env);
     if (url.pathname === '/api/config') {

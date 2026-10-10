@@ -61,6 +61,20 @@
    }
   },
   {
+   "key": "caseMetal",
+   "q": "Case colour or metal",
+   "options": {
+    "gold": "Gold",
+    "roseGold": "Rose gold",
+    "silver": "Silver / white gold",
+    "steel": "Steel",
+    "twoTone": "Silver and gold",
+    "black": "Black",
+    "plastic": "Plastic or resin"
+   },
+   "note": "Not read by the watch rules; used only to compare the watch with the one named for the person's personal year (transcript T03)."
+  },
+  {
    "key": "markers",
    "q": "What marks the hours?",
    "options": {

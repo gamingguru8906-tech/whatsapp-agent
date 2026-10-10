@@ -133,3 +133,7 @@ summary::-webkit-details-marker { display: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* Wristwatch hero: the watch's parts light up in turn, each with its name. */
+@keyframes lit { from { opacity: 0; } to { opacity: 1; } }
+.lit { animation: lit 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }

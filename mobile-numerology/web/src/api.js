@@ -29,3 +29,22 @@ export async function getReading(payload, ownerKey) {
     return { ok: false, errors: { form: 'No connection. Please check your internet and try again.' } };
   }
 }
+
+// Wristwatch segment: same flow, its own endpoint.
+export async function getWatchReading(payload, ownerKey) {
+  if (LOCAL) {
+    const { localWatchReading } = await import('./local-engine.js');
+    return localWatchReading(payload);
+  }
+  try {
+    const res = await fetch('/api/watch', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...(ownerKey ? { 'x-owner-key': ownerKey } : {}) },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => null);
+    return data ?? { ok: false, errors: { form: 'The reading could not load. Please try again.' } };
+  } catch {
+    return { ok: false, errors: { form: 'No connection. Please check your internet and try again.' } };
+  }
+}
