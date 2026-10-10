@@ -6,9 +6,12 @@ import VedicGrid from './components/VedicGrid.jsx';
 import WatchForm from './components/WatchForm.jsx';
 import WatchStory from './components/WatchStory.jsx';
 import WatchArt from './components/WatchArt.jsx';
+import MyReadings from './components/MyReadings.jsx';
+import { UserRound } from 'lucide-react';
 
-// Two segments on one site: Mobile Numerology at /, Wristwatch Numerology at /watch.
-const SEGMENT = typeof location !== 'undefined' && location.pathname.startsWith('/watch') ? 'watch' : 'mobile';
+// Two segments on one site: Mobile Numerology at /, Wristwatch Numerology at /watch; "My readings" at /my.
+const PATH = typeof location !== 'undefined' ? location.pathname : '/';
+const SEGMENT = PATH.startsWith('/watch') ? 'watch' : PATH.startsWith('/my') ? 'my' : 'mobile';
 
 const ownerKeyFromUrl = () => {
   try {
@@ -54,16 +57,20 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background">
       <header className="material sticky top-0 z-20 border-b border-border/60" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2.5 px-5 py-3">
           <a href="/" className="font-display text-[19px] font-bold tracking-tight text-maroon no-underline">
             Veshannastro<span className="text-primary">.</span>
           </a>
-          <nav aria-label="Readings" className="flex rounded-full bg-border/50 p-[3px] font-display text-[14px] font-semibold">
+          <nav aria-label="Readings" className="order-3 flex w-full rounded-full bg-border/50 p-[3px] font-display text-[14px] font-semibold sm:order-2 sm:w-auto">
             {[['mobile', '/', 'Mobile number'], ['watch', '/watch', 'Wristwatch']].map(([k, href, label]) => (
               <a key={k} href={href} aria-current={SEGMENT === k ? 'page' : undefined}
-                className={`rounded-full px-3.5 py-1.5 no-underline transition-colors ${SEGMENT === k ? 'bg-card text-maroon shadow-[0_2px_6px_rgba(0,0,0,0.1)]' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
+                className={`flex-1 rounded-full px-3.5 py-1.5 text-center no-underline transition-colors sm:flex-none ${SEGMENT === k ? 'bg-card text-maroon shadow-[0_2px_6px_rgba(0,0,0,0.1)]' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
             ))}
           </nav>
+          <a href="/my" aria-current={SEGMENT === 'my' ? 'page' : undefined}
+            className={`order-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 font-display text-[14px] font-semibold no-underline transition-colors sm:order-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
+            <UserRound size={17} aria-hidden="true" />My readings
+          </a>
         </div>
       </header>
 
@@ -73,6 +80,7 @@ export default function App() {
         </p>
       )}
       <main>
+        {SEGMENT === 'my' ? <MyReadings config={config} /> : <>
         <div className="hero-glow">
         <section className="mx-auto grid max-w-5xl gap-10 px-5 pb-12 pt-8 sm:pt-14 lg:grid-cols-[1fr_minmax(0,440px)] lg:items-start lg:gap-14">
           {SEGMENT === 'watch' ? (
@@ -110,9 +118,10 @@ export default function App() {
 
         {result && (
           <section ref={storyRef} className="mx-auto max-w-[44rem] scroll-mt-16 px-5 pb-14 pt-4">
-            {SEGMENT === 'watch' ? <WatchStory result={result} config={config} onAgain={again} /> : <Story result={result} config={config} onAgain={again} />}
+            {SEGMENT === 'watch' ? <WatchStory result={result} config={config} onAgain={again} saved={!config.preview} /> : <Story result={result} config={config} onAgain={again} saved={!config.preview} />}
           </section>
         )}
+        </>}
       </main>
 
       <footer className="border-t border-border/70 bg-card/60">

@@ -152,3 +152,18 @@ export function CallRow({ href, text }) {
     </a>
   );
 }
+
+// Under a fresh reading: it is kept for the number entered, and "My readings" shows it again after a WhatsApp sign-in.
+export function SavedNote({ mobile }) {
+  if (!mobile) return null;
+  return (
+    <a href="/my" className="group-card flex items-center gap-3 px-4 py-4 no-underline transition-colors hover:bg-muted/40 sm:px-5">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-maroon-soft font-display text-[15px] font-bold text-maroon" aria-hidden="true">✓</span>
+      <span className="min-w-0 flex-1">
+        <span className="t-headline block">Your reading is saved</span>
+        <span className="t-note mt-0.5 block">Open it any time from My readings: sign in with WhatsApp from +91 {String(mobile).slice(0, 5)} {String(mobile).slice(5)}.</span>
+      </span>
+      <span className="hidden shrink-0 font-display text-[15px] font-semibold text-primary-dark sm:inline">My readings ›</span>
+    </a>
+  );
+}

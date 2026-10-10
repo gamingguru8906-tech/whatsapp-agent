@@ -10,6 +10,8 @@ import { readingSummary } from '../engine/summary.js';
 import { watchReading, watchSummary, watchConcern } from '../engine/watch.js';
 import { clientIp, verifyTurnstile, withinRateLimit } from './security.js';
 import { checkPhoto, readWatchPhoto } from '../engine/photo.js';
+import { startLogin, loginStatus, logout, myReadings, savedInputs } from './account.js';
+import { withSchema } from './store.js';
 
 const engine = createEngine(rulebook);
 
@@ -66,7 +68,7 @@ export async function handleReading(request, env, ctx, deps = {}) {
 
   const lead = watch
     ? { name: result.input.name, mobile: result.input.mobile, dob: result.input.dob, concern: watchConcern(result), planned: [],
-      consent: true, waOptIn: body.waOptIn === true, readingSummary: watchSummary(result) }
+      consent: true, waOptIn: body.waOptIn === true, readingSummary: watchSummary(result), inputs: { segment: 'watch', watch: result.input.watch } }
     : { ...result.input, consent: true, waOptIn: body.waOptIn === true, readingSummary: readingSummary(result) };
   // The visitor's WhatsApp button carries this ID, so Kamala can find this exact reading (same details = same ID).
   const leadRef = readingId(await dedupeKey(lead));
@@ -106,6 +108,43 @@ export async function handlePhoto(request, env, deps = {}) {
   }
 }
 
+// Sign in with WhatsApp and "My readings" (worker/account.js). The browser sends its token as "Authorization: Bearer".
+const bearer = request => (request.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '').trim() || null;
+export async function handleAccount(request, env, url, deps = {}) {
+  if (!deps.run && !databaseUrl(env)) return json({ ok: false, error: 'Sign-in is not available right now.' }, 503);
+  const go = fn => (deps.run ? fn(withSchema(deps.run)) : withDb(env, run => fn(withSchema(run))));
+  const token = bearer(request);
+  try {
+    if (url.pathname === '/api/login') {
+      if (request.method === 'POST') {
+        if (!(await withinRateLimit(env, `login:${clientIp(request)}`))) return json({ ok: false, error: 'Too many tries. Please wait a minute.' }, 429);
+        return json({ ok: true, ...(await go(startLogin)), whatsappNumber: env.WHATSAPP_NUMBER || null });
+      }
+      if (request.method === 'GET') return json({ ok: true, ...(await go(run => loginStatus(run, token))) });
+      if (request.method === 'DELETE') { await go(run => logout(run, token)); return json({ ok: true }); }
+      return json({ ok: false, error: 'Use POST, GET or DELETE' }, 405);
+    }
+    const who = await go(run => loginStatus(run, token));
+    if (who.state !== 'signed-in') return json({ ok: false, error: 'Please sign in again.', state: who.state }, 401);
+    if (url.pathname === '/api/my-readings' && request.method === 'GET') {
+      return json({ ok: true, phone: who.phone, readings: await go(run => myReadings(run, who.phone)) });
+    }
+    if (url.pathname === '/api/my-readings/open' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const input = await go(run => savedInputs(run, who.phone, body?.id));
+      if (!input) return json({ ok: false, error: 'That reading was not found.' }, 404);
+      const year = deps.year ?? istYear();
+      const result = input.segment === 'watch' ? watchReading(rulebook, { ...input, year }) : engine.reading({ ...input, year });
+      if (!result.ok) return json({ ok: false, error: 'That reading could not be shown again.' }, 422);
+      return json({ ...publicView(result), segment: input.segment, leadRef: body.id });
+    }
+    return json({ ok: false, error: 'Not found' }, 404);
+  } catch (e) {
+    console.error('Account request failed:', e.message);
+    return json({ ok: false, error: 'Something went wrong. Please try again.' }, 503);
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -121,6 +160,7 @@ export default {
       if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
       return handlePhoto(request, env);
     }
+    if (url.pathname === '/api/login' || url.pathname.startsWith('/api/my-readings')) return handleAccount(request, env, url);
     if (url.pathname === '/api/health') return handleHealth(url, env);
     if (url.pathname === '/api/config') {
       return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || null, whatsappNumber: env.WHATSAPP_NUMBER || null });

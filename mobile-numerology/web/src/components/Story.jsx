@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import VedicGrid from './VedicGrid.jsx';
 import { Numbers, Timing, LoShu, NameChapter } from './BrainChapters.jsx';
-import { callLink, fmt, plural, dot, jump, Chapter, Source, Line, ShowMore, RuleRow, YogaRow, WaIcon, whatsappLink, WaButton, InlineCta } from './ui.jsx';
+import { callLink, fmt, plural, dot, jump, Chapter, Source, Line, ShowMore, RuleRow, YogaRow, WaIcon, whatsappLink, WaButton, InlineCta, SavedNote } from './ui.jsx';
 import { clarity } from '../../../engine/clarity.js';
 
 // Every numerology sentence here comes from the reading the engine returns (rule wording approved by the owner).
@@ -549,7 +549,7 @@ function Cta({ s, href }) {
   );
 }
 
-export default function Story({ result, config, onAgain }) {
+export default function Story({ result, config, onAgain, againLabel = 'Check another number', saved = true }) {
   const { input, sections } = result;
   const by = id => sections.find(s => s.id === id);
   const owner = result.owner === true;
@@ -616,8 +616,9 @@ export default function Story({ result, config, onAgain }) {
       <BetterNumber s={by('better-number')} />
       {by('compare') && <Compare s={by('compare')} />}
       <Cta s={by('cta')} href={href} />
+      {saved && <SavedNote mobile={input.mobile} />}
       <button type="button" onClick={onAgain} className="btn-plain justify-self-center bg-card px-6 shadow-[0_0_0_1px_hsl(var(--border))]">
-        Check another number
+        {againLabel}
       </button>
       <StickyWhatsApp href={href} />
     </div>

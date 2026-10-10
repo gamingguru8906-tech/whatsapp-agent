@@ -26,3 +26,19 @@ CREATE INDEX IF NOT EXISTS numerology_leads_unsynced ON numerology_leads (create
 CREATE INDEX IF NOT EXISTS numerology_leads_mobile ON numerology_leads (mobile);
 
 ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS reading_summary TEXT NOT NULL DEFAULT '';
+
+-- What the visitor entered that the columns above do not hold (the watch details), for "My readings".
+ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS inputs JSONB;
+
+-- Sign-in with WhatsApp: code shown on the page, sent as "LOGIN <code>" to Kamala, who marks it verified with the
+-- sender's number. Only the SHA-256 of the browser's token is stored.
+CREATE TABLE IF NOT EXISTS numerology_logins (
+  id          BIGSERIAL PRIMARY KEY,
+  code        TEXT        NOT NULL,
+  token_hash  TEXT        NOT NULL UNIQUE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  verified_at TIMESTAMPTZ,
+  phone       TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS numerology_logins_open_code ON numerology_logins (code) WHERE verified_at IS NULL;

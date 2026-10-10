@@ -59,12 +59,12 @@ const COLUMNS = 'id, dedupe_key, created_at, name, mobile, dob::text AS dob, con
 export async function insertLead(run, lead) {
   const key = await dedupeKey(lead);
   const rows = await run(
-    `INSERT INTO numerology_leads (dedupe_key, name, mobile, dob, concern, planned, consent, wa_opt_in, reading_summary)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `INSERT INTO numerology_leads (dedupe_key, name, mobile, dob, concern, planned, consent, wa_opt_in, reading_summary, inputs)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
      ON CONFLICT (dedupe_key) DO NOTHING
      RETURNING ${COLUMNS}`,
     [key, lead.name, lead.mobile, lead.dob, lead.concern, (lead.planned ?? []).join(','), lead.consent === true, lead.waOptIn === true,
-      String(lead.readingSummary ?? '')]);
+      String(lead.readingSummary ?? ''), lead.inputs ? JSON.stringify(lead.inputs) : null]);
   return rows[0] ?? null;
 }
 

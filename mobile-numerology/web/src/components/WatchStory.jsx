@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import { CalendarCheck, Circle, Sparkles, Watch as WatchIcon } from 'lucide-react';
-import { Chapter, Source, WaButton, callLink, CallRow, plural } from './ui.jsx';
+import { Chapter, Source, WaButton, callLink, CallRow, plural, SavedNote } from './ui.jsx';
 import { Numbers, Timing, LoShu, NameChapter } from './BrainChapters.jsx';
 
 // The Wristwatch Numerology reading: the answer first, then what the watch says, the right watch for the year,
@@ -142,7 +142,7 @@ function Bracelet({ s }) {
   );
 }
 
-export default function WatchStory({ result, config, onAgain }) {
+export default function WatchStory({ result, config, onAgain, againLabel = 'Read another watch', saved = true }) {
   const by = id => result.sections.find(s => s.id === id);
   const owner = result.owner === true;
   const word = result.input.name.split(' ')[0];
@@ -171,7 +171,8 @@ export default function WatchStory({ result, config, onAgain }) {
         <p className="mx-auto mt-2 max-w-md text-[17px] text-muted-foreground">We read your watch with your numbers and choose the right one for your year.</p>
         {href && <WaButton href={href} className="mt-6">Book a call on WhatsApp</WaButton>}
       </section>
-      <button type="button" onClick={onAgain} className="btn-plain justify-self-center bg-card px-6 shadow-[0_0_0_1px_hsl(var(--border))]">Read another watch</button>
+      {saved && <SavedNote mobile={result.input.mobile} />}
+      <button type="button" onClick={onAgain} className="btn-plain justify-self-center bg-card px-6 shadow-[0_0_0_1px_hsl(var(--border))]">{againLabel}</button>
     </div>
   );
 }
