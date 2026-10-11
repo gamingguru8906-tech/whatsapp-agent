@@ -54,7 +54,7 @@ test('an old code cannot be used; an unknown token is expired', { skip }, async 
 
 test('My readings: only readings for the signed-in number, and each opens again (mobile and watch)', { skip }, async () => {
   await save({ name: 'Rahul Sharma', mobile: '9811045672', dob: '1988-10-29', concern: 'Paisa nahi tikta', planned: [] });
-  await save({ name: 'Rahul Sharma', mobile: '9811045672', dob: '1988-10-29', watch: { dialColour: 'blue', dialShape: 'round', caseMetal: 'gold' } });
+  await save({ name: 'Rahul Sharma', mobile: '9811045672', dob: '1988-10-29', watch: { dialColour: 'blue', dialShape: 'round', caseMetal: 'gold', goal: ['warmth'] } });
   await save({ name: 'Someone Else', mobile: '9876543210', dob: '1990-01-01', concern: 'career', planned: [] });
   await new Promise(r => setTimeout(r, 50));
   const start = await call('POST', '/api/login');

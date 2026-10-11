@@ -3,11 +3,12 @@
 // personal-year transcript rules (T03) already in the rulebook; the bracelet is Veshannastro's own.
 
 import { brainReading } from '../../brain/read.js';
-import { cleanWatch } from '../../brain/watch.js';
+import { cleanWatch, WATCH_ATTRIBUTES } from '../../brain/watch.js';
 import { braceletFor, BRACELET_SHOP } from '../../brain/calc.js';
 import { parseDob, normaliseMobile, personalYear, birthNumber } from './core.js';
 
 const METAL = ['gold', 'roseGold', 'silver', 'steel', 'twoTone', 'black'];
+const GOAL_LABEL = Object.fromEntries(Object.entries(WATCH_ATTRIBUTES.find(a => a.key === 'goal')?.options ?? {}));
 
 // The watch each personal year names (T03, approved), as conditions on case metal and dial colour.
 // parts: each part is one thing the source names; a watch that meets every part matches, some parts = partly.
@@ -45,7 +46,11 @@ export function watchReading(rulebook, input) {
   const dob = parseDob(input.dob, input.today ?? new Date());
   if (!dob.ok) errors.dob = dob.error;
   const watch = cleanWatch(input.watch);
-  if (!watch.dialColour && !watch.dialShape) errors.watch = 'Please pick at least the dial colour and shape.';
+  if (!watch.dialColour && !watch.dialShape) errors.watch = 'Please add a clear photo of your watch.';
+  // What they want to improve: one or more of the suggestions and/or their own words (needed: the advice and the
+  // consultation are built around it).
+  const goalText = String(input.goalText ?? '').replace(/[\u0000-\u001f<>]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
+  if (!watch.goal?.length && goalText.length < 3) errors.goal = 'Pick what you would like to improve, or type it.';
   const year = input.year;
   if (!Number.isInteger(year)) errors.year = 'year is required';
   if (Object.keys(errors).length) return { ok: false, errors };
@@ -71,7 +76,7 @@ export function watchReading(rulebook, input) {
     { id: 'year-watch', items: yearWatch },
     { id: 'bracelet', birthNumber: b, bracelet: bracelet ? { ...bracelet, url: BRACELET_SHOP } : null }
   ];
-  return { ok: true, segment: 'watch', input: { name, mobile: mob.value, dob: dob.value.iso, watch, year }, sections };
+  return { ok: true, segment: 'watch', input: { name, mobile: mob.value, dob: dob.value.iso, watch, goalText, year }, sections };
 }
 
 // Plain-text summary saved with the lead so Kamala can talk about this exact watch reading on WhatsApp.
@@ -80,6 +85,9 @@ export function watchSummary(result) {
   const s = Object.fromEntries(result.sections.map(x => [x.id, x]));
   const b = s.brain, out = [];
   out.push(`Wristwatch reading. Date of birth ${result.input.dob}. Birth number ${b.numbers.psychic.value}, destiny ${b.numbers.destiny.value}.`);
+  const goals = (result.input.watch.goal ?? []).map(g => GOAL_LABEL[g] ?? g);
+  if (result.input.goalText) goals.push(`"${result.input.goalText}" (their words)`);
+  if (goals.length) out.push(`Wants to improve: ${goals.join('; ')}.`);
   out.push(`Watch details given: ${b.watch.groups.map(g => `${g.label.replace(/\?$/, '')}: ${g.valueLabel}`).join('; ')}.`);
   for (const y of s['year-watch'].items) out.push(`Watch named for ${y.year} (personal year ${y.personalYear}): ${y.text} Their watch: ${y.match}.`);
   out.push('What their watch says (shown to them):');
@@ -91,7 +99,9 @@ export function watchSummary(result) {
 }
 
 // A short description of the watch for the lead's "concern" column (and its duplicate check).
+// Their own words for what to improve come first, so they are never cut off.
 export function watchConcern(result) {
   const w = result.input.watch;
-  return `Wristwatch: ${Object.entries(w).map(([k, v]) => `${k}=${Array.isArray(v) ? v.join('+') : v}`).join(', ')}`.slice(0, 300);
+  const wants = result.input.goalText ? ` wants="${result.input.goalText}";` : '';
+  return `Wristwatch:${wants} ${Object.entries(w).map(([k, v]) => `${k}=${Array.isArray(v) ? v.join('+') : v}`).join(', ')}`.slice(0, 500);
 }

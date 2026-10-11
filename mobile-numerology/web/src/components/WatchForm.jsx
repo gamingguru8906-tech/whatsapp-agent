@@ -46,8 +46,9 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
   const [strap, setStrap] = useState('');
   const [strapFromPhoto, setStrapFromPhoto] = useState(false);
   const [wrist, setWrist] = useState('');
-  const [goal, setGoal] = useState([]);          // optional: what they want to improve (for the advice and the follow-up)
-  const toggleGoal = k => setGoal(g => (g.includes(k) ? g.filter(x => x !== k) : [...g, k]));
+  const [goal, setGoal] = useState([]);          // what they want to improve: one or more suggestions and/or their own words
+  const [goalText, setGoalText] = useState('');
+  const toggleGoal = k => { setGoal(g => (g.includes(k) ? g.filter(x => x !== k) : [...g, k])); setLocal(l => ({ ...l, goal: undefined })); };
   const [photo, setPhoto] = useState({ state: 'idle', msg: '', preview: null });
   const [token, setToken] = useState('');
   const [reset, setReset] = useState(0);
@@ -96,6 +97,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
     else if (photo.state === 'error') miss.photo = 'Please add a clearer photo of your watch.';
     if (!strap) miss.strap = 'Choose your strap.';
     if (!wrist) miss.wrist = 'Choose your wrist.';
+    if (!goal.length && goalText.trim().length < 3) miss.goal = 'Pick what you would like to improve, or type it.';
     if (f.name.trim().length < 2) miss.name = 'Enter your name.';
     if (f.mobile.replace(/\D/g, '').length < 10) miss.mobile = 'Enter your 10-digit mobile number.';
     if (!iso) miss.dob = 'Choose your day, month and year of birth.';
@@ -103,7 +105,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
     if (!f.consent) miss.consent = 'Tick this box so we can show your reading.';
     setLocal(miss);
     if (Object.keys(miss).length) {
-      const id = { photo: 'w-photo', strap: 'w-strap', wrist: 'w-wrist' }[Object.keys(miss)[0]] ?? `f-${Object.keys(miss)[0]}`;
+      const id = { photo: 'w-photo', strap: 'w-strap', wrist: 'w-wrist', goal: 'w-goal' }[Object.keys(miss)[0]] ?? `f-${Object.keys(miss)[0]}`;
       document.getElementById(id)?.focus();
       document.getElementById(id)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
       return;
@@ -116,7 +118,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
       if (!r.ok) return;
       const { strapMaterial, ...rest } = r.watch; watch = rest;
     }
-    const ok = await onSubmit({ ...f, dob: iso, watch: { ...watch, strapMaterial: strap, wrist, ...(goal.length ? { goal } : {}) }, turnstileToken: token });
+    const ok = await onSubmit({ ...f, dob: iso, watch: { ...watch, strapMaterial: strap, wrist, ...(goal.length ? { goal } : {}) }, goalText: goalText.trim(), turnstileToken: token });
     if (!ok) setReset(r => r + 1);
   }
 
@@ -179,19 +181,25 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
         </div>
       </div>
 
-      <div>
-        <p className="mb-2 px-1 font-display text-[13px] font-medium text-muted-foreground">{ATTRS.goal.q} (optional)</p>
+      <div id="w-goal" tabIndex={-1}>
+        <p className="mb-2 px-1 font-display text-[15px] font-semibold text-maroon">{ATTRS.goal.q}</p>
         <div className="grid gap-2">
           {Object.entries(ATTRS.goal.options).map(([k, v]) => {
             const on = goal.includes(k);
             return (
               <button key={k} type="button" aria-pressed={on} onClick={() => toggleGoal(k)}
-                className={`min-h-[44px] rounded-[12px] border px-3 py-2 text-left text-[15px] leading-tight transition-colors ${on ? 'border-primary bg-primary-soft text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
+                className={`min-h-[44px] rounded-[12px] border px-3 py-2 text-left text-[15px] leading-tight transition-colors ${on ? 'border-primary bg-primary-soft text-maroon' : err.goal ? 'border-danger/60 bg-card text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
                 {v}
               </button>
             );
           })}
+          <div className={`rounded-[12px] border bg-card px-3 py-2 ${goalText.trim() ? 'border-primary' : err.goal ? 'border-danger/60' : 'border-primary/15'}`}>
+            <label htmlFor="f-goal" className="sr-only">Something else you would like to improve</label>
+            <input id="f-goal" className="field text-[15px]" maxLength={120} placeholder="Something else? Type it here"
+              value={goalText} onChange={e => { setGoalText(e.target.value); setLocal(l => ({ ...l, goal: undefined })); }} />
+          </div>
         </div>
+        {err.goal && <p className="error px-1">{err.goal}</p>}
       </div>
 
       <div className="group-card rows shadow-soft">

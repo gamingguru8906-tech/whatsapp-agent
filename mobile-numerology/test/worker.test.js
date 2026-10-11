@@ -248,7 +248,7 @@ test('the real connection path (DATABASE_URL, no deps.run): lead saved; a dead d
 
 
 test('wristwatch: /api/watch saves one lead with the watch summary, visitors get no sources, the route answers', { skip }, async () => {
-  const body = { name: 'Rahul Sharma', mobile: '9811045672', dob: '1988-10-29', consent: true,
+  const body = { name: 'Rahul Sharma', mobile: '9811045672', dob: '1988-10-29', consent: true, goalText: 'Confidence at work',
     watch: { dialColour: 'blue', dialShape: 'round', caseMetal: 'steel', strapMaterial: 'metal' } };
   const req = () => new Request('https://site.test/api/watch', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
   const res = await handleReading(req(), env, undefined, { run, fetchImpl: sheet.fetch, sleep: async () => {}, year: 2026, segment: 'watch' });

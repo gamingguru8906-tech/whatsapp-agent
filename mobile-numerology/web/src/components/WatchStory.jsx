@@ -34,13 +34,15 @@ function headline(a) {
   return 'Here is what your watch says about you.';
 }
 
-function Answer({ a, href, bracelet }) {
+function Answer({ a, href, bracelet, wants }) {
   const total = Math.max(1, a.strengths + a.care);
   const y = a.thisYear;
   const steps = [];
   if (y && y.match !== 'full') steps.push({ title: `Wear the watch for ${y.year}`, text: `For your personal year ${y.personalYear}: ${y.text.split('. ')[0].replace(/\.$/, '')}.` });
   if (bracelet) steps.push({ title: 'Wear your bracelet', text: `For birth number ${bracelet.birthNumber}: the ${bracelet.bracelet.name}.`, link: bracelet.bracelet });
-  steps.push({ title: 'Talk to us about your watch', text: 'In a consultation, we read your watch with your numbers and choose the right one for you. Your reading comes with you on WhatsApp.', wa: true });
+  steps.push({ title: 'Talk to us about your watch', text: wants
+    ? `In a consultation, we read your watch with your numbers and work on what you want to improve: "${wants}". Your reading comes with you on WhatsApp.`
+    : 'In a consultation, we read your watch with your numbers and choose the right one for you. Your reading comes with you on WhatsApp.', wa: true });
   return (
     <section id="r-answer" className="group-card scroll-mt-32 shadow-soft">
       <div className="border-t-[3px] border-t-primary px-5 pb-5 pt-6 sm:px-7 sm:pt-7">
@@ -158,7 +160,7 @@ export default function WatchStory({ result, config, onAgain, againLabel = 'Read
         <h2 className="t-title mt-1">{first}, here's your answer</h2>
         {owner && <p className="mt-3 rounded-[12px] bg-accent-soft px-4 py-2.5 text-[14px] text-warning-dark">Owner view: each line shows the rule and source it came from.</p>}
       </div>
-      <Answer a={by('watch-answer')} href={href} bracelet={by('bracelet')} />
+      <Answer a={by('watch-answer')} href={href} bracelet={by('bracelet')} wants={result.input.goalText} />
       {brain.watch && <WatchSays w={brain.watch} owner={owner} call={call('changing my watch')} />}
       <YearWatch s={by('year-watch')} owner={owner} call={call('choosing my watch for this year')} />
       <Numbers b={brain} owner={owner} />

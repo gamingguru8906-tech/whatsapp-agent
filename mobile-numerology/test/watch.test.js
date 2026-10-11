@@ -1,11 +1,11 @@
 // Wristwatch segment: the year-watch match, input checks, and random readings.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { watchReading, yearMatch, watchSummary } from '../engine/watch.js';
+import { watchConcern, watchReading, yearMatch, watchSummary } from '../engine/watch.js';
 import { rulebook } from '../engine/rulebook.js';
 import attrs from '../../brain/data/watch-attributes.json' with { type: 'json' };
 
-const base = { name: 'Rahul Sharma', mobile: '9811045672', dob: '1988-10-29', year: 2026 };
+const base = { name: 'Rahul Sharma', mobile: '9811045672', dob: '1988-10-29', year: 2026, goalText: 'More success at work' };
 
 test('the watch named for each personal year (T03) is matched exactly', () => {
   assert.equal(yearMatch({ caseMetal: 'steel', dialColour: 'blue' }, 4), 'full');
@@ -49,4 +49,16 @@ test('2,000 random watches: no errors, nothing undefined, counts add up', () => 
     assert.ok(a.strengths + a.care + a.mixed <= a.total);
     assert.ok(watchSummary(r).length <= 3800);
   }
+});
+
+test('"What would you like to improve?" is needed: a suggestion, their own words, or both; their words lead the concern', () => {
+  const w = { dialColour: 'blue', dialShape: 'round' };
+  const none = watchReading(rulebook, { ...base, goalText: '', watch: w });
+  assert.equal(none.ok, false);
+  assert.match(none.errors.goal, /improve/);
+  assert.equal(watchReading(rulebook, { ...base, goalText: '', watch: { ...w, goal: ['confidence'] } }).ok, true);
+  const own = watchReading(rulebook, { ...base, goalText: '  Peace <b>at</b> home ', watch: w });
+  assert.equal(own.input.goalText, 'Peace b at /b home');
+  assert.match(watchConcern(own), /^Wristwatch: wants="Peace b at \/b home"; dialShape=round, dialColour=blue$/);
+  assert.match(watchSummary(own), /Wants to improve: "Peace b at \/b home" \(their words\)\./);
 });

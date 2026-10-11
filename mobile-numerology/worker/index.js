@@ -61,7 +61,7 @@ export async function handleReading(request, env, ctx, deps = {}) {
   const seg = deps.segment ?? 'mobile';
   const year = deps.year ?? istYear();
   const result = seg === 'watch'
-    ? watchReading(rulebook, { name: body.name, mobile: body.mobile, dob: body.dob, watch: body.watch, year })
+    ? watchReading(rulebook, { name: body.name, mobile: body.mobile, dob: body.dob, watch: body.watch, goalText: body.goalText, year })
     : seg === 'wrist'
       ? wristRecommendation(rulebook, { name: body.name, mobile: body.mobile, dob: body.dob, wrist: body.wrist, year })
       : engine.reading({
