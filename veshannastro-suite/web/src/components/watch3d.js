@@ -44,14 +44,28 @@ function dialTexture(maxAniso) {
     g.lineTo(S / 2 + Math.cos(a) * S * 0.475, S / 2 + Math.sin(a) * S * 0.475);
     g.stroke();
   }
-  // brand under 12
-  g.fillStyle = 'rgba(232,236,242,0.95)';
-  g.textAlign = 'center';
-  g.font = '600 40px "League Spartan", "Helvetica Neue", Arial, sans-serif';
-  if ('letterSpacing' in g) g.letterSpacing = '6px';
-  g.fillText('VESHANNASTRO', S / 2, S * 0.33);
+  // the monogram under 12: a high-contrast V (thick left stroke, hairline right, fine serifs), as a jeweller
+  // would engrave it, in polished silver, under the brand's pink dot
+  const cx = S / 2, y0 = S * 0.282, h = 90, k = 1.2;
+  const silver = g.createLinearGradient(0, y0, 0, y0 + h);
+  silver.addColorStop(0, '#FFFFFF'); silver.addColorStop(0.55, '#DCE3EE'); silver.addColorStop(1, '#AEB9CB');
+  g.fillStyle = silver;
+  g.shadowColor = 'rgba(4, 14, 40, 0.55)'; g.shadowBlur = 4; g.shadowOffsetY = 2;
+  g.beginPath();
+  g.moveTo(cx - 31 * k, y0);            // thick stroke, outer top
+  g.lineTo(cx - 14 * k, y0);            // thick stroke, inner top
+  g.lineTo(cx + 4 * k, y0 + h * 0.74);  // where the two strokes meet inside
+  g.lineTo(cx + 26 * k, y0);            // hairline, inner top
+  g.lineTo(cx + 31 * k, y0);            // hairline, outer top
+  g.lineTo(cx + 4 * k, y0 + h);         // the point
+  g.lineTo(cx - 2 * k, y0 + h);
+  g.closePath();
+  g.fill();
+  g.fillRect(cx - 40 * k, y0, 35 * k, 3.5);   // serifs
+  g.fillRect(cx + 19 * k, y0, 21 * k, 2.5);
+  g.shadowColor = 'transparent'; g.shadowBlur = 0; g.shadowOffsetY = 0;
   g.fillStyle = PINK;
-  g.beginPath(); g.arc(S / 2, S * 0.255, 7, 0, TAU); g.fill();
+  g.beginPath(); g.arc(cx, S * 0.25, 7, 0, TAU); g.fill();
   const t = new CanvasTexture(c);
   t.colorSpace = SRGBColorSpace;
   t.anisotropy = Math.min(8, maxAniso);

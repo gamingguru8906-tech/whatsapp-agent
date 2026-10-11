@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-// "Your first watch reading is ₹675 FREE": when the line comes into view, a fine gold stroke cuts through the price,
+// "Your first watch reading is ₹6,750 FREE": when the line comes into view, a fine gold stroke cuts through the price,
 // the price fades back, and FREE settles in gold capitals with one slow shimmer. Plays once.
-export default function PriceCut({ was = '₹675', className = '' }) {
+export default function PriceCut({ was = '₹6,750', className = '' }) {
   const ref = useRef(null);
   const [play, setPlay] = useState(false);
 
