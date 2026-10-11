@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import Watch3D from './components/Watch3D.jsx';
 import { Lockup } from './components/Brand.jsx';
+import PriceCut from './components/PriceCut.jsx';
 
 // Veshannastro front page. The watch reading opens later; until then its button asks to be told on WhatsApp, and
 // the mobile-number reading (live) is one tap away. "(Ref: ...)" tags the lead's source in Kamala's CRM.
@@ -96,7 +97,7 @@ export default function App() {
           <div className="mx-auto max-w-5xl px-5 py-14 sm:py-20">
             <p className="text-[17px] text-muted-foreground">A personal watch and numerology consultation often costs</p>
             <p className="mt-2 font-display text-[2.25rem] font-bold leading-[1.05] tracking-[-0.02em] text-maroon sm:text-[4rem]">₹50,000 to ₹1,00,000</p>
-            <p className="mt-3 font-display text-[1.375rem] font-semibold leading-snug sm:text-[1.625rem]">Your first watch reading is free.</p>
+            <PriceCut className="mt-3 font-display text-[1.375rem] font-semibold leading-snug sm:text-[1.625rem]" />
 
             <div className="mt-10 grid gap-10 sm:grid-cols-2 sm:gap-12">
               <div>
