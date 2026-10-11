@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import Turnstile from './Turnstile.jsx';
 import { Tick, Collapse } from './ui.jsx';
+import { scrollToEl } from '../motion.js';
 
 const CHIPS = ['Money is not staying with me', 'Career growth / job', 'Business not working', 'Marriage delay', 'Relationship problems', 'Debt and loans', 'Health worries', 'Stress and anxiety'];
 export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -62,7 +63,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
     const open = () => {
       setPlanning(true);
       setTimeout(() => {
-        document.getElementById('f-planning')?.closest('.group-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        scrollToEl(document.getElementById('f-planning')?.closest('.group-card'), { block: 'center' });
         document.getElementById('f-planned-0')?.focus({ preventScroll: true });
       }, 60);
     };

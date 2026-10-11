@@ -11,6 +11,7 @@ import Watch3D from './components/Watch3D.jsx';
 import MyReadings from './components/MyReadings.jsx';
 import { UserRound } from 'lucide-react';
 import { Lockup } from './components/Brand.jsx';
+import { startSmoothScroll, startReveal, scrollToEl } from './motion.js';
 
 // Two segments on one site: Mobile Numerology at /, Wristwatch Numerology at /watch (with "Which watch should I wear
 // this year?" at /watch/year); "My readings" at /my.
@@ -50,6 +51,10 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => { getConfig().then(setConfig); }, []);
+  // A new reading: glide to it once it is on the page.
+  useEffect(() => { if (result) requestAnimationFrame(() => scrollToEl(storyRef.current)); }, [result]);
+  // Smooth wheel scrolling, and blocks that rise into place as they come into view.
+  useEffect(() => { startSmoothScroll(); return startReveal(document.getElementById('root')); }, []);
 
   // In-page navigation between the four pages; the browser's back button works as usual.
   useEffect(() => {
@@ -57,7 +62,7 @@ export default function App() {
       const next = href.replace(/\/+$/, '') || '/';
       setResult(null); setStatus('idle'); setErrors({});
       setPath(next);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      scrollToEl(0, { immediate: true });
     };
     const onClick = e => {
       const a = e.target.closest?.('a[href]');
@@ -67,7 +72,7 @@ export default function App() {
       const target = url.pathname.replace(/\/+$/, '') || '/';
       if (url.origin !== location.origin || !ROUTES.includes(target) || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
       e.preventDefault();
-      if (target === (location.pathname.replace(/\/+$/, '') || '/')) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+      if (target === (location.pathname.replace(/\/+$/, '') || '/')) { scrollToEl(0); return; }
       history.pushState({}, '', target + url.search);
       go(target);
     };
@@ -102,14 +107,13 @@ export default function App() {
     setResult(data);
     setStatus('done');
     track(SEGMENT, 'result_shown', { leadKey: data.leadKey });
-    requestAnimationFrame(() => storyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     return true;
   }
 
   function again() {
     setResult(null);
     setStatus('idle');
-    requestAnimationFrame(() => document.getElementById('reading-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    requestAnimationFrame(() => scrollToEl(document.getElementById('reading-form')));
   }
 
   return (
@@ -190,7 +194,7 @@ export default function App() {
         </div>
 
         {result && (
-          <section ref={storyRef} key={result.leadRef ?? 'r'} className="mx-auto max-w-[44rem] scroll-mt-24 px-5 pb-14 pt-4 animate-reveal">
+          <section ref={storyRef} key={result.leadRef ?? 'r'} className="mx-auto max-w-[44rem] scroll-mt-24 px-5 pb-14 pt-4">
             {SEGMENT === 'wrist' ? <WristResult result={result} config={config} onAgain={again} saved={!config.preview} />
               : SEGMENT === 'watch' ? <WatchStory result={result} config={config} onAgain={again} saved={!config.preview} />
                 : <Story result={result} config={config} onAgain={again} saved={!config.preview} />}

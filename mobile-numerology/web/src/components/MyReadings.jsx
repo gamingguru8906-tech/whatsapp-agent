@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ChevronRight, LogOut, Smartphone, Watch as WatchIcon } from 'lucide-react';
 import { startLogin, loginStatus, signOut, getMyReadings, openMyReading } from '../api.js';
 import { WaIcon } from './ui.jsx';
+import { scrollToEl } from '../motion.js';
 import Story from './Story.jsx';
 import WatchStory from './WatchStory.jsx';
 import WristResult from './WristResult.jsx';
@@ -130,10 +131,10 @@ export default function MyReadings({ config }) {
     setBusy(false);
     if (!res.ok) { setErr(res.error || 'That reading could not be opened.'); return; }
     setOpen(res);
-    requestAnimationFrame(() => top.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    requestAnimationFrame(() => scrollToEl(top.current));
   }
   async function onSignOut() { await signOut(); setList(null); setOpen(null); setWho({ state: 'signed-out' }); }
-  const back = () => { setOpen(null); requestAnimationFrame(() => top.current?.scrollIntoView({ block: 'start' })); };
+  const back = () => { setOpen(null); requestAnimationFrame(() => scrollToEl(top.current, { immediate: true })); };
 
   return (
     <section ref={top} className="mx-auto max-w-5xl scroll-mt-20 px-5 pb-16 pt-8 sm:pt-12">

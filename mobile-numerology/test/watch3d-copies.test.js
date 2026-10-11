@@ -10,3 +10,9 @@ for (const f of ['watch3d.js', 'Watch3D.jsx', 'watch3d-poster.webp', 'Brand.jsx'
     assert.ok(a.equals(b), `${f} differs: copy mobile-numerology/web/src/components/${f} to veshannastro-suite`);
   });
 }
+
+test('motion.js is the same in mobile-numerology and veshannastro-suite', () => {
+  const a = readFileSync(new URL('../web/src/motion.js', import.meta.url));
+  const b = readFileSync(new URL('../../veshannastro-suite/web/src/motion.js', import.meta.url));
+  assert.ok(a.equals(b), 'copy mobile-numerology/web/src/motion.js to veshannastro-suite');
+});

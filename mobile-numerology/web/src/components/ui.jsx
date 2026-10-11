@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import VedicGrid from './VedicGrid.jsx';
+import { scrollToEl } from '../motion.js';
 export const fmt = m => `${m.slice(0, 5)} ${m.slice(5)}`;
 export const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 export const dot = p => ({ positive: 'dot-good', negative: 'dot-care', mixed: 'dot-mixed' }[p] || 'dot-neutral');
 
 export function jump(id) {
-  document.getElementById(`r-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  scrollToEl(document.getElementById(`r-${id}`));
 }
 
 // A chapter: icon and title above, content in grouped cards below (iOS inset grouped style).

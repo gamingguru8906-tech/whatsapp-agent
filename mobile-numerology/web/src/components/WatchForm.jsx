@@ -4,6 +4,7 @@ import { MONTHS, YEARS, dobFrom, Picker } from './ReadingForm.jsx';
 import Turnstile from './Turnstile.jsx';
 import { readPhoto, shrinkPhoto, track } from '../api.js';
 import { Segmented, Pills, CheckList, Tick } from './ui.jsx';
+import { scrollToEl } from '../motion.js';
 import attributes from '../../../../brain/data/watch-attributes.json';
 
 // Wristwatch segment: one photo of the watch (read at once, never kept) and two questions the photo cannot answer
@@ -95,7 +96,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
     if (Object.keys(miss).length) {
       const id = { photo: 'w-photo', strap: 'w-strap', wrist: 'w-wrist', goal: 'w-goal' }[Object.keys(miss)[0]] ?? `f-${Object.keys(miss)[0]}`;
       document.getElementById(id)?.focus();
-      document.getElementById(id)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      scrollToEl(document.getElementById(id), { block: 'center' });
       return;
     }
     track('watch', 'form_sent');
