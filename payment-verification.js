@@ -38,8 +38,17 @@ function inspectPaymentLink(paymentLink) {
 function isPaymentClaim(message, previousAssistantAskedForPayment) {
   const text = String(message || '').trim();
   const explicit = /\b(?:i\s*(?:have\s*|['’]ve\s*)?paid|(?:i\s*(?:(?:have|['’]ve)\s*)?)?done\s+(?:the\s+)?payment|payment\s*(?:is\s*)?(?:done|complete(?:d)?|success(?:ful)?|sent|made)|transaction\s*(?:is\s*)?(?:done|complete(?:d)?|success(?:ful)?)|paid\s*(?:it|successfully|already)|payment\s+(?:kar\s+diya|ho\s+gaya)|paise\s+(?:bhej\s+diye|transfer\s+kar\s+diye))\b/i.test(text);
-  const shortClaim = /^(?:paid|done|payment done|payment complete|yes paid)[.! ]*$/i.test(text);
-  return explicit || (Boolean(previousAssistantAskedForPayment) && shortClaim);
+  // Hinglish as people actually type it: "krdiya payment", "payment kr diya", "pay kar diya", "payment ho gya",
+  // "paid kr diya", "paise bhej diye". A question ("payment kaise karu?", "kya payment ho gaya?") is not a claim.
+  const isQuestion = /\?\s*$|^\s*(?:kya|kaise|kab|kaha|kahan|how|when|where|can|should|do i|did)\b/i.test(text);
+  const hinglish = !isQuestion && (
+    /\b(?:payment|pay|paisa|paise|amount|fees?|transfer|upi)\s*(?:bhi\s*)?(?:kar|kr)\s*(?:di(?:ya|a|ye)|dia)\b/i.test(text)
+    || /\b(?:kar|kr)\s*(?:di(?:ya|a)|dia)\s*(?:hai\s*)?(?:payment|pay|paise|paisa)\b/i.test(text)
+    || /\b(?:payment|pay)\s*(?:bhi\s*)?(?:ho\s*)?(?:gaya|gya|gyi|gayi|hogaya|hogya)\b/i.test(text)
+    || /\bpaid\s*(?:kar|kr)\s*(?:di(?:ya|a)|dia)\b/i.test(text)
+    || /\b(?:paise|paisa|amount|payment)\s*(?:bhej|send\s*kar|send\s*kr)\s*(?:di(?:ya|a|ye)|dia)\b/i.test(text));
+  const shortClaim = /^(?:paid|done|payment done|payment complete|yes paid|ho gaya|ho gya|kar diya|kr diya|krdiya|kardiya)[.! ]*$/i.test(text);
+  return explicit || hinglish || (Boolean(previousAssistantAskedForPayment) && shortClaim);
 }
 
 async function verifyPaymentLink(razorpayClient, paymentLinkId) {
