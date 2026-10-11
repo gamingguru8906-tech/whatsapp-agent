@@ -46,6 +46,8 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
   const [strap, setStrap] = useState('');
   const [strapFromPhoto, setStrapFromPhoto] = useState(false);
   const [wrist, setWrist] = useState('');
+  const [goal, setGoal] = useState([]);          // optional: what they want to improve (for the advice and the follow-up)
+  const toggleGoal = k => setGoal(g => (g.includes(k) ? g.filter(x => x !== k) : [...g, k]));
   const [photo, setPhoto] = useState({ state: 'idle', msg: '', preview: null });
   const [token, setToken] = useState('');
   const [reset, setReset] = useState(0);
@@ -114,7 +116,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
       if (!r.ok) return;
       const { strapMaterial, ...rest } = r.watch; watch = rest;
     }
-    const ok = await onSubmit({ ...f, dob: iso, watch: { ...watch, strapMaterial: strap, wrist }, turnstileToken: token });
+    const ok = await onSubmit({ ...f, dob: iso, watch: { ...watch, strapMaterial: strap, wrist, ...(goal.length ? { goal } : {}) }, turnstileToken: token });
     if (!ok) setReset(r => r + 1);
   }
 
@@ -174,6 +176,21 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
             <Chips label="Wrist" value={wrist} onPick={setWrist} options={Object.entries(ATTRS.wrist.options)} />
           </div>
           {err.wrist && <p className="error">{err.wrist}</p>}
+        </div>
+      </div>
+
+      <div>
+        <p className="mb-2 px-1 font-display text-[13px] font-medium text-muted-foreground">{ATTRS.goal.q} (optional)</p>
+        <div className="grid gap-2">
+          {Object.entries(ATTRS.goal.options).map(([k, v]) => {
+            const on = goal.includes(k);
+            return (
+              <button key={k} type="button" aria-pressed={on} onClick={() => toggleGoal(k)}
+                className={`min-h-[44px] rounded-[12px] border px-3 py-2 text-left text-[15px] leading-tight transition-colors ${on ? 'border-primary bg-primary-soft text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
+                {v}
+              </button>
+            );
+          })}
         </div>
       </div>
 
