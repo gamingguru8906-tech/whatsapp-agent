@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import Watch3D from './components/Watch3D.jsx';
 import { Lockup } from './components/Brand.jsx';
@@ -59,29 +59,22 @@ function Reading({ r }) {
 
 export default function App() {
   const year = new Date().getFullYear();
-  // The header wears the night colour over the hero and turns to frosted paper once the hero has scrolled away.
-  const [night, setNight] = useState(true);
-  useEffect(() => {
-    const on = () => { const h = document.getElementById('watch'); setNight(h ? h.getBoundingClientRect().bottom > 72 : false); };
-    window.addEventListener('scroll', on, { passive: true }); on();
-    return () => window.removeEventListener('scroll', on);
-  }, []);
   return (
     <div className="min-h-screen">
-      <header className={`sticky top-0 z-20 transition-colors duration-300 ${night ? 'header-night' : 'material border-b border-border/60'}`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <header className={`sticky top-0 z-20 transition-colors duration-300 material border-b border-border/60`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3">
-          <Lockup dark={night} />
-          <nav aria-label="Page" className={`hidden items-center gap-7 text-[15px] font-medium sm:flex ${night ? 'text-white/75' : 'text-muted-foreground'}`}>
-            <a href="#how" className={night ? 'hover:text-white' : 'hover:text-maroon'}>How it works</a>
-            <a href="#readings" className={night ? 'hover:text-white' : 'hover:text-maroon'}>Readings</a>
-            <a href={CONSULT} target="_blank" rel="noopener noreferrer" className={night ? 'hover:text-white' : 'hover:text-maroon'}>Consult</a>
+          <Lockup />
+          <nav aria-label="Page" className={`hidden items-center gap-7 text-[15px] font-medium sm:flex text-muted-foreground`}>
+            <a href="#how" className="hover:text-maroon">How it works</a>
+            <a href="#readings" className="hover:text-maroon">Readings</a>
+            <a href={CONSULT} target="_blank" rel="noopener noreferrer" className="hover:text-maroon">Consult</a>
           </nav>
         </div>
       </header>
 
       <main>
         {/* Hero: the watch reading */}
-        <div id="watch" className="hero-night">
+        <div id="watch" className="hero-day">
         <section className="mx-auto grid max-w-5xl items-center gap-8 px-5 pb-16 pt-10 sm:pt-16 lg:grid-cols-[minmax(0,1fr)_440px] lg:gap-12 lg:pb-20">
           <div className="min-w-0">
             <h1 className="enter t-large max-w-[12ch]">What does your watch say about you?</h1>
@@ -91,10 +84,10 @@ export default function App() {
             </p>
             <div className="enter enter-3 mt-8 flex flex-col gap-3 sm:flex-row">
               <a href={WATCH} className="btn-primary">Read my watch</a>
-              <a href={YEAR_WATCH} className="btn bg-white/10 text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.22)] backdrop-blur hover:bg-white/15">Which watch should I wear in {year}?</a>
+              <a href={YEAR_WATCH} className="btn-plain">Which watch should I wear in {year}?</a>
             </div>
           </div>
-          <Watch3D dark className="mx-auto w-full max-w-[440px]" />
+          <Watch3D className="mx-auto w-full max-w-[440px]" />
         </section>
         </div>
 

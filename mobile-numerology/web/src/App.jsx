@@ -48,8 +48,6 @@ export default function App() {
   const seg = useRef(SEGMENT);
   seg.current = SEGMENT;
   const [scrolled, setScrolled] = useState(false);
-  const [pastHero, setPastHero] = useState(false);
-  const night = SEGMENT !== 'my' && !pastHero;
 
   useEffect(() => { getConfig().then(setConfig); }, []);
 
@@ -57,7 +55,7 @@ export default function App() {
   useEffect(() => {
     const go = href => {
       const next = href.replace(/\/+$/, '') || '/';
-      setResult(null); setStatus('idle'); setErrors({}); setPastHero(false);
+      setResult(null); setStatus('idle'); setErrors({});
       setPath(next);
       window.scrollTo({ top: 0, behavior: 'instant' });
     };
@@ -74,11 +72,7 @@ export default function App() {
       go(target);
     };
     const onPop = () => go(location.pathname);
-    const onScroll = () => {
-      setScrolled(window.scrollY > 4);
-      const hero = document.querySelector('.hero-night');
-      setPastHero(hero ? hero.getBoundingClientRect().bottom < 72 : true);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 4);
     document.addEventListener('click', onClick);
     window.addEventListener('popstate', onPop);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -120,20 +114,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className={`sticky top-0 z-20 ${night ? 'header-night' : `material ${scrolled ? 'scrolled' : ''}`}`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <header className={`sticky top-0 z-20 material ${scrolled ? 'scrolled' : ''}`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2.5 px-5 py-3">
-          <Lockup dark={night} />
-          <nav aria-label="Readings" className={`relative order-3 grid w-full grid-cols-2 rounded-full p-[3px] text-[14px] font-semibold tracking-[-0.01em] transition-colors duration-300 sm:order-2 sm:w-[264px] ${night ? 'bg-white/10' : 'bg-border/50'}`}>
+          <Lockup />
+          <nav aria-label="Readings" className={`relative order-3 grid w-full grid-cols-2 rounded-full p-[3px] text-[14px] font-semibold tracking-[-0.01em] transition-colors duration-300 sm:order-2 sm:w-[264px] bg-border/50`}>
             <span aria-hidden="true"
               className={`absolute bottom-[3px] left-[3px] top-[3px] w-[calc(50%-3px)] rounded-full bg-card shadow-[0_3px_8px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.06)] transition-[transform,opacity] duration-[420ms] ease-ios ${TAB === 'my' ? 'opacity-0' : 'opacity-100'}`}
               style={{ transform: `translateX(${TAB === 'watch' ? '100%' : '0'})` }} />
             {[['mobile', '/', 'Mobile number'], ['watch', '/watch', 'Wristwatch']].map(([k, href, label]) => (
               <a key={k} href={href} aria-current={TAB === k ? 'page' : undefined}
-                className={`relative z-[1] rounded-full px-3.5 py-1.5 text-center no-underline transition-colors duration-300 ${TAB === k ? 'text-maroon' : night ? 'text-white/70 hover:text-white' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
+                className={`relative z-[1] rounded-full px-3.5 py-1.5 text-center no-underline transition-colors duration-300 ${TAB === k ? 'text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
             ))}
           </nav>
           <a href="/my" aria-current={SEGMENT === 'my' ? 'page' : undefined}
-            className={`pressable order-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:order-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : night ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-maroon'}`}>
+            className={`pressable order-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:order-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
             <UserRound size={17} aria-hidden="true" />My readings
           </a>
         </div>
@@ -147,7 +141,7 @@ export default function App() {
       <main>
         <div key={SEGMENT} className="animate-swap">
         {SEGMENT === 'my' ? <MyReadings config={config} /> : <>
-        <div className="hero-night">
+        <div className="hero-day">
         <section className="mx-auto grid max-w-5xl gap-8 px-5 pb-10 pt-8 sm:pt-14 lg:grid-cols-[1fr_minmax(0,460px)] lg:items-start lg:gap-14 lg:pb-16">
           {SEGMENT === 'wrist' ? (
             <div className="min-w-0 lg:sticky lg:top-28">
@@ -157,7 +151,7 @@ export default function App() {
                 strap and finish. Get your answer in under a minute.
               </p>
               {/* On phones the photo step comes first, right under the question. */}
-              <Watch3D dark className="mt-4 hidden w-full max-w-[420px] lg:block" />
+              <Watch3D className="mt-4 hidden w-full max-w-[420px] lg:block" />
             </div>
           ) : SEGMENT === 'watch' ? (
             <div className="min-w-0 lg:sticky lg:top-28">
@@ -167,7 +161,7 @@ export default function App() {
                 Add one photo of your watch and see what it says about you, whether it suits your year, and your numbers.
               </p>
               <a href="/watch/year" className="hero-link mt-5 block font-display text-[16px] font-semibold">Not sure which watch to wear this year? <span className="whitespace-nowrap">Find yours ›</span></a>
-              <Watch3D dark className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
+              <Watch3D className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
             </div>
           ) : (
           <div className="min-w-0 lg:sticky lg:top-28">
