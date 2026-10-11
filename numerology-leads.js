@@ -240,10 +240,45 @@ ${own ? '- Never ask again for their name, date of birth, mobile number or conce
 
 // Sign in on the numerology website ("My readings"). The page shows a 6-digit code and a WhatsApp button that sends
 // "LOGIN 123456" here. The code is marked as sent from this WhatsApp number, which signs the page in; the website
-// owns the numerology_logins table (mobile-numerology/db/schema.js). Only the exact message is taken, so a
-// birth date or a number in a normal chat is never mistaken for a code.
-const LOGIN_RE = /^\s*login\s*[:#-]?\s*(\d{6})\s*\.?\s*$/i;
-const extractLoginCode = text => (String(text || '').match(LOGIN_RE) || [])[1] || null;
+// owns the numerology_logins table (mobile-numerology/db/schema.js).
+// People do not always send the button's message as it is: they type the code, add words, split it "123 456",
+// use Hindi digits, or WhatsApp adds invisible marks. So there are two kinds of match:
+//   - sure:  the message is the sign-in message ("LOGIN 123456", "login code: 123-456", "sign in 123456").
+//            Always answered as a sign-in, even if the code is wrong or old.
+//   - maybe: a short message that is only a 6-digit number, or mentions a code/OTP/login with one 6-digit number.
+//            Answered as a sign-in only when that code is waiting on the website; otherwise the message goes to
+//            Kamala as usual, so a PIN code, a date or an amount in a normal chat is never taken for a code.
+
+// Hindi (Devanagari) digits to 0-9, and the invisible marks WhatsApp and keyboards add, removed.
+const cleanForCode = text => String(text || '')
+  .replace(/[\u0966-\u096F]/g, d => String(d.charCodeAt(0) - 0x0966))
+  .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2064\uFEFF]/g, '')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+const SIX = '(\\d{3})[ .-]?(\\d{3})'; // "123456", "123 456", "123-456"
+const LOGIN_RE = new RegExp(`^(?:log ?-?in|sign ?-?in)(?: ?(?:code|otp))? ?[:#-]? ?${SIX} ?[.!]?$`, 'i');
+const ONLY_CODE_RE = new RegExp(`^${SIX}$`);
+const CODE_WORDS = /\b(log ?-?in|sign ?-?in|code|otp|verify|verification|my readings)\b/i;
+const NOT_A_CODE = /\b(pin ?code|pincode|postal|zip|amount|rs\.?|rupees?|₹|phone|mobile|number is|born|dob|date of birth|time of birth)\b/i;
+
+/** { code, sure } for a message that looks like a website sign-in code, or null. */
+function loginCandidate(text) {
+  const t = cleanForCode(text);
+  if (!t || t.length > 80) return null;
+  let m = t.match(LOGIN_RE);
+  if (m) return { code: m[1] + m[2], sure: true };
+  m = t.match(ONLY_CODE_RE);
+  if (m) return { code: m[1] + m[2], sure: false };
+  if (CODE_WORDS.test(t) && !NOT_A_CODE.test(t)) {
+    const all = [...t.matchAll(new RegExp(`(?<!\\d)${SIX}(?!\\d)`, 'g'))];
+    if (all.length === 1) return { code: all[0][1] + all[0][2], sure: false };
+  }
+  return null;
+}
+
+// Kept for older callers: the code only when the message is surely a sign-in message.
+const extractLoginCode = text => { const c = loginCandidate(text); return c && c.sure ? c.code : null; };
 
 const LOGIN_REPLY = {
   ok: '✅ You are signed in on the Veshannastro website. Go back to the page: your readings will appear there in a moment.',
@@ -266,7 +301,7 @@ async function verifyLogin(pool, phone, code) {
 }
 
 module.exports = {
-  extractLoginCode, verifyLogin, LOGIN_REPLY,
+  extractLoginCode, loginCandidate, verifyLogin, LOGIN_REPLY,
   report, parseArgs, formatLead, formatDob, pack, HELP, NO_TABLE, MESSAGE_LIMIT,
   extractReadingId, migrate, rememberReading, findForPerson, fillProfile, promptContext, localMobile
 };

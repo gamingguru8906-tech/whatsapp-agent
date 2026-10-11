@@ -6,7 +6,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { Pool } = require('pg');
 const { report, parseArgs, formatDob, pack, NO_TABLE, MESSAGE_LIMIT,
-  extractReadingId, migrate, rememberReading, findForPerson, fillProfile, promptContext, extractLoginCode, verifyLogin } = require('./numerology-leads');
+  extractReadingId, migrate, rememberReading, findForPerson, fillProfile, promptContext, extractLoginCode, loginCandidate, verifyLogin } = require('./numerology-leads');
 
 const DB = process.env.TEST_DATABASE_URL;
 const skip = DB ? false : 'set TEST_DATABASE_URL to run the database tests';
@@ -217,6 +217,25 @@ test('website sign-in: only an exact "LOGIN 123456" message is a code', () => {
   assert.equal(extractLoginCode('my dob is 291088 login 482915 please'), null);
   assert.equal(extractLoginCode('482915'), null);
   assert.equal(extractLoginCode('LOGIN 48291'), null);
+});
+
+test('sign-in codes typed by hand are recognised; ordinary numbers are not', () => {
+  const sure = t => { const c = loginCandidate(t); return c && c.sure ? c.code : null; };
+  const maybe = t => { const c = loginCandidate(t); return c && !c.sure ? c.code : null; };
+  assert.equal(sure('Login 482 915'), '482915');
+  assert.equal(sure('sign in 482-915'), '482915');
+  assert.equal(sure('LOGIN code: 482915!'), '482915');
+  assert.equal(sure('LOGIN\u200e 482915'), '482915');           // invisible mark from WhatsApp
+  assert.equal(sure('LOGIN \u096a\u096e\u0968\u096f\u0967\u096b'), '482915'); // Hindi digits
+  assert.equal(maybe('482915'), '482915');
+  assert.equal(maybe(' 482 915 '), '482915');
+  assert.equal(maybe('my code is 482915'), '482915');
+  assert.equal(maybe('here is the OTP 482915 for my readings'), '482915');
+  for (const t of ['pin code 452001', '452001 is my pincode', 'my dob is 291088 login 482915 please', 'LOGIN 48291',
+    'amount 482915 code', 'login 482915 and 123456', 'my number is 9811045672 code', 'hello', '',
+    'a very long message that mentions a code 482915 somewhere in the middle of a long story about my life']) {
+    assert.equal(loginCandidate(t), null, t);
+  }
 });
 
 test('website sign-in: the code is marked as sent from this number once, within 15 minutes', { skip }, async () => {

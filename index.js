@@ -1818,13 +1818,17 @@ async function handleInboundMessage(msg) {
       : msg.type === 'button' ? String(msg.button?.text || '').trim()
       : msg.type === 'interactive' ? String(msg.interactive?.button_reply?.title || msg.interactive?.list_reply?.title || '').trim() : '';
 
-    // "LOGIN 123456" from the numerology website's sign-in button: sign that page in and stop here (no AI reply,
-    // nothing saved to the chat history).
-    const loginCode = msg.type === 'text' ? numerologyLeads.extractLoginCode(inboundText) : null;
-    if (loginCode) {
-      const outcome = await numerologyLeads.verifyLogin(pool, from, loginCode);
-      await sendTextMessage(from, numerologyLeads.LOGIN_REPLY[outcome]);
-      return;
+    // A sign-in code from the numerology website ("LOGIN 123456" from its button, or the code typed by hand):
+    // sign that page in and stop here (no AI reply, nothing saved to the chat history). A message that only might
+    // be a code (just "123456", "my code is 123456") counts only when that code is waiting on the website;
+    // otherwise it carries on to Kamala as a normal message.
+    const loginTry = (msg.type === 'text' || msg.type === 'button') ? numerologyLeads.loginCandidate(inboundText) : null;
+    if (loginTry) {
+      const outcome = await numerologyLeads.verifyLogin(pool, from, loginTry.code);
+      if (loginTry.sure || outcome === 'ok') {
+        await sendTextMessage(from, numerologyLeads.LOGIN_REPLY[outcome]);
+        return;
+      }
     }
 
     // Bring back the saved conversation after a restart (Render sleeps when idle), before anything reads it.
