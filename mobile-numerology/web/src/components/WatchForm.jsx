@@ -3,6 +3,7 @@ import { Camera, Check } from 'lucide-react';
 import { MONTHS, YEARS, dobFrom, Picker } from './ReadingForm.jsx';
 import Turnstile from './Turnstile.jsx';
 import { readPhoto, shrinkPhoto, track } from '../api.js';
+import { Segmented, Pills, CheckList, Tick } from './ui.jsx';
 import attributes from '../../../../brain/data/watch-attributes.json';
 
 // Wristwatch segment: one photo of the watch (read at once, never kept) and two questions the photo cannot answer
@@ -24,19 +25,6 @@ function seenLine(watch) {
     if (k === 'hands') return a.options[v];
     return a.options[v];
   });
-}
-
-function Chips({ options, value, onPick, label }) {
-  return (
-    <div role="radiogroup" aria-label={label} className="mt-1.5 flex flex-wrap gap-2">
-      {options.map(([k, l]) => (
-        <button key={k} type="button" role="radio" aria-checked={value === k} onClick={() => onPick(k)}
-          className={`min-h-[44px] rounded-full border px-4 text-[15px] font-medium transition-colors ${value === k ? 'border-primary bg-primary-soft text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
-          {l}
-        </button>
-      ))}
-    </div>
-  );
 }
 
 export default function WatchForm({ config, status, errors, onSubmit }) {
@@ -149,7 +137,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
         </div>
         {lines.length > 0 && (
           <ul className="row flex flex-wrap gap-x-4 gap-y-1.5" aria-label="What we see in your photo">
-            {lines.map(l => <li key={l} className="flex items-center gap-1.5 text-[15px] text-foreground/85"><Check size={15} className="shrink-0 text-success-dark" aria-hidden="true" />{l}</li>)}
+            {lines.map(l => <li key={l} className="flex items-center gap-1.5 font-ui text-[15px] tracking-[-0.01em] text-foreground/85"><Check size={15} className="shrink-0 text-success-dark" aria-hidden="true" />{l}</li>)}
           </ul>
         )}
         {(photo.msg || err.photo) && <p role="status" className="row text-[15px] text-danger-dark">{photo.msg || err.photo}</p>}
@@ -159,13 +147,11 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
             <p className="field-label" id="w-strap-label">Strap</p>
             {strapFromPhoto && <span className="chip mb-1 shrink-0 bg-accent-soft text-warning-dark">From photo · check</span>}
           </div>
-          <div id="w-strap" tabIndex={-1}>
-            <Chips label="Strap" value={strap} onPick={k => { setStrap(k); setStrapFromPhoto(false); }}
-              options={[...STRAP_MAIN.map(k => [k, ATTRS.strapMaterial.options[k]]), ...(strapOther ? [[strap, ATTRS.strapMaterial.options[strap]]] : [])]} />
-          </div>
+          <Pills id="w-strap" label="Strap" value={strap} invalid={!!err.strap} onChange={k => { setStrap(k); setStrapFromPhoto(false); }}
+            options={[...STRAP_MAIN.map(k => [k, ATTRS.strapMaterial.options[k]]), ...(strapOther ? [[strap, ATTRS.strapMaterial.options[strap]]] : [])]} />
           {!strapOther && (
             <select aria-label="Other strap" value="" onChange={e => { if (e.target.value) { setStrap(e.target.value); setStrapFromPhoto(false); } }}
-              className="mt-2 bg-transparent text-[15px] font-medium text-primary-dark">
+              className="mt-2.5 cursor-pointer bg-transparent text-[15px] font-medium text-primary-dark">
               <option value="">Something else…</option>
               {Object.entries(ATTRS.strapMaterial.options).filter(([k]) => !STRAP_MAIN.includes(k)).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
             </select>
@@ -174,30 +160,19 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
         </div>
         <div className="row">
           <p className="field-label">Which wrist do you wear it on?</p>
-          <div id="w-wrist" tabIndex={-1}>
-            <Chips label="Wrist" value={wrist} onPick={setWrist} options={Object.entries(ATTRS.wrist.options)} />
-          </div>
+          <Segmented id="w-wrist" label="Wrist" value={wrist} invalid={!!err.wrist} onChange={setWrist} options={Object.entries(ATTRS.wrist.options)} />
           {err.wrist && <p className="error">{err.wrist}</p>}
         </div>
       </div>
 
       <div id="w-goal" tabIndex={-1}>
-        <p className="mb-2 px-1 font-display text-[15px] font-semibold text-maroon">{ATTRS.goal.q}</p>
-        <div className="grid gap-2">
-          {Object.entries(ATTRS.goal.options).map(([k, v]) => {
-            const on = goal.includes(k);
-            return (
-              <button key={k} type="button" aria-pressed={on} onClick={() => toggleGoal(k)}
-                className={`min-h-[44px] rounded-[12px] border px-3 py-2 text-left text-[15px] leading-tight transition-colors ${on ? 'border-primary bg-primary-soft text-maroon' : err.goal ? 'border-danger/60 bg-card text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
-                {v}
-              </button>
-            );
-          })}
-          <div className={`rounded-[12px] border bg-card px-3 py-2 ${goalText.trim() ? 'border-primary' : err.goal ? 'border-danger/60' : 'border-primary/15'}`}>
-            <label htmlFor="f-goal" className="sr-only">Something else you would like to improve</label>
-            <input id="f-goal" className="field text-[15px]" maxLength={120} placeholder="Something else? Type it here"
-              value={goalText} onChange={e => { setGoalText(e.target.value); setLocal(l => ({ ...l, goal: undefined })); }} />
-          </div>
+        <h3 className="mb-2 px-1 font-display text-[17px] font-semibold tracking-[-0.01em] text-maroon">{ATTRS.goal.q}</h3>
+        <CheckList label={ATTRS.goal.q} values={goal} onToggle={toggleGoal} invalid={!!err.goal}
+          options={Object.entries(ATTRS.goal.options)} />
+        <div className={`group-card mt-2 px-4 py-3 transition-[box-shadow] duration-200 sm:px-5 ${goalText.trim() ? 'ring-2 ring-primary/70' : err.goal ? 'ring-1 ring-danger/60' : ''}`}>
+          <label htmlFor="f-goal" className="sr-only">Something else you would like to improve</label>
+          <input id="f-goal" className="field text-[16px]" maxLength={120} placeholder="Something else? Type it here"
+            value={goalText} onChange={e => { setGoalText(e.target.value); setLocal(l => ({ ...l, goal: undefined })); }} />
         </div>
         {err.goal && <p className="error px-1">{err.goal}</p>}
       </div>
@@ -211,7 +186,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
         <div className="row">
           <label className="field-label" htmlFor="f-mobile">Mobile number</label>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-[17px] text-muted-foreground">+91</span>
+            <span className="font-ui text-[17px] tracking-[-0.01em] text-muted-foreground">+91</span>
             <input id="f-mobile" className="field" type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="98765 43210"
               value={f.mobile} onChange={set('mobile')} aria-invalid={!!err.mobile} />
           </div>
@@ -241,15 +216,13 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
         className="absolute -left-[9999px] h-px w-px opacity-0" aria-hidden="true" />
 
       <div className="grid gap-3 px-1">
-        <label className="flex cursor-pointer items-start gap-3 text-[15px] leading-snug">
-          <input id="f-consent" type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[hsl(var(--primary))]" checked={f.consent} onChange={set('consent')} aria-invalid={!!err.consent} />
-          <span>I agree that Veshannastro stores my name, number, date of birth and my watch details, to show this reading.</span>
-        </label>
-        {err.consent && <p className="error -mt-1 pl-8">{err.consent}</p>}
-        <label className="flex cursor-pointer items-start gap-3 text-[15px] leading-snug">
-          <input id="f-wa" type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[hsl(var(--primary))]" checked={f.waOptIn} onChange={set('waOptIn')} />
-          <span>Send me updates and offers on WhatsApp <span className="text-muted-foreground">(optional)</span></span>
-        </label>
+        <Tick id="f-consent" checked={f.consent} onChange={set('consent')} invalid={!!err.consent}>
+          I agree that Veshannastro stores my name, number, date of birth and my watch details, to show this reading.
+        </Tick>
+        {err.consent && <p className="error -mt-1 pl-9">{err.consent}</p>}
+        <Tick id="f-wa" checked={f.waOptIn} onChange={set('waOptIn')}>
+          Send me updates and offers on WhatsApp <span className="text-muted-foreground">(optional)</span>
+        </Tick>
       </div>
 
       <Turnstile siteKey={config.turnstileSiteKey} onToken={setToken} resetSignal={reset} />

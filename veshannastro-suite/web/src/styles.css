@@ -29,11 +29,13 @@
 
 @layer base {
   * { @apply border-border; }
-  html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
-  body { @apply bg-background font-serif text-foreground antialiased; font-size: 17px; line-height: 1.6; font-variant-numeric: lining-nums; }
+  html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body { @apply bg-background font-serif text-foreground antialiased; font-size: 17px; line-height: 1.6; font-variant-numeric: lining-nums;
+    font-optical-sizing: auto; font-feature-settings: 'kern', 'liga', 'calt'; text-rendering: optimizeLegibility; -moz-osx-font-smoothing: grayscale; }
   h1, h2, h3 { text-wrap: balance; }
   p, li { text-wrap: pretty; }
-  h1, h2, h3, h4, button, nav, header, label { font-family: theme('fontFamily.display'); }
+  h1, h2, h3, h4 { font-family: theme('fontFamily.display'); }
+  button, nav, label { font-family: theme('fontFamily.ui'); }
   a { color: inherit; text-decoration: none; }
   :focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 2px; border-radius: 6px; }
 }
@@ -43,7 +45,9 @@
   .t-title { @apply font-display text-[1.75rem] font-bold leading-[1.1] tracking-[-0.015em] text-maroon sm:text-[2.25rem]; }
   .t-head { @apply font-display text-[18px] font-semibold leading-snug text-foreground; }
 
-  .btn { @apply inline-flex min-h-[52px] items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-6 font-display text-[17px] font-semibold transition-colors; }
+  .btn { @apply inline-flex min-h-[52px] select-none items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-6 font-ui text-[17px] font-semibold tracking-[-0.012em];
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 200ms, box-shadow 200ms; }
+  .btn:active { transform: scale(0.97); }
   .btn-whatsapp { @apply btn bg-whatsapp text-white shadow-[0_10px_24px_-14px_hsl(var(--whatsapp))] hover:bg-whatsapp-dark; }
   .btn-primary { @apply btn bg-primary text-white shadow-[0_8px_20px_-10px_hsl(var(--primary)/0.8)] hover:bg-primary-dark; }
   .btn-plain { @apply btn bg-card text-foreground shadow-[0_0_0_1px_hsl(var(--border))] hover:bg-muted; }

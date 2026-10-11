@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import Turnstile from './Turnstile.jsx';
+import { Tick, Collapse } from './ui.jsx';
 
 const CHIPS = ['Money is not staying with me', 'Career growth / job', 'Business not working', 'Marriage delay', 'Relationship problems', 'Debt and loans', 'Health worries', 'Stress and anxiety'];
 export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -21,10 +22,10 @@ export function Picker({ id, value, onChange, label, invalid, children }) {
   return (
     <span className="relative mt-1 block">
       <select id={id} value={value} onChange={onChange} aria-label={label} aria-invalid={invalid}
-        className={`w-full appearance-none rounded-[10px] bg-primary-soft/70 py-2 pl-3 pr-7 text-[17px] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${value ? 'text-foreground' : 'text-muted-foreground'}`}>
+        className={`w-full cursor-pointer appearance-none rounded-[11px] bg-muted py-2.5 pl-3 pr-8 font-ui text-[17px] tracking-[-0.01em] transition-[background-color,box-shadow] duration-200 hover:bg-border/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${invalid ? 'ring-1 ring-danger/60' : ''} ${value ? 'text-foreground' : 'text-muted-foreground'}`}>
         {children}
       </select>
-      <ChevronDown size={16} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+      <ChevronDown size={16} strokeWidth={2.5} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
     </span>
   );
 }
@@ -38,8 +39,8 @@ export function Switch({ id, checked, onChange, children, hint }) {
       </span>
       <span className="relative inline-flex shrink-0">
         <input id={id} type="checkbox" role="switch" className="peer sr-only" checked={checked} onChange={onChange} />
-        <span className="h-[31px] w-[51px] rounded-full bg-border transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2" />
-        <span className="absolute left-[2px] top-[2px] h-[27px] w-[27px] rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.15),0_1px_1px_rgba(0,0,0,0.16)] transition-transform peer-checked:translate-x-[20px]" />
+        <span className="h-[31px] w-[51px] rounded-full bg-border transition-colors duration-300 peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2" />
+        <span className="absolute left-[2px] top-[2px] h-[27px] w-[27px] rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.15),0_1px_1px_rgba(0,0,0,0.16)] transition-transform duration-300 ease-ios peer-checked:translate-x-[20px] peer-active:w-[31px] peer-checked:peer-active:translate-x-[16px]" />
       </span>
     </label>
   );
@@ -112,7 +113,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
         <div className="row">
           <label className="field-label" htmlFor="f-mobile">Mobile number</label>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-[17px] text-muted-foreground">+91</span>
+            <span className="font-ui text-[17px] tracking-[-0.01em] text-muted-foreground">+91</span>
             <input id="f-mobile" className="field" type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="98765 43210"
               value={f.mobile} onChange={set('mobile')} aria-invalid={!!err.mobile} />
           </div>
@@ -163,7 +164,8 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
           hint="See what changes: problems that go away, new ones, strengths gained or lost.">
           Compare a number before you buy it
         </Switch>
-        {planning && planned.map((p, i) => (
+        <Collapse open={planning}><div className="rows">
+        {planned.map((p, i) => (
           <div key={i} className="row flex items-center gap-3">
             <div className="min-w-0 flex-1">
               <label className="field-label" htmlFor={`f-planned-${i}`}>New number {planned.length > 1 ? i + 1 : ''}</label>
@@ -176,11 +178,12 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
             )}
           </div>
         ))}
-        {planning && planned.length < 3 && (
-          <button type="button" className="row w-full text-left text-[17px] font-medium text-primary-dark" onClick={() => setPlanned(l => [...l, ''])}>
+        {planned.length < 3 && (
+          <button type="button" className="pressable-row row w-full text-left text-[16px] font-medium text-primary-dark" onClick={() => setPlanned(l => [...l, ''])}>
             Add another number
           </button>
         )}
+        </div></Collapse>
         {planning && err.planned && <p className="row error mt-0">{err.planned}</p>}
       </div>
 
@@ -188,15 +191,13 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
         className="absolute -left-[9999px] h-px w-px opacity-0" aria-hidden="true" />
 
       <div className="grid gap-3 px-1">
-        <label className="flex cursor-pointer items-start gap-3 text-[15px] leading-snug">
-          <input id="f-consent" type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[hsl(var(--primary))]" checked={f.consent} onChange={set('consent')} aria-invalid={!!err.consent} />
-          <span>I agree that Veshannastro stores my name, number, date of birth and what I shared, to show this reading.</span>
-        </label>
-        {err.consent && <p className="error -mt-1 pl-8">{err.consent}</p>}
-        <label className="flex cursor-pointer items-start gap-3 text-[15px] leading-snug">
-          <input id="f-wa" type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[hsl(var(--primary))]" checked={f.waOptIn} onChange={set('waOptIn')} />
-          <span>Send me updates and offers on WhatsApp <span className="text-muted-foreground">(optional)</span></span>
-        </label>
+        <Tick id="f-consent" checked={f.consent} onChange={set('consent')} invalid={!!err.consent}>
+          I agree that Veshannastro stores my name, number, date of birth and what I shared, to show this reading.
+        </Tick>
+        {err.consent && <p className="error -mt-1 pl-9">{err.consent}</p>}
+        <Tick id="f-wa" checked={f.waOptIn} onChange={set('waOptIn')}>
+          Send me updates and offers on WhatsApp <span className="text-muted-foreground">(optional)</span>
+        </Tick>
       </div>
 
       <Turnstile siteKey={config.turnstileSiteKey} onToken={setToken} resetSignal={reset} />

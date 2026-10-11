@@ -13,9 +13,15 @@ import { UserRound } from 'lucide-react';
 
 // Two segments on one site: Mobile Numerology at /, Wristwatch Numerology at /watch (with "Which watch should I wear
 // this year?" at /watch/year); "My readings" at /my.
-const PATH = typeof location !== 'undefined' ? location.pathname : '/';
-const SEGMENT = PATH.startsWith('/watch/year') ? 'wrist' : PATH.startsWith('/watch') ? 'watch' : PATH.startsWith('/my') ? 'my' : 'mobile';
-const TAB = SEGMENT === 'wrist' ? 'watch' : SEGMENT;
+// Moving between them happens in the page (no reload), so the tabs slide and the content swaps smoothly.
+const segmentOf = p => (p.startsWith('/watch/year') ? 'wrist' : p.startsWith('/watch') ? 'watch' : p.startsWith('/my') ? 'my' : 'mobile');
+const ROUTES = ['/', '/watch', '/watch/year', '/my'];
+const TITLES = {
+  mobile: 'Free Mobile Number Numerology Reading | Veshannastro',
+  watch: 'What does your watch say about you? | Veshannastro',
+  wrist: 'Which watch should you wear this year? | Veshannastro',
+  my: 'My readings | Veshannastro'
+};
 const YEAR_NOW = new Date(Date.now() + 5.5 * 3600e3).getUTCFullYear();
 
 const ownerKeyFromUrl = () => {
@@ -35,15 +41,53 @@ export default function App() {
   const [result, setResult] = useState(null);
   const storyRef = useRef(null);
   const ownerKey = useRef(ownerKeyFromUrl());
+  const [path, setPath] = useState(() => (typeof location !== 'undefined' ? location.pathname.replace(/\/+$/, '') || '/' : '/'));
+  const SEGMENT = segmentOf(path);
+  const TAB = SEGMENT === 'wrist' ? 'watch' : SEGMENT;
+  const seg = useRef(SEGMENT);
+  seg.current = SEGMENT;
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => { getConfig().then(setConfig); }, []);
-  // Funnel: the page view, and every tap on a WhatsApp link (book a call, sign in).
+
+  // In-page navigation between the four pages; the browser's back button works as usual.
+  useEffect(() => {
+    const go = href => {
+      const next = href.replace(/\/+$/, '') || '/';
+      setResult(null); setStatus('idle'); setErrors({});
+      setPath(next);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    };
+    const onClick = e => {
+      const a = e.target.closest?.('a[href]');
+      if (!a) return;
+      if (a.href.startsWith('https://wa.me/')) { track(seg.current, 'whatsapp_click'); return; }
+      const url = new URL(a.href, location.href);
+      const target = url.pathname.replace(/\/+$/, '') || '/';
+      if (url.origin !== location.origin || !ROUTES.includes(target) || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      if (target === (location.pathname.replace(/\/+$/, '') || '/')) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+      history.pushState({}, '', target + url.search);
+      go(target);
+    };
+    const onPop = () => go(location.pathname);
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    document.addEventListener('click', onClick);
+    window.addEventListener('popstate', onPop);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => {
+      document.removeEventListener('click', onClick);
+      window.removeEventListener('popstate', onPop);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
+  // Funnel: one view per page shown.
   useEffect(() => {
     track(SEGMENT, 'view');
-    const onClick = e => { const a = e.target.closest?.('a[href^="https://wa.me/"]'); if (a) track(SEGMENT, 'whatsapp_click'); };
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
-  }, []);
+    document.title = TITLES[SEGMENT];
+  }, [SEGMENT]);
 
   async function submit(payload) {
     setStatus('loading');
@@ -69,19 +113,22 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="material sticky top-0 z-20 border-b border-border/60" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <header className={`material sticky top-0 z-20 ${scrolled ? 'scrolled' : ''}`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2.5 px-5 py-3">
           <a href="/" className="font-display text-[19px] font-bold tracking-tight text-maroon no-underline">
             Veshannastro<span className="text-primary">.</span>
           </a>
-          <nav aria-label="Readings" className="order-3 flex w-full rounded-full bg-border/50 p-[3px] font-display text-[14px] font-semibold sm:order-2 sm:w-auto">
+          <nav aria-label="Readings" className="relative order-3 grid w-full grid-cols-2 rounded-full bg-border/50 p-[3px] text-[14px] font-semibold tracking-[-0.01em] sm:order-2 sm:w-[264px]">
+            <span aria-hidden="true"
+              className={`absolute bottom-[3px] left-[3px] top-[3px] w-[calc(50%-3px)] rounded-full bg-card shadow-[0_3px_8px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.06)] transition-[transform,opacity] duration-[420ms] ease-ios ${TAB === 'my' ? 'opacity-0' : 'opacity-100'}`}
+              style={{ transform: `translateX(${TAB === 'watch' ? '100%' : '0'})` }} />
             {[['mobile', '/', 'Mobile number'], ['watch', '/watch', 'Wristwatch']].map(([k, href, label]) => (
               <a key={k} href={href} aria-current={TAB === k ? 'page' : undefined}
-                className={`flex-1 rounded-full px-3.5 py-1.5 text-center no-underline transition-colors sm:flex-none ${TAB === k ? 'bg-card text-maroon shadow-[0_2px_6px_rgba(0,0,0,0.1)]' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
+                className={`relative z-[1] rounded-full px-3.5 py-1.5 text-center no-underline transition-colors duration-300 ${TAB === k ? 'text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
             ))}
           </nav>
           <a href="/my" aria-current={SEGMENT === 'my' ? 'page' : undefined}
-            className={`order-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 font-display text-[14px] font-semibold no-underline transition-colors sm:order-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
+            className={`pressable order-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:order-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
             <UserRound size={17} aria-hidden="true" />My readings
           </a>
         </div>
@@ -93,6 +140,7 @@ export default function App() {
         </p>
       )}
       <main>
+        <div key={SEGMENT} className="animate-swap">
         {SEGMENT === 'my' ? <MyReadings config={config} /> : <>
         <div className="hero-glow">
         <section className="mx-auto grid max-w-5xl gap-10 px-5 pb-12 pt-8 sm:pt-14 lg:grid-cols-[1fr_minmax(0,440px)] lg:items-start lg:gap-14">
@@ -143,13 +191,14 @@ export default function App() {
         </div>
 
         {result && (
-          <section ref={storyRef} className="mx-auto max-w-[44rem] scroll-mt-16 px-5 pb-14 pt-4">
+          <section ref={storyRef} key={result.leadRef ?? 'r'} className="mx-auto max-w-[44rem] scroll-mt-24 px-5 pb-14 pt-4 animate-reveal">
             {SEGMENT === 'wrist' ? <WristResult result={result} config={config} onAgain={again} saved={!config.preview} />
               : SEGMENT === 'watch' ? <WatchStory result={result} config={config} onAgain={again} saved={!config.preview} />
                 : <Story result={result} config={config} onAgain={again} saved={!config.preview} />}
           </section>
         )}
         </>}
+        </div>
       </main>
 
       <footer className="border-t border-border/70 bg-card/60">

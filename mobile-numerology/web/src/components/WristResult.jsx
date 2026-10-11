@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CalendarCheck, Check } from 'lucide-react';
-import { WaButton, callLink, Source, SavedNote, WaIcon } from './ui.jsx';
+import { WaButton, callLink, Source, SavedNote, WaIcon, Segmented } from './ui.jsx';
 import { sendAnswer, track } from '../api.js';
 
 // The answer to "Which watch should I wear this year?", then "Does this sound like you?", and the WhatsApp opt-in
@@ -49,7 +49,7 @@ function Choice({ options, value, onPick, busy }) {
     <div className={`mt-4 grid gap-2 ${options.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
       {options.map(([k, label]) => (
         <button key={String(k)} type="button" disabled={busy} aria-pressed={value === k} onClick={() => onPick(k)}
-          className={`min-h-[48px] rounded-[12px] border px-2 font-display text-[16px] font-semibold transition-colors ${value === k ? 'border-primary bg-primary-soft text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
+          className={`pressable min-h-[48px] rounded-[12px] border px-2 text-[16px] font-semibold ${value === k ? 'border-primary bg-primary-soft text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
           {label}
         </button>
       ))}
@@ -121,7 +121,7 @@ export default function WristResult({ result, config, onAgain, againLabel = 'Try
               </div>
             ))}
           </div>
-          <Choice options={[['yes', 'Yes'], ['partly', 'Partly'], ['no', 'No']]} value={feedback} busy={busy} onPick={v => answer('feedback', v)} />
+          <div className="mt-4"><Segmented label="Does this sound like you?" options={[['yes', 'Yes'], ['partly', 'Partly'], ['no', 'No']]} value={feedback ?? ''} onChange={v => answer('feedback', v)} /></div>
           {feedback && <p className="mt-3 text-[15px] text-muted-foreground" role="status">{feedback === 'yes' ? 'Thank you. Your numbers read you well.' : 'Thank you for telling us. A consultation looks at your full chart, not only your birth number.'}</p>}
         </section>
       )}

@@ -18,6 +18,7 @@ export default {
       },
       // League Spartan (brand) for titles and anything you tap; Literata for sentences.
       fontFamily: {
+        ui: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'system-ui', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
         display: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
         sans: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
         serif: ['Literata', 'Georgia', '"Noto Serif"', '"Times New Roman"', 'serif']

@@ -3,6 +3,7 @@ import { Camera, Check } from 'lucide-react';
 import { MONTHS, YEARS, dobFrom, Picker } from './ReadingForm.jsx';
 import Turnstile from './Turnstile.jsx';
 import { readWrist, shrinkPhoto, track } from '../api.js';
+import { Segmented, Tick } from './ui.jsx';
 
 // "Which watch should I wear this year?": a photo of the wrist (read at once, never kept), then name, number and
 // birth date, side by side, so the answer is ready the moment the form is sent.
@@ -22,7 +23,7 @@ function WristPicks({ wrist, setWrist, fromPhoto, invalid }) {
       {seen.length > 0 && (
         <ul className="row flex flex-wrap gap-x-4 gap-y-1.5" aria-label="What we see in your photo">
           {seen.map(([k, a]) => (
-            <li key={k} className="flex items-center gap-1.5 text-[15px] text-foreground/85">
+            <li key={k} className="flex items-center gap-1.5 font-ui text-[15px] tracking-[-0.01em] text-foreground/85">
               <Check size={15} className="shrink-0 text-success-dark" aria-hidden="true" />
               {a.options[wrist[k]]} {k === 'size' ? 'wrist' : k === 'undertone' ? 'undertone' : 'style'}
             </li>
@@ -32,14 +33,8 @@ function WristPicks({ wrist, setWrist, fromPhoto, invalid }) {
       {!fromPhoto.has('size') && (
         <div className="row">
           <p className="field-label">Wrist size</p>
-          <div id="wr-size" tabIndex={-1} role="radiogroup" aria-label="Wrist size" className="mt-1.5 flex flex-wrap gap-2">
-            {Object.entries(WRIST.size.options).map(([k, l]) => (
-              <button key={k} type="button" role="radio" aria-checked={wrist.size === k} onClick={() => setWrist('size', k)}
-                className={`min-h-[44px] rounded-full border px-5 text-[15px] font-medium transition-colors ${wrist.size === k ? 'border-primary bg-primary-soft text-maroon' : invalid ? 'border-danger/60 bg-card text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
-                {l}
-              </button>
-            ))}
-          </div>
+          <Segmented id="wr-size" label="Wrist size" value={wrist.size ?? ''} invalid={invalid} onChange={k => setWrist('size', k)}
+            options={Object.entries(WRIST.size.options)} />
         </div>
       )}
     </>
@@ -158,7 +153,7 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
           <div className="row">
             <label className="field-label" htmlFor="f-mobile">Mobile number</label>
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-[17px] text-muted-foreground">+91</span>
+              <span className="font-ui text-[17px] tracking-[-0.01em] text-muted-foreground">+91</span>
               <input id="f-mobile" className="field" type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="98765 43210"
                 value={f.mobile} onChange={set('mobile')} aria-invalid={!!err.mobile} />
             </div>
@@ -188,10 +183,9 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
       <input type="text" name="website" tabIndex={-1} autoComplete="off" value={f.website} onChange={set('website')}
         className="absolute -left-[9999px] h-px w-px opacity-0" aria-hidden="true" />
 
-      <label className="flex cursor-pointer items-start gap-3 px-1 text-[15px] leading-snug">
-        <input id="f-consent" type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[hsl(var(--primary))]" checked={f.consent} onChange={set('consent')} aria-invalid={!!err.consent} />
-        <span>I agree that Veshannastro stores my name, number and date of birth to show this answer. The photo is not stored.</span>
-      </label>
+      <div className="px-1"><Tick id="f-consent" checked={f.consent} onChange={set('consent')} invalid={!!err.consent}>
+        I agree that Veshannastro stores my name, number and date of birth to show this answer. The photo is not stored.
+      </Tick></div>
       {err.consent && <p className="error -mt-3 pl-9">{err.consent}</p>}
 
       <Turnstile siteKey={config.turnstileSiteKey} onToken={setToken} resetSignal={reset} />

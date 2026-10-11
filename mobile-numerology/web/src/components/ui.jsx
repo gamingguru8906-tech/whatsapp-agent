@@ -1,6 +1,6 @@
 // Shared building blocks for every reading page (mobile and watch segments): same look everywhere.
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 import VedicGrid from './VedicGrid.jsx';
 export const fmt = m => `${m.slice(0, 5)} ${m.slice(5)}`;
 export const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
@@ -38,17 +38,17 @@ export function Line({ kind, children }) {
 // Shows the first few rows; the rest open with one tap. The owner sees everything, to check each line.
 export function ShowMore({ items, initial = 3, owner, noun, render }) {
   const [open, setOpen] = useState(false);
-  const all = owner || open || items.length <= initial + 1;
+  const all = owner || items.length <= initial + 1;
+  if (all) return <>{items.map(render)}</>;
   return (
     <>
-      {(all ? items : items.slice(0, initial)).map(render)}
-      {items.length > initial + 1 && !owner && (
-        <button type="button" onClick={() => setOpen(o => !o)} aria-expanded={open}
-          className="row flex w-full items-center justify-between text-left text-[17px] font-medium text-primary-dark">
-          {open ? 'Show fewer' : `Show all ${items.length} ${noun}`}
-          <ChevronDown size={20} className={`transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
-        </button>
-      )}
+      {items.slice(0, initial).map(render)}
+      <Collapse open={open}><div className="rows">{items.slice(initial).map(render)}</div></Collapse>
+      <button type="button" onClick={() => setOpen(o => !o)} aria-expanded={open}
+        className="pressable row flex w-full items-center justify-between text-left text-[16px] font-medium text-primary-dark">
+        {open ? 'Show fewer' : `Show all ${items.length} ${noun}`}
+        <ChevronDown size={20} className={`transition-transform duration-300 ease-ios ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+      </button>
     </>
   );
 }
@@ -165,5 +165,92 @@ export function SavedNote({ mobile }) {
       </span>
       <span className="hidden shrink-0 font-display text-[15px] font-semibold text-primary-dark sm:inline">My readings ›</span>
     </a>
+  );
+}
+
+// ---------- Controls with an Apple-like feel ----------
+
+// Height that eases open and shut (no jump): the content sits in a grid row that grows from 0fr to 1fr.
+export function Collapse({ open, children }) {
+  return (
+    <div className={`grid transition-[grid-template-rows,opacity,visibility] duration-[420ms] ease-ios ${open ? 'visible grid-rows-[1fr] opacity-100' : 'invisible grid-rows-[0fr] opacity-0'}`}
+      aria-hidden={!open}>
+      <div className="min-h-0 overflow-hidden">{children}</div>
+    </div>
+  );
+}
+
+// Segmented control: one choice; a white thumb slides to it. Nothing chosen yet = no thumb.
+export function Segmented({ id, label, options, value, onChange, invalid }) {
+  const i = options.findIndex(([k]) => k === value);
+  return (
+    <div id={id} tabIndex={-1} role="radiogroup" aria-label={label}
+      className={`relative mt-1.5 grid rounded-[12px] bg-muted p-[3px] ${invalid ? 'ring-1 ring-danger/60' : ''}`}
+      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
+      <span aria-hidden="true"
+        className={`absolute bottom-[3px] left-[3px] top-[3px] rounded-[9px] bg-card shadow-[0_3px_8px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.06)] transition-[transform,opacity] duration-[380ms] ease-ios ${i < 0 ? 'scale-90 opacity-0' : 'opacity-100'}`}
+        style={{ width: `calc((100% - 6px) / ${options.length})`, transform: `translateX(${Math.max(i, 0) * 100}%)` }} />
+      {options.map(([k, l]) => (
+        <button key={k} type="button" role="radio" aria-checked={value === k} onClick={() => onChange(k)}
+          className={`relative z-[1] min-h-[40px] rounded-[9px] px-2 text-[15px] font-semibold transition-colors duration-200 ${value === k ? 'text-maroon' : 'text-muted-foreground hover:text-foreground'}`}>
+          {l}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// Pills for a short list: the chosen one fills and shows a tick.
+export function Pills({ id, label, options, value, onChange, invalid }) {
+  return (
+    <div id={id} tabIndex={-1} role="radiogroup" aria-label={label} className="mt-1.5 flex flex-wrap gap-2">
+      {options.map(([k, l]) => {
+        const on = value === k;
+        return (
+          <button key={k} type="button" role="radio" aria-checked={on} onClick={() => onChange(k)}
+            className={`pressable inline-flex min-h-[40px] items-center gap-1.5 rounded-full px-4 text-[15px] font-medium transition-[background-color,color,box-shadow] duration-200 ${on ? 'bg-maroon text-white shadow-[0_4px_12px_-6px_hsl(var(--maroon)/0.8)]' : `bg-muted text-foreground hover:bg-border/70 ${invalid ? 'ring-1 ring-danger/60' : ''}`}`}>
+            <span className={`grid overflow-hidden transition-[width,opacity] duration-300 ease-ios ${on ? 'w-4 opacity-100' : 'w-0 opacity-0'}`}><Check size={15} strokeWidth={3} aria-hidden="true" /></span>
+            {l}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// A list you can tick several of (iOS checklist): a round tick on the right.
+export function CheckList({ id, label, options, values, onToggle, invalid }) {
+  return (
+    <div id={id} role="group" aria-label={label} className={`group-card rows ${invalid ? 'ring-1 ring-danger/60' : ''}`}>
+      {options.map(([k, l]) => {
+        const on = values.includes(k);
+        return (
+          <button key={k} type="button" role="checkbox" aria-checked={on} onClick={() => onToggle(k)}
+            className="pressable-row row flex w-full items-center gap-3 text-left">
+            <span className="min-w-0 flex-1 text-[16px] leading-snug">{l}</span>
+            <span aria-hidden="true" className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border transition-all duration-300 ease-ios ${on ? 'scale-100 border-primary bg-primary text-white' : 'border-border bg-card text-transparent'}`}>
+              <Check size={15} strokeWidth={3} className={`transition-transform duration-300 ease-spring ${on ? 'scale-100' : 'scale-0'}`} />
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// Checkbox with a tick that draws itself.
+export function Tick({ id, checked, onChange, invalid, children }) {
+  return (
+    <label htmlFor={id} className="flex cursor-pointer items-start gap-3 text-[15px] leading-snug">
+      <input id={id} type="checkbox" className="peer sr-only" checked={checked} onChange={onChange} aria-invalid={invalid || undefined} />
+      <span aria-hidden="true"
+        className={`mt-px grid h-[22px] w-[22px] shrink-0 place-items-center rounded-[7px] border-[1.5px] transition-all duration-200 ease-ios peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 ${checked ? 'border-primary bg-primary' : invalid ? 'border-danger bg-card' : 'border-faint bg-card'}`}>
+        <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3.5 8.5l3 3 6-7" pathLength="1" strokeDasharray="1" strokeDashoffset={checked ? 0 : 1}
+            style={{ transition: 'stroke-dashoffset 260ms cubic-bezier(0.32,0.72,0,1) 60ms' }} />
+        </svg>
+      </span>
+      <span>{children}</span>
+    </label>
   );
 }
