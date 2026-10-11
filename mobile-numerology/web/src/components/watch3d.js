@@ -290,7 +290,7 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
   function resize() {
     const r = host.getBoundingClientRect();
     W = Math.max(1, r.width); H = Math.max(1, r.height);
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5); // sharp enough for a moving model, far lighter than 2x
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
@@ -315,7 +315,10 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
   host.addEventListener('pointermove', onMove);
   host.addEventListener('pointerleave', onLeave);
 
-  let visible = true, raf = 0;
+  let visible = true, raf = 0, scrollingUntil = 0, lastDraw = -1e9;
+  // While the page is scrolling, the watch holds still: the scroll gets the whole frame budget.
+  const onScroll = () => { scrollingUntil = performance.now() + 140; };
+  window.addEventListener('scroll', onScroll, { passive: true });
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf) raf = requestAnimationFrame(frame); });
   io.observe(host);
 
@@ -331,6 +334,9 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
   function frame(now) {
     raf = 0;
     if (!visible || document.hidden) return;
+    // The sway is slow, so 30 frames a second looks the same as 60 for half the work.
+    if (!still && (now < scrollingUntil || now - lastDraw < 30)) { raf = requestAnimationFrame(frame); return; }
+    lastDraw = now;
     const t = (now - t0) / 1000;
     setTime();
     // At t = 0 the pose matches the still picture, so the switch from picture to 3D is seamless.
@@ -361,6 +367,7 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
     cancelAnimationFrame(raf);
     ro.disconnect(); io.disconnect();
     document.removeEventListener('visibilitychange', onVis);
+    window.removeEventListener('scroll', onScroll);
     host.removeEventListener('pointermove', onMove);
     host.removeEventListener('pointerleave', onLeave);
     disposables.forEach(d => d.dispose?.());

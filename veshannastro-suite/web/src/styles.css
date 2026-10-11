@@ -63,7 +63,7 @@
 }
 
 @layer utilities {
-  .material { background: hsl(var(--background) / 0.82); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
+  .material { background: hsl(var(--background) / 0.96); }
 }
 
 /* The hero in daylight: warm paper with the brand pink glowing behind the subject, a faint gold low left, and the
@@ -91,30 +91,18 @@
 .lit { animation: lit 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 
 /* The page's entrance: heading, line, buttons — 100 ms apart, rising out of a soft blur. */
-@keyframes enter { from { opacity: 0; transform: translateY(12px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes enter { from { opacity: 0; transform: translate3d(0, 12px, 0); } to { opacity: 1; transform: none; } }
 .enter { animation: enter 420ms var(--ease-out) both; }
 .enter-2 { animation-delay: 100ms; }
 .enter-3 { animation-delay: 200ms; }
 
-/* Smooth scrolling (Lenis) */
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-.lenis.lenis-stopped { overflow: hidden; }
 
-/* Reveal on scroll: blocks rise into place one by one, out of a soft blur (motion.js tags them). */
-.reveal-on [data-rv="0"] { opacity: 0; transform: translateY(16px); filter: blur(4px); }
-.reveal-on [data-rv="go"] { transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out), filter 600ms var(--ease-out); }
-.reveal-on [data-rv-d="1"] { transition-delay: 55ms; }
-.reveal-on [data-rv-d="2"] { transition-delay: 110ms; }
-.reveal-on [data-rv-d="3"] { transition-delay: 165ms; }
-.reveal-on [data-rv-d="4"] { transition-delay: 220ms; }
-.reveal-on [data-rv-d="5"] { transition-delay: 275ms; }
-.reveal-on [data-rv-d="6"] { transition-delay: 330ms; }
-.reveal-on [data-rv-d="7"] { transition-delay: 330ms; }
-.reveal-on [data-rv-d="8"] { transition-delay: 330ms; }
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-}
+/* Reveal on scroll: blocks rise into place one by one (motion.js tags them). Opacity and position only, so it
+   never costs the scroll a frame. */
+.reveal-on [data-rv="0"] { opacity: 0; transform: translate3d(0, 12px, 0); }
+.reveal-on [data-rv="go"] { transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out); will-change: opacity, transform; }
+.reveal-on [data-rv-d="1"] { transition-delay: 40ms; }
+.reveal-on [data-rv-d="2"] { transition-delay: 80ms; }
+.reveal-on [data-rv-d="3"] { transition-delay: 120ms; }
+.reveal-on [data-rv-d="4"] { transition-delay: 160ms; }
+.reveal-on [data-rv-d="5"] { transition-delay: 200ms; }

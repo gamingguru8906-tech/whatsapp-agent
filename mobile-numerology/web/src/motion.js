@@ -1,43 +1,23 @@
 // Motion for the whole page, in one place. Same file in both sites.
-// 1. Smooth scrolling: mouse wheels and trackpads glide (Lenis); phones keep their own native scrolling, which is
-//    already smooth and which people's thumbs expect. Every scroll the page makes itself goes through scrollToEl.
-// 2. Reveal: headings, paragraphs, cards and buttons rise into place one by one as they come into view, out of a
-//    soft blur. Each block reveals once. Nothing hides if JavaScript is off or the person prefers less motion.
-import Lenis from 'lenis';
+// 1. Scrolling is the browser's own: it answers the finger and the wheel at once, with nothing in between.
+//    Every scroll the page makes itself (to a new reading, back to the top) goes through scrollToEl.
+// 2. Reveal: headings, paragraphs, cards and buttons rise into place one by one as they come into view.
+//    Only opacity and position animate (the two things the graphics chip moves for free), so scrolling stays
+//    smooth on any phone. Each block reveals once. Nothing hides if JavaScript is off or the person prefers less motion.
 
 const reduced = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-const HEADER = 88; // room for the sticky header when scrolling to something
-
-let lenis = null;
-
-export function startSmoothScroll() {
-  if (lenis || reduced()) return lenis;
-  lenis = new Lenis({
-    duration: 1.1,
-    easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // exponential ease-out: quick to respond, long gentle settle
-    smoothWheel: true,
-    syncTouch: false
-  });
-  document.documentElement.style.scrollBehavior = 'auto'; // Lenis does the smoothing; CSS smoothing would fight it
-  const raf = time => { lenis?.raf(time); requestAnimationFrame(raf); };
-  requestAnimationFrame(raf);
-  return lenis;
-}
+const HEADER = 80; // room for the sticky header when scrolling to something
 
 // Scroll to an element (or to the top with 0), leaving room for the header.
 export function scrollToEl(target, { block = 'start', immediate = false } = {}) {
   if (target == null) return;
-  if (lenis) {
-    lenis.resize(); // the page may have just grown (a reading appeared): measure before choosing where to stop
-    if (target === 0) { lenis.scrollTo(0, { immediate }); return; }
-    const rect = target.getBoundingClientRect();
-    const offset = block === 'center' ? -(window.innerHeight / 2 - rect.height / 2) : -HEADER;
-    lenis.scrollTo(target, { offset, immediate, duration: immediate ? 0 : 1.0 });
-    return;
-  }
   const behavior = immediate || reduced() ? 'instant' : 'smooth';
-  if (target === 0) window.scrollTo({ top: 0, behavior });
-  else target.scrollIntoView({ behavior, block });
+  if (target === 0) { window.scrollTo({ top: 0, behavior }); return; }
+  const rect = target.getBoundingClientRect();
+  const top = block === 'center'
+    ? window.scrollY + rect.top - (window.innerHeight / 2 - rect.height / 2)
+    : window.scrollY + rect.top - HEADER;
+  window.scrollTo({ top: Math.max(0, top), behavior });
 }
 
 // ---------- Reveal ----------
@@ -50,16 +30,16 @@ export function startReveal(root = document.body) {
   document.documentElement.classList.add('reveal-on');
 
   const io = new IntersectionObserver(entries => {
-    // Everything that arrives in the same moment goes top to bottom, 55 ms apart.
+    // Everything that arrives in the same moment goes top to bottom, 40 ms apart.
     const shown = entries.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
     shown.forEach((e, i) => {
       const el = e.target;
       io.unobserve(el);
-      el.dataset.rvD = String(Math.min(i, 6));
+      el.dataset.rvD = String(Math.min(i, 5));
       el.dataset.rv = 'go';
-      setTimeout(() => { el.dataset.rv = 'done'; delete el.dataset.rvD; }, 1100);
+      setTimeout(() => { el.dataset.rv = 'done'; delete el.dataset.rvD; }, 700);
     });
-  }, { rootMargin: '0px 0px 4% 0px', threshold: 0 }); // starts just before a block scrolls in, so the screen is never empty
+  }, { rootMargin: '0px 0px 8% 0px', threshold: 0 }); // starts just before a block scrolls in, so the screen is never empty
 
   const tag = scope => {
     if (!(scope instanceof Element)) return;
@@ -67,7 +47,6 @@ export function startReveal(root = document.body) {
     for (const el of found) {
       if (el.dataset.rv || el.closest(SKIP)) continue;
       if (el.parentElement?.closest('[data-rv]')) continue; // inside a unit already
-      if (el.closest('[data-rv]') !== null && el.closest('[data-rv]') !== el) continue;
       el.dataset.rv = '0';
       io.observe(el);
     }

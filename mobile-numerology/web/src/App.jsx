@@ -11,7 +11,7 @@ import Watch3D from './components/Watch3D.jsx';
 import MyReadings from './components/MyReadings.jsx';
 import { UserRound } from 'lucide-react';
 import { Lockup } from './components/Brand.jsx';
-import { startSmoothScroll, startReveal, scrollToEl } from './motion.js';
+import { startReveal, scrollToEl } from './motion.js';
 
 // Two segments on one site: Mobile Numerology at /, Wristwatch Numerology at /watch (with "Which watch should I wear
 // this year?" at /watch/year); "My readings" at /my.
@@ -53,8 +53,8 @@ export default function App() {
   useEffect(() => { getConfig().then(setConfig); }, []);
   // A new reading: glide to it once it is on the page.
   useEffect(() => { if (result) requestAnimationFrame(() => scrollToEl(storyRef.current)); }, [result]);
-  // Smooth wheel scrolling, and blocks that rise into place as they come into view.
-  useEffect(() => { startSmoothScroll(); return startReveal(document.getElementById('root')); }, []);
+  // Blocks that rise into place as they come into view.
+  useEffect(() => { return startReveal(document.getElementById('root')); }, []);
 
   // In-page navigation between the four pages; the browser's back button works as usual.
   useEffect(() => {

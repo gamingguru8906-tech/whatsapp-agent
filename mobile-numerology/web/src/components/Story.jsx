@@ -155,18 +155,22 @@ function Why({ by, mobile, area }) {
 
 function ChapterBar({ chapters, rootRef }) {
   const [active, setActive] = useState(chapters[0]?.id);
-  const [progress, setProgress] = useState(0);
   const [top, setTop] = useState(0);
   const navRef = useRef(null);
+  const barRef = useRef(null);
 
   useEffect(() => {
     const header = document.querySelector('header');
     const measure = () => setTop(header ? Math.round(header.getBoundingClientRect().height) : 0);
-    const onScroll = () => {
+    // At most once per frame; the progress line moves by transform, without a React render.
+    let pending = 0;
+    const update = () => {
+      pending = 0;
       const root = rootRef.current;
       if (!root) return;
       const r = root.getBoundingClientRect();
-      setProgress(Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - window.innerHeight))));
+      const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - window.innerHeight)));
+      if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
       let current = chapters[0]?.id;
       for (const c of chapters) {
         const el = document.getElementById(`r-${c.id}`);
@@ -174,11 +178,12 @@ function ChapterBar({ chapters, rootRef }) {
       }
       setActive(current);
     };
+    const onScroll = () => { if (!pending) pending = requestAnimationFrame(update); };
     measure();
-    onScroll();
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', measure);
-    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', measure); };
+    return () => { cancelAnimationFrame(pending); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', measure); };
   }, [chapters, rootRef]);
 
   // Keep the current chapter's tab in view inside the horizontal bar (without moving the page).
@@ -199,7 +204,7 @@ function ChapterBar({ chapters, rootRef }) {
         ))}
       </div>
       <div className="h-[2px] bg-transparent" aria-hidden="true">
-        <div className="h-full bg-primary transition-[width] duration-150" style={{ width: `${Math.round(progress * 100)}%` }} />
+        <div ref={barRef} className="h-full origin-left bg-primary" style={{ transform: 'scaleX(0)' }} />
       </div>
     </nav>
   );
@@ -210,7 +215,9 @@ function ChapterBar({ chapters, rootRef }) {
 function StickyWhatsApp({ href }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    const onScroll = () => {
+    let pending = 0;
+    const update = () => {
+      pending = 0;
       const answer = document.getElementById('r-answer');
       const past = answer ? answer.getBoundingClientRect().bottom < 0 : false;
       // Hidden while another WhatsApp button is on screen, so two never show at once.
@@ -220,9 +227,10 @@ function StickyWhatsApp({ href }) {
       });
       setShow(past && !otherInView);
     };
-    onScroll();
+    const onScroll = () => { if (!pending) pending = requestAnimationFrame(update); };
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => { cancelAnimationFrame(pending); window.removeEventListener('scroll', onScroll); };
   }, []);
   if (!href) return null;
   return (
