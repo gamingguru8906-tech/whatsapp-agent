@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
-import Watch from './Watch.jsx';
+import Watch3D from './components/Watch3D.jsx';
 
 // Veshannastro front page. The watch reading opens later; until then its button asks to be told on WhatsApp, and
 // the mobile-number reading (live) is one tap away. "(Ref: ...)" tags the lead's source in Kamala's CRM.
@@ -85,7 +85,7 @@ export default function App() {
               <a href={YEAR_WATCH} className="btn-plain">Which watch should I wear in {year}?</a>
             </div>
           </div>
-          <Watch className="mx-auto w-full max-w-[420px]" />
+          <Watch3D className="mx-auto w-full max-w-[420px]" />
         </section>
 
         {/* The price shift */}

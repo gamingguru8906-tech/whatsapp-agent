@@ -19,7 +19,8 @@
     "node": ">=20"
   },
   "dependencies": {
-    "pg": "8.13.1"
+    "pg": "8.13.1",
+    "three": "0.180.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "4.3.4",

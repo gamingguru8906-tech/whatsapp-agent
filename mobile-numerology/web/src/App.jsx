@@ -7,7 +7,7 @@ import Story from './components/Story.jsx';
 import VedicGrid from './components/VedicGrid.jsx';
 import WatchForm from './components/WatchForm.jsx';
 import WatchStory from './components/WatchStory.jsx';
-import WatchArt from './components/WatchArt.jsx';
+import Watch3D from './components/Watch3D.jsx';
 import MyReadings from './components/MyReadings.jsx';
 import { UserRound } from 'lucide-react';
 
@@ -104,7 +104,7 @@ export default function App() {
                 strap and finish. Get your answer in under a minute.
               </p>
               {/* On phones the photo step comes first, right under the question. */}
-              <WatchArt className="mt-6 hidden w-full max-w-[420px] lg:block" />
+              <Watch3D className="mt-4 hidden w-full max-w-[420px] lg:block" />
             </div>
           ) : SEGMENT === 'watch' ? (
             <div className="min-w-0">
@@ -114,7 +114,7 @@ export default function App() {
                 See what yours says, whether it suits your year, and your numbers.
               </p>
               <a href="/watch/year" className="mt-5 inline-flex items-center gap-1 font-display text-[16px] font-semibold text-primary-dark">Not sure which watch to wear this year? Find yours ›</a>
-              <WatchArt className="mt-6 w-full max-w-[420px]" />
+              <Watch3D className="mt-4 w-full max-w-[420px]" />
             </div>
           ) : (
           <div className="min-w-0">
