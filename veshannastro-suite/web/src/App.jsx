@@ -16,8 +16,8 @@ const WaIcon = ({ size = 20 }) => (
 );
 
 const STEPS = [
-  ['Add a photo or describe it', 'A photo of your watch fills in its dial, metal and strap; check each answer, or pick them yourself.'],
-  ['Add the finer details', 'Numerals, date window, hands and strap pattern, if you know them.'],
+  ['Add one photo', 'We read the dial, its colour and shape, the metal, numerals and hands from the photo.'],
+  ['Answer two questions', 'Your strap, and the wrist you wear it on.'],
   ['Add your birth date', 'It gives your birth number and your personal year.'],
   ['Read your answer', 'What your watch says about you, whether it suits your year, and what to change.']
 ];
@@ -78,7 +78,7 @@ export default function App() {
             <h1 className="t-large max-w-[12ch]">What does your watch say about you?</h1>
             <p className="mt-5 max-w-[34rem] text-[18px] leading-[1.6] text-muted-foreground">
               The colour of the dial, the metal, the strap and the wrist you wear it on all carry meaning in numerology.
-              Add a photo or describe your watch, and see what it says about you and whether it suits your year.
+              Add one photo of your watch and see what it says about you and whether it suits your year.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a href={WATCH} className="btn-primary">Read my watch</a>

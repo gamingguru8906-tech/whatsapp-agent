@@ -111,10 +111,10 @@ export default function App() {
               <h1 className="t-large max-w-[12ch]">What does your watch say about you?</h1>
               <p className="mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
                 The colour of the dial, its shape, the metal, the strap and the wrist you wear it on all carry meaning in numerology.
-                See what yours says, whether it suits your year, and your numbers.
+                Add one photo of your watch and see what it says about you, whether it suits your year, and your numbers.
               </p>
               <a href="/watch/year" className="mt-5 inline-flex items-center gap-1 font-display text-[16px] font-semibold text-primary-dark">Not sure which watch to wear this year? Find yours ›</a>
-              <Watch3D className="mt-4 w-full max-w-[420px]" />
+              <Watch3D className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
             </div>
           ) : (
           <div className="min-w-0">

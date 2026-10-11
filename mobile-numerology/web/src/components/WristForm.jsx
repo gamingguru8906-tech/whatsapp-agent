@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Camera } from 'lucide-react';
+import { Camera, Check } from 'lucide-react';
 import { MONTHS, YEARS, dobFrom, Picker } from './ReadingForm.jsx';
 import Turnstile from './Turnstile.jsx';
 import { readWrist, shrinkPhoto, track } from '../api.js';
@@ -13,20 +13,37 @@ export const WRIST = {
   style: { q: 'Your usual style', options: { formal: 'Formal', casual: 'Casual', sporty: 'Sporty', traditional: 'Traditional' } }
 };
 
+// What the photo read, as a line of ticks; the only thing ever asked is the wrist size, and only if the photo
+// could not tell (one tap). Undertone and style are optional: the answer works without them.
 function WristPicks({ wrist, setWrist, fromPhoto, invalid }) {
-  return Object.entries(WRIST).map(([k, a]) => (
-    <div key={k} className="row">
-      <div className="flex items-baseline justify-between gap-2">
-        <label className="field-label" htmlFor={`wr-${k}`}>{a.q}</label>
-        {fromPhoto.has(k) && <span className="chip mb-1 shrink-0 bg-accent-soft text-warning-dark">From photo · check</span>}
-      </div>
-      <Picker id={`wr-${k}`} value={wrist[k] ?? ''} onChange={e => setWrist(k, e.target.value || undefined)} label={a.q} invalid={invalid && k === 'size'}>
-        <option value="">Choose</option>
-        {Object.entries(a.options).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-      </Picker>
-      {a.hint && <p className="t-note mt-1">{a.hint}</p>}
-    </div>
-  ));
+  const seen = Object.entries(WRIST).filter(([k]) => fromPhoto.has(k) && wrist[k]);
+  return (
+    <>
+      {seen.length > 0 && (
+        <ul className="row flex flex-wrap gap-x-4 gap-y-1.5" aria-label="What we see in your photo">
+          {seen.map(([k, a]) => (
+            <li key={k} className="flex items-center gap-1.5 text-[15px] text-foreground/85">
+              <Check size={15} className="shrink-0 text-success-dark" aria-hidden="true" />
+              {a.options[wrist[k]]} {k === 'size' ? 'wrist' : k === 'undertone' ? 'undertone' : 'style'}
+            </li>
+          ))}
+        </ul>
+      )}
+      {!fromPhoto.has('size') && (
+        <div className="row">
+          <p className="field-label">Wrist size</p>
+          <div id="wr-size" tabIndex={-1} role="radiogroup" aria-label="Wrist size" className="mt-1.5 flex flex-wrap gap-2">
+            {Object.entries(WRIST.size.options).map(([k, l]) => (
+              <button key={k} type="button" role="radio" aria-checked={wrist.size === k} onClick={() => setWrist('size', k)}
+                className={`min-h-[44px] rounded-full border px-5 text-[15px] font-medium transition-colors ${wrist.size === k ? 'border-primary bg-primary-soft text-maroon' : invalid ? 'border-danger/60 bg-card text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
+                {l}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default function WristForm({ config, status, errors, onSubmit, year }) {
@@ -71,7 +88,7 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
     setW(s => ({ ...s, ...r.wrist }));
     setFromPhoto(new Set(r.filled));
     setManual(true);
-    setPhoto(p => ({ ...p, state: 'done', msg: r.filled.length === 3 ? 'Here is what we see. Change anything that is not right.' : 'We could read part of it. Please choose the rest.' }));
+    setPhoto(p => ({ ...p, state: 'done', msg: r.filled.includes('size') ? '' : 'Tap your wrist size below; the photo did not show it clearly.' }));
     track('wrist', 'photo_read', { detail: { filled: r.filled.length } });
   }
 

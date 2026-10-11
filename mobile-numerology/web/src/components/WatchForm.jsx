@@ -1,29 +1,40 @@
-import React, { useRef, useState } from 'react';
-import { Camera, ChevronDown } from 'lucide-react';
-import { readPhoto, shrinkPhoto } from '../api.js';
+import React, { useEffect, useRef, useState } from 'react';
+import { Camera, Check } from 'lucide-react';
 import { MONTHS, YEARS, dobFrom, Picker } from './ReadingForm.jsx';
 import Turnstile from './Turnstile.jsx';
+import { readPhoto, shrinkPhoto, track } from '../api.js';
 import attributes from '../../../../brain/data/watch-attributes.json';
 
-// Wristwatch segment form: the person's details, then their watch, picked by hand (same look as the mobile form).
-const ATTRS = attributes.attributes;
-const FIRST = ['dialColour', 'dialShape', 'caseMetal', 'dialSize', 'wrist', 'markers', 'strapMaterial'];
-const MAIN = FIRST.map(k => ATTRS.find(a => a.key === k)).filter(Boolean);
-const MORE = ATTRS.filter(a => !FIRST.includes(a.key) && !a.multi);
-const GOAL = ATTRS.find(a => a.key === 'goal');
-const ART = ATTRS.find(a => a.key === 'dialArt');
+// Wristwatch segment: one photo of the watch (read at once, never kept) and two questions the photo cannot answer
+// for sure — the strap and the wrist. Everything else on the watch comes from the photo.
 
-function AttrRow({ a, value, onChange, invalid, fromPhoto }) {
+const ATTRS = Object.fromEntries(attributes.attributes.map(a => [a.key, a]));
+const STRAP_MAIN = ['metal', 'leather', 'rubber', 'silicone', 'fabric'];
+// What the photo read, in the order a person looks at a watch.
+const SHOW = ['dialColour', 'dialShape', 'caseMetal', 'markers', 'dateWindow', 'hands', 'watchType', 'dialArt'];
+
+function seenLine(watch) {
+  return SHOW.filter(k => watch[k] !== undefined).map(k => {
+    const a = ATTRS[k], v = watch[k];
+    if (k === 'dateWindow') return v === 'none' ? 'No date window' : `${{ date: 'Date', day: 'Day', dayDate: 'Day and date' }[v]} window${watch.datePosition ? ` at ${watch.datePosition}` : ''}`;
+    if (k === 'dialArt') return v.map(x => a.options[x]).join(', ');
+    if (k === 'dialColour') return `${a.options[v]} dial`;
+    if (k === 'dialShape') return `${a.options[v]} shape`;
+    if (k === 'caseMetal') return `${a.options[v]} case`;
+    if (k === 'hands') return a.options[v];
+    return a.options[v];
+  });
+}
+
+function Chips({ options, value, onPick, label }) {
   return (
-    <div className="row">
-      <div className="flex items-baseline justify-between gap-2">
-        <label className="field-label" htmlFor={`w-${a.key}`}>{a.q}</label>
-        {fromPhoto && <span className="chip mb-1 shrink-0 bg-accent-soft text-warning-dark">From photo · check</span>}
-      </div>
-      <Picker id={`w-${a.key}`} value={value ?? ''} onChange={e => onChange(a.key, e.target.value || undefined)} label={a.q} invalid={invalid}>
-        <option value="">Choose</option>
-        {Object.entries(a.options).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-      </Picker>
+    <div role="radiogroup" aria-label={label} className="mt-1.5 flex flex-wrap gap-2">
+      {options.map(([k, l]) => (
+        <button key={k} type="button" role="radio" aria-checked={value === k} onClick={() => onPick(k)}
+          className={`min-h-[44px] rounded-full border px-4 text-[15px] font-medium transition-colors ${value === k ? 'border-primary bg-primary-soft text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
+          {l}
+        </button>
+      ))}
     </div>
   );
 }
@@ -31,73 +42,139 @@ function AttrRow({ a, value, onChange, invalid, fromPhoto }) {
 export default function WatchForm({ config, status, errors, onSubmit }) {
   const [f, setF] = useState({ name: '', mobile: '', consent: false, waOptIn: false, website: '' });
   const [dob, setDob] = useState({ day: '', month: '', year: '' });
-  const [w, setW] = useState({});
-  const [more, setMore] = useState(false);
+  const [seen, setSeen] = useState({});          // what the photo read
+  const [strap, setStrap] = useState('');
+  const [strapFromPhoto, setStrapFromPhoto] = useState(false);
+  const [wrist, setWrist] = useState('');
+  const [photo, setPhoto] = useState({ state: 'idle', msg: '', preview: null });
   const [token, setToken] = useState('');
   const [reset, setReset] = useState(0);
   const [local, setLocal] = useState({});
+  const fileRef = useRef(null);
+  const pending = useRef(null);                  // the photo read in progress, so "submit" can wait for it
   const set = k => e => setF(s => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
   const setD = k => e => setDob(s => ({ ...s, [k]: e.target.value }));
-  const setAttr = (k, v) => {
-    setW(s => { const n = { ...s }; if (v === undefined) delete n[k]; else n[k] = v; return n; });
-    setPhotoKeys(p => { const n = new Set(p); n.delete(k); return n; }); // a changed answer is the visitor's own
-  };
-  // Photo: fills the choices it can see; every filled choice is marked until the visitor looks at it.
-  const fileRef = useRef(null);
-  const [photo, setPhoto] = useState({ state: 'idle', msg: '' });
-  const [photoKeys, setPhotoKeys] = useState(new Set());
+  const err = { ...errors, ...local };
+  useEffect(() => () => { if (photo.preview) URL.revokeObjectURL(photo.preview); }, [photo.preview]);
+
   async function onPhoto(e) {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    setPhoto({ state: 'loading', msg: '' });
-    let image;
-    try { image = await shrinkPhoto(file); } catch { setPhoto({ state: 'error', msg: 'That file could not be opened as a photo. Please try another.' }); return; }
-    const r = await readPhoto(image);
-    if (!r.ok) { setPhoto({ state: 'error', msg: r.error }); return; }
-    setW(s => ({ ...s, ...r.watch }));
-    setPhotoKeys(new Set(r.filled));
-    if (r.filled.some(k => !FIRST.includes(k))) setMore(true);
-    setPhoto({ state: 'done', msg: `We filled ${r.filled.length} details from your photo. Please check each marked answer and change anything that is not right.` });
+    track('watch', 'photo_added');
+    setLocal(l => ({ ...l, photo: undefined }));
+    setSeen({});
+    setPhoto({ state: 'loading', msg: '', preview: URL.createObjectURL(file) });
+    const job = (async () => {
+      let image;
+      try { image = await shrinkPhoto(file); } catch { return { ok: false, error: 'That file could not be opened as a photo. Please try another.' }; }
+      return readPhoto(image);
+    })();
+    pending.current = job;
+    const r = await job;
+    if (pending.current !== job) return;          // a newer photo was chosen meanwhile
+    pending.current = null;
+    if (!r.ok || !(r.watch.dialColour || r.watch.dialShape)) {
+      setPhoto(p => ({ ...p, state: 'error', msg: r.ok ? 'The dial is not clear in this photo. Please take a closer photo of the watch face.' : r.error }));
+      track('watch', 'photo_failed');
+      return;
+    }
+    const { strapMaterial, ...rest } = r.watch;
+    setSeen(rest);
+    if (strapMaterial && !strap) { setStrap(strapMaterial); setStrapFromPhoto(true); }
+    setPhoto(p => ({ ...p, state: 'done', msg: '' }));
+    track('watch', 'photo_read', { detail: { filled: r.filled.length } });
   }
-  const toggleList = (key, k) => {
-    setW(s => {
-      const g = new Set(s[key] ?? []);
-      g.has(k) ? g.delete(k) : g.add(k);
-      return { ...s, [key]: [...g] };
-    });
-    setPhotoKeys(p => { const n = new Set(p); n.delete(key); return n; });
-  };
-  const toggleGoal = k => toggleList('goal', k);
-  const err = { ...errors, ...local };
-  const visible = a => !a.onlyIf || Object.entries(a.onlyIf).every(([k, vs]) => vs.includes(w[k]));
 
   async function submit(e) {
     e.preventDefault();
     const iso = dobFrom(dob);
     const miss = {};
+    if (photo.state === 'idle') miss.photo = 'Add a photo of your watch.';
+    else if (photo.state === 'error') miss.photo = 'Please add a clearer photo of your watch.';
+    if (!strap) miss.strap = 'Choose your strap.';
+    if (!wrist) miss.wrist = 'Choose your wrist.';
     if (f.name.trim().length < 2) miss.name = 'Enter your name.';
     if (f.mobile.replace(/\D/g, '').length < 10) miss.mobile = 'Enter your 10-digit mobile number.';
     if (!iso) miss.dob = 'Choose your day, month and year of birth.';
     else if (iso === 'invalid') miss.dob = 'That date does not exist. Check the day and month.';
-    if (!w.dialColour || !w.dialShape) miss.watch = 'Pick at least the dial colour and the dial shape.';
     if (!f.consent) miss.consent = 'Tick this box so we can show your reading.';
     setLocal(miss);
     if (Object.keys(miss).length) {
-      const firstKey = Object.keys(miss)[0];
-      document.getElementById(firstKey === 'watch' ? 'w-dialColour' : `f-${firstKey}`)?.focus();
+      const id = { photo: 'w-photo', strap: 'w-strap', wrist: 'w-wrist' }[Object.keys(miss)[0]] ?? `f-${Object.keys(miss)[0]}`;
+      document.getElementById(id)?.focus();
+      document.getElementById(id)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
       return;
     }
-    const ok = await onSubmit({ ...f, dob: iso, watch: w, turnstileToken: token });
+    track('watch', 'form_sent');
+    // The photo may still be reading: wait for it, so the reading uses everything the photo shows.
+    let watch = seen;
+    if (pending.current) {
+      const r = await pending.current;
+      if (!r.ok) return;
+      const { strapMaterial, ...rest } = r.watch; watch = rest;
+    }
+    const ok = await onSubmit({ ...f, dob: iso, watch: { ...watch, strapMaterial: strap, wrist }, turnstileToken: token });
     if (!ok) setReset(r => r + 1);
   }
 
   const busy = status === 'loading';
+  const lines = seenLine(seen);
+  const strapOther = strap && !STRAP_MAIN.includes(strap);
   return (
     <form onSubmit={submit} noValidate aria-labelledby="form-title" className="grid gap-5">
       <div>
         <h2 id="form-title" className="t-section">Get your free watch reading</h2>
-        <p className="mt-1 text-[15px] text-muted-foreground">Your details, then your watch. Your reading appears right here.</p>
+        <p className="mt-1 text-[15px] text-muted-foreground">A photo of your watch and two quick answers. Your reading appears right here.</p>
+      </div>
+
+      <div className="group-card rows shadow-soft">
+        <div className="row flex items-center gap-4 py-4">
+          {photo.preview
+            ? <img src={photo.preview} alt="Your watch photo" className="h-20 w-20 shrink-0 rounded-[16px] object-cover" />
+            : <span className="grid h-20 w-20 shrink-0 place-items-center rounded-[16px] bg-primary-soft text-primary-dark"><Camera size={30} aria-hidden="true" /></span>}
+          <div className="min-w-0 flex-1">
+            <p className="t-headline">{photo.state === 'loading' ? 'Reading your watch…' : photo.state === 'done' ? 'Your watch' : 'Photo of your watch'}</p>
+            <p className="t-note mt-0.5">{photo.state === 'done' ? 'Read from your photo.' : 'The watch face, straight on, in good light. The photo is never kept.'}</p>
+          </div>
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} aria-label="Choose a photo of your watch" />
+          <button id="w-photo" type="button" onClick={() => fileRef.current?.click()} disabled={photo.state === 'loading'}
+            className={`min-h-[44px] shrink-0 px-4 text-[15px] disabled:opacity-70 ${photo.preview ? 'btn-plain bg-card shadow-[0_0_0_1px_hsl(var(--border))]' : 'btn-primary'}`}>
+            {photo.state === 'loading' ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" aria-label="Reading" /> : photo.preview ? 'Change' : 'Add photo'}
+          </button>
+        </div>
+        {lines.length > 0 && (
+          <ul className="row flex flex-wrap gap-x-4 gap-y-1.5" aria-label="What we see in your photo">
+            {lines.map(l => <li key={l} className="flex items-center gap-1.5 text-[15px] text-foreground/85"><Check size={15} className="shrink-0 text-success-dark" aria-hidden="true" />{l}</li>)}
+          </ul>
+        )}
+        {(photo.msg || err.photo) && <p role="status" className="row text-[15px] text-danger-dark">{photo.msg || err.photo}</p>}
+
+        <div className="row">
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="field-label" id="w-strap-label">Strap</p>
+            {strapFromPhoto && <span className="chip mb-1 shrink-0 bg-accent-soft text-warning-dark">From photo · check</span>}
+          </div>
+          <div id="w-strap" tabIndex={-1}>
+            <Chips label="Strap" value={strap} onPick={k => { setStrap(k); setStrapFromPhoto(false); }}
+              options={[...STRAP_MAIN.map(k => [k, ATTRS.strapMaterial.options[k]]), ...(strapOther ? [[strap, ATTRS.strapMaterial.options[strap]]] : [])]} />
+          </div>
+          {!strapOther && (
+            <select aria-label="Other strap" value="" onChange={e => { if (e.target.value) { setStrap(e.target.value); setStrapFromPhoto(false); } }}
+              className="mt-2 bg-transparent text-[15px] font-medium text-primary-dark">
+              <option value="">Something else…</option>
+              {Object.entries(ATTRS.strapMaterial.options).filter(([k]) => !STRAP_MAIN.includes(k)).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+            </select>
+          )}
+          {err.strap && <p className="error">{err.strap}</p>}
+        </div>
+        <div className="row">
+          <p className="field-label">Which wrist do you wear it on?</p>
+          <div id="w-wrist" tabIndex={-1}>
+            <Chips label="Wrist" value={wrist} onPick={setWrist} options={Object.entries(ATTRS.wrist.options)} />
+          </div>
+          {err.wrist && <p className="error">{err.wrist}</p>}
+        </div>
       </div>
 
       <div className="group-card rows shadow-soft">
@@ -134,69 +211,6 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
           {err.dob && <p className="error">{err.dob}</p>}
         </fieldset>
       </div>
-
-      <div>
-        <h3 className="mb-2 px-1 font-display text-[15px] font-semibold text-maroon">Your watch</h3>
-        <div className="group-card mb-3 flex items-center gap-4 px-4 py-4 sm:px-5">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary-soft text-primary-dark"><Camera size={22} aria-hidden="true" /></span>
-          <div className="min-w-0 flex-1">
-            <p className="t-headline">Fill it from a photo</p>
-            <p className="t-note mt-0.5">A clear, straight photo of the watch face. The photo is only read, not kept.</p>
-          </div>
-          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/*" className="hidden" onChange={onPhoto} aria-label="Choose a photo of your watch" />
-          <button type="button" onClick={() => fileRef.current?.click()} disabled={photo.state === 'loading'}
-            className="btn-plain min-h-[44px] shrink-0 bg-card px-4 text-[15px] shadow-[0_0_0_1px_hsl(var(--border))] disabled:opacity-70">
-            {photo.state === 'loading' ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" /> Reading…</> : photo.state === 'done' ? 'Another photo' : 'Add photo'}
-          </button>
-        </div>
-        {photo.msg && <p role="status" className={`mb-3 rounded-[12px] px-4 py-3 text-[15px] ${photo.state === 'error' ? 'bg-danger-soft text-danger-dark' : 'bg-accent-soft text-warning-dark'}`}>{photo.msg}</p>}
-        <div className="group-card rows">
-          {MAIN.map(a => <AttrRow key={a.key} a={a} value={w[a.key]} onChange={setAttr} fromPhoto={photoKeys.has(a.key)} invalid={!!err.watch && ['dialColour', 'dialShape'].includes(a.key)} />)}
-          {err.watch && <p className="row error mt-0">{err.watch}</p>}
-          <button type="button" onClick={() => setMore(m => !m)} aria-expanded={more}
-            className="row flex w-full items-center justify-between text-left text-[17px] font-medium text-primary-dark">
-            {more ? 'Fewer details' : 'More details (numerals, date window, hands, strap…)'}
-            <ChevronDown size={20} className={`shrink-0 transition-transform ${more ? 'rotate-180' : ''}`} aria-hidden="true" />
-          </button>
-          {more && MORE.filter(visible).map(a => <AttrRow key={a.key} a={a} value={w[a.key]} onChange={setAttr} fromPhoto={photoKeys.has(a.key)} />)}
-          {more && ART && (
-            <div className="row">
-              <div className="flex items-baseline justify-between gap-2">
-                <p className="field-label">{ART.q} <span className="font-normal text-muted-foreground">(pick any)</span></p>
-                {photoKeys.has('dialArt') && <span className="chip mb-1 shrink-0 bg-accent-soft text-warning-dark">From photo · check</span>}
-              </div>
-              <div className="mt-1 flex flex-wrap gap-2">
-                {Object.entries(ART.options).map(([k, v]) => {
-                  const on = (w.dialArt ?? []).includes(k);
-                  return (
-                    <button key={k} type="button" aria-pressed={on} onClick={() => toggleList('dialArt', k)}
-                      className={`min-h-[40px] rounded-full border px-3.5 text-[15px] transition-colors ${on ? 'border-primary bg-primary-soft text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
-                      {v}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {GOAL && (
-        <div>
-          <p className="mb-2 px-1 font-display text-[13px] font-medium text-muted-foreground">{GOAL.q} (optional)</p>
-          <div className="grid gap-2">
-            {Object.entries(GOAL.options).map(([k, v]) => {
-              const on = (w.goal ?? []).includes(k);
-              return (
-                <button key={k} type="button" aria-pressed={on} onClick={() => toggleGoal(k)}
-                  className={`min-h-[44px] rounded-[12px] border px-3 py-2 text-left text-[15px] leading-tight transition-colors ${on ? 'border-primary bg-primary-soft text-maroon' : 'border-primary/15 bg-card text-maroon hover:border-primary/50'}`}>
-                  {v}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       <input type="text" name="website" tabIndex={-1} autoComplete="off" value={f.website} onChange={set('website')}
         className="absolute -left-[9999px] h-px w-px opacity-0" aria-hidden="true" />
