@@ -68,13 +68,21 @@ export default function WristResult({ result, config, onAgain, againLabel = 'Try
   const [optIn, setOptIn] = useState(null);
   const [busy, setBusy] = useState(false);
 
+  const [failed, setFailed] = useState(null); // 'feedback' | 'optIn' when saving that answer did not go through
+
   async function answer(kind, value) {
-    setBusy(true);
+    setBusy(true); setFailed(null);
+    const before = kind === 'feedback' ? feedback : optIn;
     if (kind === 'feedback') setFeedback(value); else setOptIn(value);
     track('wrist', kind === 'feedback' ? 'feedback' : 'opt_in', { leadKey: result.leadKey, detail: { value: String(value) } });
-    await sendAnswer(result.leadKey, kind === 'feedback' ? { feedback: value } : { optIn: value });
+    const res = await sendAnswer(result.leadKey, kind === 'feedback' ? { feedback: value } : { optIn: value });
+    if (!res.ok) { // not saved: undo the choice and say so, so they can tap again
+      if (kind === 'feedback') setFeedback(before); else setOptIn(before);
+      setFailed(kind);
+    }
     setBusy(false);
   }
+  const Failed = () => <p role="alert" className="mt-3 rounded-[12px] bg-danger-soft px-4 py-2.5 text-[15px] text-danger-dark">That did not save. Please check your internet and tap again.</p>;
 
   return (
     <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8">
@@ -122,7 +130,8 @@ export default function WristResult({ result, config, onAgain, againLabel = 'Try
             ))}
           </div>
           <div className="mt-4"><Segmented label="Does this sound like you?" options={[['yes', 'Yes'], ['partly', 'Partly'], ['no', 'No']]} value={feedback ?? ''} onChange={v => answer('feedback', v)} /></div>
-          {feedback && <p className="mt-3 text-[15px] text-muted-foreground" role="status">{feedback === 'yes' ? 'Thank you. Your numbers read you well.' : 'Thank you for telling us. A consultation looks at your full chart, not only your birth number.'}</p>}
+          {failed === 'feedback' && <Failed />}
+          {feedback && <p className="mt-3 text-[15px] text-success-dark" role="status">{feedback === 'yes' ? 'Thank you. Your numbers read you well.' : 'Thank you for telling us. A consultation looks at your full chart, not only your birth number.'}</p>}
         </section>
       )}
 
@@ -152,7 +161,8 @@ export default function WristResult({ result, config, onAgain, againLabel = 'Try
         <h2 className="t-title mt-3">Get your watch reminders on WhatsApp?</h2>
         <p className="mx-auto mt-2 max-w-md text-[17px] text-muted-foreground">When your watch for the year changes, and new recommendations and offers. Reply STOP any time.</p>
         <div className="mx-auto max-w-sm"><Choice options={[[true, 'Yes, send them'], [false, 'No thanks']]} value={optIn} busy={busy} onPick={v => answer('optIn', v)} /></div>
-        {optIn !== null && <p className="mt-3 text-[15px] text-muted-foreground" role="status">{optIn ? 'Done. We will message you on WhatsApp.' : 'No problem. We will not send you updates.'}</p>}
+        {failed === 'optIn' && <Failed />}
+        {optIn !== null && <p className="mt-3 text-[15px] text-success-dark" role="status">{optIn ? 'Done. We will message you on WhatsApp.' : 'No problem. We will not send you updates.'}</p>}
       </section>
 
       <section data-wa-cta className="group-card px-6 py-8 text-center shadow-soft">

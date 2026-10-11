@@ -7,6 +7,7 @@ import VedicGrid from './VedicGrid.jsx';
 import { Numbers, Timing, LoShu, NameChapter } from './BrainChapters.jsx';
 import { callLink, fmt, plural, dot, jump, Chapter, Source, Line, ShowMore, RuleRow, YogaRow, WaIcon, whatsappLink, WaButton, InlineCta, SavedNote } from './ui.jsx';
 import { clarity } from '../../../engine/clarity.js';
+import { CONTACT } from './SiteNav.jsx';
 
 // Every numerology sentence here comes from the reading the engine returns (rule wording approved by the owner).
 // The page only adds headings, short "how this works" intros, navigation and layout.
@@ -551,7 +552,7 @@ function Cta({ s, href }) {
       <p className="mx-auto mt-2 max-w-md text-[17px] text-muted-foreground">Consult with us about your number, your remedies, or choosing a new number that suits your birth date.</p>
       {href
         ? <WaButton href={href} className="mt-6">Consult with us on WhatsApp</WaButton>
-        : <p className="mt-5 text-[15px] font-semibold text-muted-foreground">WhatsApp contact coming soon.</p>}
+        : <p className="mt-5 text-[15px] font-semibold text-muted-foreground">Call us on <a href={`tel:${CONTACT.phone}`} className="text-primary-dark">{CONTACT.phoneLabel}</a> or email <a href={`mailto:${CONTACT.email}`} className="break-all text-primary-dark">{CONTACT.email}</a>.</p>}
       {s.healthNote && <p className="t-note mt-5">For any health concern mentioned in your reading, please also consult a doctor.</p>}
     </section>
   );

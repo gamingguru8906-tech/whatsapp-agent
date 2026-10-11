@@ -75,7 +75,7 @@ export async function readPhoto(image) {
   try {
     const res = await fetch('/api/watch-photo', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image }) });
     const data = await res.json().catch(() => null);
-    return data ?? { ok: false, error: 'We could not read this photo. Please fill in the details below.' };
+    return data ?? { ok: false, error: 'We could not read this photo. Please try again in a minute.' };
   } catch {
     return { ok: false, error: 'No connection. Please check your internet and try again.' };
   }

@@ -115,7 +115,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
   const lines = seenLine(seen);
   const strapOther = strap && !STRAP_MAIN.includes(strap);
   return (
-    <form onSubmit={submit} noValidate aria-labelledby="form-title" className="grid gap-5">
+    <form onSubmit={submit} noValidate aria-labelledby="form-title" className="grid min-w-0 grid-cols-1 gap-5">
       <div>
         <h2 id="form-title" className="t-section">Get your free watch reading</h2>
         <p className="mt-1 text-[15px] text-muted-foreground">A photo of your watch and two quick answers. Your reading appears right here.</p>
@@ -141,7 +141,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
             {lines.map(l => <li key={l} className="flex items-center gap-1.5 font-ui text-[15px] tracking-[-0.01em] text-foreground/85"><Check size={15} className="shrink-0 text-success-dark" aria-hidden="true" />{l}</li>)}
           </ul>
         )}
-        {(photo.msg || err.photo) && <p role="status" className="row text-[15px] text-danger-dark">{photo.msg || err.photo}</p>}
+        {(photo.msg || err.photo) && <p role="alert" className="row text-[15px] text-danger-dark">{photo.msg || err.photo}</p>}
 
         <div className="row">
           <div className="flex items-baseline justify-between gap-2">
@@ -227,7 +227,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
       </div>
 
       <Turnstile siteKey={config.turnstileSiteKey} onToken={setToken} resetSignal={reset} />
-      {err.form && <p className="error rounded-[12px] bg-danger-soft px-4 py-3">{err.form}</p>}
+      {err.form && <p role="alert" className="error rounded-[12px] bg-danger-soft px-4 py-3">{err.form}</p>}
 
       <button type="submit" disabled={busy} className="btn-primary w-full disabled:opacity-70">
         {busy ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground" /> Reading your watch…</> : 'Show my watch reading'}

@@ -98,7 +98,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
 
   const busy = status === 'loading';
   return (
-    <form onSubmit={submit} noValidate aria-labelledby="form-title" className="grid gap-5">
+    <form onSubmit={submit} noValidate aria-labelledby="form-title" className="grid min-w-0 grid-cols-1 gap-5">
       <div>
         <h2 id="form-title" className="t-section">Get your free reading</h2>
         <p className="mt-1 text-[15px] text-muted-foreground">Four details. Your reading appears right here.</p>
@@ -203,7 +203,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
 
       <Turnstile siteKey={config.turnstileSiteKey} onToken={setToken} resetSignal={reset} />
 
-      {err.form && <p className="error rounded-[12px] bg-danger-soft px-4 py-3">{err.form}</p>}
+      {err.form && <p role="alert" className="error rounded-[12px] bg-danger-soft px-4 py-3">{err.form}</p>}
 
       <button type="submit" disabled={busy} className="btn-primary w-full disabled:opacity-70">
         {busy ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground" /> Reading your number…</> : 'Show my reading'}

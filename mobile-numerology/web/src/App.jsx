@@ -11,19 +11,15 @@ import Watch3D from './components/Watch3D.jsx';
 import MyReadings from './components/MyReadings.jsx';
 import { UserRound } from 'lucide-react';
 import { Lockup } from './components/Brand.jsx';
+import { MobileMenu, FooterLinks } from './components/SiteNav.jsx';
 import { startReveal, scrollToEl } from './motion.js';
+import { PAGES, ORIGIN } from '../../engine/pages.js';
 
 // Two segments on one site: Mobile Numerology at /, Wristwatch Numerology at /watch (with "Which watch should I wear
 // this year?" at /watch/year); "My readings" at /my.
 // Moving between them happens in the page (no reload), so the tabs slide and the content swaps smoothly.
 const segmentOf = p => (p.startsWith('/watch/year') ? 'wrist' : p.startsWith('/watch') ? 'watch' : p.startsWith('/my') ? 'my' : 'mobile');
 const ROUTES = ['/', '/watch', '/watch/year', '/my'];
-const TITLES = {
-  mobile: 'Free Mobile Number Numerology Reading | Veshannastro',
-  watch: 'What does your watch say about you? | Veshannastro',
-  wrist: 'Which watch should you wear this year? | Veshannastro',
-  my: 'My readings | Veshannastro'
-};
 const YEAR_NOW = new Date(Date.now() + 5.5 * 3600e3).getUTCFullYear();
 
 const ownerKeyFromUrl = () => {
@@ -92,7 +88,11 @@ export default function App() {
   // Funnel: one view per page shown.
   useEffect(() => {
     track(SEGMENT, 'view');
-    document.title = TITLES[SEGMENT];
+    // This page's title, description and address (the Worker writes the same into the HTML for the first load).
+    const page = PAGES[SEGMENT];
+    document.title = page.title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', page.description);
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', ORIGIN + page.path);
   }, [SEGMENT]);
 
   async function submit(payload) {
@@ -102,6 +102,11 @@ export default function App() {
     if (!data.ok) {
       setErrors(data.errors || { form: 'Please check the form and try again.' });
       setStatus('idle');
+      // Take them to the first message, so a problem is never hidden further down the form.
+      requestAnimationFrame(() => {
+        const first = document.querySelector('#reading-form .error');
+        if (first) scrollToEl(first, { block: 'center' });
+      });
       return false;
     }
     setResult(data);
@@ -130,10 +135,13 @@ export default function App() {
                 className={`relative z-[1] rounded-full px-3.5 py-1.5 text-center no-underline transition-colors duration-300 ${TAB === k ? 'text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
             ))}
           </nav>
-          <a href="/my" aria-current={SEGMENT === 'my' ? 'page' : undefined}
-            className={`pressable order-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:order-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
-            <UserRound size={17} aria-hidden="true" />My readings
-          </a>
+          <div className="order-2 flex items-center gap-1 sm:order-3">
+            <a href="/my" aria-current={SEGMENT === 'my' ? 'page' : undefined}
+              className={`pressable inline-flex min-h-[40px] min-w-[40px] items-center justify-center gap-1.5 rounded-full px-2.5 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:min-h-[36px] sm:px-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
+              <UserRound size={18} aria-hidden="true" /><span className="sr-only sm:not-sr-only">My readings</span>
+            </a>
+            <MobileMenu site="readings" refCode={`WEB-${SEGMENT.toUpperCase()}-MENU`} />
+          </div>
         </div>
       </header>
 
@@ -146,7 +154,7 @@ export default function App() {
         <div key={SEGMENT} className="animate-swap">
         {SEGMENT === 'my' ? <MyReadings config={config} /> : <>
         <div className="hero-day">
-        <section className="mx-auto grid max-w-5xl gap-8 px-5 pb-10 pt-8 sm:pt-14 lg:grid-cols-[1fr_minmax(0,460px)] lg:items-start lg:gap-14 lg:pb-16">
+        <section className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-5 pb-10 pt-8 sm:pt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:items-start lg:gap-14 lg:pb-16">
           {SEGMENT === 'wrist' ? (
             <div className="min-w-0 lg:sticky lg:top-28">
               <h1 className="enter t-large max-w-[13ch]">Which watch should you wear this year?</h1>
@@ -165,7 +173,7 @@ export default function App() {
                 Add one photo of your watch and see what it says about you, whether it suits your year, and your numbers.
               </p>
               <a href="/watch/year" className="hero-link mt-5 block font-display text-[16px] font-semibold">Not sure which watch to wear this year? <span className="whitespace-nowrap">Find yours ›</span></a>
-              <Watch3D className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
+              <Watch3D priority className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
             </div>
           ) : (
           <div className="min-w-0 lg:sticky lg:top-28">
@@ -177,7 +185,7 @@ export default function App() {
             <div className="mt-8 flex items-center gap-5 sm:gap-7">
               <VedicGrid size="xl" counts={{ 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1 }} lightOrder={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
                 label="The Vedic numerology grid: 3 1 9, 6 7 5, 2 8 4" />
-              <p className="hero-sub max-w-[13rem] text-[15px] leading-snug">
+              <p className="hero-sub min-w-0 max-w-[13rem] flex-1 text-[15px] leading-snug">
                 Your digits light up on this grid. Where they line up, they form yogas.
               </p>
             </div>
@@ -206,14 +214,11 @@ export default function App() {
 
       <footer className="border-t border-border/70 bg-card/60">
         <div className="mx-auto grid max-w-5xl gap-3 px-5 py-9 text-[13px] leading-relaxed text-muted-foreground">
-          <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
-            <Lockup size={26} />
-            <a href="https://www.veshannastro.co.in" className="font-ui text-[13px] font-medium text-primary-dark no-underline">veshannastro.co.in</a>
-          </div>
+          <div className="mb-1"><Lockup size={26} /></div>
           <p className="font-ui text-[14px] text-foreground/80">Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
           <p><strong className="font-semibold text-foreground">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods taught by experienced numerologists. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>
           <p>What we store: your name, mobile number, date of birth, what you shared, the numbers and watch details you gave, and whether you want WhatsApp updates. We use them to show your reading and, only if you agree, to contact you on WhatsApp. We never sell them. Photos of your watch or wrist are read once and never stored.</p>
-          <p className="font-ui">© {new Date().getFullYear()} Veshannastro</p>
+          <div className="mt-4 text-[14px]"><FooterLinks site="readings" refCode={`WEB-${SEGMENT.toUpperCase()}-FOOTER`} /></div>
         </div>
       </footer>
     </div>

@@ -3,6 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import Watch3D from './components/Watch3D.jsx';
 import { Lockup } from './components/Brand.jsx';
 import PriceCut from './components/PriceCut.jsx';
+import { MobileMenu, FooterLinks } from './components/SiteNav.jsx';
 
 // Veshannastro front page. The watch reading opens later; until then its button asks to be told on WhatsApp, and
 // the mobile-number reading (live) is one tap away. "(Ref: ...)" tags the lead's source in Kamala's CRM.
@@ -29,9 +30,7 @@ const YEAR_WATCH = `${WATCH}/year`;
 const READINGS = [
   { name: 'Your Watch for the Year', text: 'A photo of your wrist and your birth date: the watch to wear this year, its metal, dial, size and strap.', status: 'Open now', href: YEAR_WATCH },
   { name: 'Wristwatch Analyzer', text: "What your watch's dial, colour, metal and strap say about you, and whether it suits your year.", status: 'Open now', href: WATCH },
-  { name: 'Mobile Number Reading', text: 'What your mobile number is doing to your money, work and relationships, and whether to change it.', status: 'Open now', href: MOBILE },
-  { name: 'Signature Analysis', text: 'What your signature shows about the way you decide and lead.', status: 'Coming later' },
-  { name: 'Symbolism Mapper', text: 'What the symbols you carry and live with mean for you.', status: 'Coming later' }
+  { name: 'Mobile Number Reading', text: 'What your mobile number is doing to your money, work and relationships, and whether to change it.', status: 'Open now', href: MOBILE }
 ];
 
 const Dot = ({ className }) => <span className={`mt-[0.62em] h-1.5 w-1.5 shrink-0 rounded-full ${className}`} aria-hidden="true" />;
@@ -70,6 +69,7 @@ export default function App() {
             <a href="#readings" className="hover:text-maroon">Readings</a>
             <a href={CONSULT} target="_blank" rel="noopener noreferrer" className="hover:text-maroon">Consult</a>
           </nav>
+          <MobileMenu site="suite" refCode="WEB-SUITE-MENU" />
         </div>
       </header>
 
@@ -88,7 +88,7 @@ export default function App() {
               <a href={YEAR_WATCH} className="btn-plain">Which watch should I wear in {year}?</a>
             </div>
           </div>
-          <Watch3D className="mx-auto w-full max-w-[440px]" />
+          <Watch3D priority className="mx-auto w-full max-w-[440px]" />
         </section>
         </div>
 
@@ -169,10 +169,12 @@ export default function App() {
       </main>
 
       <footer className="border-t border-border/70 bg-card/60">
-        <div className="mx-auto grid max-w-5xl gap-2 px-5 py-9 text-[14px] leading-relaxed text-muted-foreground">
-          <Lockup size={26} />
-          <p>Readings follow traditional numerology. They are not medical, legal or financial advice.</p>
-          <p>© {year} Veshannastro</p>
+        <div className="mx-auto grid max-w-5xl gap-6 px-5 py-10 text-[14px] leading-relaxed text-muted-foreground">
+          <div className="grid gap-2">
+            <Lockup size={26} />
+            <p>Readings follow traditional numerology. They are not medical, legal or financial advice.</p>
+          </div>
+          <FooterLinks site="suite" refCode="WEB-SUITE-FOOTER" />
         </div>
       </footer>
     </div>

@@ -13,7 +13,8 @@ function canRender3D() {
   }
 }
 
-export default function Watch3D({ className = '', dark = false }) {
+// priority: the picture is the page's main visual (load it first); otherwise it loads only when shown.
+export default function Watch3D({ className = '', dark = false, priority = false }) {
   const host = useRef(null);
   const [live, setLive] = useState(false);
 
@@ -44,6 +45,7 @@ export default function Watch3D({ className = '', dark = false }) {
     <div className={`relative aspect-[7/8] ${className}`} role="img"
       aria-label="A steel watch with a blue dial, turning slowly, with its strap, hands, dial colour, numerals and metal labelled">
       <img src={poster} alt="" aria-hidden="true" width="840" height="960" decoding="async"
+        loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'}
         className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${live ? 'opacity-0' : 'opacity-100'}`} />
       <div ref={host} className={`absolute inset-0 transition-opacity duration-700 ${live ? 'opacity-100' : 'opacity-0'}`} />
     </div>

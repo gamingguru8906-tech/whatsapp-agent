@@ -111,7 +111,7 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
 
   const busy = status === 'loading';
   return (
-    <form onSubmit={submit} noValidate aria-labelledby="form-title" className="grid gap-5">
+    <form onSubmit={submit} noValidate aria-labelledby="form-title" className="grid min-w-0 grid-cols-1 gap-5">
       <div>
         <h2 id="form-title" className="t-section">Find your watch for {year}</h2>
         <p className="mt-1 text-[15px] text-muted-foreground">A photo of your wrist and your birth date. Your answer appears right here.</p>
@@ -134,7 +134,7 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
               {photo.state === 'loading' ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" aria-label="Reading" /> : photo.preview ? 'Change' : 'Add photo'}
             </button>
           </div>
-          {photo.msg && <p role="status" className={`row text-[15px] ${photo.state === 'error' ? 'text-danger-dark' : 'text-warning-dark'}`}>{photo.msg}</p>}
+          {photo.msg && <p role={photo.state === 'error' ? 'alert' : 'status'} className={`row text-[15px] ${photo.state === 'error' ? 'text-danger-dark' : 'text-warning-dark'}`}>{photo.msg}</p>}
           {manual
             ? <WristPicks wrist={wrist} setWrist={setWrist} fromPhoto={fromPhoto} invalid={!!err.wrist} />
             : <button type="button" onClick={() => setManual(true)} className="row w-full text-left text-[16px] font-medium text-primary-dark">No photo? Choose your wrist size instead</button>}
@@ -189,7 +189,7 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
       {err.consent && <p className="error -mt-3 pl-9">{err.consent}</p>}
 
       <Turnstile siteKey={config.turnstileSiteKey} onToken={setToken} resetSignal={reset} />
-      {err.form && <p className="error rounded-[12px] bg-danger-soft px-4 py-3">{err.form}</p>}
+      {err.form && <p role="alert" className="error rounded-[12px] bg-danger-soft px-4 py-3">{err.form}</p>}
 
       <button type="submit" disabled={busy} className="btn-primary w-full disabled:opacity-70">
         {busy ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground" /> Finding your watch…</> : `Show my watch for ${year}`}

@@ -13,6 +13,7 @@ import { clientIp, verifyTurnstile, withinRateLimit } from './security.js';
 import { checkPhoto, readWatchPhoto, VISION_MODEL } from '../engine/photo.js';
 import { startLogin, loginStatus, logout, myReadings, savedInputs, leadKeyFor } from './account.js';
 import { withSchema, saveAnswer, pushAnswers, flushAnswers, saveEvent, funnel } from './store.js';
+import { PAGES, ORIGIN, pageFor } from '../engine/pages.js';
 
 const engine = createEngine(rulebook);
 
@@ -94,9 +95,9 @@ export async function handleReading(request, env, ctx, deps = {}) {
 // POST /api/watch-photo { image: data URL } -> { ok, watch, filled }. The model only fills the form's choices; the
 // visitor checks them before asking for the reading. The photo is not stored or logged.
 const PHOTO_ERRORS = {
-  'not-a-watch': 'We could not find a watch in this photo. Try a clear photo of the watch face, or fill in the details below.',
-  'nothing-seen': 'The photo was not clear enough to read. Try a brighter, closer photo, or fill in the details below.',
-  unreadable: 'We could not read this photo. Please fill in the details below.'
+  'not-a-watch': 'We could not find a watch in this photo. Please add a clear photo of the watch face, straight on.',
+  'nothing-seen': 'The photo was not clear enough to read. Please add a brighter, closer photo of the watch face.',
+  unreadable: 'We could not read this photo. Please try another photo of the watch face.'
 };
 const WRIST_ERRORS = {
   'not-a-wrist': 'We could not see a wrist in this photo. Try a clear photo of your bare wrist and hand, or choose the details below.',
@@ -109,7 +110,10 @@ export async function handlePhoto(request, env, deps = {}) {
   if (bad) return json({ ok: false, error: bad }, 400);
   if (!(await withinRateLimit(env, `photo:${clientIp(request)}`))) return json({ ok: false, error: 'Too many photos from this connection. Please wait a minute and try again.' }, 429);
   const ai = deps.ai ?? env.AI;
-  if (!ai) return json({ ok: false, error: 'Photo reading is not available right now. Please fill in the details below.' }, 503);
+  const busy = deps.kind === 'wrist'
+    ? 'Photo reading is busy right now. Please choose your wrist size below, or try the photo again in a minute.'
+    : 'Photo reading is busy right now. Please try the photo again in a minute.';
+  if (!ai) return json({ ok: false, error: busy }, 503);
   try {
     if (deps.kind === 'wrist') {
       const r = await readWristPhoto(ai, VISION_MODEL, body.image);
@@ -119,7 +123,7 @@ export async function handlePhoto(request, env, deps = {}) {
     return r.ok ? json(r) : json({ ok: false, error: PHOTO_ERRORS[r.error] ?? PHOTO_ERRORS.unreadable }, 422);
   } catch (e) {
     console.error('Photo reading failed:', e.message);
-    return json({ ok: false, error: 'Photo reading is not available right now. Please fill in the details below.' }, 503);
+    return json({ ok: false, error: busy }, 503);
   }
 }
 
@@ -201,6 +205,31 @@ export async function handleAccount(request, env, url, deps = {}) {
   }
 }
 
+// Pages. "/" is served straight from index.html. The other pages ("/watch", "/watch/year", "/my") come here: the same
+// app, with that page's own title, description, address and share picture written in, for search engines and
+// link previews. Any other address gets the 404 page with a real 404 status. Files (icons, images) are served as is.
+async function servePage(request, env, url) {
+  if (!env.ASSETS) return new Response('Not found', { status: 404 });
+  if (!['GET', 'HEAD'].includes(request.method) || /\.[a-z0-9]{2,5}$/i.test(url.pathname)) return env.ASSETS.fetch(request);
+  const key = pageFor(url.pathname);
+  if (!key) {
+    const notFound = await env.ASSETS.fetch(new Request(new URL('/404', url), { headers: request.headers }));
+    return new Response(notFound.body, { status: 404, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
+  }
+  const page = PAGES[key];
+  const html = await env.ASSETS.fetch(new Request(new URL('/', url), { headers: request.headers }));
+  const set = (attr, value) => ({ element: el => el.setAttribute(attr, value) });
+  return new HTMLRewriter()
+    .on('title', { element: el => el.setInnerContent(page.title) })
+    .on('meta[name="description"]', set('content', page.description))
+    .on('link[rel="canonical"]', set('href', ORIGIN + page.path))
+    .on('meta[property="og:url"]', set('content', ORIGIN + page.path))
+    .on('meta[property="og:title"]', set('content', page.ogTitle))
+    .on('meta[property="og:description"]', set('content', page.ogDescription))
+    .on('meta[property="og:image"]', set('content', ORIGIN + page.image))
+    .transform(new Response(html.body, { status: 200, headers: html.headers }));
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -235,7 +264,7 @@ export default {
       return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || null, whatsappNumber: env.WHATSAPP_NUMBER || null });
     }
     if (url.pathname.startsWith('/api/')) return json({ ok: false, error: 'Not found' }, 404);
-    return env.ASSETS ? env.ASSETS.fetch(request) : new Response('Not found', { status: 404 });
+    return servePage(request, env, url);
   },
 
   async scheduled(event, env, ctx) {
