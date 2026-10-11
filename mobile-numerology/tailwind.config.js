@@ -2,6 +2,8 @@
 const v = name => `hsl(var(--${name}) / <alpha-value>)`;
 
 export default {
+  // Hover styles only where a real pointer can hover, so nothing stays stuck after a tap on a phone.
+  future: { hoverOnlyWhenSupported: true },
   content: ['./web/index.html', './web/src/**/*.{js,jsx}'],
   theme: {
     extend: {

@@ -593,7 +593,7 @@ export default function Story({ result, config, onAgain, againLabel = 'Check ano
     <div ref={rootRef} className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8 pb-20 sm:pb-0">
       <div>
         <p className="font-display text-[15px] font-medium text-muted-foreground">Your free reading for {fmt(input.mobile)}</p>
-        <h2 className="t-title mt-1">{first}, here's your answer</h2>
+        <h2 className="t-title mt-1">{first}, here’s your answer</h2>
         {owner && <p className="mt-3 rounded-[12px] bg-accent-soft px-4 py-2.5 text-[14px] text-warning-dark">Owner view: each line shows the rule and source it came from, and every list is open.</p>}
       </div>
 
@@ -612,7 +612,7 @@ export default function Story({ result, config, onAgain, againLabel = 'Check ano
       {brain?.name ? <NameChapter b={brain} owner={owner} call={call('correcting my name spelling')} /> : by('name') && <NameNumber s={by('name')} />}
       {ifKept && <IfKept s={ifKept} owner={owner} />}
       <Protection s={by('protection')} />
-      <InlineCta href={href} title="Not sure which remedy to start with?" text="Ask us on WhatsApp and we'll guide you, based on your reading." />
+      <InlineCta href={href} title="Not sure which remedy to start with?" text="Ask us on WhatsApp and we’ll guide you, based on your reading." />
       <BetterNumber s={by('better-number')} />
       {by('compare') && <Compare s={by('compare')} />}
       <Cta s={by('cta')} href={href} />

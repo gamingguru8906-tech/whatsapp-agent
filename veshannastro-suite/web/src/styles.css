@@ -25,6 +25,9 @@
   --success-dark: 146 58% 26%;
   --whatsapp: 145 72% 37%;
   --whatsapp-dark: 145 74% 31%;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ring-hairline: 0 0 0 1px hsl(27 32% 84% / 0.7);
+  --lift-1: 0 1px 2px hsl(341 40% 20% / 0.04), 0 4px 12px -6px hsl(341 40% 20% / 0.08);
 }
 
 @layer base {
@@ -37,7 +40,10 @@
   h1, h2, h3, h4 { font-family: theme('fontFamily.display'); }
   button, nav, label { font-family: theme('fontFamily.ui'); }
   a { color: inherit; text-decoration: none; }
-  :focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 2px; border-radius: 6px; }
+  :focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 2px; border-radius: 8px; }
+  ::selection { background: hsl(var(--primary) / 0.18); }
+  button, a, [role="button"], summary, label { touch-action: manipulation; }
+  button, [role="button"], nav a, .btn { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 }
 
 @layer components {
@@ -46,13 +52,13 @@
   .t-head { @apply font-display text-[18px] font-semibold leading-snug text-foreground; }
 
   .btn { @apply inline-flex min-h-[52px] select-none items-center justify-center gap-2 whitespace-nowrap rounded-[14px] px-6 font-ui text-[17px] font-semibold tracking-[-0.012em];
-    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 200ms, box-shadow 200ms; }
-  .btn:active { transform: scale(0.97); }
+    transition: transform 150ms var(--ease-out), background-color 200ms, box-shadow 200ms; }
+  .btn:active { transform: scale(0.96); }
   .btn-whatsapp { @apply btn bg-whatsapp text-white shadow-[0_10px_24px_-14px_hsl(var(--whatsapp))] hover:bg-whatsapp-dark; }
   .btn-primary { @apply btn bg-primary text-white shadow-[0_8px_20px_-10px_hsl(var(--primary)/0.8)] hover:bg-primary-dark; }
   .btn-plain { @apply btn bg-card text-foreground shadow-[0_0_0_1px_hsl(var(--border))] hover:bg-muted; }
 
-  .group-card { @apply overflow-hidden rounded-[20px] border border-border/70 bg-card; }
+  .group-card { @apply overflow-hidden rounded-[22px] border border-transparent bg-card; box-shadow: var(--ring-hairline), var(--lift-1); }
   .rows > * + * { box-shadow: inset 0 1px 0 hsl(var(--border) / 0.8); }
 }
 
@@ -63,6 +69,12 @@
 /* The page's one moment: the watch's parts light up in turn, each with its name. */
 @keyframes lit { from { opacity: 0; } to { opacity: 1; } }
 .lit { animation: lit 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* The page's entrance: heading, line, buttons — 100 ms apart, rising out of a soft blur. */
+@keyframes enter { from { opacity: 0; transform: translateY(12px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+.enter { animation: enter 420ms var(--ease-out) both; }
+.enter-2 { animation-delay: 100ms; }
+.enter-3 { animation-delay: 200ms; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

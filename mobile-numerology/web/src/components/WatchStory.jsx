@@ -157,7 +157,7 @@ export default function WatchStory({ result, config, onAgain, againLabel = 'Read
     <div ref={rootRef} className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8">
       <div>
         <p className="font-display text-[15px] font-medium text-muted-foreground">Your free watch reading</p>
-        <h2 className="t-title mt-1">{first}, here's your answer</h2>
+        <h2 className="t-title mt-1">{first}, here’s your answer</h2>
         {owner && <p className="mt-3 rounded-[12px] bg-accent-soft px-4 py-2.5 text-[14px] text-warning-dark">Owner view: each line shows the rule and source it came from.</p>}
       </div>
       <Answer a={by('watch-answer')} href={href} bracelet={by('bracelet')} wants={result.input.goalText} />

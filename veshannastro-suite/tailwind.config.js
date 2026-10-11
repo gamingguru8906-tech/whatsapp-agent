@@ -2,6 +2,7 @@
 const v = name => `hsl(var(--${name}) / <alpha-value>)`;
 
 export default {
+  future: { hoverOnlyWhenSupported: true },
   content: ['./web/index.html', './web/src/**/*.{js,jsx}'],
   theme: {
     extend: {

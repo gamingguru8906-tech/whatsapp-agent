@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import Watch3D from './components/Watch3D.jsx';
+import { Lockup } from './components/Brand.jsx';
 
 // Veshannastro front page. The watch reading opens later; until then its button asks to be told on WhatsApp, and
 // the mobile-number reading (live) is one tap away. "(Ref: ...)" tags the lead's source in Kamala's CRM.
@@ -62,7 +63,7 @@ export default function App() {
     <div className="min-h-screen">
       <header className="material sticky top-0 z-20 border-b border-border/60" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3">
-          <a href="/" className="font-display text-[19px] font-bold tracking-tight text-maroon">Veshannastro<span className="text-primary">.</span></a>
+          <Lockup />
           <nav aria-label="Page" className="hidden items-center gap-7 text-[15px] font-medium text-muted-foreground sm:flex">
             <a href="#how" className="hover:text-maroon">How it works</a>
             <a href="#readings" className="hover:text-maroon">Readings</a>
@@ -75,12 +76,12 @@ export default function App() {
         {/* Hero: the watch reading */}
         <section id="watch" className="mx-auto grid max-w-5xl items-center gap-8 px-5 pb-14 pt-10 sm:pt-16 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-12">
           <div className="min-w-0">
-            <h1 className="t-large max-w-[12ch]">What does your watch say about you?</h1>
-            <p className="mt-5 max-w-[34rem] text-[18px] leading-[1.6] text-muted-foreground">
+            <h1 className="enter t-large max-w-[12ch]">What does your watch say about you?</h1>
+            <p className="enter enter-2 mt-5 max-w-[34rem] text-[18px] leading-[1.6] text-muted-foreground">
               The colour of the dial, the metal, the strap and the wrist you wear it on all carry meaning in numerology.
               Add one photo of your watch and see what it says about you and whether it suits your year.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="enter enter-3 mt-8 flex flex-col gap-3 sm:flex-row">
               <a href={WATCH} className="btn-primary">Read my watch</a>
               <a href={YEAR_WATCH} className="btn-plain">Which watch should I wear in {year}?</a>
             </div>
@@ -166,7 +167,7 @@ export default function App() {
 
       <footer className="border-t border-border/70 bg-card/60">
         <div className="mx-auto grid max-w-5xl gap-2 px-5 py-9 text-[14px] leading-relaxed text-muted-foreground">
-          <p className="font-display text-[19px] font-bold text-maroon">Veshannastro<span className="text-primary">.</span></p>
+          <Lockup size={26} />
           <p>Readings follow traditional numerology. They are not medical, legal or financial advice.</p>
           <p>© {year} Veshannastro</p>
         </div>

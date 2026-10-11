@@ -10,6 +10,7 @@ import WatchStory from './components/WatchStory.jsx';
 import Watch3D from './components/Watch3D.jsx';
 import MyReadings from './components/MyReadings.jsx';
 import { UserRound } from 'lucide-react';
+import { Lockup } from './components/Brand.jsx';
 
 // Two segments on one site: Mobile Numerology at /, Wristwatch Numerology at /watch (with "Which watch should I wear
 // this year?" at /watch/year); "My readings" at /my.
@@ -115,9 +116,7 @@ export default function App() {
     <div className="min-h-screen bg-background">
       <header className={`material sticky top-0 z-20 ${scrolled ? 'scrolled' : ''}`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2.5 px-5 py-3">
-          <a href="/" className="font-display text-[19px] font-bold tracking-tight text-maroon no-underline">
-            Veshannastro<span className="text-primary">.</span>
-          </a>
+          <Lockup />
           <nav aria-label="Readings" className="relative order-3 grid w-full grid-cols-2 rounded-full bg-border/50 p-[3px] text-[14px] font-semibold tracking-[-0.01em] sm:order-2 sm:w-[264px]">
             <span aria-hidden="true"
               className={`absolute bottom-[3px] left-[3px] top-[3px] w-[calc(50%-3px)] rounded-full bg-card shadow-[0_3px_8px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.06)] transition-[transform,opacity] duration-[420ms] ease-ios ${TAB === 'my' ? 'opacity-0' : 'opacity-100'}`}
@@ -146,8 +145,8 @@ export default function App() {
         <section className="mx-auto grid max-w-5xl gap-10 px-5 pb-12 pt-8 sm:pt-14 lg:grid-cols-[1fr_minmax(0,440px)] lg:items-start lg:gap-14">
           {SEGMENT === 'wrist' ? (
             <div className="min-w-0">
-              <h1 className="t-large max-w-[13ch]">Which watch should you wear this year?</h1>
-              <p className="mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
+              <h1 className="enter t-large max-w-[13ch]">Which watch should you wear this year?</h1>
+              <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
                 Your birth date sets the watch for your year: its metal and dial colour. A photo of your wrist sets its size,
                 strap and finish. Get your answer in under a minute.
               </p>
@@ -156,18 +155,18 @@ export default function App() {
             </div>
           ) : SEGMENT === 'watch' ? (
             <div className="min-w-0">
-              <h1 className="t-large max-w-[12ch]">What does your watch say about you?</h1>
-              <p className="mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
+              <h1 className="enter t-large max-w-[12ch]">What does your watch say about you?</h1>
+              <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
                 The colour of the dial, its shape, the metal, the strap and the wrist you wear it on all carry meaning in numerology.
                 Add one photo of your watch and see what it says about you, whether it suits your year, and your numbers.
               </p>
-              <a href="/watch/year" className="mt-5 inline-flex items-center gap-1 font-display text-[16px] font-semibold text-primary-dark">Not sure which watch to wear this year? Find yours ›</a>
+              <a href="/watch/year" className="mt-5 inline-flex items-center gap-1 font-display text-[16px] font-semibold text-primary-dark">Not sure which watch to wear this year? <span className="whitespace-nowrap">Find yours ›</span></a>
               <Watch3D className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
             </div>
           ) : (
           <div className="min-w-0">
-            <h1 className="t-large max-w-[13ch]">What is your mobile number doing to your life?</h1>
-            <p className="mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
+            <h1 className="enter t-large max-w-[13ch]">What is your mobile number doing to your life?</h1>
+            <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
               Every pair of digits in your number has a meaning, and the shapes your digits make on the Vedic grid form yogas.
               See yours, with your year ahead and how to protect yourself.
             </p>
@@ -180,7 +179,7 @@ export default function App() {
             </div>
           </div>
           )}
-          <div className="min-w-0 scroll-mt-20" id="reading-form">
+          <div className="enter enter-3 min-w-0 scroll-mt-20" id="reading-form">
             {SEGMENT === 'wrist'
               ? <WristForm config={config} status={status} errors={errors} onSubmit={submit} year={YEAR_NOW} />
               : SEGMENT === 'watch'
@@ -203,10 +202,14 @@ export default function App() {
 
       <footer className="border-t border-border/70 bg-card/60">
         <div className="mx-auto grid max-w-5xl gap-3 px-5 py-9 text-[13px] leading-relaxed text-muted-foreground">
-          <p className="font-display text-[19px] font-bold text-maroon">Veshannastro<span className="text-primary">.</span></p>
+          <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
+            <Lockup size={26} />
+            <a href="https://www.veshannastro.co.in" className="font-ui text-[13px] font-medium text-primary-dark no-underline">veshannastro.co.in</a>
+          </div>
+          <p className="font-ui text-[14px] text-foreground/80">Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
           <p><strong className="font-semibold text-foreground">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods taught by experienced numerologists. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>
           <p>What we store: your name, mobile number, date of birth, what you shared, the numbers and watch details you gave, and whether you want WhatsApp updates. We use them to show your reading and, only if you agree, to contact you on WhatsApp. We never sell them. Photos of your watch or wrist are read once and never stored.</p>
-          <p>© {new Date().getFullYear()} Veshannastro</p>
+          <p className="font-ui">© {new Date().getFullYear()} Veshannastro</p>
         </div>
       </footer>
     </div>
