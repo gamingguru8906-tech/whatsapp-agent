@@ -38,5 +38,23 @@ export const SCHEMA_STATEMENTS = [
   verified_at TIMESTAMPTZ,
   phone       TEXT
 )`,
-  `CREATE UNIQUE INDEX IF NOT EXISTS numerology_logins_open_code ON numerology_logins (code) WHERE verified_at IS NULL`
+  `CREATE UNIQUE INDEX IF NOT EXISTS numerology_logins_open_code ON numerology_logins (code) WHERE verified_at IS NULL`,
+  // After the reading: "Does this sound like you?" (yes / partly / no) and the WhatsApp opt-in asked at the end,
+  // with when each was answered. sheet_update_pending = the Sheet row still needs these answers.
+  `ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS feedback TEXT`,
+  `ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS feedback_at TIMESTAMPTZ`,
+  `ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS opt_in_at TIMESTAMPTZ`,
+  `ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS sheet_update_pending BOOLEAN NOT NULL DEFAULT false`,
+  // What visitors do at each step (page opened, photo added, form sent, answer shown, ...), for the owner's funnel.
+  // sid = a random id per browser tab; no name, number or photo is ever stored here.
+  `CREATE TABLE IF NOT EXISTS numerology_events (
+  id        BIGSERIAL PRIMARY KEY,
+  at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  sid       TEXT        NOT NULL,
+  page      TEXT        NOT NULL,
+  event     TEXT        NOT NULL,
+  lead_key  TEXT,
+  detail    JSONB
+)`,
+  `CREATE INDEX IF NOT EXISTS numerology_events_at ON numerology_events (at)`
 ];

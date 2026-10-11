@@ -42,3 +42,23 @@ CREATE TABLE IF NOT EXISTS numerology_logins (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS numerology_logins_open_code ON numerology_logins (code) WHERE verified_at IS NULL;
+
+-- After the reading: "Does this sound like you?" and the WhatsApp opt-in asked at the end, with their times.
+-- sheet_update_pending = the Sheet row still needs these answers.
+ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS feedback TEXT;
+ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS feedback_at TIMESTAMPTZ;
+ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS opt_in_at TIMESTAMPTZ;
+ALTER TABLE numerology_leads ADD COLUMN IF NOT EXISTS sheet_update_pending BOOLEAN NOT NULL DEFAULT false;
+
+-- What visitors do at each step, for the owner's funnel. sid = random id per browser tab; no personal data.
+CREATE TABLE IF NOT EXISTS numerology_events (
+  id        BIGSERIAL PRIMARY KEY,
+  at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  sid       TEXT        NOT NULL,
+  page      TEXT        NOT NULL,
+  event     TEXT        NOT NULL,
+  lead_key  TEXT,
+  detail    JSONB
+);
+
+CREATE INDEX IF NOT EXISTS numerology_events_at ON numerology_events (at);

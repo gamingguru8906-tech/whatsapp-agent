@@ -4,6 +4,7 @@ import { startLogin, loginStatus, signOut, getMyReadings, openMyReading } from '
 import { WaIcon } from './ui.jsx';
 import Story from './Story.jsx';
 import WatchStory from './WatchStory.jsx';
+import WristResult from './WristResult.jsx';
 
 // "My readings": sign in with WhatsApp (send a code from your own number), then every reading saved for that number.
 
@@ -84,13 +85,13 @@ function List({ phone, readings, onOpen, onSignOut, busy }) {
       ) : (
         <div className="group-card rows">
           {readings.map(r => {
-            const Icon = r.segment === 'watch' ? WatchIcon : Smartphone;
+            const Icon = r.segment === 'mobile' ? Smartphone : WatchIcon;
             return (
               <button key={r.id} type="button" onClick={() => onOpen(r)} disabled={busy}
                 className="row flex w-full items-center gap-4 text-left transition-colors hover:bg-muted/40 disabled:opacity-70">
                 <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-maroon-soft text-maroon"><Icon size={21} aria-hidden="true" /></span>
                 <span className="min-w-0 flex-1">
-                  <span className="t-headline block">{r.segment === 'watch' ? 'Wristwatch reading' : 'Mobile number reading'}</span>
+                  <span className="t-headline block">{r.segment === 'wrist' ? 'Your watch for the year' : r.segment === 'watch' ? 'Wristwatch reading' : 'Mobile number reading'}</span>
                   <span className="t-note mt-0.5 block truncate">{r.name} · born {dob(r.dob)} · {day(r.createdAt)}</span>
                 </span>
                 <ChevronRight size={20} className="shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -143,7 +144,9 @@ export default function MyReadings({ config }) {
       {open && (
         <div className="mx-auto max-w-[44rem]">
           <button type="button" onClick={back} className="btn-plain mb-6 bg-card px-4 text-[15px] shadow-[0_0_0_1px_hsl(var(--border))]">‹ My readings</button>
-          {open.segment === 'watch'
+          {open.segment === 'wrist'
+            ? <WristResult result={open} config={config} onAgain={back} againLabel="Back to my readings" saved={false} />
+            : open.segment === 'watch'
             ? <WatchStory result={open} config={config} onAgain={back} againLabel="Back to my readings" saved={false} />
             : <Story result={open} config={config} onAgain={back} againLabel="Back to my readings" saved={false} />}
         </div>

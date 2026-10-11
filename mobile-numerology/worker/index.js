@@ -8,10 +8,11 @@ import { saveLead, flushUnsynced, dedupeKey, readingId, ensureTable } from './st
 import { databaseUrl, withDb } from './db.js';
 import { readingSummary } from '../engine/summary.js';
 import { watchReading, watchSummary, watchConcern } from '../engine/watch.js';
+import { wristRecommendation, wristSummary, wristConcern, readWristPhoto } from '../engine/wrist.js';
 import { clientIp, verifyTurnstile, withinRateLimit } from './security.js';
-import { checkPhoto, readWatchPhoto } from '../engine/photo.js';
-import { startLogin, loginStatus, logout, myReadings, savedInputs } from './account.js';
-import { withSchema } from './store.js';
+import { checkPhoto, readWatchPhoto, VISION_MODEL } from '../engine/photo.js';
+import { startLogin, loginStatus, logout, myReadings, savedInputs, leadKeyFor } from './account.js';
+import { withSchema, saveAnswer, pushAnswers, flushAnswers, saveEvent, funnel } from './store.js';
 
 const engine = createEngine(rulebook);
 
@@ -57,21 +58,27 @@ export async function handleReading(request, env, ctx, deps = {}) {
   }
   if (body.consent !== true) return json({ ok: false, errors: { consent: 'Please tick the box to agree, so we can show your reading.' } }, 400);
 
-  const watch = deps.segment === 'watch';
-  const result = watch
-    ? watchReading(rulebook, { name: body.name, mobile: body.mobile, dob: body.dob, watch: body.watch, year: deps.year ?? istYear() })
-    : engine.reading({
-      name: body.name, mobile: body.mobile, dob: body.dob, concern: body.concern,
-      planned: Array.isArray(body.planned) ? body.planned.slice(0, 5) : [], year: deps.year ?? istYear()
-    });
+  const seg = deps.segment ?? 'mobile';
+  const year = deps.year ?? istYear();
+  const result = seg === 'watch'
+    ? watchReading(rulebook, { name: body.name, mobile: body.mobile, dob: body.dob, watch: body.watch, year })
+    : seg === 'wrist'
+      ? wristRecommendation(rulebook, { name: body.name, mobile: body.mobile, dob: body.dob, wrist: body.wrist, year })
+      : engine.reading({
+        name: body.name, mobile: body.mobile, dob: body.dob, concern: body.concern,
+        planned: Array.isArray(body.planned) ? body.planned.slice(0, 5) : [], year
+      });
   if (!result.ok) return json({ ok: false, errors: result.errors }, 400);
 
-  const lead = watch
-    ? { name: result.input.name, mobile: result.input.mobile, dob: result.input.dob, concern: watchConcern(result), planned: [],
-      consent: true, waOptIn: body.waOptIn === true, readingSummary: watchSummary(result), inputs: { segment: 'watch', watch: result.input.watch } }
-    : { ...result.input, consent: true, waOptIn: body.waOptIn === true, readingSummary: readingSummary(result) };
+  const base = { name: result.input.name, mobile: result.input.mobile, dob: result.input.dob, planned: [], consent: true, waOptIn: body.waOptIn === true };
+  const lead = seg === 'watch'
+    ? { ...base, concern: watchConcern(result), readingSummary: watchSummary(result), inputs: { segment: 'watch', watch: result.input.watch } }
+    : seg === 'wrist'
+      ? { ...base, concern: wristConcern(result), readingSummary: wristSummary(result), inputs: { segment: 'wrist', wrist: result.input.wrist } }
+      : { ...result.input, consent: true, waOptIn: body.waOptIn === true, readingSummary: readingSummary(result) };
   // The visitor's WhatsApp button carries this ID, so Kamala can find this exact reading (same details = same ID).
-  const leadRef = readingId(await dedupeKey(lead));
+  const leadKey = await dedupeKey(lead);
+  const leadRef = readingId(leadKey);
   if (deps.run || databaseUrl(env)) {
     const save = run => saveLead(env, lead, { run, fetchImpl: deps.fetchImpl, sleep: deps.sleep });
     const saving = (deps.run ? save(deps.run) : withDb(env, save)).catch(e => console.error('Lead not saved:', e.message));
@@ -81,7 +88,7 @@ export async function handleReading(request, env, ctx, deps = {}) {
   }
 
   const owner = env.OWNER_KEY && request.headers.get('x-owner-key') === env.OWNER_KEY;
-  return json(owner ? { ...result, owner: true, leadRef } : { ...publicView(result), leadRef });
+  return json(owner ? { ...result, owner: true, leadRef, leadKey } : { ...publicView(result), leadRef, leadKey });
 }
 
 // POST /api/watch-photo { image: data URL } -> { ok, watch, filled }. The model only fills the form's choices; the
@@ -90,6 +97,10 @@ const PHOTO_ERRORS = {
   'not-a-watch': 'We could not find a watch in this photo. Try a clear photo of the watch face, or fill in the details below.',
   'nothing-seen': 'The photo was not clear enough to read. Try a brighter, closer photo, or fill in the details below.',
   unreadable: 'We could not read this photo. Please fill in the details below.'
+};
+const WRIST_ERRORS = {
+  'not-a-wrist': 'We could not see a wrist in this photo. Try a clear photo of your bare wrist and hand, or choose the details below.',
+  unreadable: 'We could not read this photo. Please choose the details below.'
 };
 export async function handlePhoto(request, env, deps = {}) {
   let body;
@@ -100,12 +111,56 @@ export async function handlePhoto(request, env, deps = {}) {
   const ai = deps.ai ?? env.AI;
   if (!ai) return json({ ok: false, error: 'Photo reading is not available right now. Please fill in the details below.' }, 503);
   try {
+    if (deps.kind === 'wrist') {
+      const r = await readWristPhoto(ai, VISION_MODEL, body.image);
+      return r.ok ? json(r) : json({ ok: false, error: WRIST_ERRORS[r.error] ?? WRIST_ERRORS.unreadable }, 422);
+    }
     const r = await readWatchPhoto(ai, body.image);
     return r.ok ? json(r) : json({ ok: false, error: PHOTO_ERRORS[r.error] ?? PHOTO_ERRORS.unreadable }, 422);
   } catch (e) {
     console.error('Photo reading failed:', e.message);
     return json({ ok: false, error: 'Photo reading is not available right now. Please fill in the details below.' }, 503);
   }
+}
+
+// POST /api/answer { key, feedback?: yes|partly|no, optIn?: true|false }: answers given after the reading, saved on
+// the visitor's own lead (the full key came back with their reading) and written to the lead's Sheet row.
+export async function handleAnswer(request, env, ctx, deps = {}) {
+  const body = await request.json().catch(() => null);
+  if (!/^[0-9a-f]{64}$/.test(String(body?.key ?? ''))) return json({ ok: false, error: 'Unknown reading.' }, 400);
+  if (!deps.run && !databaseUrl(env)) return json({ ok: true, stored: false });
+  try {
+    const work = async run => {
+      const row = await saveAnswer(withSchema(run), body.key, { feedback: body.feedback, optIn: body.optIn });
+      if (!row) return null;
+      await pushAnswers(env, run, [row], { fetchImpl: deps.fetchImpl, sleep: deps.sleep }).catch(e => console.error('Answer not in the Sheet yet:', e.message));
+      return row;
+    };
+    const row = deps.run ? await work(deps.run) : await withDb(env, work);
+    return row ? json({ ok: true }) : json({ ok: false, error: 'Unknown reading.' }, 404);
+  } catch (e) {
+    console.error('Answer not saved:', e.message);
+    return json({ ok: false, error: 'Please try again.' }, 503);
+  }
+}
+
+// POST /api/event { sid, page, event, leadKey?, detail? }: one step of the funnel. Never fails the page.
+export async function handleEvent(request, env, ctx, deps = {}) {
+  const body = await request.json().catch(() => null);
+  if (!body || (!deps.run && !databaseUrl(env))) return new Response(null, { status: 204 });
+  const save = run => saveEvent(withSchema(run), body);
+  const p = (deps.run ? save(deps.run) : withDb(env, save)).catch(e => console.error('Event not saved:', e.message));
+  if (ctx?.waitUntil) ctx.waitUntil(p); else await p;
+  return new Response(null, { status: 204 });
+}
+
+// GET /api/stats?key=OWNER_KEY&days=30: the owner's funnel (counts only, no personal data).
+export async function handleStats(url, env, deps = {}) {
+  if (!env.OWNER_KEY || url.searchParams.get('key') !== env.OWNER_KEY) return json({ ok: false, error: 'Not found' }, 404);
+  const days = Math.min(Math.max(Number(url.searchParams.get('days')) || 30, 1), 365);
+  if (!deps.run && !databaseUrl(env)) return json({ ok: false, error: 'No database' }, 503);
+  const go = run => funnel(withSchema(run), days);
+  return json({ ok: true, ...(deps.run ? await go(deps.run) : await withDb(env, go)) });
 }
 
 // Sign in with WhatsApp and "My readings" (worker/account.js). The browser sends its token as "Authorization: Bearer".
@@ -134,9 +189,10 @@ export async function handleAccount(request, env, url, deps = {}) {
       const input = await go(run => savedInputs(run, who.phone, body?.id));
       if (!input) return json({ ok: false, error: 'That reading was not found.' }, 404);
       const year = deps.year ?? istYear();
-      const result = input.segment === 'watch' ? watchReading(rulebook, { ...input, year }) : engine.reading({ ...input, year });
+      const result = input.segment === 'watch' ? watchReading(rulebook, { ...input, year })
+        : input.segment === 'wrist' ? wristRecommendation(rulebook, { ...input, year }) : engine.reading({ ...input, year });
       if (!result.ok) return json({ ok: false, error: 'That reading could not be shown again.' }, 422);
-      return json({ ...publicView(result), segment: input.segment, leadRef: body.id });
+      return json({ ...publicView(result), segment: input.segment, leadRef: body.id, leadKey: await go(run => leadKeyFor(run, who.phone, body.id)) });
     }
     return json({ ok: false, error: 'Not found' }, 404);
   } catch (e) {
@@ -156,10 +212,23 @@ export default {
       if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
       return handleReading(request, env, ctx, { segment: 'watch' });
     }
-    if (url.pathname === '/api/watch-photo') {
+    if (url.pathname === '/api/watch-photo' || url.pathname === '/api/wrist-photo') {
       if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
-      return handlePhoto(request, env);
+      return handlePhoto(request, env, { kind: url.pathname === '/api/wrist-photo' ? 'wrist' : 'watch' });
     }
+    if (url.pathname === '/api/wrist') {
+      if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
+      return handleReading(request, env, ctx, { segment: 'wrist' });
+    }
+    if (url.pathname === '/api/answer') {
+      if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
+      return handleAnswer(request, env, ctx);
+    }
+    if (url.pathname === '/api/event') {
+      if (request.method !== 'POST') return json({ ok: false, error: 'Use POST' }, 405);
+      return handleEvent(request, env, ctx);
+    }
+    if (url.pathname === '/api/stats') return handleStats(url, env);
     if (url.pathname === '/api/login' || url.pathname.startsWith('/api/my-readings')) return handleAccount(request, env, url);
     if (url.pathname === '/api/health') return handleHealth(url, env);
     if (url.pathname === '/api/config') {
@@ -171,7 +240,7 @@ export default {
 
   async scheduled(event, env, ctx) {
     if (!databaseUrl(env)) return;
-    ctx.waitUntil(withDb(env, run => flushUnsynced(env, { run }))
+    ctx.waitUntil(withDb(env, async run => ({ ...(await flushUnsynced(env, { run })), ...(await flushAnswers(env, { run })) }))
       .then(r => console.log('Sheet catch-up:', JSON.stringify(r)))
       .catch(e => console.error('Sheet catch-up failed:', e.message)));
   }

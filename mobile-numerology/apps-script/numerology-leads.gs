@@ -25,7 +25,11 @@
  *      update the live URL; a new version must be deployed every time this code changes.)
  *
  * The website sends each new lead once, and this script also refuses any Key it already has, so a resend after
- * a network hiccup can never create a duplicate row.
+ * a network hiccup can never create a duplicate row. Rows marked op "update" only fill the answer columns
+ * (L to N, and WhatsApp opt-in) of the lead's existing row; they never add a row.
+ *
+ * Updating from an earlier version: paste this whole file over the old one, Save, run setupNumerologySheets once,
+ * then Deploy > Manage deployments > edit > Version: New version > Deploy. Nothing in Kamala's own files changes.
  */
 
 var NUMEROLOGY_LEADS_TAB = 'Numerology Leads';
@@ -33,6 +37,8 @@ var NUMEROLOGY_STATS_TAB = 'Numerology Stats';
 var NUMEROLOGY_TARGET = 'numerology_append_rows';
 var NUMEROLOGY_HEADERS = ['Date (IST)', 'Name', 'Mobile', 'Date of birth', 'Concern', 'Planned 1', 'Planned 2', 'Planned 3',
   'Consent', 'WhatsApp opt-in', 'Key'];
+// Answers given after the reading, filled in later on the same row (columns L to N).
+var NUMEROLOGY_ANSWER_HEADERS = ['Sounds like you', 'Answered at (IST)', 'Opt-in at (IST)'];
 
 /** Called from doPost. Returns a response for the numerology website's request, or null for anything else. */
 function handleNumerologyTarget_(data) {
@@ -55,6 +61,18 @@ function numerologyAppendRows_(rows) {
       if (!/^[0-9a-f]{64}$/.test(key)) { results[key] = 'invalid'; continue; }
       var last = sheet.getLastRow();
       var found = last > 1 && sheet.getRange(2, keyCol, last - 1, 1).createTextFinder(key).matchEntireCell(true).findNext();
+      if (row.op === 'update') {
+        // "Does this sound like you?" and the opt-in asked at the end: written on the lead's own row, never appended.
+        if (!found) { results[key] = 'missing'; continue; }
+        var r = found.getRow();
+        if (row.soundsLikeYou) sheet.getRange(r, keyCol + 1, 1, 2).setValues([[numerologySafe_(row.soundsLikeYou), numerologyIstDate_(row.answeredAt)]]);
+        if (row.waOptIn) {
+          sheet.getRange(r, 10).setValue(numerologySafe_(row.waOptIn));
+          sheet.getRange(r, keyCol + 3).setValue(numerologyIstDate_(row.optInAt));
+        }
+        results[key] = 'updated';
+        continue;
+      }
       if (found) { results[key] = 'exists'; continue; }
       sheet.appendRow([
         numerologyIstDate_(row.date), numerologySafe_(row.name), "'" + String(row.mobile || ''), "'" + String(row.dob || ''),
@@ -98,6 +116,9 @@ function numerologyLeadsSheet_() {
     sheet.setFrozenRows(1);
     sheet.getRange(1, 1, 1, NUMEROLOGY_HEADERS.length).setFontWeight('bold');
   }
+  // A tab made before the answer columns existed gets their headers (existing rows are left as they are).
+  var answers = sheet.getRange(1, NUMEROLOGY_HEADERS.length + 1, 1, NUMEROLOGY_ANSWER_HEADERS.length);
+  if (String(answers.getValues()[0][0]) !== NUMEROLOGY_ANSWER_HEADERS[0]) answers.setValues([NUMEROLOGY_ANSWER_HEADERS]).setFontWeight('bold');
   return sheet;
 }
 
@@ -116,18 +137,23 @@ function setupNumerologySheets() {
   var sheet = numerologyLeadsSheet_();
   sheet.hideColumns(NUMEROLOGY_HEADERS.length); // Key: needed for the no-duplicates check, not for reading
   sheet.getRange('A2:A').setNumberFormat('yyyy-mm-dd hh:mm');
+  sheet.getRange('M2:N').setNumberFormat('yyyy-mm-dd hh:mm');
 
   var L = "'" + NUMEROLOGY_LEADS_TAB + "'!";
   var stats = ss.getSheetByName(NUMEROLOGY_STATS_TAB) || ss.insertSheet(NUMEROLOGY_STATS_TAB);
   stats.clear();
   stats.getRange('A1:B1').setValues([['Measure', 'Value']]).setFontWeight('bold');
-  stats.getRange('A2:B6').setFormulas([
+  stats.getRange('A2:B9').setFormulas([
     ['="Total leads"', '=COUNTA(' + L + 'K2:K)'],
     ['="Last 7 days"', '=COUNTIF(' + L + 'A2:A,">="&(TODAY()-7))'],
     ['="WhatsApp opt-in %"', '=IFERROR(COUNTIF(' + L + 'J2:J,"Yes")/COUNTA(' + L + 'K2:K),0)'],
     ['="Checked a planned number"', '=COUNTIF(' + L + 'F2:F,"?*")'],
-    ['="Opted in and checked a planned number"', '=COUNTIFS(' + L + 'J2:J,"Yes",' + L + 'F2:F,"?*")']
+    ['="Opted in and checked a planned number"', '=COUNTIFS(' + L + 'J2:J,"Yes",' + L + 'F2:F,"?*")'],
+    ['="Answered: does this sound like you?"', '=COUNTA(' + L + 'L2:L)'],
+    ['="Said yes (of those who answered)"', '=IFERROR(COUNTIF(' + L + 'L2:L,"Yes")/COUNTA(' + L + 'L2:L),0)'],
+    ['="Opted in at the end of the watch-for-the-year flow"', '=COUNTIFS(' + L + 'N2:N,"<>",' + L + 'J2:J,"Yes")']
   ]);
+  stats.getRange('B8').setNumberFormat('0%');
   stats.getRange('B4').setNumberFormat('0%');
   stats.getRange('D1').setValue('Leads per day').setFontWeight('bold');
   stats.getRange('D2').setFormula('=IFERROR(QUERY(ARRAYFORMULA(IF(' + L + 'A2:A="",,INT(' + L + 'A2:A))),"select Col1, count(Col1) where Col1 is not null group by Col1 order by Col1 desc label Col1 \'Day\', count(Col1) \'Leads\'",0),"No leads yet")');

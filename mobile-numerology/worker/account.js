@@ -71,7 +71,8 @@ export function watchFromConcern(concern) {
   return w;
 }
 
-const segmentOf = row => (row.inputs?.segment === 'watch' || /^Wristwatch:/.test(row.concern ?? '') ? 'watch' : 'mobile');
+const segmentOf = row => (row.inputs?.segment === 'wrist' || /^Watch for the year:/.test(row.concern ?? '') ? 'wrist'
+  : row.inputs?.segment === 'watch' || /^Wristwatch:/.test(row.concern ?? '') ? 'watch' : 'mobile');
 
 export async function myReadings(run, phone) {
   const rows = await run(`SELECT id, dedupe_key, created_at, name, dob::text AS dob, concern, inputs
@@ -79,7 +80,7 @@ export async function myReadings(run, phone) {
   return rows.map(r => ({
     id: `NM-${r.dedupe_key.slice(0, 8)}`, segment: segmentOf(r), name: r.name, dob: r.dob.slice(0, 10),
     createdAt: new Date(r.created_at).toISOString(),
-    about: segmentOf(r) === 'watch' ? null : r.concern
+    about: segmentOf(r) === 'mobile' ? r.concern : null
   }));
 }
 
@@ -91,6 +92,15 @@ export async function savedInputs(run, phone, id) {
     WHERE mobile = $1 AND dedupe_key LIKE $2 ORDER BY created_at DESC LIMIT 1`, [phone, `${m[1]}%`]);
   if (!r) return null;
   const base = { name: r.name, mobile: r.mobile, dob: r.dob.slice(0, 10) };
+  if (segmentOf(r) === 'wrist') return { segment: 'wrist', ...base, wrist: r.inputs?.wrist ?? {} };
   if (segmentOf(r) === 'watch') return { segment: 'watch', ...base, watch: r.inputs?.watch ?? watchFromConcern(r.concern) ?? {} };
   return { segment: 'mobile', ...base, concern: r.concern, planned: r.planned ? r.planned.split(',').filter(Boolean) : [] };
+}
+
+// The full key of one of their readings (lets "Does this sound like you?" be answered from My readings too).
+export async function leadKeyFor(run, phone, id) {
+  const m = String(id ?? '').match(/^NM-([0-9a-f]{8})$/);
+  if (!m) return null;
+  const [r] = await run('SELECT dedupe_key FROM numerology_leads WHERE mobile = $1 AND dedupe_key LIKE $2 ORDER BY created_at DESC LIMIT 1', [phone, `${m[1]}%`]);
+  return r?.dedupe_key ?? null;
 }

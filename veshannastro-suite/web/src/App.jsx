@@ -22,7 +22,10 @@ const STEPS = [
   ['Read your answer', 'What your watch says about you, whether it suits your year, and what to change.']
 ];
 
+const YEAR_WATCH = `${WATCH}/year`;
+
 const READINGS = [
+  { name: 'Your Watch for the Year', text: 'A photo of your wrist and your birth date: the watch to wear this year, its metal, dial, size and strap.', status: 'Open now', href: YEAR_WATCH },
   { name: 'Wristwatch Analyzer', text: "What your watch's dial, colour, metal and strap say about you, and whether it suits your year.", status: 'Open now', href: WATCH },
   { name: 'Mobile Number Reading', text: 'What your mobile number is doing to your money, work and relationships, and whether to change it.', status: 'Open now', href: MOBILE },
   { name: 'Signature Analysis', text: 'What your signature shows about the way you decide and lead.', status: 'Coming later' },
@@ -79,7 +82,7 @@ export default function App() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a href={WATCH} className="btn-primary">Read my watch</a>
-              <a href={MOBILE} className="btn-plain">Read my mobile number now</a>
+              <a href={YEAR_WATCH} className="btn-plain">Which watch should I wear in {year}?</a>
             </div>
           </div>
           <Watch className="mx-auto w-full max-w-[420px]" />

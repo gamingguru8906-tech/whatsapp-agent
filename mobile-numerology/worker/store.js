@@ -121,3 +121,78 @@ export async function flushUnsynced(env, deps, limit = 50) {
     return { pending: rows.length, synced: 0, error: e.message };
   }
 }
+
+// ---------- After the reading: "Does this sound like you?" and the WhatsApp opt-in ----------
+export const FEEDBACK = ['yes', 'partly', 'no'];
+
+// Saves an answer on the visitor's own lead (they hold its full key). Returns the row, or null if the key is unknown.
+export async function saveAnswer(run, key, { feedback, optIn }) {
+  const sets = [], params = [key];
+  if (FEEDBACK.includes(feedback)) { params.push(feedback); sets.push(`feedback = $${params.length}, feedback_at = now()`); }
+  if (typeof optIn === 'boolean') { params.push(optIn); sets.push(`wa_opt_in = $${params.length}, opt_in_at = now()`); }
+  if (!sets.length) return null;
+  const rows = await run(`UPDATE numerology_leads SET ${sets.join(', ')}, sheet_update_pending = true WHERE dedupe_key = $1
+    RETURNING dedupe_key, sheet_synced, feedback, feedback_at, wa_opt_in, opt_in_at`, [...params]);
+  return rows[0] ?? null;
+}
+
+export const answerRow = r => ({
+  op: 'update', key: r.dedupe_key,
+  soundsLikeYou: r.feedback ? r.feedback.charAt(0).toUpperCase() + r.feedback.slice(1) : '',
+  answeredAt: r.feedback_at ? istStamp(r.feedback_at) : '',
+  waOptIn: r.opt_in_at ? (r.wa_opt_in ? 'Yes' : 'No') : '',
+  optInAt: r.opt_in_at ? istStamp(r.opt_in_at) : ''
+});
+
+// Sends answers to rows the Sheet already has (a lead not in the Sheet yet gets them when the catch-up runs).
+export async function pushAnswers(env, run, rows, deps = {}) {
+  const ready = rows.filter(r => r.sheet_synced);
+  if (!ready.length) return 0;
+  const results = await pushRows(env, ready.map(answerRow), deps);
+  const done = Object.entries(results).filter(([, v]) => v === 'updated').map(([k]) => k);
+  if (done.length) await run('UPDATE numerology_leads SET sheet_update_pending = false WHERE dedupe_key = ANY($1::text[])', [done]);
+  return done.length;
+}
+
+export async function flushAnswers(env, deps, limit = 50) {
+  const run = withSchema(deps.run);
+  const rows = await run(`SELECT dedupe_key, sheet_synced, feedback, feedback_at, wa_opt_in, opt_in_at FROM numerology_leads
+    WHERE sheet_update_pending AND sheet_synced ORDER BY created_at LIMIT $1`, [limit]);
+  if (!rows.length) return { answers: 0 };
+  try { return { answers: await pushAnswers(env, run, rows, deps) }; } catch (e) { return { answers: 0, error: e.message }; }
+}
+
+// ---------- Funnel events ----------
+export const PAGES = ['mobile', 'watch', 'wrist', 'my'];
+export const EVENTS = ['view', 'photo_added', 'photo_read', 'photo_failed', 'details_changed', 'form_sent', 'result_shown',
+  'feedback', 'opt_in', 'whatsapp_click', 'shop_click', 'sign_in'];
+
+export async function saveEvent(run, { sid, page, event, leadKey, detail }) {
+  if (!/^[a-z0-9]{12,40}$/.test(String(sid ?? '')) || !PAGES.includes(page) || !EVENTS.includes(event)) return false;
+  const d = detail && typeof detail === 'object' ? JSON.stringify(detail).slice(0, 300) : null;
+  // At most 60 events per tab, so a script cannot flood the table.
+  const rows = await run(`INSERT INTO numerology_events (sid, page, event, lead_key, detail)
+    SELECT $1, $2, $3, $4, $5::jsonb WHERE (SELECT count(*) FROM numerology_events WHERE sid = $1) < 60 RETURNING id`,
+  [sid, page, event, /^[0-9a-f]{64}$/.test(leadKey ?? '') ? leadKey : null, d && d.endsWith('}') ? d : null]);
+  return rows.length > 0;
+}
+
+// Owner funnel: for each page, how many tabs reached each step, and the answers given after the reading.
+export async function funnel(run, days = 30) {
+  const steps = await run(`SELECT page, event, count(DISTINCT sid)::int AS visitors FROM numerology_events
+    WHERE at > now() - make_interval(days => $1) GROUP BY page, event`, [days]);
+  const answers = await run(`SELECT
+      CASE WHEN inputs->>'segment' = 'wrist' THEN 'wrist' WHEN concern LIKE 'Wristwatch:%' THEN 'watch' ELSE 'mobile' END AS page,
+      count(*)::int AS leads,
+      count(*) FILTER (WHERE feedback = 'yes')::int AS yes,
+      count(*) FILTER (WHERE feedback = 'partly')::int AS partly,
+      count(*) FILTER (WHERE feedback = 'no')::int AS no,
+      count(*) FILTER (WHERE opt_in_at IS NOT NULL AND wa_opt_in)::int AS opted_in,
+      count(*) FILTER (WHERE opt_in_at IS NOT NULL AND NOT wa_opt_in)::int AS declined
+    FROM numerology_leads WHERE created_at > now() - make_interval(days => $1) GROUP BY 1`, [days]);
+  const out = {};
+  for (const p of PAGES) out[p] = { steps: Object.fromEntries(EVENTS.map(e => [e, 0])), leads: 0, feedback: { yes: 0, partly: 0, no: 0 }, optedIn: 0, declined: 0 };
+  for (const s of steps) if (out[s.page]) out[s.page].steps[s.event] = s.visitors;
+  for (const a of answers) if (out[a.page]) Object.assign(out[a.page], { leads: a.leads, feedback: { yes: a.yes, partly: a.partly, no: a.no }, optedIn: a.opted_in, declined: a.declined });
+  return { days, pages: out };
+}

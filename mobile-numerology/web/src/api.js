@@ -112,3 +112,67 @@ export const loginStatus = () => (session.get() ? account('GET', '/api/login') :
 export async function signOut() { await account('DELETE', '/api/login'); session.set(null); }
 export const getMyReadings = () => account('GET', '/api/my-readings');
 export const openMyReading = id => account('POST', '/api/my-readings/open', { id });
+
+// ---------- Which watch for the year (wrist photo) ----------
+export async function readWrist(image) {
+  if (LOCAL) {
+    await new Promise(r => setTimeout(r, 700));
+    return { ok: true, wrist: { size: 'slim', undertone: 'warm', style: 'casual' }, filled: ['size', 'undertone', 'style'] };
+  }
+  try {
+    const res = await fetch('/api/wrist-photo', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image }) });
+    return (await res.json().catch(() => null)) ?? { ok: false, error: 'We could not read this photo. Please choose the details below.' };
+  } catch {
+    return { ok: false, error: 'No connection. Please check your internet and try again.' };
+  }
+}
+
+export async function getWristReading(payload, ownerKey) {
+  if (LOCAL) {
+    const { localWristReading } = await import('./local-engine.js');
+    return localWristReading(payload);
+  }
+  try {
+    const res = await fetch('/api/wrist', {
+      method: 'POST', headers: { 'content-type': 'application/json', ...(ownerKey ? { 'x-owner-key': ownerKey } : {}) }, body: JSON.stringify(payload)
+    });
+    return (await res.json().catch(() => null)) ?? { ok: false, errors: { form: 'Your answer could not load. Please try again.' } };
+  } catch {
+    return { ok: false, errors: { form: 'No connection. Please check your internet and try again.' } };
+  }
+}
+
+// "Does this sound like you?" and the opt-in, saved on the visitor's own lead.
+export async function sendAnswer(key, answer) {
+  if (LOCAL || !key) return { ok: true };
+  for (let i = 0; i < 2; i++) {
+    try {
+      const res = await fetch('/api/answer', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ key, ...answer }) });
+      if (res.ok) return { ok: true };
+      if (res.status !== 404) break;
+    } catch { /* retry once */ }
+    await new Promise(r => setTimeout(r, 1500)); // the lead may still be saving
+  }
+  return { ok: false };
+}
+
+// Funnel events: one random id per tab, no personal data. Never blocks or breaks the page.
+let sid = null;
+function tabId() {
+  if (sid) return sid;
+  try { sid = sessionStorage.getItem('vsid'); } catch { /* blocked */ }
+  if (!sid) {
+    sid = Array.from(crypto.getRandomValues(new Uint8Array(12)), b => (b % 36).toString(36)).join('');
+    try { sessionStorage.setItem('vsid', sid); } catch { /* page-only */ }
+  }
+  return sid;
+}
+export function track(page, event, extra = {}) {
+  if (LOCAL) return;
+  try {
+    const body = JSON.stringify({ sid: tabId(), page, event, ...extra });
+    if (!(navigator.sendBeacon && navigator.sendBeacon('/api/event', new Blob([body], { type: 'application/json' })))) {
+      fetch('/api/event', { method: 'POST', headers: { 'content-type': 'application/json' }, body, keepalive: true }).catch(() => {});
+    }
+  } catch { /* never break the page */ }
+}
