@@ -196,6 +196,8 @@ async function migrateMainTables() {
     );
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS nudge_at TIMESTAMPTZ;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS nudged_at TIMESTAMPTZ;
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS last_polled_at TIMESTAMPTZ;
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS delivery_kind TEXT;
     CREATE TABLE IF NOT EXISTS wa_inbound (
       msg_id TEXT PRIMARY KEY,
       phone TEXT NOT NULL,
@@ -945,7 +947,7 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
       .catch(e => console.error('Saving the Meet link failed:', e.message));
     const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
     if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
-    const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}`;
+    const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}\n\nAs soon as you pay, your confirmation, Google Meet link and receipt will come here automatically. No screenshot needed.`;
     const delivery = await deliver({ mediaId, invoiceName, caption, link, customerName: args.customer_name, serviceName: publishedService.t, appointmentDate, slot });
     const refId = createdPaymentLink.id;
     delivered = { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
@@ -1425,11 +1427,12 @@ async function fulfilPaidLink(event) {
   }
 
   // 5. Log to Google Sheets & send the same personalized confirmation by email.
+  let bookingSheet = null;
   {
     const bookedAt = new Date(notes.time_slot);
     if (!Number.isFinite(bookedAt.getTime())) throw new Error(`Invalid booked time in payment notes for ${pl.id}`);
 
-    await once('booking_sheet', () => postAppsScript({
+    bookingSheet = await once('booking_sheet', () => postAppsScript({
       target: "booking",
       invoiceNumber,
       name: customerName,
@@ -1456,7 +1459,12 @@ async function fulfilPaidLink(event) {
       invoicePdfName: invoiceName,
       isGatewayTest: isGatewayTest,
       basePrice: Number(notes.service_total || notes.list_price || price)
-    }).then(() => true));
+    }).then(r => {
+      // This call also emails the confirmation. Remember whether it did, so the chat message only says so when true:
+      // an explicit email status other than "sent" (or no email address) means no email went out.
+      const status = r && typeof r === 'object' && 'email' in r ? String(r.email) : null;
+      return notes.email && (status === null || status === 'sent') ? 'email_sent' : 'no_email';
+    }));
 
     await once('customer_sheet', () => postAppsScript({
       target: "customer_update",
@@ -1480,12 +1488,18 @@ async function fulfilPaidLink(event) {
 
   // 6. Send WhatsApp Confirmation
   if (phone) {
-    const agreedSlotMsg = notes.time_slot && notes.time_slot !== "Not specified" ? `\n\nRequested test slot: ${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST.` : '';
     if (!invoiceBuffer) throw new Error(`Invoice buffer missing for paid link ${pl.id}`);
     const slotText = `${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST`;
+    // An older run stored `true` here (before the email status was kept): then only say what is certain.
+    const emailLine = bookingSheet === 'email_sent' && notes.email ? `\n📧 Confirmation email sent to ${notes.email}` : '';
+    const meetLine = meetLink ? `\n🔗 Google Meet: ${meetLink}` : '\n🔗 Google Meet link: will be shared here before the slot';
     const msg = notes.gateway_test === 'true'
-      ? `Razorpay has verified the ₹${price.toFixed(2)} gateway test payment. This is only a payment-system test; it does not pay for or confirm your ${serviceName} consultation.${agreedSlotMsg}\n\nInvoice No.: ${invoiceNumber}\nTest Google Meet link: ${meetLink || 'will be shared here before the slot'}\n\nYour clearly labelled test receipt is attached. I will also remind you here 30 minutes before the slot.`
-      : `Payment verified. Thank you, ${customerName}. We received ₹${price.toFixed(2)} for ${serviceName}.\n\nYour booking is confirmed for ${slotText}.\nInvoice No.: ${invoiceNumber}\nGoogle Meet: ${meetLink || 'will be shared here before your consultation'}\n\nYour payment receipt is attached. I will remind you here 30 minutes before your consultation.`;
+      ? `✅ Payment received, ${customerName} ji! Razorpay has verified your ₹${price.toFixed(2)} test payment.\n\n`
+        + `Your test booking for ${serviceName} is set up:\n📅 ${slotText}${meetLine}\n🧾 Invoice No.: ${invoiceNumber} (test receipt attached)${emailLine}\n\n`
+        + `Please note: this was a ₹1 payment-system test, so the ${serviceName} fee itself is not paid yet. I will remind you here 30 minutes before the slot.`
+      : `✅ Payment received, ${customerName} ji! Razorpay has verified ₹${price.toFixed(2)} for ${serviceName}.\n\n`
+        + `Your call is booked 🙏\n📅 ${slotText}${meetLine}\n🧾 Invoice No.: ${invoiceNumber} (receipt attached)${emailLine}\n\n`
+        + `I will remind you here 30 minutes before your consultation. Just join the Meet link at that time.`;
     // WhatsApp only allows free messages within 24 hours of the customer's last message. If the receipt or
     // confirmation cannot go out (e.g. they paid from a template after a phone call), the owner is told once
     // with everything needed to send it by hand, instead of Razorpay retrying the whole booking for a day.
@@ -1593,11 +1607,20 @@ async function recoverFulfilments() {
 app.post('/razorpay-webhook', async (req, res) => {
   if (!RAZORPAY_WEBHOOK_SECRET) return res.status(503).send('Razorpay webhook secret is not configured');
   const signature = req.headers['x-razorpay-signature'];
-  if (!signature || !req.rawBody) return res.sendStatus(400);
+  if (!signature || !req.rawBody) {
+    console.warn('Razorpay webhook rejected: no signature or empty body.');
+    return res.sendStatus(400);
+  }
   const expectedSignature = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(req.rawBody).digest('hex');
   const received = Buffer.from(String(signature));
   const expected = Buffer.from(expectedSignature);
-  if (received.length !== expected.length || !crypto.timingSafeEqual(received, expected)) return res.sendStatus(400);
+  if (received.length !== expected.length || !crypto.timingSafeEqual(received, expected)) {
+    // Never log either signature or the secret. This usually means the webhook secret in Razorpay and
+    // RAZORPAY_WEBHOOK_SECRET in Render differ.
+    console.warn('Razorpay webhook rejected: signature does not match RAZORPAY_WEBHOOK_SECRET (check the secret set in Razorpay > Webhooks).');
+    return res.sendStatus(400);
+  }
+  console.log(`Razorpay webhook received: ${String(req.body?.event || 'unknown event').slice(0, 40)}`);
 
   try {
     await dbReady;
@@ -1663,11 +1686,7 @@ app.post('/razorpay-webhook', async (req, res) => {
       const job = runFulfilment(event);
       if (req.headers['x-kamala-internal'] === '1') await job;
     } else if (event.event === 'payment_link.expired') {
-      const pl = event.payload?.payment_link?.entity;
-      const eventId = pl?.notes?.calendar_event_id;
-      if (eventId) await cancelCalendarHold(eventId);
-      if (pl?.id && pool) await pool.query("UPDATE wa_payment_links SET status=$2,updated_at=NOW() WHERE payment_link_id=$1", [pl.id, pl.notes?.gateway_test === 'true' ? 'gateway_test_expired' : 'expired']);
-      if (pl?.id && pendingPayments[pl.id]) clearTimeout(pendingPayments[pl.id]);
+      await closeExpiredLink(event.payload?.payment_link?.entity);
     }
     return res.sendStatus(200);
   } catch(e) {
@@ -2811,6 +2830,8 @@ async function ownJobsNextDue() {
         WHERE payload IS NOT NULL AND attempts < 6 AND status IN ('failed','processing')
       UNION ALL SELECT next_at FROM wa_calendar_cancels
       UNION ALL SELECT next_at FROM wa_booking_retries
+      UNION ALL SELECT COALESCE(last_polled_at, created_at) + INTERVAL '5 minutes' FROM wa_payment_links
+        WHERE status='request_created' AND created_at > NOW() - INTERVAL '2 hours'
       UNION ALL SELECT nudge_at FROM wa_payment_links
         WHERE nudge_at IS NOT NULL AND nudged_at IS NULL AND status='request_created' AND nudge_at > NOW() - INTERVAL '6 hours'
       UNION ALL SELECT COALESCE(claimed_at, received_at) + INTERVAL '5 minutes' FROM wa_inbound
@@ -2849,6 +2870,49 @@ async function claimOnce(metaKey, value) {
 }
 
 // The gentle "need help with the payment?" message, 2 hours after a link went out and only while it is unpaid.
+// Payments are confirmed even when Razorpay's webhook never arrives (switched off, failing, Render asleep):
+// every unpaid Kamala link is checked with Razorpay directly — about every minute for its first 30 minutes,
+// then every 5 minutes until it expires (12 hours). A paid link goes through the normal fulfilment, which sends
+// the receipt and confirmation in the chat on its own. The customer never has to say "I have paid".
+const PAYMENT_POLL_FAST_MINUTES = 30;
+// An unpaid link that ran out: free its calendar hold and stop treating it as open. Used by Razorpay's
+// payment_link.expired webhook and by the checks below when that webhook never came.
+async function closeExpiredLink(pl) {
+  if (!pl) return;
+  const eventId = pl.notes?.calendar_event_id;
+  if (eventId) await cancelCalendarHold(eventId);
+  if (pl.id && pool) await pool.query("UPDATE wa_payment_links SET status=$2,updated_at=NOW() WHERE payment_link_id=$1", [pl.id, pl.notes?.gateway_test === 'true' ? 'gateway_test_expired' : 'expired']);
+  if (pl.id && pendingPayments[pl.id]) clearTimeout(pendingPayments[pl.id]);
+}
+let pollingPayments = false;
+async function pollUnpaidPaymentLinks() {
+  if (!pool || !razorpayClient || pollingPayments) return;
+  pollingPayments = true;
+  try {
+    const due = await pool.query(`UPDATE wa_payment_links SET last_polled_at=NOW()
+      WHERE payment_link_id IN (SELECT payment_link_id FROM wa_payment_links
+        WHERE status='request_created' AND created_at > NOW() - INTERVAL '13 hours'
+          AND (last_polled_at IS NULL OR last_polled_at < NOW() - CASE
+            WHEN created_at > NOW() - make_interval(mins => $1) THEN INTERVAL '50 seconds'
+            ELSE INTERVAL '290 seconds' END)
+        ORDER BY created_at DESC LIMIT 10)
+      RETURNING payment_link_id, phone`, [PAYMENT_POLL_FAST_MINUTES]);
+    for (const row of due.rows) {
+      try {
+        const result = await fetchAndFulfillVerifiedPayment(row.payment_link_id);
+        if (result.paid) console.log(`💰 Payment found for ${row.payment_link_id} (+${row.phone}) without the webhook; confirmation ${result.fulfilled ? 'sent' : 'in progress'}.`);
+        else if (result.status === 'expired') await closeExpiredLink(result.paymentLink);
+      } catch (e) {
+        console.error(`Payment check for ${row.payment_link_id} failed:`, e.message || e.error?.description);
+      }
+    }
+  } catch (e) {
+    console.error('Payment polling failed:', e.message);
+  } finally {
+    pollingPayments = false;
+  }
+}
+
 async function sendPaymentNudges() {
   const due = await pool.query(`UPDATE wa_payment_links SET nudged_at=NOW()
     WHERE payment_link_id IN (SELECT payment_link_id FROM wa_payment_links
@@ -2943,7 +3007,8 @@ async function runOwnJobs() {
   } finally {
     ownJobsRunning = false;
   }
-  // These send many template messages with pauses in between; they run on their own and never overlap.
+  // These run on their own (a payment check can wait on Google and Razorpay) and never overlap themselves.
+  pollUnpaidPaymentLinks().catch(e => console.error('Payment polling failed:', e.message));
   maybeSendDiscountOffers().catch(e => console.error('Discount offers failed:', e.message));
   maybeRunDailyDrip().catch(e => console.error('❌ Drip campaign error:', e.message));
 }
