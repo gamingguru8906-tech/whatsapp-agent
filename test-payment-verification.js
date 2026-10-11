@@ -117,3 +117,15 @@ test('missing or malformed Razorpay amounts fail closed', () => {
   assert.equal(inspectPaymentLink({ status: 'paid', amount: 100 }).paid, false);
   assert.equal(inspectPaymentLink({ status: 'paid', amount: 'NaN', amount_paid: 100 }).paid, false);
 });
+
+test('Hinglish payment claims as people type them are recognised', () => {
+  for (const t of ['Krdiya payment', 'payment kr diya', 'pay kar diya hai', 'payment ho gya', 'paid kr diya', 'paise bhej diye', 'maine payment kar dia', 'payment bhi kar diya'])
+    assert.equal(isPaymentClaim(t), true, t);
+  assert.equal(isPaymentClaim('krdiya', true), true);
+  assert.equal(isPaymentClaim('krdiya', false), false);
+});
+
+test('questions and unrelated messages are not payment claims', () => {
+  for (const t of ['payment kaise karu?', 'kaise pay kar du', 'kab tak payment karna hai?', 'ok', 'done?', 'kal kar dunga payment', 'my birth time is 10 am'])
+    assert.equal(isPaymentClaim(t), false, t);
+});
