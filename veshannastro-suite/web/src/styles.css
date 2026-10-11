@@ -66,6 +66,28 @@
   .material { background: hsl(var(--background) / 0.82); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
 }
 
+/* The hero at night: deep maroon with the brand pink glowing behind the subject, a faint gold low left, and the
+   Vedic grid as a field of tiny dots. The one place the brand speaks loudest. */
+.hero-night {
+  position: relative; isolation: isolate; color: #FFF4F7;
+  background:
+    radial-gradient(55% 45% at 78% 28%, hsl(338 85% 58% / 0.38) 0%, transparent 70%),
+    radial-gradient(45% 40% at 8% 92%, hsl(40 70% 55% / 0.16) 0%, transparent 72%),
+    linear-gradient(165deg, #22070F 0%, #3E0C21 48%, #5E1734 100%);
+}
+.hero-night::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(circle, rgb(255 255 255 / 0.09) 1.1px, transparent 1.6px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(70% 60% at 70% 30%, #000 0%, transparent 85%);
+  mask-image: radial-gradient(70% 60% at 70% 30%, #000 0%, transparent 85%);
+}
+.hero-night .t-large { color: #FFF4F7; text-shadow: 0 2px 30px hsl(338 80% 40% / 0.35); }
+.hero-night .hero-sub { color: rgb(255 228 238 / 0.78); }
+.hero-night .hero-link { color: #F9A8C8; }
+/* Header over the hero: same night colour, light text; it turns to frosted paper once you scroll. */
+.header-night { background: #22070F; color: #FFF4F7; transition: background-color 250ms, box-shadow 250ms; }
+
 /* The page's one moment: the watch's parts light up in turn, each with its name. */
 @keyframes lit { from { opacity: 0; } to { opacity: 1; } }
 .lit { animation: lit 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }

@@ -23,9 +23,9 @@ export function BrandMark({ size = 28, className = '' }) {
 }
 
 // Mark + wordmark, as one lockup. The pink full stop is part of the wordmark.
-export function Lockup({ href = '/', size = 28, className = '' }) {
+export function Lockup({ href = '/', size = 28, className = '', dark = false }) {
   return (
-    <a href={href} className={`inline-flex items-center gap-2.5 font-display text-[19px] font-bold tracking-[-0.02em] text-maroon no-underline ${className}`}>
+    <a href={href} className={`inline-flex items-center gap-2.5 font-display text-[19px] font-bold tracking-[-0.02em] no-underline transition-colors duration-300 ${dark ? 'text-[#FFF4F7]' : 'text-maroon'} ${className}`}>
       <BrandMark size={size} />
       <span>Veshannastro<span className="text-primary">.</span></span>
     </a>

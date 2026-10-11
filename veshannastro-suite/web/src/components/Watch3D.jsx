@@ -13,7 +13,7 @@ function canRender3D() {
   }
 }
 
-export default function Watch3D({ className = '' }) {
+export default function Watch3D({ className = '', dark = false }) {
   const host = useRef(null);
   const [live, setLive] = useState(false);
 
@@ -25,7 +25,7 @@ export default function Watch3D({ className = '' }) {
     const start = () => import('./watch3d.js').then(({ mountWatch }) => {
       if (cancelled || !host.current) return;
       try {
-        dispose = mountWatch(host.current, { reduced });
+        dispose = mountWatch(host.current, { reduced, dark });
         requestAnimationFrame(() => requestAnimationFrame(() => !cancelled && setLive(true)));
       } catch {
         dispose?.();

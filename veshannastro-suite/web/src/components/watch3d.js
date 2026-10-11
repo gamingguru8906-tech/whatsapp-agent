@@ -108,7 +108,8 @@ function sparkles(points, colour, size) {
 }
 
 // still: one frame at 10:10, no labels (used to make the picture shown before the 3D loads).
-export function mountWatch(host, { reduced = false, still = false } = {}) {
+export function mountWatch(host, { reduced = false, still = false, dark = false } = {}) {
+  const INK = dark ? '#FFE9F1' : MAROON, LINE = dark ? '#FFFFFF' : MAROON;
   const renderer = new WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power', preserveDrawingBuffer: still });
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = SRGBColorSpace;
@@ -251,14 +252,14 @@ export function mountWatch(host, { reduced = false, still = false } = {}) {
     const g = document.createElementNS(NS, 'g');
     g.style.cssText = `opacity:0;transition:opacity .6s ease ${reduced ? 0 : 0.9 + i * 0.4}s`;
     const line = document.createElementNS(NS, 'path');
-    line.setAttribute('fill', 'none'); line.setAttribute('stroke', MAROON); line.setAttribute('stroke-opacity', '0.45'); line.setAttribute('stroke-width', '1.25');
+    line.setAttribute('fill', 'none'); line.setAttribute('stroke', LINE); line.setAttribute('stroke-opacity', dark ? '0.4' : '0.45'); line.setAttribute('stroke-width', '1.25');
     const dot = document.createElementNS(NS, 'circle');
     dot.setAttribute('r', '3.2'); dot.setAttribute('fill', PINK);
     const halo = document.createElementNS(NS, 'circle');
     halo.setAttribute('r', '7'); halo.setAttribute('fill', PINK); halo.setAttribute('fill-opacity', '0.18');
     const text = document.createElementNS(NS, 'text');
     text.textContent = d.text;
-    text.setAttribute('font-family', 'League Spartan, sans-serif'); text.setAttribute('font-weight', '600'); text.setAttribute('fill', MAROON);
+    text.setAttribute('font-family', 'League Spartan, sans-serif'); text.setAttribute('font-weight', '600'); text.setAttribute('fill', INK);
     text.setAttribute('text-anchor', d.side === 'left' ? 'start' : 'end');
     g.append(line, halo, dot, text);
     svg.appendChild(g);

@@ -48,6 +48,8 @@ export default function App() {
   const seg = useRef(SEGMENT);
   seg.current = SEGMENT;
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
+  const night = SEGMENT !== 'my' && !pastHero;
 
   useEffect(() => { getConfig().then(setConfig); }, []);
 
@@ -55,7 +57,7 @@ export default function App() {
   useEffect(() => {
     const go = href => {
       const next = href.replace(/\/+$/, '') || '/';
-      setResult(null); setStatus('idle'); setErrors({});
+      setResult(null); setStatus('idle'); setErrors({}); setPastHero(false);
       setPath(next);
       window.scrollTo({ top: 0, behavior: 'instant' });
     };
@@ -72,7 +74,11 @@ export default function App() {
       go(target);
     };
     const onPop = () => go(location.pathname);
-    const onScroll = () => setScrolled(window.scrollY > 4);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 4);
+      const hero = document.querySelector('.hero-night');
+      setPastHero(hero ? hero.getBoundingClientRect().bottom < 72 : true);
+    };
     document.addEventListener('click', onClick);
     window.addEventListener('popstate', onPop);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -114,20 +120,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className={`material sticky top-0 z-20 ${scrolled ? 'scrolled' : ''}`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <header className={`sticky top-0 z-20 ${night ? 'header-night' : `material ${scrolled ? 'scrolled' : ''}`}`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2.5 px-5 py-3">
-          <Lockup />
-          <nav aria-label="Readings" className="relative order-3 grid w-full grid-cols-2 rounded-full bg-border/50 p-[3px] text-[14px] font-semibold tracking-[-0.01em] sm:order-2 sm:w-[264px]">
+          <Lockup dark={night} />
+          <nav aria-label="Readings" className={`relative order-3 grid w-full grid-cols-2 rounded-full p-[3px] text-[14px] font-semibold tracking-[-0.01em] transition-colors duration-300 sm:order-2 sm:w-[264px] ${night ? 'bg-white/10' : 'bg-border/50'}`}>
             <span aria-hidden="true"
               className={`absolute bottom-[3px] left-[3px] top-[3px] w-[calc(50%-3px)] rounded-full bg-card shadow-[0_3px_8px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.06)] transition-[transform,opacity] duration-[420ms] ease-ios ${TAB === 'my' ? 'opacity-0' : 'opacity-100'}`}
               style={{ transform: `translateX(${TAB === 'watch' ? '100%' : '0'})` }} />
             {[['mobile', '/', 'Mobile number'], ['watch', '/watch', 'Wristwatch']].map(([k, href, label]) => (
               <a key={k} href={href} aria-current={TAB === k ? 'page' : undefined}
-                className={`relative z-[1] rounded-full px-3.5 py-1.5 text-center no-underline transition-colors duration-300 ${TAB === k ? 'text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
+                className={`relative z-[1] rounded-full px-3.5 py-1.5 text-center no-underline transition-colors duration-300 ${TAB === k ? 'text-maroon' : night ? 'text-white/70 hover:text-white' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
             ))}
           </nav>
           <a href="/my" aria-current={SEGMENT === 'my' ? 'page' : undefined}
-            className={`pressable order-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:order-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
+            className={`pressable order-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:order-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : night ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-maroon'}`}>
             <UserRound size={17} aria-hidden="true" />My readings
           </a>
         </div>
@@ -141,45 +147,45 @@ export default function App() {
       <main>
         <div key={SEGMENT} className="animate-swap">
         {SEGMENT === 'my' ? <MyReadings config={config} /> : <>
-        <div className="hero-glow">
-        <section className="mx-auto grid max-w-5xl gap-10 px-5 pb-12 pt-8 sm:pt-14 lg:grid-cols-[1fr_minmax(0,440px)] lg:items-start lg:gap-14">
+        <div className="hero-night">
+        <section className="mx-auto grid max-w-5xl gap-8 px-5 pb-10 pt-8 sm:pt-14 lg:grid-cols-[1fr_minmax(0,460px)] lg:items-start lg:gap-14 lg:pb-16">
           {SEGMENT === 'wrist' ? (
-            <div className="min-w-0">
+            <div className="min-w-0 lg:sticky lg:top-28">
               <h1 className="enter t-large max-w-[13ch]">Which watch should you wear this year?</h1>
-              <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
+              <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] hero-sub">
                 Your birth date sets the watch for your year: its metal and dial colour. A photo of your wrist sets its size,
                 strap and finish. Get your answer in under a minute.
               </p>
               {/* On phones the photo step comes first, right under the question. */}
-              <Watch3D className="mt-4 hidden w-full max-w-[420px] lg:block" />
+              <Watch3D dark className="mt-4 hidden w-full max-w-[420px] lg:block" />
             </div>
           ) : SEGMENT === 'watch' ? (
-            <div className="min-w-0">
+            <div className="min-w-0 lg:sticky lg:top-28">
               <h1 className="enter t-large max-w-[12ch]">What does your watch say about you?</h1>
-              <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
+              <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] hero-sub">
                 The colour of the dial, its shape, the metal, the strap and the wrist you wear it on all carry meaning in numerology.
                 Add one photo of your watch and see what it says about you, whether it suits your year, and your numbers.
               </p>
-              <a href="/watch/year" className="mt-5 inline-flex items-center gap-1 font-display text-[16px] font-semibold text-primary-dark">Not sure which watch to wear this year? <span className="whitespace-nowrap">Find yours ›</span></a>
-              <Watch3D className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
+              <a href="/watch/year" className="hero-link mt-5 block font-display text-[16px] font-semibold">Not sure which watch to wear this year? <span className="whitespace-nowrap">Find yours ›</span></a>
+              <Watch3D dark className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
             </div>
           ) : (
-          <div className="min-w-0">
+          <div className="min-w-0 lg:sticky lg:top-28">
             <h1 className="enter t-large max-w-[13ch]">What is your mobile number doing to your life?</h1>
-            <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] text-muted-foreground">
+            <p className="enter enter-2 mt-4 max-w-[34rem] text-[18px] leading-[1.55] hero-sub">
               Every pair of digits in your number has a meaning, and the shapes your digits make on the Vedic grid form yogas.
               See yours, with your year ahead and how to protect yourself.
             </p>
             <div className="mt-8 flex items-center gap-5 sm:gap-7">
               <VedicGrid size="xl" counts={{ 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1 }} lightOrder={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
                 label="The Vedic numerology grid: 3 1 9, 6 7 5, 2 8 4" />
-              <p className="max-w-[13rem] text-[15px] leading-snug text-muted-foreground">
+              <p className="hero-sub max-w-[13rem] text-[15px] leading-snug">
                 Your digits light up on this grid. Where they line up, they form yogas.
               </p>
             </div>
           </div>
           )}
-          <div className="enter enter-3 min-w-0 scroll-mt-20" id="reading-form">
+          <div className="form-sheet enter enter-3 min-w-0 scroll-mt-24" id="reading-form">
             {SEGMENT === 'wrist'
               ? <WristForm config={config} status={status} errors={errors} onSubmit={submit} year={YEAR_NOW} />
               : SEGMENT === 'watch'
