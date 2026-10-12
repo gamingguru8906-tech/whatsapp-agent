@@ -68,7 +68,7 @@ function Reading({ r }) {
   return (
     <li>
       {live
-        ? <a href={r.href} className="block px-5 py-5 transition-colors hover:bg-muted/50 sm:px-6">{body}</a>
+        ? <a href={r.href} className="press-row block px-5 py-5 hover:bg-muted/50 sm:px-6">{body}</a>
         : <div className="px-5 py-5 sm:px-6">{body}</div>}
     </li>
   );
@@ -78,7 +78,7 @@ export default function App() {
   const year = new Date().getFullYear();
   return (
     <div className="min-h-screen">
-      <header className={`sticky top-0 z-20 transition-colors duration-300 material border-b border-border/60`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <header className="sticky top-0 z-20 material border-b border-border/60" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3">
           <Lockup />
           <nav aria-label="Page" className={`hidden items-center gap-7 text-[15px] font-medium sm:flex text-muted-foreground`}>
@@ -102,7 +102,7 @@ export default function App() {
             </p>
             <div className="enter enter-3 mt-8 flex flex-col gap-3 sm:flex-row">
               <a href={WATCH} className="btn-primary">Read my watch</a>
-              <a href={YEAR_WATCH} className="btn-plain">Which watch should I wear in {year}?</a>
+              <a href={YEAR_WATCH} className="btn-plain whitespace-normal py-3 text-center leading-tight">Which watch should I wear in {year}?</a>
             </div>
           </div>
           <Watch3D priority className="mx-auto w-full max-w-[440px]" />
@@ -172,7 +172,7 @@ export default function App() {
                 Veshannastro is a Vedic astrology and numerology practice led by Shashank Agrawal, author of
                 {' '}<em>Numbers &amp; Navgraha: Untold Secret of Numerology</em>.
               </p>
-              <a href={MAIN_SITE} className="mt-4 inline-flex items-center gap-0.5 font-display text-[16px] font-semibold text-primary-dark hover:text-maroon">
+              <a href={MAIN_SITE} className="press-link mt-2 inline-flex min-h-[44px] items-center gap-0.5 font-display text-[16px] font-semibold text-primary-dark hover:text-maroon">
                 Visit veshannastro.co.in<ChevronRight size={18} aria-hidden="true" />
               </a>
             </div>

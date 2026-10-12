@@ -264,7 +264,7 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
     { text: 'Metal', side: 'left', y: 0.78, obj: () => bezel, at: [-0.8, -0.78, 0.04] }
   ].map((d, i) => {
     const g = document.createElementNS(NS, 'g');
-    g.style.cssText = `opacity:0;transition:opacity .6s ease ${reduced ? 0 : 0.9 + i * 0.4}s`;
+    g.style.cssText = `opacity:0;transition:opacity .4s cubic-bezier(0.23,1,0.32,1) ${reduced ? 0 : 0.3 + i * 0.08}s`;
     const line = document.createElementNS(NS, 'path');
     line.setAttribute('fill', 'none'); line.setAttribute('stroke', LINE); line.setAttribute('stroke-opacity', dark ? '0.4' : '0.45'); line.setAttribute('stroke-width', '1.25');
     const dot = document.createElementNS(NS, 'circle');
@@ -281,6 +281,13 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
   });
   requestAnimationFrame(() => LABELS.forEach(l => { l.g.style.opacity = '1'; }));
 
+  // Each label's text width, measured once per font size (and again once the web font has loaded), never per frame.
+  const textWidth = (l, fs) => {
+    if (l.fs !== fs) { l.text.setAttribute('font-size', fs); l.w = l.text.getComputedTextLength(); l.fs = fs; }
+    return l.w;
+  };
+  document.fonts?.ready.then(() => LABELS.forEach(l => { l.fs = 0; }));
+
   const tmp = new Vector3();
   function placeLabels(w, h) {
     const fs = w < 360 ? 13 : 15;
@@ -291,8 +298,9 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
       const ax = (tmp.x * 0.5 + 0.5) * w, ay = (-tmp.y * 0.5 + 0.5) * h;
       const ty = l.y * h;
       const tx = l.side === 'left' ? 2 : w - 2;
-      const ex = l.side === 'left' ? tx + l.text.getComputedTextLength() + 8 : tx - l.text.getComputedTextLength() - 8;
-      l.text.setAttribute('x', tx); l.text.setAttribute('y', ty + fs * 0.35); l.text.setAttribute('font-size', fs);
+      const tw = textWidth(l, fs);
+      const ex = l.side === 'left' ? tx + tw + 8 : tx - tw - 8;
+      l.text.setAttribute('x', tx); l.text.setAttribute('y', ty + fs * 0.35);
       l.line.setAttribute('d', `M${ex} ${ty} L${(ex + ax) / 2} ${ty} L${ax} ${ay}`);
       l.dot.setAttribute('cx', ax); l.dot.setAttribute('cy', ay);
       l.halo.setAttribute('cx', ax); l.halo.setAttribute('cy', ay);
@@ -321,29 +329,42 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
 
 
   let visible = true, raf = 0, scrollingUntil = 0, lastDraw = -1e9;
-  // While the page is scrolling, the watch holds still: the scroll gets the whole frame budget.
+  // While the page is scrolling, or the phone menu covers it, the watch holds still: the scroll or the menu gets the
+  // whole frame budget.
   const onScroll = () => { scrollingUntil = performance.now() + 140; };
   window.addEventListener('scroll', onScroll, { passive: true });
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf) raf = requestAnimationFrame(frame); });
   io.observe(host);
 
   const t0 = performance.now();
-  function setTime() {
-    const d = still ? new Date(2026, 0, 1, 10, 10, 31) : new Date();
+  // The hands start at 10:10, exactly as in the still picture, and once the picture has faded out (about 0.75s) they
+  // sweep to the real time over 0.6s. For reduced motion (and the still picture itself) they stay at 10:10.
+  const TEN_TEN = new Date(2026, 0, 1, 10, 10, 31);
+  const handAngles = d => {
     const s = d.getSeconds() + d.getMilliseconds() / 1000, m = d.getMinutes() + s / 60, h = (d.getHours() % 12) + m / 60;
-    secondHand.rotation.z = -(s / 60) * TAU;
-    minuteHand.rotation.z = -(m / 60) * TAU;
-    hourHand.rotation.z = -(h / 12) * TAU;
+    return [-(s / 60) * TAU, -(m / 60) * TAU, -(h / 12) * TAU];
+  };
+  const shortest = a => ((a + Math.PI) % TAU + TAU) % TAU - Math.PI;
+  const easeInOut = k => (k < 0.5 ? 8 * k ** 4 : 1 - (-2 * k + 2) ** 4 / 2); // close to cubic-bezier(0.77, 0, 0.175, 1)
+  const born = performance.now(), SWEEP_AT = 750, SWEEP = 600;
+  function setTime(now = performance.now()) {
+    let a = handAngles(still || reduced ? TEN_TEN : new Date());
+    const k = (now - born - SWEEP_AT) / SWEEP;
+    if (!still && !reduced && k < 1) {
+      const from = handAngles(TEN_TEN), e = k <= 0 ? 0 : easeInOut(k);
+      a = from.map((f, i) => f + shortest(a[i] - f) * e);
+    }
+    [secondHand.rotation.z, minuteHand.rotation.z, hourHand.rotation.z] = a;
   }
 
   function frame(now) {
     raf = 0;
     if (!visible || document.hidden) return;
     // The sway is slow, so 30 frames a second looks the same as 60 for half the work.
-    if (!still && (now < scrollingUntil || now - lastDraw < 30)) { raf = requestAnimationFrame(frame); return; }
+    if (!still && (now < scrollingUntil || now - lastDraw < 30 || document.documentElement.dataset.menu === 'open')) { raf = requestAnimationFrame(frame); return; }
     lastDraw = now;
     const t = (now - t0) / 1000;
-    setTime();
+    setTime(now);
     // At t = 0 the pose matches the still picture, so the switch from picture to 3D is seamless.
     if (!reduced && !still) {
       watch.rotation.y = 0.22 + Math.sin(t * 0.45) * 0.4;

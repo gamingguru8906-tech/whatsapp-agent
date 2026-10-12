@@ -32,7 +32,7 @@
 
 @layer base {
   * { @apply border-border; }
-  html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; scroll-padding-top: 80px; }
+  html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; scroll-padding-top: 80px; }
   body { @apply bg-background font-serif text-foreground antialiased; font-size: 17px; line-height: 1.6; font-variant-numeric: lining-nums;
     font-optical-sizing: auto; font-feature-settings: 'kern', 'liga', 'calt'; text-rendering: optimizeLegibility; -moz-osx-font-smoothing: grayscale; }
   h1, h2, h3 { text-wrap: balance; }
@@ -87,12 +87,13 @@
 .hero-day .hero-link { color: hsl(var(--primary-dark)); }
 
 /* The page's one moment: the watch's parts light up in turn, each with its name. */
-@keyframes lit { from { opacity: 0; } to { opacity: 1; } }
-.lit { animation: lit 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 
-/* The page's entrance: heading, line, buttons — 100 ms apart, rising out of a soft blur. */
+/* The page's entrance: heading, line, buttons, 100 ms apart, rising 12px (a plain fade for people who turn motion
+   down). */
 @keyframes enter { from { opacity: 0; transform: translate3d(0, 12px, 0); } to { opacity: 1; transform: none; } }
-.enter { animation: enter 420ms var(--ease-out) both; }
+@keyframes enter-fade { from { opacity: 0; } }
+.enter { animation: enter-fade 200ms ease both; }
+@media (prefers-reduced-motion: no-preference) { .enter { animation: enter 420ms var(--ease-out) both; } }
 .enter-2 { animation-delay: 100ms; }
 .enter-3 { animation-delay: 200ms; }
 
@@ -107,24 +108,25 @@
 .reveal-on [data-rv-d="4"] { transition-delay: 160ms; }
 .reveal-on [data-rv-d="5"] { transition-delay: 200ms; }
 
-/* The price cut: ₹675 struck through by a fine gold stroke, then FREE in gold capitals with one slow shimmer. */
+/* The price cut: the old price struck through by a fine gold stroke (400ms), then FREE in gold capitals rising in
+   (from 250ms), then one shimmer. Only opacity and transform move, so the line's layout is never recalculated. */
 .price-cut { --gold-1: #7C5410; --gold-2: #B8862F; --gold-3: #F3DFA2; --gold-4: #D3A54A; }
-.pc-was { position: relative; display: inline-block; color: hsl(var(--foreground)); transition: opacity 700ms var(--ease-out) 150ms, color 700ms var(--ease-out) 150ms; }
+.pc-was { position: relative; display: inline-block; color: hsl(var(--foreground)); transition: opacity 400ms var(--ease-out) 100ms, color 400ms var(--ease-out) 100ms; }
 .pc-stroke { position: absolute; left: -3%; right: -3%; top: 50%; height: 2.5px; margin-top: -1.25px; border-radius: 3px;
   background: linear-gradient(90deg, #9A6B1E, #D9B25E 45%, #F3DFA2 55%, #9A6B1E);
   box-shadow: 0 1px 2px hsl(35 60% 25% / 0.25);
   transform: rotate(-11deg) scaleX(0); transform-origin: left center;
-  transition: transform 620ms cubic-bezier(0.65, 0, 0.35, 1); }
-.pc-free { display: inline-block; vertical-align: baseline; margin-left: 0.12em; font-weight: 700; font-size: 1.5em; line-height: 1; letter-spacing: 0.5em; margin-right: -0.5em;
+  transition: transform 400ms cubic-bezier(0.77, 0, 0.175, 1); }
+.pc-free { display: inline-block; vertical-align: baseline; margin-left: 0.12em; font-weight: 700; font-size: 1.5em; line-height: 1; letter-spacing: 0.16em; margin-right: -0.16em;
   background: linear-gradient(100deg, #8E6118 0%, #BF8E37 18%, #A0701F 33.3%, #F6E6B0 50%, #A0701F 66.6%, #BF8E37 82%, #8E6118 100%);
   background-size: 300% 100%; background-position: 100% 0;
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  opacity: 0; transform: translate3d(0, 0.18em, 0);
-  transition: opacity 900ms var(--ease-out) 560ms, transform 900ms var(--ease-out) 560ms, letter-spacing 1100ms var(--ease-out) 560ms, margin-right 1100ms var(--ease-out) 560ms; }
+  opacity: 0; transform: translate3d(0, 0.18em, 0) scale(0.96);
+  transition: opacity 400ms var(--ease-out) 250ms, transform 400ms var(--ease-out) 250ms; }
 .price-cut.play .pc-stroke { transform: rotate(-11deg) scaleX(1); }
 .price-cut.play .pc-was { opacity: 0.7; color: hsl(var(--muted-foreground)); }
-.price-cut.play .pc-free { opacity: 1; transform: none; letter-spacing: 0.16em; margin-right: -0.16em;
-  animation: pc-shimmer 1600ms cubic-bezier(0.45, 0, 0.25, 1) 1250ms both; }
+.price-cut.play .pc-free { opacity: 1; transform: none;
+  animation: pc-shimmer 1200ms cubic-bezier(0.45, 0, 0.25, 1) 650ms both; }
 @keyframes pc-shimmer { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 @media (prefers-reduced-motion: reduce) {
   .pc-stroke, .pc-was, .pc-free { transition: none !important; animation: none !important; }
@@ -135,13 +137,13 @@
   color: hsl(var(--maroon)); transition: background-color 200ms, transform 150ms var(--ease-out); -webkit-tap-highlight-color: transparent; }
 .sitenav-toggle:active { transform: scale(0.94); background: hsl(var(--maroon) / 0.08); }
 .sitenav-backdrop { position: fixed; left: 0; right: 0; bottom: 0; top: var(--sitenav-top, 64px); background: hsl(341 30% 12% / 0.32);
-  opacity: 0; pointer-events: none; transition: opacity 260ms var(--ease-out); }
-.sitenav-backdrop.is-open { opacity: 1; pointer-events: auto; }
+  opacity: 0; pointer-events: none; transition: opacity 150ms var(--ease-out); }
+.sitenav-backdrop.is-open { opacity: 1; pointer-events: auto; transition: opacity 260ms var(--ease-out); }
 .sitenav-sheet { position: fixed; left: 0; right: 0; top: var(--sitenav-top, 64px); max-height: calc(100dvh - var(--sitenav-top, 64px));
   overflow-y: auto; overscroll-behavior: contain; padding: 8px 20px calc(20px + env(safe-area-inset-bottom, 0px));
   background: hsl(var(--card)); border-radius: 0 0 22px 22px; box-shadow: 0 24px 48px -24px hsl(341 40% 18% / 0.35);
   opacity: 0; visibility: hidden; transform: translate3d(0, -10px, 0);
-  transition: opacity 240ms var(--ease-out), transform 300ms var(--ease-out), visibility 0s linear 300ms; }
+  transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out), visibility 0s linear 150ms; }
 .sitenav-sheet.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 240ms var(--ease-out), transform 300ms var(--ease-out); }
 .sitenav-head { margin-top: 14px; font-family: 'League Spartan', system-ui, sans-serif; font-size: 13px; font-weight: 600;
   letter-spacing: 0.06em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
@@ -154,9 +156,10 @@
 .sitenav-chip:active { transform: scale(0.97); }
 .sitenav-foothead { font-family: 'League Spartan', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
   text-transform: uppercase; color: hsl(var(--foreground) / 0.75); }
-.sitenav-footlink { padding: 3px 0; font-size: 15px; color: hsl(var(--muted-foreground)); text-decoration: none; transition: color 150ms; }
-.sitenav-footlink:hover { color: hsl(var(--maroon)); }
-.sitenav-copy { margin-top: 28px; padding-top: 18px; border-top: 1px solid hsl(var(--border) / 0.7); font-size: 13px; color: hsl(var(--muted-foreground)); }
+.sitenav-footlink { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; color: hsl(var(--muted-foreground)); text-decoration: none; transition: color 150ms; }
+@media (hover: hover) and (pointer: fine) { .sitenav-footlink:hover { color: hsl(var(--maroon)); } }
+.sitenav-footlink:active { opacity: 0.6; transition: none; }
+.sitenav-copy { margin-top: 24px; padding-top: 6px; border-top: 1px solid hsl(var(--border) / 0.7); font-size: 13px; color: hsl(var(--muted-foreground)); }
 
 /* Nothing on any page may push it sideways on a phone. (Layouts are fixed at the source; this is the safety net.) */
 html, body { overflow-x: clip; }
@@ -258,3 +261,17 @@ html, body { overflow-x: clip; }
   .vc-bubble { pointer-events: none; }
   .vc-bubble .vc-action { pointer-events: auto; }
 }
+
+/* In-page jumps (menu links, "How it works") glide only when the person has not asked for less motion. */
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* Press feedback: a row darkens the moment it is pressed and fades back when released; text links dim. */
+.press-row { transition: background-color 200ms ease; }
+.press-row:active { background-color: hsl(var(--muted)); transition: none; }
+.press-link:active { opacity: 0.6; transition: none; }
+/* The menu button's two icons crossfade instead of swapping. */
+.sitenav-toggle { position: relative; }
+.sitenav-icon { position: absolute; inset: 0; display: grid; place-items: center;
+  transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out), filter 150ms var(--ease-out); }
+.sitenav-icon.is-off { opacity: 0; transform: scale(0.8); filter: blur(2px); }
+@media (prefers-reduced-motion: reduce) { .sitenav-icon { transition: none; } }

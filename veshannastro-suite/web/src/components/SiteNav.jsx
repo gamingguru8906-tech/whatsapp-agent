@@ -70,6 +70,7 @@ export function MobileMenu({ site, refCode = 'WEB-MENU', className = '' }) {
     const html = document.documentElement;
     const before = html.style.overflow;
     html.style.overflow = 'hidden'; // the page behind stays still while the menu is open
+    html.dataset.menu = 'open'; // the 3D watch under the sheet stops drawing, so the menu gets every frame
     document.addEventListener('keydown', onKey);
     // The sheet and its shade start right under the header (the two sites' headers differ in height).
     const top = Math.round(button.current?.closest('header')?.getBoundingClientRect().bottom ?? 64);
@@ -77,6 +78,7 @@ export function MobileMenu({ site, refCode = 'WEB-MENU', className = '' }) {
     requestAnimationFrame(() => sheet.current?.querySelector('a')?.focus({ preventScroll: true }));
     return () => {
       html.style.overflow = before;
+      delete html.dataset.menu;
       document.removeEventListener('keydown', onKey);
       button.current?.focus({ preventScroll: true });
     };
@@ -87,7 +89,8 @@ export function MobileMenu({ site, refCode = 'WEB-MENU', className = '' }) {
     <div className={`sm:hidden ${className}`}>
       <button ref={button} type="button" aria-expanded={open} aria-controls={id} aria-label={open ? 'Close menu' : 'Open menu'}
         onClick={() => setOpen(o => !o)} className="sitenav-toggle">
-        {open ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+        <span className={`sitenav-icon ${open ? 'is-off' : ''}`} aria-hidden="true"><Menu size={22} /></span>
+        <span className={`sitenav-icon ${open ? '' : 'is-off'}`} aria-hidden="true"><X size={22} /></span>
       </button>
       <div className={`sitenav-backdrop ${open ? 'is-open' : ''}`} onClick={close} aria-hidden="true" />
       <nav id={id} ref={sheet} aria-label="Menu" className={`sitenav-sheet ${open ? 'is-open' : ''}`} inert={open ? undefined : ''}>
@@ -122,8 +125,8 @@ export function SiteFooter({ site, refCode = 'WEB-FOOTER', children }) {
   const col = (title, items) => (
     <div>
       <p className="sitenav-foothead">{title}</p>
-      <ul className="mt-2 grid gap-1.5">
-        {items.map(([label, href]) => <li key={href}><a href={href} className="sitenav-footlink inline-block">{label}</a></li>)}
+      <ul className="mt-1 grid">
+        {items.map(([label, href]) => <li key={href}><a href={href} className="sitenav-footlink">{label}</a></li>)}
       </ul>
     </div>
   );
@@ -158,17 +161,17 @@ export function SiteFooter({ site, refCode = 'WEB-FOOTER', children }) {
 
         <div className="mt-12 grid grid-cols-1 gap-9 sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div className="grid content-start gap-3 text-[14px] leading-relaxed text-muted-foreground">
-            <Lockup size={26} />
+            <Lockup size={26} className="press-link min-h-[44px] justify-self-start" />
             {children}
           </div>
           {col('Readings', links.readings)}
           {col('Veshannastro', links.about)}
         </div>
 
-        <div className="sitenav-copy flex flex-wrap gap-x-5 gap-y-2">
+        <div className="sitenav-copy flex flex-wrap items-center gap-x-5">
           <span>© {year > FIRST_YEAR ? `${FIRST_YEAR}–${year}` : year} Veshannastro · All rights reserved</span>
-          <a href="/privacy" className="sitenav-footlink p-0 text-[13px]">Privacy policy</a>
-          <a href="/terms" className="sitenav-footlink p-0 text-[13px]">Terms and conditions</a>
+          <a href="/privacy" className="sitenav-footlink text-[13px]">Privacy policy</a>
+          <a href="/terms" className="sitenav-footlink text-[13px]">Terms and conditions</a>
         </div>
       </div>
     </footer>

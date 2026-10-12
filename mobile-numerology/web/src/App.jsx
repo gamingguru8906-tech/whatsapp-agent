@@ -197,7 +197,7 @@ export default function App() {
                 The colour of the dial, its shape, the metal, the strap and the wrist you wear it on all carry meaning in numerology.
                 Add one photo of your watch and see what it says about you, whether it suits your year, and your numbers.
               </p>
-              <a href="/watch/year" className="hero-link mt-5 block font-display text-[16px] font-semibold">Not sure which watch to wear this year? <span className="whitespace-nowrap">Find yours ›</span></a>
+              <a href="/watch/year" className="hero-link press-link mt-5 block font-display text-[16px] font-semibold">Not sure which watch to wear this year? <span className="whitespace-nowrap">Find yours ›</span></a>
               <Watch3D priority className="mx-auto mt-2 w-full max-w-[300px] sm:max-w-[360px] lg:mx-0 lg:mt-4 lg:max-w-[420px]" />
             </div>
           ) : (
@@ -241,7 +241,7 @@ export default function App() {
       <SiteFooter site="readings" refCode={`WEB-${SEGMENT.toUpperCase()}-FOOTER`}>
         <p className="text-foreground/80">Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
         <p><strong className="font-semibold text-foreground">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>
-        <p>Photos of your watch or wrist are read once and never stored. What we keep, and why, is in our <a href="/privacy" className="font-medium text-primary-dark">privacy policy</a>.</p>
+        <p>Photos of your watch or wrist are read once and never stored. What we keep, and why, is in our <a href="/privacy" className="press-link py-3 font-medium text-primary-dark">privacy policy</a>.</p>
       </SiteFooter>
     </div>
   );
