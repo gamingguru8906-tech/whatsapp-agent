@@ -1,16 +1,19 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { Mail, Menu, Phone, X } from 'lucide-react';
+import { ChevronRight, Mail, Menu, Phone, X } from 'lucide-react';
+import { Lockup } from './Brand.jsx';
+import Mascot from './Mascot.jsx';
 
-// Navigation shared by the two sites (main page and readings site): the phone menu, the footer links and the
-// contact details. Same file in mobile-numerology and veshannastro-suite (a test keeps the copies identical).
+// Navigation shared by the two sites (main page and readings site): the phone menu, the footer and the contact
+// details. Same file in mobile-numerology and veshannastro-suite (a test keeps the copies identical).
 
 export const SUITE = 'https://veshannastro-suite.veshannastro.workers.dev';
 export const READINGS = 'https://veshannastro-numerology.veshannastro.workers.dev';
 export const MAIN_SITE = 'https://www.veshannastro.co.in';
 
+// One number for calls and WhatsApp, one email, everywhere on both sites.
 export const CONTACT = {
-  phone: '+918827684725', phoneLabel: '+91 88276 84725',
-  email: 'veshannastro@gmail.com',
+  phone: '+917646952745', phoneLabel: '+91 76469 52745',
+  email: 'veshannastro7@gmail.com',
   whatsapp: '917646952745', whatsappLabel: '+91 76469 52745'
 };
 export const waLink = (text, ref) => `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(`${text} (Ref: ${ref})`)}`;
@@ -103,10 +106,20 @@ export function MobileMenu({ site, refCode = 'WEB-MENU', className = '' }) {
   );
 }
 
-/** Footer links, contact details and the copyright line. */
-export function FooterLinks({ site, refCode = 'WEB-FOOTER' }) {
+/**
+ * The footer: a contact card with the mascot perched on its edge (email, call, WhatsApp, each one tap), then the
+ * site links, then the copyright and legal links. `children` adds a site's own notes (disclaimer, what we store).
+ */
+export function SiteFooter({ site, refCode = 'WEB-FOOTER', children }) {
   const links = siteLinks(site);
   const year = new Date().getFullYear();
+  const wa = waLink('Hi, I would like a watch and numerology consultation.', refCode);
+  const rows = [
+    { href: `mailto:${CONTACT.email}`, icon: <Mail size={20} aria-hidden="true" />, label: 'Email',
+      value: <>{CONTACT.email.split('@')[0]}@<wbr />{CONTACT.email.split('@')[1]}</> }, // on a narrow phone it breaks after the @
+    { href: `tel:${CONTACT.phone}`, icon: <Phone size={20} aria-hidden="true" />, label: 'Call', value: CONTACT.phoneLabel },
+    { href: wa, icon: <WaGlyph size={20} />, label: 'WhatsApp', value: CONTACT.whatsappLabel, external: true, wa: true }
+  ];
   const col = (title, items) => (
     <div>
       <p className="sitenav-foothead">{title}</p>
@@ -116,24 +129,50 @@ export function FooterLinks({ site, refCode = 'WEB-FOOTER' }) {
     </div>
   );
   return (
-    <>
-      <div className="grid gap-8 sm:grid-cols-3">
-        {col('Readings', links.readings)}
-        {col('Veshannastro', links.about)}
-        <div>
-          <p className="sitenav-foothead">Contact</p>
-          <ul className="mt-2 grid gap-1.5">
-            <li><a href={`tel:${CONTACT.phone}`} className="sitenav-footlink inline-flex items-center gap-2"><Phone size={15} aria-hidden="true" />{CONTACT.phoneLabel}</a></li>
-            <li><a href={waLink('Hi, I would like a watch and numerology consultation.', refCode)} target="_blank" rel="noopener noreferrer" className="sitenav-footlink inline-flex items-center gap-2"><WaGlyph size={15} />WhatsApp {CONTACT.whatsappLabel}</a></li>
-            <li><a href={`mailto:${CONTACT.email}`} className="sitenav-footlink inline-flex items-center gap-2 break-all"><Mail size={15} aria-hidden="true" />{CONTACT.email}</a></li>
-          </ul>
+    <footer className="site-footer">
+      <div className="mx-auto max-w-5xl px-5 pb-10 pt-24">
+        <section className="footer-card" aria-labelledby="footer-contact">
+          <div className="footer-mascot"><Mascot size={118} delay={200} label="Veshannastro mascot" /></div>
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:items-center md:gap-10">
+            <div>
+              <p className="footer-eyebrow">Contact</p>
+              <h2 id="footer-contact" className="footer-title">Talk to Veshannastro</h2>
+              <p className="mt-3 max-w-[26rem] text-[16px] leading-relaxed text-muted-foreground">
+                Questions about your watch, your numbers or a consultation. Write to us, call, or message us on WhatsApp.
+              </p>
+            </div>
+            <ul className="footer-rows">
+              {rows.map(r => (
+                <li key={r.label}>
+                  <a href={r.href} {...(r.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} className="footer-row">
+                    <span className={`footer-row-icon ${r.wa ? 'is-wa' : ''}`}>{r.icon}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[13px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">{r.label}</span>
+                      <span className="block font-display text-[16px] font-semibold text-foreground [overflow-wrap:break-word] min-[380px]:text-[18px]">{r.value}</span>
+                    </span>
+                    <ChevronRight size={20} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <div className="mt-12 grid grid-cols-1 gap-9 sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="grid content-start gap-3 text-[14px] leading-relaxed text-muted-foreground">
+            <Lockup size={26} />
+            {children}
+          </div>
+          {col('Readings', links.readings)}
+          {col('Veshannastro', links.about)}
+        </div>
+
+        <div className="sitenav-copy flex flex-wrap gap-x-5 gap-y-2">
+          <span>© {year > FIRST_YEAR ? `${FIRST_YEAR}–${year}` : year} Veshannastro · All rights reserved</span>
+          <a href="/privacy" className="sitenav-footlink p-0 text-[13px]">Privacy policy</a>
+          <a href="/terms" className="sitenav-footlink p-0 text-[13px]">Terms and conditions</a>
         </div>
       </div>
-      <div className="sitenav-copy flex flex-wrap gap-x-5 gap-y-2">
-        <span>© {year > FIRST_YEAR ? `${FIRST_YEAR}–${year}` : year} Veshannastro · All rights reserved</span>
-        <a href="/privacy" className="sitenav-footlink p-0 text-[13px]">Privacy policy</a>
-        <a href="/terms" className="sitenav-footlink p-0 text-[13px]">Terms and conditions</a>
-      </div>
-    </>
+    </footer>
   );
 }

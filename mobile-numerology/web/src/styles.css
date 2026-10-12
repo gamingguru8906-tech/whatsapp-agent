@@ -235,3 +235,50 @@ summary::-webkit-details-marker { display: none; }
 
 /* Nothing on any page may push it sideways on a phone. (Layouts are fixed at the source; this is the safety net.) */
 html, body { overflow-x: clip; }
+
+/* ---------- Mascot (Mascot.jsx). Same block in both sites. Gentle, and still for reduced motion. ---------- */
+.mascot { display: inline-block; padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; -webkit-tap-highlight-color: transparent; }
+.mascot:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 4px; border-radius: 24px; }
+.mascot svg { display: block; overflow: visible; }
+.mascot-breathe { transform-box: fill-box; transform-origin: 50% 100%; animation: mascot-breathe 3.8s ease-in-out infinite; }
+.mascot-sleep .mascot-breathe { animation-duration: 5.4s; }
+.mascot-hop, .mascot-shadow { transform-box: fill-box; transform-origin: 50% 100%; }
+.mascot-shadow { transform-origin: 50% 50%; }
+.mascot-waking .mascot-hop { animation: mascot-hop 520ms cubic-bezier(0.3, 1.5, 0.5, 1); }
+.mascot-waking .mascot-shadow { animation: mascot-shadow 520ms cubic-bezier(0.3, 1.5, 0.5, 1); }
+.mascot-happy .mascot-hop { animation: mascot-hop2 760ms ease-out; }
+.mascot-happy .mascot-shadow { animation: mascot-shadow2 760ms ease-out; }
+.mascot-eye { transform-box: view-box; transition: transform 90ms ease-out; }
+.mascot.is-blink .mascot-eye { transform: scaleY(0.12); }
+.mascot-pupil { transition: transform 420ms cubic-bezier(0.3, 0.7, 0.3, 1); }
+.mascot.is-paused, .mascot.is-paused * { animation-play-state: paused !important; }
+@keyframes mascot-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 0.985); } }
+@keyframes mascot-hop { 0% { transform: translateY(0) scale(1.05, 0.93); } 45% { transform: translateY(-14px) scale(0.97, 1.04); } 100% { transform: none; } }
+@keyframes mascot-shadow { 45% { transform: scale(0.8); opacity: 0.12; } }
+@keyframes mascot-hop2 { 0% { transform: none; } 25% { transform: translateY(-10px); } 50% { transform: none; } 70% { transform: translateY(-6px); } 100% { transform: none; } }
+@keyframes mascot-shadow2 { 25%, 70% { transform: scale(0.85); } }
+@media (prefers-reduced-motion: reduce) {
+  .mascot *, .mascot { animation: none !important; transition: none !important; }
+}
+
+/* ---------- Footer (SiteNav.jsx SiteFooter). Same block in both sites. ---------- */
+.site-footer { border-top: 1px solid hsl(var(--border) / 0.7);
+  background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(30 40% 95%) 100%); }
+.footer-card { position: relative; padding: 64px 18px 18px; border-radius: 28px; background: hsl(var(--card));
+  box-shadow: 0 0 0 1px hsl(27 32% 84% / 0.7), 0 30px 60px -36px hsl(341 40% 22% / 0.35); }
+@media (min-width: 640px) { .footer-card { padding: 44px 40px 36px; } }
+.footer-mascot { position: absolute; top: -72px; right: 22px; }
+@media (min-width: 640px) { .footer-mascot { right: 40px; } }
+.footer-eyebrow { font-family: 'League Spartan', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #B8862F; }
+.footer-title { margin-top: 6px; font-family: 'League Spartan', system-ui, sans-serif; font-size: clamp(1.75rem, 5vw, 2.4rem); line-height: 1.08;
+  font-weight: 700; letter-spacing: -0.02em; color: hsl(var(--maroon)); }
+.footer-rows { display: grid; gap: 10px; }
+.footer-row { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 12px; border-radius: 16px; text-decoration: none;
+  background: hsl(var(--background)); box-shadow: 0 0 0 1px hsl(var(--border) / 0.8);
+  transition: background-color 200ms, box-shadow 200ms, transform 150ms var(--ease-out); }
+.footer-row:hover { background: hsl(var(--card)); box-shadow: 0 0 0 1px hsl(var(--maroon) / 0.25), 0 10px 22px -16px hsl(341 40% 22% / 0.4); }
+.footer-row:active { transform: scale(0.985); }
+.footer-row-icon { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px;
+  background: hsl(var(--maroon-soft)); color: hsl(var(--maroon)); }
+.footer-row-icon.is-wa { background: hsl(var(--whatsapp)); color: #fff; }

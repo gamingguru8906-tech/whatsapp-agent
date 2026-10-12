@@ -3,7 +3,8 @@ import { ChevronRight } from 'lucide-react';
 import Watch3D from './components/Watch3D.jsx';
 import { Lockup } from './components/Brand.jsx';
 import PriceCut from './components/PriceCut.jsx';
-import { MobileMenu, FooterLinks } from './components/SiteNav.jsx';
+import Mascot from './components/Mascot.jsx';
+import { MobileMenu, SiteFooter } from './components/SiteNav.jsx';
 
 // Veshannastro front page. The watch reading opens later; until then its button asks to be told on WhatsApp, and
 // the mobile-number reading (live) is one tap away. "(Ref: ...)" tags the lead's source in Kamala's CRM.
@@ -146,9 +147,12 @@ export default function App() {
           </ul>
         </section>
 
-        {/* Who is behind it, and the consultation */}
-        <section id="about" className="border-t border-border/70">
-          <div className="mx-auto grid max-w-5xl gap-10 px-5 py-14 sm:py-20 lg:grid-cols-2 lg:gap-16">
+        {/* Who is behind it, and the consultation. The mascot wakes when this section comes into view. */}
+        <section id="about" className="scroll-mt-16 border-t border-border/70">
+          <div className="mx-auto grid max-w-5xl items-center gap-10 px-5 py-14 sm:py-20 lg:grid-cols-[200px_minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
+            <div className="flex justify-center lg:justify-start">
+              <Mascot size={184} delay={350} />
+            </div>
             <div>
               <h2 className="t-title">Who reads your numbers</h2>
               <p className="mt-4 text-[17px]">
@@ -159,7 +163,7 @@ export default function App() {
                 Visit veshannastro.co.in<ChevronRight size={18} aria-hidden="true" />
               </a>
             </div>
-            <div className="lg:pt-1">
+            <div>
               <h2 className="t-title">Want a watch chosen for you?</h2>
               <p className="mt-4 text-[17px] text-muted-foreground">Talk to us on WhatsApp about your watch, your numbers or a new mobile number.</p>
               <a href={CONSULT} target="_blank" rel="noopener noreferrer" className="btn-whatsapp mt-6 w-full sm:w-auto"><WaIcon />Consult on WhatsApp</a>
@@ -168,15 +172,10 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="border-t border-border/70 bg-card/60">
-        <div className="mx-auto grid max-w-5xl gap-6 px-5 py-10 text-[14px] leading-relaxed text-muted-foreground">
-          <div className="grid gap-2">
-            <Lockup size={26} />
-            <p>Readings follow traditional numerology. They are not medical, legal or financial advice.</p>
-          </div>
-          <FooterLinks site="suite" refCode="WEB-SUITE-FOOTER" />
-        </div>
-      </footer>
+      <SiteFooter site="suite" refCode="WEB-SUITE-FOOTER">
+        <p>Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
+        <p>Readings follow traditional numerology. They are not medical, legal or financial advice.</p>
+      </SiteFooter>
     </div>
   );
 }

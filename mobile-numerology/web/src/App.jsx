@@ -11,7 +11,7 @@ import Watch3D from './components/Watch3D.jsx';
 import MyReadings from './components/MyReadings.jsx';
 import { UserRound } from 'lucide-react';
 import { Lockup } from './components/Brand.jsx';
-import { MobileMenu, FooterLinks } from './components/SiteNav.jsx';
+import { MobileMenu, SiteFooter } from './components/SiteNav.jsx';
 import { startReveal, scrollToEl } from './motion.js';
 import { PAGES, ORIGIN } from '../../engine/pages.js';
 
@@ -212,15 +212,11 @@ export default function App() {
         </div>
       </main>
 
-      <footer className="border-t border-border/70 bg-card/60">
-        <div className="mx-auto grid max-w-5xl gap-3 px-5 py-9 text-[13px] leading-relaxed text-muted-foreground">
-          <div className="mb-1"><Lockup size={26} /></div>
-          <p className="font-ui text-[14px] text-foreground/80">Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
-          <p><strong className="font-semibold text-foreground">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods taught by experienced numerologists. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>
-          <p>What we store: your name, mobile number, date of birth, what you shared, the numbers and watch details you gave, and whether you want WhatsApp updates. We use them to show your reading and, only if you agree, to contact you on WhatsApp. We never sell them. Photos of your watch or wrist are read once and never stored.</p>
-          <div className="mt-4 text-[14px]"><FooterLinks site="readings" refCode={`WEB-${SEGMENT.toUpperCase()}-FOOTER`} /></div>
-        </div>
-      </footer>
+      <SiteFooter site="readings" refCode={`WEB-${SEGMENT.toUpperCase()}-FOOTER`}>
+        <p className="text-foreground/80">Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
+        <p><strong className="font-semibold text-foreground">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>
+        <p>Photos of your watch or wrist are read once and never stored. What we keep, and why, is in our <a href="/privacy" className="font-medium text-primary-dark">privacy policy</a>.</p>
+      </SiteFooter>
     </div>
   );
 }
