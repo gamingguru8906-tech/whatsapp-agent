@@ -110,7 +110,7 @@ for (const plan of PLAN) {
     else if (verdict === 'M' && !mapped?.approve) { status = 'review'; reason = 'the reader marked it MAYBE'; }
     rules.push({
       id, set: plan.set, ...(mapped?.kind ? { kind: mapped.kind } : {}), when, period, text: text.trim(), polarity: ({ good: 'good', care: 'care', mixed: 'mixed', 'good / care': 'mixed', 'good (remedy)': 'good' })[(r.polarity || '').trim()] ?? 'neutral',
-      areas: col(r, 'life areas').split(/,\s*/).filter(Boolean),
+      areas: col(r, 'life areas').split(/,\s*/).filter(a => a && a !== '—' && a !== '-'), // a dash in the sheet means none
       source: { book: plan.book, pages: pages(r.page), quote, quoteFound: found, rank: BOOKS[plan.book].rank },
       condition, status, ...(reason ? { reason } : {})
     });

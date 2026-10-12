@@ -199,7 +199,7 @@ function ChapterBar({ chapters, rootRef }) {
       <div ref={navRef} className="no-scrollbar flex gap-1 overflow-x-auto px-3 py-2">
         {chapters.map(c => (
           <button key={c.id} data-id={c.id} type="button" onClick={() => jump(c.id)} aria-current={active === c.id ? 'true' : undefined}
-            className={`min-h-[36px] shrink-0 rounded-full px-3.5 text-[15px] font-medium transition-colors ${active === c.id ? 'bg-maroon text-white' : 'text-muted-foreground hover:bg-primary-soft hover:text-maroon'}`}>
+            className={`min-h-[36px] shrink-0 rounded-[10px] px-3.5 text-[15px] font-medium transition-colors ${active === c.id ? 'bg-maroon text-white' : 'text-muted-foreground hover:bg-primary-soft hover:text-maroon'}`}>
             {c.label}
           </button>
         ))}
@@ -237,7 +237,7 @@ function StickyWhatsApp({ href }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" aria-hidden={!show} tabIndex={show ? 0 : -1}
       style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
-      className={`btn-whatsapp fixed right-4 z-30 rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-all duration-200 sm:hidden ${show ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'}`}>
+      className={`btn-whatsapp fixed right-4 z-30 shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-all duration-200 sm:hidden ${show ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'}`}>
       <WaIcon />Ask us on WhatsApp
     </a>
   );

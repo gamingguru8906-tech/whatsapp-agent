@@ -299,7 +299,7 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
     }
   }
 
-  // ---------- Size, pointer, loop ----------
+  // ---------- Size and loop ----------
   let W = 0, H = 0;
   function resize() {
     const r = host.getBoundingClientRect();
@@ -319,15 +319,6 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
   ro.observe(host);
   resize();
 
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-  const onMove = e => {
-    const r = host.getBoundingClientRect();
-    pointer.tx = MathUtils.clamp(((e.clientX - r.left) / r.width - 0.5) * 2, -1, 1);
-    pointer.ty = MathUtils.clamp(((e.clientY - r.top) / r.height - 0.5) * 2, -1, 1);
-  };
-  const onLeave = () => { pointer.tx = 0; pointer.ty = 0; };
-  host.addEventListener('pointermove', onMove);
-  host.addEventListener('pointerleave', onLeave);
 
   let visible = true, raf = 0, scrollingUntil = 0, lastDraw = -1e9;
   // While the page is scrolling, the watch holds still: the scroll gets the whole frame budget.
@@ -355,9 +346,8 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
     setTime();
     // At t = 0 the pose matches the still picture, so the switch from picture to 3D is seamless.
     if (!reduced && !still) {
-      pointer.x += (pointer.tx - pointer.x) * 0.06; pointer.y += (pointer.ty - pointer.y) * 0.06;
-      watch.rotation.y = 0.22 + Math.sin(t * 0.45) * 0.4 + pointer.x * 0.35;
-      watch.rotation.x = -0.18 + Math.sin(t * 0.32) * 0.07 + pointer.y * 0.2;
+      watch.rotation.y = 0.22 + Math.sin(t * 0.45) * 0.4;
+      watch.rotation.x = -0.18 + Math.sin(t * 0.32) * 0.07;
       watch.rotation.z = Math.sin(t * 0.27) * 0.04;
       watch.position.y = Math.sin(t * 0.8) * 0.05;
       key.position.set(3 * Math.cos(t * 0.5), 2 + Math.sin(t * 0.7), 4);
@@ -382,8 +372,6 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
     ro.disconnect(); io.disconnect();
     document.removeEventListener('visibilitychange', onVis);
     window.removeEventListener('scroll', onScroll);
-    host.removeEventListener('pointermove', onMove);
-    host.removeEventListener('pointerleave', onLeave);
     disposables.forEach(d => d.dispose?.());
     [glitter, glints].forEach(p => { p.geometry.dispose(); p.material.dispose(); });
     envRT.dispose(); pmrem.dispose(); renderer.dispose();

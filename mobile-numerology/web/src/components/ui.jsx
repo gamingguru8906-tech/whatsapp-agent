@@ -159,7 +159,7 @@ export function SavedNote({ mobile }) {
   if (!mobile) return null;
   return (
     <a href="/my" className="group-card flex items-center gap-3 px-4 py-4 no-underline transition-colors hover:bg-muted/40 sm:px-5">
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-maroon-soft font-display text-[15px] font-bold text-maroon" aria-hidden="true">✓</span>
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-maroon-soft text-maroon" aria-hidden="true"><Check size={18} strokeWidth={2.4} /></span>
       <span className="min-w-0 flex-1">
         <span className="t-headline block">Your reading is saved</span>
         <span className="t-note mt-0.5 block">Open it any time from My readings: sign in with WhatsApp from +91 {String(mobile).slice(0, 5)} {String(mobile).slice(5)}.</span>
@@ -209,7 +209,7 @@ export function Pills({ id, label, options, value, onChange, invalid }) {
         const on = value === k;
         return (
           <button key={k} type="button" role="radio" aria-checked={on} onClick={() => onChange(k)}
-            className={`pressable inline-flex min-h-[40px] items-center gap-1.5 rounded-full px-4 text-[15px] font-medium transition-[background-color,color,box-shadow] duration-200 ${on ? 'bg-maroon text-white shadow-[0_4px_12px_-6px_hsl(var(--maroon)/0.8)]' : `bg-muted text-foreground hover:bg-border/70 ${invalid ? 'ring-1 ring-danger/60' : ''}`}`}>
+            className={`pressable inline-flex min-h-[40px] items-center gap-1.5 rounded-[10px] px-4 text-[15px] font-medium transition-[background-color,color,box-shadow] duration-200 ${on ? 'bg-maroon text-white shadow-[0_4px_12px_-6px_hsl(var(--maroon)/0.8)]' : `bg-muted text-foreground hover:bg-border/70 ${invalid ? 'ring-1 ring-danger/60' : ''}`}`}>
             <span className={`grid overflow-hidden transition-[width,opacity] duration-300 ease-ios ${on ? 'w-4 opacity-100' : 'w-0 opacity-0'}`}><Check size={15} strokeWidth={3} aria-hidden="true" /></span>
             {l}
           </button>
@@ -229,7 +229,7 @@ export function CheckList({ id, label, options, values, onToggle, invalid }) {
           <button key={k} type="button" role="checkbox" aria-checked={on} onClick={() => onToggle(k)}
             className="pressable-row row flex w-full items-center gap-3 text-left">
             <span className="min-w-0 flex-1 text-[16px] leading-snug">{l}</span>
-            <span aria-hidden="true" className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border transition-all duration-300 ease-ios ${on ? 'scale-100 border-primary bg-primary text-white' : 'border-border bg-card text-transparent'}`}>
+            <span aria-hidden="true" className={`grid h-6 w-6 shrink-0 place-items-center rounded-[7px] border transition-all duration-300 ease-ios ${on ? 'scale-100 border-primary bg-primary text-white' : 'border-border bg-card text-transparent'}`}>
               <Check size={15} strokeWidth={3} className={`transition-transform duration-300 ease-spring ${on ? 'scale-100' : 'scale-0'}`} />
             </span>
           </button>

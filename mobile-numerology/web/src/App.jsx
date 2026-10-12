@@ -126,18 +126,18 @@ export default function App() {
       <header className={`sticky top-0 z-20 material ${scrolled ? 'scrolled' : ''}`} style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2.5 px-5 py-3">
           <Lockup />
-          <nav aria-label="Readings" className={`relative order-3 grid w-full grid-cols-2 rounded-full p-[3px] text-[14px] font-semibold tracking-[-0.01em] transition-colors duration-300 sm:order-2 sm:w-[264px] bg-border/50`}>
+          <nav aria-label="Readings" className={`relative order-3 grid w-full grid-cols-2 rounded-[12px] p-[3px] text-[14px] font-semibold tracking-[-0.01em] transition-colors duration-300 sm:order-2 sm:w-[264px] bg-border/50`}>
             <span aria-hidden="true"
-              className={`absolute bottom-[3px] left-[3px] top-[3px] w-[calc(50%-3px)] rounded-full bg-card shadow-[0_3px_8px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.06)] transition-[transform,opacity] duration-[420ms] ease-ios ${TAB === 'my' ? 'opacity-0' : 'opacity-100'}`}
+              className={`absolute bottom-[3px] left-[3px] top-[3px] w-[calc(50%-3px)] rounded-[9px] bg-card shadow-[0_3px_8px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.06)] transition-[transform,opacity] duration-[420ms] ease-ios ${TAB === 'my' ? 'opacity-0' : 'opacity-100'}`}
               style={{ transform: `translateX(${TAB === 'watch' ? '100%' : '0'})` }} />
             {[['mobile', '/', 'Mobile number'], ['watch', '/watch', 'Wristwatch']].map(([k, href, label]) => (
               <a key={k} href={href} aria-current={TAB === k ? 'page' : undefined}
-                className={`relative z-[1] rounded-full px-3.5 py-1.5 text-center no-underline transition-colors duration-300 ${TAB === k ? 'text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
+                className={`relative z-[1] rounded-[9px] px-3.5 py-1.5 text-center no-underline transition-colors duration-300 ${TAB === k ? 'text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>{label}</a>
             ))}
           </nav>
           <div className="order-2 flex items-center gap-1 sm:order-3">
             <a href="/my" aria-current={SEGMENT === 'my' ? 'page' : undefined}
-              className={`pressable inline-flex min-h-[40px] min-w-[40px] items-center justify-center gap-1.5 rounded-full px-2.5 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:min-h-[36px] sm:px-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
+              className={`pressable inline-flex min-h-[40px] min-w-[40px] items-center justify-center gap-1.5 rounded-[10px] px-2.5 font-ui text-[14px] font-semibold tracking-[-0.01em] no-underline sm:min-h-[36px] sm:px-3 ${SEGMENT === 'my' ? 'bg-maroon-soft text-maroon' : 'text-muted-foreground hover:text-maroon'}`}>
               <UserRound size={18} aria-hidden="true" /><span className="sr-only sm:not-sr-only">My readings</span>
             </a>
             <MobileMenu site="readings" refCode={`WEB-${SEGMENT.toUpperCase()}-MENU`} />

@@ -131,7 +131,7 @@
 }
 
 /* ---------- Site navigation (SiteNav.jsx): phone menu and footer links. Same block in both sites. ---------- */
-.sitenav-toggle { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -8px; border-radius: 999px;
+.sitenav-toggle { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -6px; border-radius: 12px;
   color: hsl(var(--maroon)); transition: background-color 200ms, transform 150ms var(--ease-out); -webkit-tap-highlight-color: transparent; }
 .sitenav-toggle:active { transform: scale(0.94); background: hsl(var(--maroon) / 0.08); }
 .sitenav-backdrop { position: fixed; left: 0; right: 0; bottom: 0; top: var(--sitenav-top, 64px); background: hsl(341 30% 12% / 0.32);

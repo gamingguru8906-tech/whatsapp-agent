@@ -122,17 +122,17 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
       </div>
 
       <div className="group-card rows shadow-soft">
-        <div className="row flex items-center gap-4 py-4">
+        <div className="row flex flex-wrap items-center gap-x-4 gap-y-3 py-4 sm:flex-nowrap">
           {photo.preview
-            ? <img src={photo.preview} alt="Your watch photo" className="h-20 w-20 shrink-0 rounded-[16px] object-cover" />
-            : <span className="grid h-20 w-20 shrink-0 place-items-center rounded-[16px] bg-primary-soft text-primary-dark"><Camera size={30} aria-hidden="true" /></span>}
-          <div className="min-w-0 flex-1">
+            ? <img src={photo.preview} alt="Your watch photo" className="h-16 w-16 shrink-0 sm:h-20 sm:w-20 rounded-[16px] object-cover" />
+            : <span className="grid h-16 w-16 shrink-0 place-items-center rounded-[16px] bg-primary-soft sm:h-20 sm:w-20 text-primary-dark"><Camera size={30} aria-hidden="true" /></span>}
+          <div className="min-w-0 flex-1 basis-[10rem]">
             <p className="t-headline">{photo.state === 'loading' ? 'Reading your watch…' : photo.state === 'done' ? 'Your watch' : 'Photo of your watch'}</p>
             <p className="t-note mt-0.5">{photo.state === 'done' ? 'Read from your photo.' : 'The watch face, straight on, in good light. The photo is never kept.'}</p>
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} aria-label="Choose a photo of your watch" />
           <button id="w-photo" type="button" onClick={() => fileRef.current?.click()} disabled={photo.state === 'loading'}
-            className={`min-h-[44px] shrink-0 px-4 text-[15px] disabled:opacity-70 ${photo.preview ? 'btn-plain bg-card shadow-[0_0_0_1px_hsl(var(--border))]' : 'btn-primary'}`}>
+            className={`min-h-[44px] w-full shrink-0 px-4 text-[15px] disabled:opacity-70 sm:w-auto ${photo.preview ? 'btn-plain bg-card shadow-[0_0_0_1px_hsl(var(--border))]' : 'btn-primary'}`}>
             {photo.state === 'loading' ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" aria-label="Reading" /> : photo.preview ? 'Change' : 'Add photo'}
           </button>
         </div>
@@ -172,7 +172,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
           options={Object.entries(ATTRS.goal.options)} />
         <div className={`group-card mt-2 px-4 py-3 transition-[box-shadow] duration-200 sm:px-5 ${goalText.trim() ? 'ring-2 ring-primary/70' : err.goal ? 'ring-1 ring-danger/60' : ''}`}>
           <label htmlFor="f-goal" className="sr-only">Something else you would like to improve</label>
-          <input id="f-goal" className="field text-[16px]" maxLength={120} placeholder="Something else? Type it here"
+          <input id="f-goal" className="field text-[16px]" maxLength={120} placeholder="Or type your own"
             value={goalText} onChange={e => { setGoalText(e.target.value); setLocal(l => ({ ...l, goal: undefined })); }} />
         </div>
         {err.goal && <p className="error px-1">{err.goal}</p>}
@@ -195,16 +195,16 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
         </div>
         <fieldset className="row">
           <legend className="field-label float-left w-full">Date of birth</legend>
-          <div className="clear-both grid grid-cols-[4.75rem_1fr_6rem] gap-2.5">
+          <div className="clear-both grid grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-2.5 min-[390px]:grid-cols-[4.5rem_minmax(0,1fr)_5.5rem]">
             <Picker id="f-dob" value={dob.day} onChange={setD('day')} label="Day of birth" invalid={!!err.dob}>
               <option value="">Day</option>
               {Array.from({ length: 31 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
             </Picker>
             <Picker value={dob.month} onChange={setD('month')} label="Month of birth">
               <option value="">Month</option>
-              {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+              {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m.slice(0, 3)}</option>)}
             </Picker>
-            <Picker value={dob.year} onChange={setD('year')} label="Year of birth">
+            <Picker value={dob.year} onChange={setD('year')} label="Year of birth" className="col-span-2 min-[390px]:col-span-1">
               <option value="">Year</option>
               {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
             </Picker>
@@ -218,7 +218,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
 
       <div className="grid gap-3 px-1">
         <Tick id="f-consent" checked={f.consent} onChange={set('consent')} invalid={!!err.consent}>
-          I agree that Veshannastro stores my name, number, date of birth and my watch details, to show this reading.
+          I agree that Veshannastro stores my name, number, date of birth and my watch details, to show this reading. <a href="/privacy" target="_blank" className="font-medium text-primary-dark">Privacy policy</a> · <a href="/terms" target="_blank" className="font-medium text-primary-dark">Terms</a>
         </Tick>
         {err.consent && <p className="error -mt-1 pl-9">{err.consent}</p>}
         <Tick id="f-wa" checked={f.waOptIn} onChange={set('waOptIn')}>

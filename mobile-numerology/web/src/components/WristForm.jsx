@@ -120,17 +120,17 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
       <div>
         <h3 className="mb-2 px-1 font-display text-[15px] font-semibold text-maroon">1. Your wrist</h3>
         <div className="group-card rows shadow-soft">
-          <div className="row flex items-center gap-4 py-4">
+          <div className="row flex flex-wrap items-center gap-x-4 gap-y-3 py-4 sm:flex-nowrap">
             {photo.preview
               ? <img src={photo.preview} alt="Your wrist photo" className="h-16 w-16 shrink-0 rounded-[14px] object-cover" />
               : <span className="grid h-16 w-16 shrink-0 place-items-center rounded-[14px] bg-primary-soft text-primary-dark"><Camera size={26} aria-hidden="true" /></span>}
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 basis-[10rem]">
               <p className="t-headline">{photo.state === 'loading' ? 'Reading your wrist…' : photo.preview ? 'Your wrist photo' : 'Add a photo of your wrist'}</p>
               <p className="t-note mt-0.5">Bare wrist and hand, in daylight. The photo is read once and never kept.</p>
             </div>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} aria-label="Choose a photo of your wrist" />
             <button type="button" onClick={() => fileRef.current?.click()} disabled={photo.state === 'loading'}
-              className="btn-plain min-h-[44px] shrink-0 bg-card px-4 text-[15px] shadow-[0_0_0_1px_hsl(var(--border))] disabled:opacity-70">
+              className="btn-plain min-h-[44px] w-full shrink-0 bg-card px-4 text-[15px] shadow-[0_0_0_1px_hsl(var(--border))] disabled:opacity-70 sm:w-auto">
               {photo.state === 'loading' ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" aria-label="Reading" /> : photo.preview ? 'Change' : 'Add photo'}
             </button>
           </div>
@@ -161,16 +161,16 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
           </div>
           <fieldset className="row">
             <legend className="field-label float-left w-full">Date of birth <span className="font-normal text-muted-foreground">(sets your watch for the year)</span></legend>
-            <div className="clear-both grid grid-cols-[4.75rem_1fr_6rem] gap-2.5">
+            <div className="clear-both grid grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-2.5 min-[390px]:grid-cols-[4.5rem_minmax(0,1fr)_5.5rem]">
               <Picker id="f-dob" value={dob.day} onChange={setD('day')} label="Day of birth" invalid={!!err.dob}>
                 <option value="">Day</option>
                 {Array.from({ length: 31 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
               </Picker>
               <Picker value={dob.month} onChange={setD('month')} label="Month of birth">
                 <option value="">Month</option>
-                {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+                {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m.slice(0, 3)}</option>)}
               </Picker>
-              <Picker value={dob.year} onChange={setD('year')} label="Year of birth">
+              <Picker value={dob.year} onChange={setD('year')} label="Year of birth" className="col-span-2 min-[390px]:col-span-1">
                 <option value="">Year</option>
                 {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
               </Picker>
@@ -184,7 +184,7 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
         className="absolute -left-[9999px] h-px w-px opacity-0" aria-hidden="true" />
 
       <div className="px-1"><Tick id="f-consent" checked={f.consent} onChange={set('consent')} invalid={!!err.consent}>
-        I agree that Veshannastro stores my name, number and date of birth to show this answer. The photo is not stored.
+        I agree that Veshannastro stores my name, number, date of birth and my wrist details to show this answer. The photo is not stored. <a href="/privacy" target="_blank" className="font-medium text-primary-dark">Privacy policy</a> · <a href="/terms" target="_blank" className="font-medium text-primary-dark">Terms</a>
       </Tick></div>
       {err.consent && <p className="error -mt-3 pl-9">{err.consent}</p>}
 

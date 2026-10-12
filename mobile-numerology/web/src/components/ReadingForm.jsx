@@ -19,14 +19,14 @@ export function dobFrom(d) {
 }
 
 // A native picker (the phone's own wheel or list) styled as a quiet field with a chevron.
-export function Picker({ id, value, onChange, label, invalid, children }) {
+export function Picker({ id, value, onChange, label, invalid, children, className = '' }) {
   return (
-    <span className="relative mt-1 block">
+    <span className={`relative mt-1 block ${className}`}>
       <select id={id} value={value} onChange={onChange} aria-label={label} aria-invalid={invalid}
-        className={`w-full cursor-pointer appearance-none rounded-[11px] bg-muted py-2.5 pl-3 pr-8 font-ui text-[17px] tracking-[-0.01em] transition-[background-color,box-shadow] duration-200 hover:bg-border/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${invalid ? 'ring-1 ring-danger/60' : ''} ${value ? 'text-foreground' : 'text-muted-foreground'}`}>
+        className={`w-full cursor-pointer appearance-none rounded-[11px] bg-muted py-2.5 pl-2.5 pr-7 font-ui text-[17px] tracking-[-0.01em] transition-[background-color,box-shadow] duration-200 hover:bg-border/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${invalid ? 'ring-1 ring-danger/60' : ''} ${value ? 'text-foreground' : 'text-muted-foreground'}`}>
         {children}
       </select>
-      <ChevronDown size={16} strokeWidth={2.5} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+      <ChevronDown size={16} strokeWidth={2.5} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
     </span>
   );
 }
@@ -123,16 +123,16 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
 
         <fieldset className="row">
           <legend className="field-label float-left w-full">Date of birth</legend>
-          <div className="clear-both grid grid-cols-[4.75rem_1fr_6rem] gap-2.5">
+          <div className="clear-both grid grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-2.5 min-[390px]:grid-cols-[4.5rem_minmax(0,1fr)_5.5rem]">
             <Picker id="f-dob" value={dob.day} onChange={setD('day')} label="Day of birth" invalid={!!err.dob}>
               <option value="">Day</option>
               {Array.from({ length: 31 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
             </Picker>
             <Picker value={dob.month} onChange={setD('month')} label="Month of birth">
               <option value="">Month</option>
-              {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+              {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m.slice(0, 3)}</option>)}
             </Picker>
-            <Picker value={dob.year} onChange={setD('year')} label="Year of birth">
+            <Picker value={dob.year} onChange={setD('year')} label="Year of birth" className="col-span-2 min-[390px]:col-span-1">
               <option value="">Year</option>
               {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
             </Picker>
@@ -193,7 +193,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
 
       <div className="grid gap-3 px-1">
         <Tick id="f-consent" checked={f.consent} onChange={set('consent')} invalid={!!err.consent}>
-          I agree that Veshannastro stores my name, number, date of birth and what I shared, to show this reading.
+          I agree that Veshannastro stores my name, number, date of birth and what I shared, to show this reading. <a href="/privacy" target="_blank" className="font-medium text-primary-dark">Privacy policy</a> · <a href="/terms" target="_blank" className="font-medium text-primary-dark">Terms</a>
         </Tick>
         {err.consent && <p className="error -mt-1 pl-9">{err.consent}</p>}
         <Tick id="f-wa" checked={f.waOptIn} onChange={set('waOptIn')}>

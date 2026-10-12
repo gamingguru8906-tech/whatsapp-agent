@@ -112,7 +112,7 @@
   .dot-mixed { background: linear-gradient(90deg, hsl(var(--success)) 50%, hsl(var(--care)) 50%); }
   .dot-neutral { background: hsl(var(--text-faint)); }
 
-  .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-ui text-[12.5px] font-semibold tracking-[-0.004em]; }
+  .chip { @apply inline-flex items-center gap-1 rounded-[7px] px-2.5 py-0.5 font-ui text-[12.5px] font-semibold tracking-[-0.004em]; }
   .digit { @apply grid h-11 w-9 font-display place-items-center rounded-[10px] bg-card text-lg font-semibold tabular-nums text-maroon shadow-[0_0_0_1px_hsl(var(--border))] sm:h-12 sm:w-10 sm:text-xl; }
 
   /* Buttons */
@@ -206,7 +206,7 @@ summary::-webkit-details-marker { display: none; }
 .reveal-on [data-rv-d="5"] { transition-delay: 200ms; }
 
 /* ---------- Site navigation (SiteNav.jsx): phone menu and footer links. Same block in both sites. ---------- */
-.sitenav-toggle { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -8px; border-radius: 999px;
+.sitenav-toggle { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -6px; border-radius: 12px;
   color: hsl(var(--maroon)); transition: background-color 200ms, transform 150ms var(--ease-out); -webkit-tap-highlight-color: transparent; }
 .sitenav-toggle:active { transform: scale(0.94); background: hsl(var(--maroon) / 0.08); }
 .sitenav-backdrop { position: fixed; left: 0; right: 0; bottom: 0; top: var(--sitenav-top, 64px); background: hsl(341 30% 12% / 0.32);

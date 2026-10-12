@@ -94,6 +94,10 @@ export function MobileMenu({ site, refCode = 'WEB-MENU', className = '' }) {
         <p className="sitenav-head">Veshannastro</p>
         <ul>{links.about.map(([label, href]) => <li key={href}><a href={href} onClick={close}>{label}</a></li>)}</ul>
         <div className="mt-5"><ContactRow refCode={refCode} onPick={close} /></div>
+        <p className="mt-4 flex gap-5 text-[14px]">
+          <a href="/privacy" onClick={close} className="text-muted-foreground">Privacy policy</a>
+          <a href="/terms" onClick={close} className="text-muted-foreground">Terms and conditions</a>
+        </p>
       </nav>
     </div>
   );
@@ -125,7 +129,11 @@ export function FooterLinks({ site, refCode = 'WEB-FOOTER' }) {
           </ul>
         </div>
       </div>
-      <p className="sitenav-copy">© {year > FIRST_YEAR ? `${FIRST_YEAR}–${year}` : year} Veshannastro · All rights reserved</p>
+      <div className="sitenav-copy flex flex-wrap gap-x-5 gap-y-2">
+        <span>© {year > FIRST_YEAR ? `${FIRST_YEAR}–${year}` : year} Veshannastro · All rights reserved</span>
+        <a href="/privacy" className="sitenav-footlink p-0 text-[13px]">Privacy policy</a>
+        <a href="/terms" className="sitenav-footlink p-0 text-[13px]">Terms and conditions</a>
+      </div>
     </>
   );
 }

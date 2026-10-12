@@ -17,7 +17,7 @@ test('motion.js is the same in mobile-numerology and veshannastro-suite', () => 
   assert.ok(a.equals(b), 'copy mobile-numerology/web/src/motion.js to veshannastro-suite');
 });
 
-for (const f of ['404.html', 'favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'site.webmanifest', 'og-watch.jpg']) {
+for (const f of ['404.html', 'privacy.html', 'terms.html', 'favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'site.webmanifest', 'og-watch.jpg']) {
   test(`public/${f} is the same in both sites`, () => {
     const a = readFileSync(new URL(`../web/public/${f}`, import.meta.url));
     const b = readFileSync(new URL(`../../veshannastro-suite/web/public/${f}`, import.meta.url));
