@@ -27,14 +27,14 @@ export default {
         gold: { DEFAULT: v('gold'), soft: v('gold-soft') }
       },
       borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
-      // Two faces with two jobs. League Spartan (the brand face) for titles and everything you tap, pick or scan;
-      // Literata, a book face made for reading on phone screens, for the sentences of the reading.
+      // Three faces, three jobs: Bricolage Grotesque for titles, Poppins for what you tap, pick or scan,
+      // Instrument Sans for the sentences of the reading.
       fontFamily: {
-        display: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
         // Interface text (labels, controls, notes): the phone's own UI face — SF on Apple devices, Roboto on Android.
-        ui: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'system-ui', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
-        sans: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-        serif: ['Literata', 'Georgia', '"Noto Serif"', '"Times New Roman"', 'serif']
+        ui: ['Poppins', '-apple-system', 'BlinkMacSystemFont', 'system-ui', '"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'],
+        sans: ['"Instrument Sans"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        serif: ['"Instrument Sans"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
       },
       transitionTimingFunction: {
         ios: 'cubic-bezier(0.32, 0.72, 0, 1)',        // iOS sheet / segmented motion

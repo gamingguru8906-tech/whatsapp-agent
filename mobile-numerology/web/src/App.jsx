@@ -13,6 +13,7 @@ import { UserRound } from 'lucide-react';
 import { Lockup } from './components/Brand.jsx';
 import { MobileMenu, SiteFooter } from './components/SiteNav.jsx';
 import Companion from './components/Companion.jsx';
+import HeroBackdrop from './components/HeroBackdrop.jsx';
 import { sending, failed, done, watchMobileField } from './mascot.js';
 import { startReveal, scrollToEl } from './motion.js';
 import { PAGES, ORIGIN } from '../../engine/pages.js';
@@ -179,6 +180,7 @@ export default function App() {
         <div key={SEGMENT} className="animate-swap">
         {SEGMENT === 'my' ? <MyReadings config={config} /> : <>
         <div className="hero-day">
+        <HeroBackdrop />
         <section className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-5 pb-10 pt-8 sm:pt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:items-start lg:gap-14 lg:pb-16">
           {SEGMENT === 'wrist' ? (
             <div className="min-w-0 lg:sticky lg:top-28">
@@ -241,7 +243,7 @@ export default function App() {
       <SiteFooter site="readings" refCode={`WEB-${SEGMENT.toUpperCase()}-FOOTER`}>
         <p className="text-foreground/80">Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
         <p><strong className="font-semibold text-foreground">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>
-        <p>Photos of your watch or wrist are read once and never stored. What we keep, and why, is in our <a href="/privacy" className="press-link py-3 font-medium text-primary-dark">privacy policy</a>.</p>
+        <p>Photos of your watch or wrist are read once and never stored. What we keep, and why, is in our <a href="/privacy" className="press-link py-3.5 font-medium text-primary-dark">privacy policy</a>.</p>
       </SiteFooter>
     </div>
   );

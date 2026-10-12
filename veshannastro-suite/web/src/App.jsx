@@ -5,6 +5,8 @@ import { Lockup } from './components/Brand.jsx';
 import PriceCut from './components/PriceCut.jsx';
 import { MobileMenu, SiteFooter } from './components/SiteNav.jsx';
 import Companion from './components/Companion.jsx';
+import HeroBackdrop from './components/HeroBackdrop.jsx';
+import VineSteps from './components/VineSteps.jsx';
 
 // Veshannastro front page. The watch reading opens later; until then its button asks to be told on WhatsApp, and
 // the mobile-number reading (live) is one tap away. "(Ref: ...)" tags the lead's source in Kamala's CRM.
@@ -93,6 +95,7 @@ export default function App() {
       <main>
         {/* Hero: the watch reading */}
         <div id="watch" className="hero-day">
+        <HeroBackdrop />
         <section className="mx-auto grid max-w-5xl items-center gap-8 px-5 pb-16 pt-10 sm:pt-16 lg:grid-cols-[minmax(0,1fr)_440px] lg:gap-12 lg:pb-20">
           <div className="min-w-0">
             <h1 className="enter t-large max-w-[12ch]">What does your watch say about you?</h1>
@@ -139,24 +142,19 @@ export default function App() {
           </div>
         </section>
 
-        {/* How it works */}
-        <section id="how" className="mx-auto max-w-5xl scroll-mt-16 px-5 py-14 sm:py-20">
-          <h2 className="t-title">How the watch reading works</h2>
-          <ol className="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-            {STEPS.map(([title, text], i) => (
-              <li key={title} className="flex gap-4 lg:flex-col lg:gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-[1.5px] border-maroon/40 font-display text-[16px] font-semibold text-maroon">{i + 1}</span>
-                <div>
-                  <h3 className="t-head">{title}</h3>
-                  <p className="mt-1 text-[16px] leading-snug text-muted-foreground">{text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+        {/* How it works: a vine that grows down the steps as you scroll */}
+        <section id="how" className="vine-band scroll-mt-16">
+          <div className="mx-auto max-w-5xl px-5 py-16 sm:py-24">
+            <h2 className="t-title">How the watch reading works</h2>
+            <p className="vine-sub mt-3 max-w-[34rem] text-[17px]">One photo, two questions and your birth date.</p>
+            <VineSteps steps={STEPS}>
+              <div className="vine-cta"><a href={WATCH} className="btn-primary">Start my reading</a></div>
+            </VineSteps>
+          </div>
         </section>
 
         {/* Every reading */}
-        <section id="readings" className="mx-auto max-w-5xl scroll-mt-16 px-5 pb-14 sm:pb-20">
+        <section id="readings" className="mx-auto max-w-5xl scroll-mt-16 px-5 py-14 sm:py-20">
           <h2 className="t-title">Readings by Veshannastro</h2>
           <ul className="group-card rows mt-8">
             {READINGS.map(r => <Reading key={r.name} r={r} />)}

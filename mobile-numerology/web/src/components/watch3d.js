@@ -273,7 +273,7 @@ export function mountWatch(host, { reduced = false, still = false, dark = false 
     halo.setAttribute('r', '7'); halo.setAttribute('fill', PINK); halo.setAttribute('fill-opacity', '0.18');
     const text = document.createElementNS(NS, 'text');
     text.textContent = d.text;
-    text.setAttribute('font-family', 'League Spartan, sans-serif'); text.setAttribute('font-weight', '600'); text.setAttribute('fill', INK);
+    text.setAttribute('font-family', 'Bricolage Grotesque, sans-serif'); text.setAttribute('font-weight', '600'); text.setAttribute('fill', INK);
     text.setAttribute('text-anchor', d.side === 'left' ? 'start' : 'end');
     g.append(line, halo, dot, text);
     svg.appendChild(g);

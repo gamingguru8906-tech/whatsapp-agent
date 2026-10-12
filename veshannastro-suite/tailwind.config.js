@@ -17,12 +17,12 @@ export default {
         success: { DEFAULT: v('success'), soft: v('success-soft'), dark: v('success-dark') },
         whatsapp: { DEFAULT: v('whatsapp'), dark: v('whatsapp-dark') }
       },
-      // League Spartan (brand) for titles and anything you tap; Literata for sentences.
+      // Bricolage Grotesque for titles, Poppins for what you tap, Instrument Sans for sentences.
       fontFamily: {
-        ui: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'system-ui', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
-        display: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-        sans: ['"League Spartan"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-        serif: ['Literata', 'Georgia', '"Noto Serif"', '"Times New Roman"', 'serif']
+        ui: ['Poppins', '-apple-system', 'BlinkMacSystemFont', 'system-ui', '"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        sans: ['"Instrument Sans"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        serif: ['"Instrument Sans"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
       }
     }
   },

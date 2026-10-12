@@ -5,7 +5,7 @@
 /*
  * Same family as the mobile-number site. Colour only where it moves someone to act: WhatsApp green for the
  * one action (talk to us), Veshannastro pink and maroon in the watch drawing (the brand moment). The rest is
- * off-white, white and ink. League Spartan for titles and anything you tap; Literata for sentences.
+ * off-white, white and ink. Bricolage Grotesque for titles, Poppins for what you tap, Instrument Sans for sentences.
  */
 :root {
   color-scheme: light;
@@ -75,13 +75,6 @@
     radial-gradient(42% 40% at 6% 94%, hsl(40 70% 90% / 0.45) 0%, transparent 72%),
     linear-gradient(170deg, #FFFEFC 0%, #FBF7F2 60%, #F9F3EF 100%);
 }
-.hero-day::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image: radial-gradient(circle, hsl(341 40% 30% / 0.09) 1.1px, transparent 1.6px);
-  background-size: 22px 22px;
-  -webkit-mask-image: radial-gradient(70% 60% at 70% 30%, #000 0%, transparent 85%);
-  mask-image: radial-gradient(70% 60% at 70% 30%, #000 0%, transparent 85%);
-}
 .hero-day .t-large { color: hsl(var(--maroon)); }
 .hero-day .hero-sub { color: hsl(var(--muted-foreground)); }
 .hero-day .hero-link { color: hsl(var(--primary-dark)); }
@@ -145,16 +138,16 @@
   opacity: 0; visibility: hidden; transform: translate3d(0, -10px, 0);
   transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out), visibility 0s linear 150ms; }
 .sitenav-sheet.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 240ms var(--ease-out), transform 300ms var(--ease-out); }
-.sitenav-head { margin-top: 14px; font-family: 'League Spartan', system-ui, sans-serif; font-size: 13px; font-weight: 600;
+.sitenav-head { margin-top: 14px; font-family: Poppins, system-ui, sans-serif; font-size: 13px; font-weight: 600;
   letter-spacing: 0.06em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
-.sitenav-sheet ul a { display: flex; align-items: center; min-height: 48px; font-family: 'League Spartan', system-ui, sans-serif;
+.sitenav-sheet ul a { display: flex; align-items: center; min-height: 48px; font-family: Poppins, system-ui, sans-serif;
   font-size: 18px; font-weight: 600; color: hsl(var(--foreground)); text-decoration: none; box-shadow: inset 0 -1px 0 hsl(var(--border) / 0.8); }
 .sitenav-sheet ul a:active { color: hsl(var(--maroon)); }
 .sitenav-chip { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border-radius: 14px;
-  font-family: 'League Spartan', system-ui, sans-serif; font-size: 16px; font-weight: 600; color: hsl(var(--maroon)); text-decoration: none;
+  font-family: Poppins, system-ui, sans-serif; font-size: 16px; font-weight: 600; color: hsl(var(--maroon)); text-decoration: none;
   background: hsl(var(--card)); box-shadow: 0 0 0 1px hsl(var(--border)); transition: transform 150ms var(--ease-out); }
 .sitenav-chip:active { transform: scale(0.97); }
-.sitenav-foothead { font-family: 'League Spartan', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
+.sitenav-foothead { font-family: Poppins, system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
   text-transform: uppercase; color: hsl(var(--foreground) / 0.75); }
 .sitenav-footlink { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; color: hsl(var(--muted-foreground)); text-decoration: none; transition: color 150ms; }
 @media (hover: hover) and (pointer: fine) { .sitenav-footlink:hover { color: hsl(var(--maroon)); } }
@@ -171,9 +164,9 @@ html, body { overflow-x: clip; }
 .footer-card { position: relative; padding: 26px 18px 18px; border-radius: 28px; background: hsl(var(--card));
   box-shadow: 0 0 0 1px hsl(27 32% 84% / 0.7), 0 30px 60px -36px hsl(341 40% 22% / 0.35); }
 @media (min-width: 640px) { .footer-card { padding: 44px 40px 36px; } }
-.footer-eyebrow { font-family: 'League Spartan', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+.footer-eyebrow { font-family: Poppins, system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
   text-transform: uppercase; color: #B8862F; }
-.footer-title { margin-top: 6px; font-family: 'League Spartan', system-ui, sans-serif; font-size: clamp(1.75rem, 5vw, 2.4rem); line-height: 1.08;
+.footer-title { margin-top: 6px; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: clamp(1.75rem, 5vw, 2.4rem); line-height: 1.08;
   font-weight: 700; letter-spacing: -0.02em; color: hsl(var(--maroon)); }
 .footer-rows { display: grid; gap: 10px; }
 .footer-row { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 12px; border-radius: 16px; text-decoration: none;
@@ -229,10 +222,10 @@ html, body { overflow-x: clip; }
   background: hsl(var(--card)); color: hsl(var(--foreground)); box-shadow: 0 0 0 1px hsl(27 32% 84% / 0.8), 0 14px 30px -14px hsl(341 40% 20% / 0.35);
   animation: vc-pop 260ms cubic-bezier(0.3, 1.4, 0.5, 1); }
 .vc-bubble.is-folded { padding: 9px 12px; cursor: pointer; }
-.vc-text { margin: 0; font-family: 'League Spartan', system-ui, sans-serif; font-size: 15px; font-weight: 500; line-height: 1.35; letter-spacing: -0.005em; }
+.vc-text { margin: 0; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px; font-weight: 500; line-height: 1.35; letter-spacing: -0.005em; }
 .vc-caret { display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -0.12em; background: hsl(var(--primary)); opacity: 0.7; animation: vc-caret 900ms steps(2) infinite; }
 .vc-action { display: inline-flex; align-items: center; margin-top: 9px; min-height: 34px; padding: 0 12px; border: 0; border-radius: 10px;
-  background: hsl(var(--maroon)); color: #fff; font-family: 'League Spartan', system-ui, sans-serif; font-size: 14px; font-weight: 600;
+  background: hsl(var(--maroon)); color: #fff; font-family: Poppins, system-ui, sans-serif; font-size: 14px; font-weight: 600;
   text-decoration: none; cursor: pointer; transition: transform 150ms var(--ease-out), background-color 200ms; }
 .vc-action:hover { background: hsl(341 61% 24%); }
 .vc-action:active { transform: scale(0.96); }
@@ -275,3 +268,112 @@ html, body { overflow-x: clip; }
   transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out), filter 150ms var(--ease-out); }
 .sitenav-icon.is-off { opacity: 0; transform: scale(0.8); filter: blur(2px); }
 @media (prefers-reduced-motion: reduce) { .sitenav-icon { transition: none; } }
+
+/* 3D headings (same block in both sites): the title's letters stand on a stacked rose edge, cut down and to the right,
+   with a soft shadow under it. Sized in em, so the edge scales with the heading. */
+.t-large, .t-title {
+  --edge: hsl(338 74% 84%); --edge-deep: hsl(338 58% 72%);
+  text-shadow: 0.011em 0.022em 0 var(--edge), 0.022em 0.044em 0 var(--edge), 0.033em 0.066em 0 var(--edge),
+    0.044em 0.088em 0 var(--edge-deep), 0.05em 0.16em 0.26em hsl(341 50% 25% / 0.16);
+}
+
+/* Hero backdrop (same block in both sites): a faint grid, three soft shapes that drift and turn, gold sparkles.
+   Transform and opacity only; paused off screen (.is-paused) and still for Reduce Motion. */
+.hb { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.hb-grid { position: absolute; inset: 0;
+  background-image: linear-gradient(hsl(341 40% 30% / 0.06) 1px, transparent 1px), linear-gradient(90deg, hsl(341 40% 30% / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px; background-position: center top;
+  -webkit-mask-image: radial-gradient(80% 70% at 62% 30%, #000 0%, transparent 82%);
+  mask-image: radial-gradient(80% 70% at 62% 30%, #000 0%, transparent 82%); }
+.hb-blob { position: absolute; display: block; aspect-ratio: 1; border-radius: 58% 42% 55% 45% / 48% 60% 40% 52%; }
+.hb-blob-1 { width: clamp(170px, 28vw, 330px); right: -7%; top: -9%; opacity: 0.55;
+  background: radial-gradient(circle at 34% 30%, #FFEAF1 0%, #F7BBD0 36%, #EC95B5 72%, #DF7AA2 100%); }
+.hb-blob-2 { width: clamp(120px, 17vw, 220px); left: -6%; bottom: -8%; opacity: 0.5;
+  background: radial-gradient(circle at 34% 30%, #FFF6DF 0%, #F5DDA2 40%, #E6BE69 78%, #D6A64E 100%); }
+.hb-blob-3 { width: clamp(54px, 6vw, 86px); left: 47%; bottom: 10%; opacity: 0.5;
+  background: radial-gradient(circle at 34% 30%, #FFEAF1 0%, #F4AFC7 50%, #E584A8 100%); }
+.hb-spark { position: absolute; display: block; fill: #D3A54A; opacity: 0.55; }
+@media (prefers-reduced-motion: no-preference) {
+  .hb-blob { will-change: transform; animation: hb-drift-a 24s ease-in-out infinite alternate; }
+  .hb-blob-2 { animation-name: hb-drift-b; animation-duration: 28s; }
+  .hb-blob-3 { animation-duration: 18s; animation-direction: alternate-reverse; }
+  .hb-spark { opacity: 0; transform: scale(0.4); animation: hb-twinkle 5.6s ease-in-out infinite; }
+  .hb.is-paused .hb-blob, .hb.is-paused .hb-spark { animation-play-state: paused; }
+}
+@keyframes hb-drift-a {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(-16px, 20px, 0) rotate(50deg) scale(1.05); }
+  100% { transform: translate3d(10px, 32px, 0) rotate(100deg) scale(0.97); }
+}
+@keyframes hb-drift-b {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(22px, -14px, 0) rotate(-40deg) scale(1.06); }
+  100% { transform: translate3d(8px, -26px, 0) rotate(-80deg) scale(1); }
+}
+@keyframes hb-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  45%, 55% { opacity: 0.8; transform: scale(1) rotate(45deg); }
+}
+
+/* "How it works" as a vine on a deep plum band (main page only). The vine's tip follows the reading line; steps it has
+   reached light up. Without .vine-on (Reduce Motion or no JavaScript) everything is shown lit and grown. */
+.vine-band { position: relative; isolation: isolate; color: #FFF4F7; overflow: hidden;
+  background:
+    radial-gradient(60% 40% at 85% 0%, hsl(338 60% 30% / 0.55) 0%, transparent 70%),
+    radial-gradient(50% 40% at 0% 100%, hsl(40 60% 30% / 0.35) 0%, transparent 70%),
+    #1B0A12; }
+.vine-band::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: linear-gradient(hsl(42 70% 80% / 0.05) 1px, transparent 1px), linear-gradient(90deg, hsl(42 70% 80% / 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%); }
+.vine-band .t-title { color: #FFF4F7; --edge: hsl(338 62% 42%); --edge-deep: hsl(338 64% 30%); }
+.vine-band .vine-sub { color: hsl(340 30% 86% / 0.75); }
+
+.vine { position: relative; margin-top: 40px; }
+.vine-svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.vine-path { fill: none; stroke-linecap: round; }
+.vine-track { stroke: hsl(338 40% 60% / 0.22); stroke-width: 2; }
+.vine-glow { stroke: #E2B95C; stroke-opacity: 0.22; stroke-width: 9; }
+.vine-lit { stroke: url(#vine-gold); stroke-width: 3; }
+.vine-node-ring { fill: #1B0A12; stroke: #E2B95C; stroke-opacity: 0.5; stroke-width: 2; }
+.vine-node-dot { fill: #E2B95C; transform-box: fill-box; transform-origin: center; }
+.vine-head-halo { fill: #F3DFA2; opacity: 0.25; transform-box: fill-box; transform-origin: center; }
+.vine-head-dot { fill: #FFE7A6; }
+.vine-head.is-done { opacity: 0; }
+.vine-leaf-grow { transform-box: fill-box; transform-origin: 0% 50%; }
+
+.vine-list { position: relative; display: grid; gap: 22px; padding-left: 48px; list-style: none; margin: 0; }
+.vine-card { position: relative; padding: 20px 20px 22px; border-radius: 18px;
+  background: hsl(0 0% 100% / 0.04); box-shadow: inset 0 0 0 1px hsl(42 70% 80% / 0.14); }
+.vine-num { display: block; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: 44px; font-weight: 800; line-height: 1;
+  letter-spacing: -0.03em; color: #F3DFA2;
+  text-shadow: 0.02em 0.04em 0 #B8862F, 0.04em 0.08em 0 #B8862F, 0.06em 0.12em 0 #7C5410; }
+.vine-title { margin-top: 12px; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: 20px; font-weight: 700;
+  line-height: 1.2; letter-spacing: -0.01em; color: #FFF4F7; }
+.vine-text { margin-top: 6px; font-size: 16px; line-height: 1.5; color: hsl(340 30% 90% / 0.74); }
+.vine-cta { margin-top: 30px; padding-left: 48px; }
+
+@media (min-width: 860px) {
+  .vine-list { display: flex; flex-direction: column; gap: 0; padding-left: 0; }
+  .vine-step { width: calc(50% - 64px); }
+  .vine-step.is-left { align-self: flex-start; }
+  .vine-step.is-right { align-self: flex-end; }
+  .vine-step + .vine-step { margin-top: -28px; }
+  .vine-cta { padding-left: 0; text-align: center; }
+}
+
+/* Growing: only with motion on, and once the script has measured the vine. */
+@media (prefers-reduced-motion: no-preference) {
+  .vine-on .vine-card { opacity: 0.42; transform: translate3d(0, 10px, 0);
+    transition: opacity 450ms var(--ease-out), transform 450ms var(--ease-out), box-shadow 450ms var(--ease-out), background-color 450ms var(--ease-out); }
+  .vine-on .vine-step.is-on .vine-card { opacity: 1; transform: none; background: hsl(42 70% 80% / 0.06);
+    box-shadow: inset 0 0 0 1px hsl(42 70% 75% / 0.42), 0 18px 40px -24px hsl(42 80% 55% / 0.45); }
+  .vine-on .vine-leaf-grow { transform: scale(0); transition: transform 520ms cubic-bezier(0.34, 1.4, 0.64, 1); }
+  .vine-on .is-on .vine-leaf-grow { transform: none; }
+  .vine-on .is-on .vine-leaf + .vine-leaf .vine-leaf-grow { transition-delay: 90ms; }
+  .vine-on .vine-node-dot { transform: scale(0); transition: transform 300ms var(--ease-out); }
+  .vine-on .is-on .vine-node-dot { transform: none; }
+  .vine-head-halo { animation: vine-pulse 1.6s ease-in-out infinite alternate; }
+}
+@keyframes vine-pulse { from { transform: scale(0.8); opacity: 0.18; } to { transform: scale(1.25); opacity: 0.32; } }
