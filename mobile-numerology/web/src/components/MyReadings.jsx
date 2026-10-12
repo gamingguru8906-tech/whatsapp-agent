@@ -3,6 +3,7 @@ import { ChevronRight, LogOut, Smartphone, Watch as WatchIcon } from 'lucide-rea
 import { startLogin, loginStatus, signOut, getMyReadings, openMyReading } from '../api.js';
 import { WaIcon } from './ui.jsx';
 import { scrollToEl } from '../motion.js';
+import { mascotSay } from './Companion.jsx';
 import Story from './Story.jsx';
 import WatchStory from './WatchStory.jsx';
 import WristResult from './WristResult.jsx';
@@ -25,11 +26,16 @@ function SignIn({ onSignedIn }) {
     if (!r.ok) { setStep({ state: 'error', msg: r.error }); return; }
     const num = String(r.whatsappNumber || '').replace(/\D/g, '');
     setStep({ state: 'code', code: r.code, href: num ? `https://wa.me/${num}?text=${encodeURIComponent(`LOGIN ${r.code}`)}` : null, until: Date.now() + r.minutes * 60e3 });
+    mascotSay({ mood: 'think', say: 'Send the code on WhatsApp. I will sign you in the moment it arrives.', anchor: 'main h2', hold: 0 });
     clearInterval(timer.current);
     timer.current = setInterval(async () => {
       if (document.visibilityState === 'hidden') return; // check again when they come back from WhatsApp
       const s = await loginStatus();
-      if (s.state === 'signed-in') { clearInterval(timer.current); onSignedIn(s.phone); }
+      if (s.state === 'signed-in') {
+        clearInterval(timer.current);
+        mascotSay({ mood: 'happy', say: 'You are signed in. Here are your readings.', anchor: 'main h2', hold: 6000 });
+        onSignedIn(s.phone);
+      }
       else if (s.state === 'expired') { clearInterval(timer.current); setStep({ state: 'error', msg: 'That code has expired. Please get a new one.' }); }
     }, 3000);
   }

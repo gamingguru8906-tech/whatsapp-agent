@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import Turnstile from './Turnstile.jsx';
 import { Tick, Collapse } from './ui.jsx';
 import { scrollToEl } from '../motion.js';
+import { tipMissing } from '../mascot.js';
 
 const CHIPS = ['Money is not staying with me', 'Career growth / job', 'Business not working', 'Marriage delay', 'Relationship problems', 'Debt and loans', 'Health worries', 'Stress and anxiety'];
 export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -89,6 +90,7 @@ export default function ReadingForm({ config, status, errors, onSubmit }) {
     if (!f.consent) miss.consent = 'Tick this box so we can show your reading.';
     setLocal(miss);
     if (Object.keys(miss).length) {
+      tipMissing(miss, 'mobile');
       document.getElementById(`f-${Object.keys(miss)[0]}`)?.focus();
       return;
     }

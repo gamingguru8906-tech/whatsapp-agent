@@ -161,39 +161,13 @@
 /* Nothing on any page may push it sideways on a phone. (Layouts are fixed at the source; this is the safety net.) */
 html, body { overflow-x: clip; }
 
-/* ---------- Mascot (Mascot.jsx). Same block in both sites. Gentle, and still for reduced motion. ---------- */
-.mascot { display: inline-block; padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; -webkit-tap-highlight-color: transparent; }
-.mascot:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 4px; border-radius: 24px; }
-.mascot svg { display: block; overflow: visible; }
-.mascot-breathe { transform-box: fill-box; transform-origin: 50% 100%; animation: mascot-breathe 3.8s ease-in-out infinite; }
-.mascot-sleep .mascot-breathe { animation-duration: 5.4s; }
-.mascot-hop, .mascot-shadow { transform-box: fill-box; transform-origin: 50% 100%; }
-.mascot-shadow { transform-origin: 50% 50%; }
-.mascot-waking .mascot-hop { animation: mascot-hop 520ms cubic-bezier(0.3, 1.5, 0.5, 1); }
-.mascot-waking .mascot-shadow { animation: mascot-shadow 520ms cubic-bezier(0.3, 1.5, 0.5, 1); }
-.mascot-happy .mascot-hop { animation: mascot-hop2 760ms ease-out; }
-.mascot-happy .mascot-shadow { animation: mascot-shadow2 760ms ease-out; }
-.mascot-eye { transform-box: view-box; transition: transform 90ms ease-out; }
-.mascot.is-blink .mascot-eye { transform: scaleY(0.12); }
-.mascot-pupil { transition: transform 420ms cubic-bezier(0.3, 0.7, 0.3, 1); }
-.mascot.is-paused, .mascot.is-paused * { animation-play-state: paused !important; }
-@keyframes mascot-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 0.985); } }
-@keyframes mascot-hop { 0% { transform: translateY(0) scale(1.05, 0.93); } 45% { transform: translateY(-14px) scale(0.97, 1.04); } 100% { transform: none; } }
-@keyframes mascot-shadow { 45% { transform: scale(0.8); opacity: 0.12; } }
-@keyframes mascot-hop2 { 0% { transform: none; } 25% { transform: translateY(-10px); } 50% { transform: none; } 70% { transform: translateY(-6px); } 100% { transform: none; } }
-@keyframes mascot-shadow2 { 25%, 70% { transform: scale(0.85); } }
-@media (prefers-reduced-motion: reduce) {
-  .mascot *, .mascot { animation: none !important; transition: none !important; }
-}
 
 /* ---------- Footer (SiteNav.jsx SiteFooter). Same block in both sites. ---------- */
 .site-footer { border-top: 1px solid hsl(var(--border) / 0.7);
   background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(30 40% 95%) 100%); }
-.footer-card { position: relative; padding: 64px 18px 18px; border-radius: 28px; background: hsl(var(--card));
+.footer-card { position: relative; padding: 26px 18px 18px; border-radius: 28px; background: hsl(var(--card));
   box-shadow: 0 0 0 1px hsl(27 32% 84% / 0.7), 0 30px 60px -36px hsl(341 40% 22% / 0.35); }
 @media (min-width: 640px) { .footer-card { padding: 44px 40px 36px; } }
-.footer-mascot { position: absolute; top: -72px; right: 22px; }
-@media (min-width: 640px) { .footer-mascot { right: 40px; } }
 .footer-eyebrow { font-family: 'League Spartan', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
   text-transform: uppercase; color: #B8862F; }
 .footer-title { margin-top: 6px; font-family: 'League Spartan', system-ui, sans-serif; font-size: clamp(1.75rem, 5vw, 2.4rem); line-height: 1.08;
@@ -207,3 +181,80 @@ html, body { overflow-x: clip; }
 .footer-row-icon { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px;
   background: hsl(var(--maroon-soft)); color: hsl(var(--maroon)); }
 .footer-row-icon.is-wa { background: hsl(var(--whatsapp)); color: #fff; }
+
+/* ---------- Mascot and its travelling helper (Mascot.jsx, Companion.jsx). Same block in both sites. ---------- */
+.vm { display: inline-block; line-height: 0; }
+.vm svg { display: block; overflow: visible; }
+.vm-float { animation: vm-float 2.8s ease-in-out infinite; }
+.vm-hop, .vm-arm, .vm-antenna { transform-box: fill-box; }
+.vm-hop { transform-origin: 50% 100%; }
+.vm-antenna { transform-origin: 50% 100%; animation: vm-antenna 3.4s ease-in-out infinite; }
+.vm-arm-l { transform-origin: 100% 50%; }
+.vm-arm-r { transform-origin: 0% 50%; }
+.vm-eye { transform-box: view-box; transition: transform 90ms ease-out; }
+.vm.is-blink .vm-eye { transform: scaleY(0.1); }
+.vm-shine { transition: transform 380ms cubic-bezier(0.3, 0.7, 0.3, 1); }
+.vm-brows { opacity: 0; transition: opacity 200ms; }
+.vm-think .vm-brows, .vm-worried .vm-brows { opacity: 1; }
+.vm-worried .vm-brow-l { transform: rotate(-14deg); transform-box: fill-box; transform-origin: 100% 50%; }
+.vm-worried .vm-brow-r { transform: rotate(14deg); transform-box: fill-box; transform-origin: 0% 50%; }
+.vm-think .vm-brow-l { transform: translateY(-2px) rotate(-8deg); transform-box: fill-box; transform-origin: 50% 50%; }
+.vm-talk .vm-talk { animation: vm-talk 220ms ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 50%; }
+.vm-wave .vm-arm-r { animation: vm-wave 520ms ease-in-out 3 alternate; }
+.vm-happy .vm-hop { animation: vm-hop 640ms cubic-bezier(0.3, 1.4, 0.5, 1) 2; }
+.vm-happy .vm-arm-l { transform: rotate(38deg); }
+.vm-happy .vm-arm-r { transform: rotate(-38deg); }
+.vm-worried .vm-hop { animation: vm-shake 420ms ease-in-out 1; }
+.vm-think .vm-arm-r { transform: rotate(-60deg) translateY(-4px); }
+.vm-arm { transition: transform 260ms cubic-bezier(0.3, 1.4, 0.5, 1); }
+.vm.is-paused, .vm.is-paused * { animation-play-state: paused !important; }
+@keyframes vm-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes vm-antenna { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(5deg); } }
+@keyframes vm-talk { from { transform: scaleY(0.35); } to { transform: scaleY(1); } }
+@keyframes vm-wave { from { transform: rotate(0deg); } to { transform: rotate(-55deg); } }
+@keyframes vm-hop { 0% { transform: none; } 40% { transform: translateY(-9px) scale(0.97, 1.04); } 70% { transform: translateY(0) scale(1.04, 0.95); } 100% { transform: none; } }
+@keyframes vm-shake { 0%, 100% { transform: none; } 25% { transform: translateX(-3px) rotate(-3deg); } 75% { transform: translateX(3px) rotate(3deg); } }
+
+.vc { position: fixed; inset: 0 auto auto 0; z-index: 15; pointer-events: none; opacity: 0; transition: opacity 300ms; }
+.vc.is-shown { opacity: 1; }
+.vc-body, .vc-bubble { position: fixed; top: 0; left: 0; pointer-events: auto; will-change: transform; }
+.vc.is-flying .vc-body, .vc.is-flying .vc-bubble { transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1); }
+.vc-body { padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; -webkit-tap-highlight-color: transparent;
+  filter: drop-shadow(0 8px 14px hsl(338 70% 45% / 0.28)); }
+.vc-body:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 3px; border-radius: 16px; }
+.vc-bubble { width: max-content; max-width: min(250px, calc(100vw - 24px)); padding: 11px 14px 12px; border-radius: 18px;
+  background: hsl(var(--card)); color: hsl(var(--foreground)); box-shadow: 0 0 0 1px hsl(27 32% 84% / 0.8), 0 14px 30px -14px hsl(341 40% 20% / 0.35);
+  animation: vc-pop 260ms cubic-bezier(0.3, 1.4, 0.5, 1); }
+.vc-bubble.is-folded { padding: 9px 12px; cursor: pointer; }
+.vc-text { margin: 0; font-family: 'League Spartan', system-ui, sans-serif; font-size: 15px; font-weight: 500; line-height: 1.35; letter-spacing: -0.005em; }
+.vc-caret { display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -0.12em; background: hsl(var(--primary)); opacity: 0.7; animation: vc-caret 900ms steps(2) infinite; }
+.vc-action { display: inline-flex; align-items: center; margin-top: 9px; min-height: 34px; padding: 0 12px; border: 0; border-radius: 10px;
+  background: hsl(var(--maroon)); color: #fff; font-family: 'League Spartan', system-ui, sans-serif; font-size: 14px; font-weight: 600;
+  text-decoration: none; cursor: pointer; transition: transform 150ms var(--ease-out), background-color 200ms; }
+.vc-action:hover { background: hsl(341 61% 24%); }
+.vc-action:active { transform: scale(0.96); }
+.vc-dots { display: inline-flex; gap: 4px; align-items: center; height: 10px; }
+.vc-dots i { width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--maroon) / 0.55); animation: vc-dot 1.2s ease-in-out infinite; }
+.vc-dots i:nth-child(2) { animation-delay: 150ms; }
+.vc-dots i:nth-child(3) { animation-delay: 300ms; }
+/* thought-bubble tail: two small circles leading down to the mascot */
+.vc-tail { position: absolute; left: var(--tail-x, 30px); bottom: -14px; width: 0; height: 0; }
+.vc-tail i { position: absolute; border-radius: 50%; background: hsl(var(--card)); box-shadow: 0 0 0 1px hsl(27 32% 84% / 0.8); }
+.vc-tail i:nth-child(1) { width: 10px; height: 10px; left: -5px; top: -3px; }
+.vc-tail i:nth-child(2) { width: 6px; height: 6px; left: -3px; top: 9px; }
+.vc-bubble.is-below .vc-tail { bottom: auto; top: -14px; }
+.vc-bubble[data-side="right"] .vc-tail, .vc-bubble[data-side="left"] .vc-tail { display: none; }
+.vc-bubble.is-below .vc-tail i:nth-child(1) { top: 7px; }
+.vc-bubble.is-below .vc-tail i:nth-child(2) { top: -3px; }
+@keyframes vc-pop { from { opacity: 0; scale: 0.9; } to { opacity: 1; scale: 1; } }
+@keyframes vc-caret { 50% { opacity: 0; } }
+@keyframes vc-dot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.55; } 30% { transform: translateY(-3px); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .vm *, .vc *, .vc { animation: none !important; transition: none !important; }
+}
+
+/* On a phone the bubble sits over the page: taps go through it to whatever is underneath, except its own button. */
+@media (max-width: 899px) {
+  .vc-bubble { pointer-events: none; }
+  .vc-bubble .vc-action { pointer-events: auto; }
+}

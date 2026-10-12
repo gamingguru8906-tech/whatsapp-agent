@@ -1,7 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { ChevronRight, Mail, Menu, Phone, X } from 'lucide-react';
 import { Lockup } from './Brand.jsx';
-import Mascot from './Mascot.jsx';
 
 // Navigation shared by the two sites (main page and readings site): the phone menu, the footer and the contact
 // details. Same file in mobile-numerology and veshannastro-suite (a test keeps the copies identical).
@@ -107,7 +106,7 @@ export function MobileMenu({ site, refCode = 'WEB-MENU', className = '' }) {
 }
 
 /**
- * The footer: a contact card with the mascot perched on its edge (email, call, WhatsApp, each one tap), then the
+ * The footer: a contact card (email, call, WhatsApp, each one tap), then the
  * site links, then the copyright and legal links. `children` adds a site's own notes (disclaimer, what we store).
  */
 export function SiteFooter({ site, refCode = 'WEB-FOOTER', children }) {
@@ -132,7 +131,6 @@ export function SiteFooter({ site, refCode = 'WEB-FOOTER', children }) {
     <footer className="site-footer">
       <div className="mx-auto max-w-5xl px-5 pb-10 pt-24">
         <section className="footer-card" aria-labelledby="footer-contact">
-          <div className="footer-mascot"><Mascot size={118} delay={200} label="Veshannastro mascot" /></div>
           <div className="grid grid-cols-1 gap-7 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:items-center md:gap-10">
             <div>
               <p className="footer-eyebrow">Contact</p>

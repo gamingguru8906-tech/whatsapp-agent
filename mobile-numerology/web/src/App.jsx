@@ -12,6 +12,8 @@ import MyReadings from './components/MyReadings.jsx';
 import { UserRound } from 'lucide-react';
 import { Lockup } from './components/Brand.jsx';
 import { MobileMenu, SiteFooter } from './components/SiteNav.jsx';
+import Companion from './components/Companion.jsx';
+import { sending, failed, done, watchMobileField } from './mascot.js';
 import { startReveal, scrollToEl } from './motion.js';
 import { PAGES, ORIGIN } from '../../engine/pages.js';
 
@@ -32,6 +34,25 @@ const ownerKeyFromUrl = () => {
   }
 };
 
+// What the helper says beside each part of each page (it moves down with the reader).
+const FOOTER_STOP = { id: 'footer', el: '.site-footer', anchor: '.footer-eyebrow', say: 'Call, email or message us on WhatsApp, whichever is easiest for you.' };
+const click = sel => () => document.querySelector(sel)?.click();
+function helperStops(segment, hasResult) {
+  if (segment === 'my') {
+    return [{ id: 'my', el: 'main section', anchor: 'main h2', mood: 'wave', say: 'Sign in with WhatsApp to see every reading made with your number.' }, FOOTER_STOP];
+  }
+  if (hasResult) {
+    return [{ id: 'answer', el: '#r-answer', anchor: '#r-answer h2', say: 'Each part of your reading is explained as you scroll down.' }, FOOTER_STOP];
+  }
+  const form = {
+    watch: { say: 'Add a photo of your watch to begin. I will read the dial, the metal and the hands for you.', action: { label: 'Add photo', onClick: click('#w-photo') } },
+    wrist: { say: `A photo of your bare wrist and your birth date is all I need to find your watch for ${YEAR_NOW}.`, action: { label: 'Add photo', onClick: click('#reading-form input[type=file]') } },
+    mobile: { say: 'Enter your mobile number and date of birth, and tell me what is worrying you. Your reading appears right here.', action: { label: 'Start', onClick: () => document.getElementById('f-name')?.focus() } }
+  }[segment];
+  const anchor = { watch: '#w-photo', wrist: '#reading-form .group-card button', mobile: '#f-name' }[segment];
+  return [{ id: `form-${segment}`, el: '#reading-form', anchor, mood: 'wave', ...form }, FOOTER_STOP];
+}
+
 export default function App() {
   const [config, setConfig] = useState({});
   const [status, setStatus] = useState('idle'); // idle | loading | done
@@ -51,6 +72,7 @@ export default function App() {
   useEffect(() => { if (result) requestAnimationFrame(() => scrollToEl(storyRef.current)); }, [result]);
   // Blocks that rise into place as they come into view.
   useEffect(() => { return startReveal(document.getElementById('root')); }, []);
+  useEffect(() => watchMobileField(), []);
 
   // In-page navigation between the four pages; the browser's back button works as usual.
   useEffect(() => {
@@ -98,10 +120,12 @@ export default function App() {
   async function submit(payload) {
     setStatus('loading');
     setErrors({});
+    sending(SEGMENT);
     const data = await (SEGMENT === 'watch' ? getWatchReading : SEGMENT === 'wrist' ? getWristReading : getReading)(payload, ownerKey.current);
     if (!data.ok) {
       setErrors(data.errors || { form: 'Please check the form and try again.' });
       setStatus('idle');
+      failed(data.errors?.form || Object.values(data.errors || {})[0] || 'Something did not work. Please check the form and try again.');
       // Take them to the first message, so a problem is never hidden further down the form.
       requestAnimationFrame(() => {
         const first = document.querySelector('#reading-form .error');
@@ -111,6 +135,7 @@ export default function App() {
     }
     setResult(data);
     setStatus('done');
+    window.setTimeout(() => done(SEGMENT), 700);
     track(SEGMENT, 'result_shown', { leadKey: data.leadKey });
     return true;
   }
@@ -212,6 +237,7 @@ export default function App() {
         </div>
       </main>
 
+      <Companion key={`${SEGMENT}-${result ? 'r' : 'f'}`} stops={helperStops(SEGMENT, Boolean(result))} />
       <SiteFooter site="readings" refCode={`WEB-${SEGMENT.toUpperCase()}-FOOTER`}>
         <p className="text-foreground/80">Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
         <p><strong className="font-semibold text-foreground">Guidance, not a guarantee.</strong> Readings follow traditional numerology methods. They are not medical, legal or financial advice. For any health concern, please consult a doctor.</p>

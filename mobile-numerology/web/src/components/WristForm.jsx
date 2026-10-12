@@ -4,6 +4,7 @@ import { MONTHS, YEARS, dobFrom, Picker } from './ReadingForm.jsx';
 import Turnstile from './Turnstile.jsx';
 import { readWrist, shrinkPhoto, track } from '../api.js';
 import { Segmented, Tick } from './ui.jsx';
+import { tipMissing, photoReading, photoRead, photoFailed } from '../mascot.js';
 
 // "Which watch should I wear this year?": a photo of the wrist (read at once, never kept), then name, number and
 // birth date, side by side, so the answer is ready the moment the form is sent.
@@ -69,21 +70,25 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
     if (!file) return;
     track('wrist', 'photo_added');
     setPhoto({ state: 'loading', msg: '', preview: URL.createObjectURL(file) });
+    photoReading('#reading-form .group-card');
     let image;
     try { image = await shrinkPhoto(file, 768); } catch {
       setPhoto(p => ({ ...p, state: 'error', msg: 'That file could not be opened as a photo. Please try another, or choose below.' }));
+      photoFailed('#reading-form .group-card', 'That file could not be opened as a photo. Try another, or choose your wrist size.');
       setManual(true); track('wrist', 'photo_failed', { detail: { reason: 'file' } }); return;
     }
     const r = await readWrist(image);
     image = null;
     if (!r.ok) {
       setPhoto(p => ({ ...p, state: 'error', msg: r.error })); setManual(true);
+      photoFailed('#reading-form .group-card', r.error);
       track('wrist', 'photo_failed', { detail: { reason: 'model' } }); return;
     }
     setW(s => ({ ...s, ...r.wrist }));
     setFromPhoto(new Set(r.filled));
     setManual(true);
     setPhoto(p => ({ ...p, state: 'done', msg: r.filled.includes('size') ? '' : 'Tap your wrist size below; the photo did not show it clearly.' }));
+    photoRead('#reading-form .group-card', r.filled.includes('size') ? 'Got it. Now your name, number and birth date.' : 'Almost: please tap your wrist size, the photo did not show it clearly.');
     track('wrist', 'photo_read', { detail: { filled: r.filled.length } });
   }
 
@@ -99,6 +104,7 @@ export default function WristForm({ config, status, errors, onSubmit, year }) {
     if (!f.consent) miss.consent = 'Tick this box so we can show your answer.';
     setLocal(miss);
     if (Object.keys(miss).length) {
+      tipMissing(miss, 'wrist');
       if (miss.wrist) setManual(true);
       const k = Object.keys(miss)[0];
       requestAnimationFrame(() => document.getElementById(k === 'wrist' ? 'wr-size' : `f-${k}`)?.focus());

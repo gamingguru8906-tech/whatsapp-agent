@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-for (const f of ['watch3d.js', 'Watch3D.jsx', 'watch3d-poster.webp', 'Brand.jsx', 'SiteNav.jsx', 'Mascot.jsx']) {
+for (const f of ['watch3d.js', 'Watch3D.jsx', 'watch3d-poster.webp', 'Brand.jsx', 'SiteNav.jsx', 'Mascot.jsx', 'Companion.jsx']) {
   test(`${f} is the same in mobile-numerology and veshannastro-suite`, () => {
     const a = readFileSync(new URL(`../web/src/components/${f}`, import.meta.url));
     const b = readFileSync(new URL(`../../veshannastro-suite/web/src/components/${f}`, import.meta.url));

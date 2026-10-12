@@ -3,8 +3,8 @@ import { ChevronRight } from 'lucide-react';
 import Watch3D from './components/Watch3D.jsx';
 import { Lockup } from './components/Brand.jsx';
 import PriceCut from './components/PriceCut.jsx';
-import Mascot from './components/Mascot.jsx';
 import { MobileMenu, SiteFooter } from './components/SiteNav.jsx';
+import Companion from './components/Companion.jsx';
 
 // Veshannastro front page. The watch reading opens later; until then its button asks to be told on WhatsApp, and
 // the mobile-number reading (live) is one tap away. "(Ref: ...)" tags the lead's source in Kamala's CRM.
@@ -32,6 +32,22 @@ const READINGS = [
   { name: 'Your Watch for the Year', text: 'A photo of your wrist and your birth date: the watch to wear this year, its metal, dial, size and strap.', status: 'Open now', href: YEAR_WATCH },
   { name: 'Wristwatch Analyzer', text: "What your watch's dial, colour, metal and strap say about you, and whether it suits your year.", status: 'Open now', href: WATCH },
   { name: 'Mobile Number Reading', text: 'What your mobile number is doing to your money, work and relationships, and whether to change it.', status: 'Open now', href: MOBILE }
+];
+
+// What the helper says beside each part of the page (it moves down with the reader).
+const STOPS = [
+  { id: 'hero', el: '#watch', anchor: '#watch a[href$="/watch/year"]', mood: 'wave',
+    say: 'Hi! Add one photo of your watch and I will show you what it says about you.', action: { label: 'Read my watch', href: WATCH } },
+  { id: 'price', el: '#price', anchor: '#price .btn-whatsapp',
+    say: 'Your first watch reading is free. A consultation is for when you want a watch chosen with you.' },
+  { id: 'how', el: '#how', anchor: '#how h2',
+    say: 'One photo, two questions and your birth date. That is all it takes.', action: { label: 'Start my reading', href: WATCH } },
+  { id: 'readings', el: '#readings', anchor: '#readings h2',
+    say: 'Not sure where to start? The watch for this year needs only a wrist photo and your birth date.', action: { label: 'Find my watch', href: YEAR_WATCH } },
+  { id: 'about', el: '#about', anchor: '#about .btn-whatsapp',
+    say: 'Want a watch chosen for you? Send us a message on WhatsApp.' },
+  { id: 'footer', el: '.site-footer', anchor: '.footer-eyebrow',
+    say: 'Call, email or message us on WhatsApp, whichever is easiest for you.' }
 ];
 
 const Dot = ({ className }) => <span className={`mt-[0.62em] h-1.5 w-1.5 shrink-0 rounded-full ${className}`} aria-hidden="true" />;
@@ -147,12 +163,9 @@ export default function App() {
           </ul>
         </section>
 
-        {/* Who is behind it, and the consultation. The mascot wakes when this section comes into view. */}
+        {/* Who is behind it, and the consultation */}
         <section id="about" className="scroll-mt-16 border-t border-border/70">
-          <div className="mx-auto grid max-w-5xl items-center gap-10 px-5 py-14 sm:py-20 lg:grid-cols-[200px_minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
-            <div className="flex justify-center lg:justify-start">
-              <Mascot size={184} delay={350} />
-            </div>
+          <div className="mx-auto grid max-w-5xl gap-10 px-5 py-14 sm:py-20 lg:grid-cols-2 lg:gap-16">
             <div>
               <h2 className="t-title">Who reads your numbers</h2>
               <p className="mt-4 text-[17px]">
@@ -172,6 +185,7 @@ export default function App() {
         </section>
       </main>
 
+      <Companion stops={STOPS} />
       <SiteFooter site="suite" refCode="WEB-SUITE-FOOTER">
         <p>Numerology and Vedic astrology by Shashank Agrawal, author of <span className="italic">Numbers &amp; Navgraha</span>.</p>
         <p>Readings follow traditional numerology. They are not medical, legal or financial advice.</p>

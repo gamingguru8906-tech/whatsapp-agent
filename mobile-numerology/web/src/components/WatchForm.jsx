@@ -6,6 +6,7 @@ import { readPhoto, shrinkPhoto, track } from '../api.js';
 import { Segmented, Pills, CheckList, Tick } from './ui.jsx';
 import { scrollToEl } from '../motion.js';
 import attributes from '../../../../brain/data/watch-attributes.json';
+import { tipMissing, photoReading, photoRead, photoFailed } from '../mascot.js';
 
 // Wristwatch segment: one photo of the watch (read at once, never kept) and two questions the photo cannot answer
 // for sure — the strap and the wrist. Everything else on the watch comes from the photo.
@@ -57,6 +58,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
     setLocal(l => ({ ...l, photo: undefined }));
     setSeen({});
     setPhoto({ state: 'loading', msg: '', preview: URL.createObjectURL(file) });
+    photoReading('#w-photo');
     const job = (async () => {
       let image;
       try { image = await shrinkPhoto(file); } catch { return { ok: false, error: 'That file could not be opened as a photo. Please try another.' }; }
@@ -67,7 +69,9 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
     if (pending.current !== job) return;          // a newer photo was chosen meanwhile
     pending.current = null;
     if (!r.ok || !(r.watch.dialColour || r.watch.dialShape)) {
-      setPhoto(p => ({ ...p, state: 'error', msg: r.ok ? 'The dial is not clear in this photo. Please take a closer photo of the watch face.' : r.error }));
+      const msg = r.ok ? 'The dial is not clear in this photo. Please take a closer photo of the watch face.' : r.error;
+      setPhoto(p => ({ ...p, state: 'error', msg }));
+      photoFailed('#w-photo', msg);
       track('watch', 'photo_failed');
       return;
     }
@@ -75,6 +79,8 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
     setSeen(rest);
     if (strapMaterial && !strap) { setStrap(strapMaterial); setStrapFromPhoto(true); }
     setPhoto(p => ({ ...p, state: 'done', msg: '' }));
+    const said = seenLine(rest).slice(0, 3).join(', ').toLowerCase();
+    photoRead('#w-photo', `Got it: ${said || 'your watch'}. Now check the strap and pick your wrist.`);
     track('watch', 'photo_read', { detail: { filled: r.filled.length } });
   }
 
@@ -94,6 +100,7 @@ export default function WatchForm({ config, status, errors, onSubmit }) {
     if (!f.consent) miss.consent = 'Tick this box so we can show your reading.';
     setLocal(miss);
     if (Object.keys(miss).length) {
+      tipMissing(miss, 'watch');
       const id = { photo: 'w-photo', strap: 'w-strap', wrist: 'w-wrist', goal: 'w-goal' }[Object.keys(miss)[0]] ?? `f-${Object.keys(miss)[0]}`;
       document.getElementById(id)?.focus();
       scrollToEl(document.getElementById(id), { block: 'center' });
