@@ -361,7 +361,7 @@ BOOKING A CONSULTATION ON THE PHONE
 - Consultations are one hour (India time). Normal START times: Monday to Friday 7:30 PM to 9:30 PM; Saturday and Sunday 10:00 AM to 7:00 PM. Never within 2 hours. If they call before 11:00 AM, today's evening is possible; from 11:00 AM onward, nothing today and tomorrow is evening on a weekday or morning (10 AM to 12 PM) on a weekend. The exact rule for right now is under REAL-TIME CONTEXT. Call find_free_slots for the day they want and offer at most two times. Never invent availability.
 - You need: full name, the service (exact name from SERVICES), the agreed time, and only the birth details listed under "Details needed" for that service. Numerology and name/number services need only the date of birth: never ask their time or place of birth. Time and place of birth are only for astrology/kundli services. Gender and email only if they come up naturally; the Meet link reaches them on WhatsApp anyway. Ask only for what is not already known, one detail at a time, and never ask twice.
 - Before sending anything ask: "Is this number aapka WhatsApp number bhi hai? I'll send the payment link wahin." Yes: use the calling number. No: ask for their WhatsApp number, read it back digit by digit in small groups, and wait for a yes.
-- Then call create_booking_and_send_link. Say the link is sent only after the tool says "sent". If it says "awaiting_hi", ask them to ${whatsappHi} and tell them the link will come right after that.${gatewayNote}
+- Then call create_booking_and_send_link. Say the link is sent only after the tool says "sent". If it says "sent_sms", say the link has come by SMS on that number, and ask them to ${whatsappHi} so the invoice and updates reach them there too. If it says "awaiting_hi", ask them to ${whatsappHi} and tell them the link will come right after that.${gatewayNote}
 - After that, payment, receipt, Meet link and reminders all happen on WhatsApp. Never say on the call that the booking is paid or confirmed.
 
 ESCALATION (you cannot transfer the call)
@@ -477,6 +477,7 @@ function callOutcome(session) {
   const parts = [];
   if (escalation) parts.push('Callback needed');
   if (booking?.status === 'awaiting_hi') parts.push('Booking link waiting for "Hi" on WhatsApp');
+  else if (booking?.status === 'sent_sms') parts.push('Booking link sent by SMS (WhatsApp waiting for "Hi")');
   else if (booking) parts.push('Booking link sent on WhatsApp');
   if (links.length) parts.push('Service link on WhatsApp');
   if (!parts.length) parts.push(session.turns.some(t => t.role === 'user') ? 'Questions answered' : 'No conversation');
@@ -1121,6 +1122,9 @@ class CallSession {
     if (result.status === 'awaiting_hi') {
       return { status: 'awaiting_hi', whatsapp_number: `+${whatsapp}`, next: 'WhatsApp lets us message this number only after they message us. Ask them to send "Hi" on WhatsApp; the payment link and invoice go out right after.' };
     }
+    if (result.status === 'sent_sms') {
+      return { status: 'sent_sms', whatsapp_number: `+${whatsapp}`, next: 'WhatsApp lets us message this number only after they message us, so the payment link went by SMS. Tell them to check their SMS, and to send "Hi" on WhatsApp for the invoice and booking updates.' };
+    }
     return { status: 'sent', whatsapp_number: `+${whatsapp}`, service: result.serviceName, appointment: result.appointmentDate };
   }
 
@@ -1130,9 +1134,9 @@ class CallSession {
     if (!this.deps.sendServiceLink) return { status: 'error', error: 'Sending links is not set up.' };
     const result = await this.deps.sendServiceLink({ phone: whatsapp, serviceName: args.service_name });
     this.tools.links.push({ ...result, whatsapp });
-    return result.status === 'awaiting_hi'
-      ? { status: 'awaiting_hi', next: 'Ask them to send "Hi" on WhatsApp; the link goes out right after.' }
-      : { status: 'sent', service: result.serviceName, whatsapp_number: `+${whatsapp}` };
+    if (result.status === 'awaiting_hi') return { status: 'awaiting_hi', next: 'Ask them to send "Hi" on WhatsApp; the link goes out right after.' };
+    if (result.status === 'sent_sms') return { status: 'sent_sms', service: result.serviceName, next: 'The link went by SMS. Tell them to check their SMS.' };
+    return { status: 'sent', service: result.serviceName, whatsapp_number: `+${whatsapp}` };
   }
 
   async escalate(args) {

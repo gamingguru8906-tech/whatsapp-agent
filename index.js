@@ -28,6 +28,7 @@ const voiceNote = require('./voice-note');
 const voiceAgent = require('./voice-agent');
 const growth = require('./growth');
 const numerologyLeads = require('./numerology-leads');
+const textbee = require('./textbee');
 
 // No outside call may hang forever (WhatsApp, Meta media, website). Calls that need longer pass their own timeout.
 axios.defaults.timeout = 60000;
@@ -62,6 +63,14 @@ const ADMIN_PHONE_NUMBER = process.env.ADMIN_PHONE_NUMBER;
 const razorpayClient = (RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET) 
   ? new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET }) 
   : null;
+
+// SMS from the owner's Android phone (textbee), for callers WhatsApp cannot reach yet. Off without TEXTBEE_API_KEY.
+const sms = textbee.createTextbee({
+  apiKey: process.env.TEXTBEE_API_KEY,
+  baseUrl: process.env.TEXTBEE_BASE_URL,
+  deviceId: process.env.TEXTBEE_DEVICE_ID,
+  simSubscriptionId: process.env.TEXTBEE_SIM_SUBSCRIPTION_ID
+});
 
 // Global State
 let liveData = [];
@@ -1521,11 +1530,17 @@ async function fulfilPaidLink(event) {
       body: msg,
       template: process.env.WA_BOOKING_CONFIRMED_TEMPLATE ? [customerName, serviceName, slotText, meetLink || 'shared before the session'] : null,
       templateName: process.env.WA_BOOKING_CONFIRMED_TEMPLATE || '',
+      sms: (notes.gateway_test === 'true'
+        ? `Veshannastro: Rs 1 payment-system test received, ${customerName} ji. Test booking for ${serviceName}: ${slotText}. The ${serviceName} fee itself is not paid yet.\n`
+        : `Veshannastro: Payment received, ${customerName} ji. ${serviceName} is booked for ${slotText}.\n`)
+        + (meetLink ? `Google Meet: ${meetLink}\n` : 'The Google Meet link will be shared before the slot.\n')
+        + `For your receipt and reminders, ${whatsappHiLine()}.`,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     }));
     if (!delivered(receiptSent) || !delivered(confirmationSent)) {
-      const held = receiptSent === 'awaiting_hi' || confirmationSent === 'awaiting_hi';
-      await once('delivery_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${slotText}), but WhatsApp could not deliver the ${!delivered(receiptSent) ? 'receipt' : 'confirmation'} now (their 24-hour window is closed).${held ? ' It will go out automatically the next time they message.' : ''} The email confirmation has gone out. To be safe, message them the Meet link yourself: ${meetLink || 'see Google Calendar'}`, 'Payment confirmation not delivered on WhatsApp').then(() => true));
+      const held = [receiptSent, confirmationSent].some(d => d === 'awaiting_hi' || d === 'sent_sms');
+      const bySms = confirmationSent === 'sent_sms' ? ' The confirmation and Meet link went to them by SMS.' : '';
+      await once('delivery_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${slotText}), but WhatsApp could not deliver the ${!delivered(receiptSent) ? 'receipt' : 'confirmation'} now (their 24-hour window is closed).${held ? ' It will go out automatically the next time they message.' : ''}${bySms} The email confirmation has gone out. To be safe, message them the Meet link yourself: ${meetLink || 'see Google Calendar'}`, 'Payment confirmation not delivered on WhatsApp').then(() => true));
     }
     // Personal thank-you voice note from Kamala (best effort; never blocks fulfillment; sent once).
     if (GEMINI_API_KEY && confirmationSent === 'sent' && !doneSteps.voice_note) {
@@ -2032,6 +2047,17 @@ async function handleInboundMessage(msg) {
         if (!isOwner) return await sendTextMessage(from, 'That command is available to the business owner only.');
         for (const text of await numerologyLeads.report(pool, command.split(/\s+/).slice(1))) await sendTextMessage(from, text);
         return;
+      }
+
+      if (lowerCmd === '/sms' || lowerCmd.startsWith('/sms ')) {
+        // Test the textbee SMS phone: "/sms 9198xxxxxxx Hello".
+        if (!isOwner) return await sendTextMessage(from, 'That command is available to the business owner only.');
+        if (!sms.enabled) return await sendTextMessage(from, 'SMS is not set up. Add TEXTBEE_API_KEY (from textbee.dev) in Render, with the textbee app running on the Android phone.');
+        const number = command.split(/\s+/)[1] || '';
+        const text = command.replace(/^\/sms\s+\S+\s*/i, '');
+        if (!number || !text || text === command) return await sendTextMessage(from, 'Use: /sms <number> <message>, e.g. /sms 919876543210 Test from Kamala');
+        const r = await sms.send(number, text);
+        return await sendTextMessage(from, r.ok ? `✅ SMS handed to the textbee phone for ${textbee.toE164(number)}.` : `❌ SMS failed: ${r.error}`);
       }
 
       if (lowerCmd.startsWith('/broadcast ')) {
@@ -3088,7 +3114,9 @@ app.post('/cron/tick', async (req, res) => {
 
 // WhatsApp allows a free-form message only within 24 hours of the person's last message.
 // After a call: send now if that window is open, else the approved call template (payment
-// links only), else hold it until they message us (see deliverPendingCallMessages).
+// links only), else hold it until they message us (see deliverPendingCallMessages). A held
+// message with an `sms` text also goes out by SMS straight away (textbee), and the WhatsApp
+// copy (with any invoice PDF) still follows their "Hi".
 async function deliverAfterCall(phone, message) {
   const open = pool
     ? (await pool.query(`SELECT last_inbound_at > NOW() - INTERVAL '23 hours 58 minutes' AS open FROM users WHERE phone=$1`, [phone])
@@ -3110,10 +3138,34 @@ async function deliverAfterCall(phone, message) {
     if (sessions[phone]) sessions[phone].push({ role: 'model', parts: [{ text: message.body }] });
     return delivery;
   }
-  if (!pool) throw new Error('WhatsApp will not take a first message to this number, and there is no database to hold it.');
+  let smsSent = false;
+  if (message.sms && sms.enabled) {
+    const r = await sms.send(phone, message.sms);
+    if (r.ok) {
+      smsSent = true;
+      crm.saveTurn(pool, phone, 'model', `[SMS] ${message.sms}`).catch(() => {});
+    } else {
+      console.error(`SMS to +${phone} failed:`, r.error);
+    }
+  }
+  if (!pool) {
+    if (smsSent) return 'sent_sms';
+    throw new Error('WhatsApp will not take a first message to this number, and there is no database to hold it.');
+  }
   await pool.query(`INSERT INTO voice_pending_messages (phone, media_id, filename, body, expires_at) VALUES ($1,$2,$3,$4,$5)`,
     [phone, message.mediaId || null, message.filename || null, message.body, message.expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]);
-  return 'awaiting_hi';
+  return smsSent ? 'sent_sms' : 'awaiting_hi';
+}
+
+// "send Hi on WhatsApp to <number>" for SMS texts; plain ASCII so the SMS is not split early.
+function whatsappHiLine() {
+  const number = String(process.env.BUSINESS_WHATSAPP_NUMBER || '').trim();
+  return number ? `send "Hi" on WhatsApp to ${number}` : 'send "Hi" to us on WhatsApp';
+}
+
+// Call-tool status for a deliverAfterCall result.
+function callDeliveryStatus(delivery) {
+  return delivery === 'awaiting_hi' || delivery === 'sent_sms' ? delivery : 'sent';
 }
 
 async function hasPendingCallMessages(phone) {
@@ -3160,11 +3212,14 @@ async function createCallBooking({ callerPhone, whatsappPhone, args }) {
       mediaId, filename: invoiceName, body: caption,
       template: [customerName, serviceName, appointmentDate, link],
       templateName: process.env.WA_CALL_PAYMENT_TEMPLATE || 'call_payment_link',
+      sms: `Veshannastro: Namaste ${customerName} ji, jaise call pe baat hui, ${serviceName} (${appointmentDate}) ka payment link: ${link}\n`
+        + (GATEWAY_VALIDATION_CHARGE_INR > 0 ? 'Yeh Rs 1 payment-system test link hai, isse consultation fee pay nahi hoti.\n' : '')
+        + `Invoice, confirmation aur Meet link ke liye ${whatsappHiLine()}.`,
       expiresAt: new Date(Date.now() + 11.5 * 60 * 60 * 1000) // the payment link expires after 12 hours
     })
   });
   console.log(`📞 Call booking for +${phone}: ${result.serviceName}, ${result.appointmentDate} (${result.delivery})`);
-  return { status: result.delivery === 'awaiting_hi' ? 'awaiting_hi' : 'sent', serviceName: result.serviceName, appointmentDate: result.appointmentDate };
+  return { status: callDeliveryStatus(result.delivery), serviceName: result.serviceName, appointmentDate: result.appointmentDate };
 }
 
 // A report or other service the caller wants to order from the website.
@@ -3177,9 +3232,10 @@ async function sendCallServiceLink({ phone, serviceName }) {
   const delivery = await deliverAfterCall(to, {
     body,
     template: [name, service.t, url],
-    templateName: process.env.WA_CALL_LINK_TEMPLATE || 'call_service_link'
+    templateName: process.env.WA_CALL_LINK_TEMPLATE || 'call_service_link',
+    sms: `Veshannastro: Jaise call pe baat hui, yeh raha ${service.t} ka link: ${url}\nKoi bhi question ho toh ${whatsappHiLine()}.`
   });
-  return { status: delivery === 'awaiting_hi' ? 'awaiting_hi' : 'sent', serviceName: service.t };
+  return { status: callDeliveryStatus(delivery), serviceName: service.t };
 }
 
 const PORT = process.env.PORT || 3000;

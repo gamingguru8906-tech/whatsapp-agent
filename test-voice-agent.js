@@ -526,6 +526,32 @@ test('booking on a call uses the confirmed WhatsApp number and passes "send Hi" 
   }
 });
 
+test('a booking link that went by SMS tells Kamala to point the caller to their SMS', async () => {
+  const live = fakeLive();
+  const { server, url } = await startServer({
+    openLive: live.open,
+    createCallBooking: async () => ({ status: 'sent_sms', serviceName: 'Career Consultation', appointmentDate: '3 Oct 2026, 7:30 pm IST' }),
+    notifyOwner: async () => true
+  });
+  try {
+    const exotel = await connect(`${url}/voice/exotel?token=secret`);
+    exotel.send(startMessage());
+    await waitFor(() => live.sessions.length === 1 && live.sessions[0].sent.length >= 1);
+    const gemini = live.sessions[0];
+    gemini.emit('message', { toolCall: { functionCalls: [{ id: 'b1', name: 'create_booking_and_send_link', args: {
+      customer_name: 'Priya Sharma', service_name: 'Career Consultation', preferred_time_slot: '2026-10-03T19:30:00+05:30'
+    } }] } });
+    await waitFor(() => gemini.sent.some(m => m.toolResponse));
+    const answer = gemini.sent.find(m => m.toolResponse).toolResponse.functionResponses[0].response;
+    assert.equal(answer.status, 'sent_sms');
+    assert.equal(answer.whatsapp_number, '+919876543210');
+    assert.match(answer.next, /SMS/);
+    exotel.close();
+  } finally {
+    server.close();
+  }
+});
+
 test('if the first Live model is refused before setup, the next one is tried', async () => {
   const live = fakeLive({ refuseModels: ['models/gemini-3.8-live'] });
   const { server, url } = await startServer({ openLive: live.open, notifyOwner: async () => true });
