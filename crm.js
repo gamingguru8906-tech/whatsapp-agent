@@ -166,7 +166,7 @@ function profileContext(user, bookings = [], lastTurnAt = null) {
     `- Previous conversation: ${lastTurnAt === 'ongoing' ? 'Ongoing chat' : (lastTurnAt ? istDateTime(lastTurnAt) : 'None — first chat')}`
   ];
   if (bookings.length) {
-    lines.push(`- Past bookings: ${bookings.map(b => `${b.service_name} on ${istDateTime(b.appointment_start)}${b.status === 'gateway_test_paid' ? ' (₹1 test)' : ''}`).join('; ')}`);
+    lines.push(`- Past bookings: ${bookings.map(b => `${b.service_name}${b.appointment_start ? ` on ${istDateTime(b.appointment_start)}` : ' (report)'}${b.status === 'gateway_test_paid' ? ' (₹1 test)' : ''}`).join('; ')}`);
   } else {
     lines.push('- Past bookings: None');
   }
