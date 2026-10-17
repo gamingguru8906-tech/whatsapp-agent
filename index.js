@@ -35,9 +35,10 @@ axios.defaults.timeout = 60000;
 process.on('unhandledRejection', reason => console.error('Unhandled promise rejection:', reason?.message || reason));
 process.on('uncaughtException', err => console.error('Uncaught exception:', err?.stack || err?.message || err));
 
-// Temporary, explicit gateway validation charge. This is not the consultation
-// fee and must be changed back to catalogue pricing after the live-gateway test.
-const GATEWAY_VALIDATION_CHARGE_INR = 1;
+// Live: every link collects the full published price (after approved discounts).
+// Set this to 1 only to run a ₹1 payment-gateway test again (labelled as a test everywhere).
+const GATEWAY_VALIDATION_CHARGE_INR = 0;
+const GATEWAY_TEST = GATEWAY_VALIDATION_CHARGE_INR > 0;
 
 const app = express();
 app.use(express.json({
@@ -333,9 +334,9 @@ const tools = [{
           service_name: { type: SchemaType.STRING, description: "Name of the service to book" },
           discount_offer: { type: SchemaType.STRING, description: "Use 'standard' normally, 'hardship' for repeated affordability concerns, or 'followup_10' only after the system records YES to its 48-hour offer. The server decides eligibility and amount." },
           customer_pain_points_summary: { type: SchemaType.STRING, description: "A 2-3 sentence summary of the user's emotional state and core problem. For relationship/divorce reports also include the partner's name and birth details the customer gave." },
-          preferred_time_slot: { type: SchemaType.STRING, description: "The exact date and time explicitly agreed with the customer, formatted ISO-8601 with +05:30 offset (e.g. 2026-09-26T19:30:00+05:30). Never invent this." }
+          preferred_time_slot: { type: SchemaType.STRING, description: "LIVE SESSION services only: the exact date and time explicitly agreed with the customer, formatted ISO-8601 with +05:30 offset (e.g. 2026-09-26T19:30:00+05:30). Never invent this. Leave EMPTY for DELIVERED REPORT services." }
         },
-        required: ["customer_name", "email", "billing_address", "service_name", "preferred_time_slot"]
+        required: ["customer_name", "email", "billing_address", "service_name"]
       }
     },
     {
@@ -369,7 +370,7 @@ function refreshSystemPrompt() {
       servicesContext += `\nCATEGORY: ${cat.name}\n`;
       cat.services.forEach(svc => {
         const featuresStr = svc.features ? svc.features.join(', ') : 'N/A';
-      servicesContext += `- ${svc.t}: Published price ${svc.p}; regular/list price ${svc.was || svc.p}; published discount ${svc.off || 'none listed'}. ${svc.d} Features: ${featuresStr}. Details needed: ${describeServiceNeeds(serviceNeeds(svc, cat.name))}\n`;
+      servicesContext += `- ${svc.t}: Published price ${svc.p}; regular/list price ${svc.was || svc.p}; published discount ${svc.off || 'none listed'}. ${svc.d} Features: ${featuresStr}. Details needed: ${describeServiceNeeds(serviceNeeds(svc, cat.name))}. Format: ${isLiveService(svc) ? 'LIVE SESSION (needs an agreed time slot)' : 'DELIVERED REPORT (no time slot; prepared and sent after payment)'}\n`;
       });
     });
   }
@@ -422,11 +423,9 @@ CRITICAL RULES FOR WHATSAPP FORMATTING (MANDATORY):
 - FOLLOW THE CONVERSATION (CRITICAL): read every message against YOUR LAST MESSAGE and the chat so far. A short or unclear message ("done?", "ok", "hmm", "?", "then?") continues the topic you were just discussing; never jump to a different topic (payment, booking, a new service) that was not being discussed. If it is still unclear, ask one short, natural question about it, e.g. "Ji, aap name correction ki details ke baare mein pooch rahe hain?"
 - NEVER mention screens, systems, records, databases, files or anything "showing" or "not showing" (never say "mere screen par show nahi ho raha", "system mein nahi dikh raha"). A real assistant simply remembers or asks. If the person says you already have their details but they are "Not known yet" above, apologise simply and ask once: "Sorry ji, woh mujh tak nahi pahuncha. Ek baar full name aur date of birth bhej dijiye." Then never ask for it again.
 
-PAYMENT VALIDATION PERIOD:
-- Payment links currently collect ₹1 only to validate the live payment gateway. This is not payment for a consultation and does not confirm a real consultation appointment.
-- The server sends an unpaid payment-request invoice with the Razorpay link. It is not a payment receipt or a GST tax invoice. Only after Razorpay verifies payment may the server send the existing payment receipt and the appropriate booking or test-payment confirmation.
-- Do not say or imply that the consultation price has been paid or that the requested appointment is a real confirmed booking after a ₹1 gateway test. The server sends the customer a clearly labelled gateway-test receipt and test meeting details after Razorpay confirms the ₹1 transaction.
-- Keep quoting the published catalogue price accurately; the ₹1 amount is only the temporary gateway validation transaction.
+PAYMENTS:
+- Payment links collect the full published price (after any discount the server approves). The server sends the invoice with the Razorpay link; it is not a payment receipt.
+- After Razorpay confirms the payment, the server itself sends the receipt and the confirmation in this chat (for live sessions: the slot and Meet link; for reports: that the report is being prepared). Never say a payment is done unless the server or 'verify_payment' says so.
 
 HOW YOU SELL (A CONSULTATIVE SALES SYSTEM — FOLLOW THE STAGES IN ORDER):
 Your job is not to "convince". It is to find out honestly whether we can help this person, help them see it clearly, and make saying yes easy. A person who passes the three gates below will want to book; a person who does not pass is kindly not pitched. All of this happens over many short WhatsApp messages: one stage at a time, one question per message, never all at once.
@@ -493,8 +492,9 @@ IF THEY SEND AN IMAGE:
 - If they send a kundli, birth chart, horoscope, or palm photo: describe only visible, legible information and distinguish observation from interpretation. Never invent placements or claim certainty.
 - **THE SANDWICH TEST (CRITICAL):** If they send an image of something completely irrelevant (e.g., a sandwich, food, toilet paper, a meme, a random object), DO NOT analyze it astrologically. Politely tell them: "I'm sorry, I can only read Kundlis, birth charts, or palms. I cannot perform a reading on this image."
 
-NEGOTIATE THE TIME SLOT & SCARCITY (CRITICAL FOR TRUST):
-- NEVER generate a payment link until you have explicitly agreed on a time slot.
+NEGOTIATE THE TIME SLOT & SCARCITY (LIVE SESSIONS ONLY; CRITICAL FOR TRUST):
+- Time slots are ONLY for services whose Format is LIVE SESSION. For a DELIVERED REPORT never ask for, offer or mention a time slot: once the details are in, create the payment link.
+- For a LIVE SESSION, NEVER generate a payment link until you have explicitly agreed on a time slot.
 - Never claim scarcity or say a slot is free or taken; you cannot see the calendar. Negotiate politely only within the stated hours; the server holds the slot when the link is created.
 - **STRICT Available Timings (NEVER deviate from this):**
   - Sessions are one hour. **Weekdays (Mon-Fri):** the session can START only between 7:30 PM and 9:30 PM IST (it must end by 10:30 PM). Never offer or accept a weekday time outside this.
@@ -504,7 +504,7 @@ NEGOTIATE THE TIME SLOT & SCARCITY (CRITICAL FOR TRUST):
 - Negotiate calmly and friendly. If they ask for a different time, check that it falls EXACTLY within the above rules, and agree on it. ONLY proceed to payment once the exact time and date is confirmed by them. If they suggest a time outside the rules, explicitly state the available time windows and ask them to choose from there.
 
 WHEN BOOKING:
-- Once you have the details listed under "Details needed" for that service, the email, the billing address AND an agreed time slot — call 'create_booking_payment'. Never fill a field the customer did not give you.
+- Once you have the details listed under "Details needed" for that service, the email, the billing address AND (for a LIVE SESSION only) an agreed time slot — call 'create_booking_payment'. For a DELIVERED REPORT leave preferred_time_slot empty. Never fill a field the customer did not give you.
 - Collect the customer's full billing address before creating the payment request. Never ask for a GSTIN and never mention GST or tax to the customer; the document you send before payment is simply the invoice.
 - Write their actual problem in 'customer_pain_points_summary' so we know what they're going through.
 - Quote the live catalogue price first. Never calculate or promise a discount or provide a price to the tool. For genuine affordability hardship after discussing the price, set discount_offer to "hardship" and let the server decide eligibility and amount. A 10% offer may be used only after the system's 48-hour follow-up and explicit customer acceptance.
@@ -589,11 +589,23 @@ function findPublishedService(requestedName) {
         if (!Number.isFinite(price) || price <= 0) throw new Error(`Published price is missing or invalid for ${service.t}`);
         const normalPrice = parsePrice(service.was);
         const listPrice = Number.isFinite(normalPrice) && normalPrice >= price ? normalPrice : price;
-        return { ...service, price, listPrice, websiteDiscount: Math.max(0, listPrice - price), needs: serviceNeeds(service, category.name) };
+        return { ...service, price, listPrice, websiteDiscount: Math.max(0, listPrice - price), needs: serviceNeeds(service, category.name),
+          live: isLiveService(service) };
       }
     }
   }
   throw customerFixable('That service name does not match the website list. Offer the closest services from the LIVE SERVICES DATA by their exact names and ask which one they want.');
+}
+
+// A live session (video call) needs a time slot; everything else (PDF reports, recorded voice answers) is
+// prepared and delivered, so it has no slot, no calendar hold and no Meet link.
+function isLiveService(service) {
+  return Array.isArray(service?.give) ? service.give.includes('video') : true;
+}
+// "Delivered within 24–48 hrs" from the service's own features, if the website states it.
+function deliveryPromise(service) {
+  const line = (service?.features || []).find(f => /deliver/i.test(String(f)) && /\d/.test(String(f)));
+  return line ? String(line).trim() : '';
 }
 
 function hasRepeatedHardshipEvidence(phone) {
@@ -788,7 +800,7 @@ function createBookingPaymentRequest(phone, ...rest) {
 }
 
 async function createBookingPaymentRequestNow(phone, args, dbUser, {
-  required = ['customer_name', 'email', 'billing_address', 'service_name', 'preferred_time_slot'],
+  required = ['customer_name', 'email', 'billing_address', 'service_name'],
   source = 'WhatsApp Direct Booking',
   deliver = async ({ mediaId, invoiceName, caption }) => {
     if (!(await sendWhatsAppDocument(phone, mediaId, invoiceName, caption))) throw new Error('WhatsApp did not accept the invoice-and-payment-link message.');
@@ -816,7 +828,12 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
     }
     // Never carry birth time/place into a service that does not use them (e.g. numerology).
     if (!publishedService.needs.fields.includes('tob')) { args = { ...args, tob: '', pob: '' }; }
-    const slot = validatePreferredSlot(args.preferred_time_slot);
+    const live = publishedService.live;
+    if (live && !String(args.preferred_time_slot || '').trim()) {
+      throw customerFixable(`${publishedService.t} is a live session: agree an exact time slot with the customer first.`);
+    }
+    // Reports have no slot: nothing to validate, hold on the calendar or join.
+    const slot = live ? validatePreferredSlot(args.preferred_time_slot) : null;
     let additionalDiscountPercent = 0;
     let acceptedDiscountSourceId = null;
     if (args.discount_offer === 'hardship' && hasRepeatedHardshipEvidence(phone)) {
@@ -833,10 +850,8 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
     const additionalDiscount = Math.round(publishedService.price * additionalDiscountPercent) / 100;
     const serviceTotal = Math.max(0, publishedService.price - additionalDiscount);
     if (serviceTotal <= 0) throw new Error('The approved discount would make the service total invalid. Please ask the owner to review it.');
-    // This temporary hard-coded charge intentionally exercises the
-    // configured Razorpay gateway with real credentials for ₹1.
-    // It does not collect the service price or apply discounts.
-    const finalAmount = GATEWAY_VALIDATION_CHARGE_INR;
+    // The full price after discounts (or the labelled ₹1 gateway test, only when GATEWAY_TEST is switched on).
+    const finalAmount = GATEWAY_TEST ? GATEWAY_VALIDATION_CHARGE_INR : serviceTotal;
     const amountPaise = Math.round(finalAmount * 100);
     // Earlier unpaid links for this number stay valid until the new one has reached the customer (see below),
     // so a failure here never leaves them with nothing. The new hold may overlap their own old holds.
@@ -844,7 +859,7 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
       ? (await pool.query("SELECT payment_link_id, calendar_event_id FROM wa_payment_links WHERE phone=$1 AND status='request_created'", [phone])
         .catch(() => ({ rows: [] }))).rows
       : [];
-    calendarHold = await reserveCalendarSlot(slot, {
+    if (live) calendarHold = await reserveCalendarSlot(slot, {
       holdKey,
       ignoreEventIds: older.map(r => r.calendar_event_id).filter(Boolean),
       serviceName: publishedService.t,
@@ -858,8 +873,8 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
       currency: "INR",
       accept_partial: false,
       // Expires after 12 hours, or 30 minutes before the slot if that is sooner (never less than 16 minutes).
-      expire_by: Math.floor(Math.max(Date.now() + 16 * 60 * 1000, Math.min(Date.now() + 12 * 60 * 60 * 1000, slot.start.getTime() - 30 * 60 * 1000)) / 1000),
-      description: `INR 1 gateway validation only - not a consultation payment. ${String(publishedService.t)}`.substring(0, 2048),
+      expire_by: Math.floor(Math.max(Date.now() + 16 * 60 * 1000, Math.min(Date.now() + 12 * 60 * 60 * 1000, live ? slot.start.getTime() - 30 * 60 * 1000 : Infinity)) / 1000),
+      description: (GATEWAY_TEST ? `INR 1 gateway validation only - not a consultation payment. ${String(publishedService.t)}` : `Veshannastro - ${String(publishedService.t)}`).substring(0, 2048),
       reference_id: `wa_booking_${Date.now()}`,
       notify: { sms: false, email: false },
       notes: {
@@ -880,11 +895,11 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
         additional_discount_percentage: String(additionalDiscountPercent),
         service_total: String(serviceTotal),
         discount_percentage: String(additionalDiscountPercent),
-        gateway_test: 'true',
+        gateway_test: GATEWAY_TEST ? 'true' : 'false',
         phone: String(phone),
         summary: String(args.customer_pain_points_summary || '').substring(0, 240),
-        time_slot: slot.start.toISOString(),
-        calendar_event_id: String(calendarHold.event.id),
+        time_slot: live ? slot.start.toISOString() : '',
+        calendar_event_id: live ? String(calendarHold.event.id) : '',
       }
     });
 
@@ -892,11 +907,14 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
 
     // One invoice number per order (VA/26-27/09-001); it is how every booking is tracked.
     const invoiceNumber = await crm.allocateInvoiceNumber(pool);
-    const issueDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' });
+    // A report invoice shows the moment it was made (date and time); a live session shows its date and the slot.
+    const issueDate = live
+      ? new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' })
+      : new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) + ' IST';
     const invoiceName = `Invoice_${invoiceNumber.replace(/\//g, '-')}.pdf`;
-    const appointmentDate = slot.start.toLocaleString('en-IN', {
+    const appointmentDate = live ? slot.start.toLocaleString('en-IN', {
       timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short'
-    }) + ' IST';
+    }) + ' IST' : '';
     const invoiceBuffer = await generatePaymentRequestInvoice({
       invoiceNumber,
       issueDate,
@@ -907,12 +925,13 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
       customerGstin: args.customer_gstin || '',
       serviceName: publishedService.t,
       appointmentDate,
+      delivered: !live,
       normalRate: publishedService.listPrice,
       websiteDiscount: publishedService.websiteDiscount,
       additionalDiscount,
       serviceTotal,
       linkAmount: finalAmount,
-      isGatewayTest: true,
+      isGatewayTest: GATEWAY_TEST,
       paymentUrl: createdPaymentLink.short_url
     });
     if (pool) {
@@ -934,20 +953,24 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
         payment_link_id, phone, calendar_event_id, amount_paise, customer_name,
         email, gender, dob, tob, pob, billing_address, customer_gstin, service_name,
         appointment_start, normal_rate_paise, website_discount_paise, additional_discount_paise,
-        service_total_paise, request_invoice_number, status
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,'request_created')
+        service_total_paise, request_invoice_number, delivery_kind, status
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,'request_created')
       ON CONFLICT (payment_link_id) DO UPDATE SET status='request_created', updated_at=NOW()`,
-      [createdPaymentLink.id, phone, calendarHold.event.id, amountPaise, args.customer_name || '',
+      [createdPaymentLink.id, phone, live ? calendarHold.event.id : '', amountPaise, args.customer_name || '',
         args.email || '', args.gender || '', args.dob || '', args.tob || '', args.pob || '', args.billing_address || '',
-        args.customer_gstin || '', publishedService.t, slot.start, Math.round(publishedService.listPrice * 100),
+        args.customer_gstin || '', publishedService.t, live ? slot.start : null, Math.round(publishedService.listPrice * 100),
         Math.round(publishedService.websiteDiscount * 100), Math.round(additionalDiscount * 100),
-        Math.round(serviceTotal * 100), invoiceNumber]
+        Math.round(serviceTotal * 100), invoiceNumber, live ? 'live' : 'delivered']
     );
-    await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, calendarHold.meetLink || null])
+    if (live) await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, calendarHold.meetLink || null])
       .catch(e => console.error('Saving the Meet link failed:', e.message));
     const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
     if (!mediaId) throw new Error('WhatsApp did not accept the payment-request PDF upload.');
-    const caption = `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached. Appointment requested: ${appointmentDate}.\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your consultation. Consultation total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}\n\nAs soon as you pay, your confirmation, Google Meet link and receipt will come here automatically. No screenshot needed.`;
+    const caption = GATEWAY_TEST
+      ? `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached.${live ? ` Appointment requested: ${appointmentDate}.` : ''}\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your order. Total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}\n\nAs soon as you pay, your confirmation and receipt will come here automatically. No screenshot needed.`
+      : live
+        ? `Thank you, ${args.customer_name}. Your invoice for ${publishedService.t} is attached.\nAppointment: ${appointmentDate}\nAmount: ₹${finalAmount.toFixed(2)}\n\nPay securely here: ${link}\n\nAs soon as you pay, your confirmation, Google Meet link and receipt will come here automatically. No screenshot needed.`
+        : `Thank you, ${args.customer_name}. Your invoice for ${publishedService.t} is attached.\nAmount: ₹${finalAmount.toFixed(2)}\n\nPay securely here: ${link}\n\nAs soon as you pay, your receipt and confirmation will come here automatically, and your report will be prepared and sent to you. No screenshot needed.`;
     const delivery = await deliver({ mediaId, invoiceName, caption, link, customerName: args.customer_name, serviceName: publishedService.t, appointmentDate, slot });
     const refId = createdPaymentLink.id;
     delivered = { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
@@ -961,11 +984,11 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
       name: args.customer_name, phone: phone, email: args.email,
       billingAddress: args.billing_address, customerGstin: args.customer_gstin || '',
       gender: args.gender || '', dob: args.dob || '', birthTime: args.tob || '', birthPlace: args.pob || '',
-      service: publishedService.t, sessionDate: slot.start.toISOString(),
+      service: publishedService.t, sessionDate: live ? slot.start.toISOString() : '',
       normalRate: publishedService.listPrice, websiteDiscount: publishedService.websiteDiscount,
       additionalDiscount: additionalDiscount, serviceTotal: serviceTotal,
       amountDue: finalAmount, paymentUrl: link, invoiceStatus: 'UNPAID',
-      isGatewayTest: true, source
+      isGatewayTest: GATEWAY_TEST, source
     }).catch(e => console.error('Payment request log failed (link kept):', e.message));
     if (acceptedDiscountSourceId && pool) {
       await pool.query(`UPDATE wa_discount_offers SET used_at=NOW(), status='used' WHERE source_payment_link_id=$1 AND status='accepted'`, [acceptedDiscountSourceId])
@@ -1163,7 +1186,7 @@ async function checkPaymentForCustomer(from, claimText) {
       ORDER BY l.created_at DESC LIMIT 1`, [from]).catch(() => ({ rows: [] }));
     return res.rows[0] || null;
   };
-  const alreadyReply = row => `Aapka payment pehle hi confirm ho chuka hai ji. Receipt aur Meet link upar bhej diye the${row?.appointment_start ? ` (slot: ${crm.istDateTime(row.appointment_start)})` : ''}.`;
+  const alreadyReply = row => `Aapka payment pehle hi confirm ho chuka hai ji. Receipt aur confirmation upar bhej diye the${row?.appointment_start ? ` (slot: ${crm.istDateTime(row.appointment_start)})` : ''}.`;
   const plId = await findActivePaymentLinkId(from, claimText);
   if (!plId) {
     const done = await recentlyConfirmed();
@@ -1177,7 +1200,7 @@ async function checkPaymentForCustomer(from, claimText) {
   try {
     const verification = await fetchAndFulfillVerifiedPayment(plId);
     if (!verification.paid) {
-      return { status: 'unpaid', reply: "Maine abhi check kiya, payment abhi reflect nahi hua hai. Kabhi kabhi bank gateway thoda time leta hai. Razorpay confirm karte hi receipt aur Meet details yahin aa jayenge." };
+      return { status: 'unpaid', reply: "Maine abhi check kiya, payment abhi reflect nahi hua hai. Kabhi kabhi bank gateway thoda time leta hai. Razorpay confirm karte hi receipt aur confirmation yahin apne aap aa jayenge." };
     }
     if (!verification.fulfilled) {
       return { status: 'paid_processing', reply: "Razorpay par aapka payment verify ho gaya hai. Receipt aur confirmation abhi process ho rahe hain, thodi der mein yahin aa jayenge." };
@@ -1338,7 +1361,9 @@ async function fulfilPaidLink(event) {
   const price = Number(notes.price);
   const payment = event.payload?.payment?.entity;
   const storedLinkRow = (await pool.query(`SELECT amount_paise,phone,calendar_event_id,service_name,meet_link,
-    request_invoice_number,appointment_start,email FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id])).rows[0] || null;
+    request_invoice_number,appointment_start,email,delivery_kind FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id])).rows[0] || null;
+  // A report (or recorded answer) is prepared and delivered: no slot, calendar, Meet link or voice note.
+  const delivered = storedLinkRow?.delivery_kind === 'delivered';
   // Each step below runs once per payment, even if Razorpay retries after a partial failure.
   // Recording a step also refreshes the lease, so a slow run is not taken over by a retry.
   const doneSteps = (await pool.query('SELECT steps FROM wa_payment_fulfillments WHERE payment_link_id=$1', [pl.id])).rows[0]?.steps || {};
@@ -1368,7 +1393,7 @@ async function fulfilPaidLink(event) {
 
   // A Calendar event was created as a temporary hold before the payment link.
   // Upgrade that exact event only after Razorpay confirms the exact amount.
-  if (!notes.calendar_event_id) throw new Error(`No appointment hold exists for paid link ${pl.id}; manual fulfillment is required.`);
+  if (!delivered && !notes.calendar_event_id) throw new Error(`No appointment hold exists for paid link ${pl.id}; manual fulfillment is required.`);
   const isGatewayTest = notes.gateway_test === 'true';
   const eventSummary = isGatewayTest
     ? `GATEWAY TEST ONLY — NOT A BOOKING — ${serviceName} — ${customerName}`
@@ -1380,7 +1405,7 @@ async function fulfilPaidLink(event) {
   // Confirm the Calendar hold. A slow Apps Script is retried; a hold that is gone or has no Meet link never
   // fixes itself, so the payment still completes (with the Meet link saved at booking, if any) and the owner is told.
   const invoiceNumber = storedLinkRow?.request_invoice_number || pl.id.replace('plink_', '').toUpperCase();
-  const calendarResult = await once('calendar', async () => {
+  const calendarResult = delivered ? '' : await once('calendar', async () => {
     try {
       const finalized = await postAppsScript({
         target: 'calendar_finalize',
@@ -1396,7 +1421,7 @@ async function fulfilPaidLink(event) {
     }
   });
   const meetLink = typeof calendarResult === 'string' ? calendarResult : (storedLinkRow?.meet_link || '');
-  if (typeof calendarResult !== 'string') {
+  if (!delivered && typeof calendarResult !== 'string') {
     await once('calendar_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })} IST), but the Google Calendar event could not be confirmed: ${calendarResult.failed}. ${meetLink ? `The Meet link saved at booking was sent to them: ${meetLink}` : 'Please add the slot to your calendar and send them a Google Meet link.'}`, 'Calendar needs attention').then(() => true));
   }
   if (pool && meetLink) await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [pl.id, meetLink]);
@@ -1416,8 +1441,11 @@ async function fulfilPaidLink(event) {
       amountPaid: price,
       basePrice: Number(notes.service_total || notes.list_price || price),
       isGatewayTest: isGatewayTest,
-      date: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
-      appointmentDate: new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
+      date: delivered
+        ? new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) + ' IST'
+        : new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      appointmentDate: delivered ? '' : new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
+      delivered,
       paymentId: payment?.id,
       meetLink: meetLink
     });
@@ -1429,10 +1457,22 @@ async function fulfilPaidLink(event) {
   // 5. Log to Google Sheets & send the same personalized confirmation by email.
   let bookingSheet = null;
   {
-    const bookedAt = new Date(notes.time_slot);
+    // A report has no slot: its "booking date" is when it was paid for.
+    const bookedAt = delivered ? new Date() : new Date(notes.time_slot);
     if (!Number.isFinite(bookedAt.getTime())) throw new Error(`Invalid booked time in payment notes for ${pl.id}`);
 
-    bookingSheet = await once('booking_sheet', () => postAppsScript({
+    // Reports go to the "Premium Reports" tab (the booking/email step needs a Meet link, which a report has none of).
+    if (delivered) bookingSheet = await once('booking_sheet', () => postAppsScript({
+      target: 'report',
+      name: customerName, phone, email: notes.email || '',
+      dob: notes.dob || '', birthTime: notes.tob || '', birthPlace: notes.pob || '',
+      service: serviceName, query: notes.summary || '',
+      source: 'WhatsApp Direct Booking',
+      paymentStatus: isGatewayTest ? 'Gateway test paid - report not paid' : 'Paid',
+      amountPaid: price, sessionDate: '',
+      notes: `Invoice ${invoiceNumber} | Payment ${payment?.id || pl.id} | Link ${pl.id}`
+    }).then(() => 'no_email'));
+    else bookingSheet = await once('booking_sheet', () => postAppsScript({
       target: "booking",
       invoiceNumber,
       name: customerName,
@@ -1489,11 +1529,18 @@ async function fulfilPaidLink(event) {
   // 6. Send WhatsApp Confirmation
   if (phone) {
     if (!invoiceBuffer) throw new Error(`Invoice buffer missing for paid link ${pl.id}`);
-    const slotText = `${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST`;
+    const slotText = delivered ? '' : `${new Date(notes.time_slot).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' })} IST`;
+    let promise = '';
+    if (delivered) { try { promise = deliveryPromise(findPublishedService(serviceName)); } catch (e) { promise = ''; } }
     // An older run stored `true` here (before the email status was kept): then only say what is certain.
     const emailLine = bookingSheet === 'email_sent' && notes.email ? `\n📧 Confirmation email sent to ${notes.email}` : '';
     const meetLine = meetLink ? `\n🔗 Google Meet: ${meetLink}` : '\n🔗 Google Meet link: will be shared here before the slot';
-    const msg = notes.gateway_test === 'true'
+    const msg = delivered
+      ? `✅ Payment received, ${customerName} ji! Razorpay has verified ₹${price.toFixed(2)} for ${serviceName}.${isGatewayTest ? ' (₹1 payment-system test: the report fee itself is not paid yet.)' : ''}\n\n`
+        + `🧾 Invoice No.: ${invoiceNumber} (receipt attached)\n`
+        + `📄 Your ${serviceName} is now being prepared and will be sent to you here${notes.email ? ` and on ${notes.email}` : ''}.${promise ? ` (${promise})` : ''}\n\n`
+        + `Thank you for trusting Veshannastro 🙏`
+      : notes.gateway_test === 'true'
       ? `✅ Payment received, ${customerName} ji! Razorpay has verified your ₹${price.toFixed(2)} test payment.\n\n`
         + `Your test booking for ${serviceName} is set up:\n📅 ${slotText}${meetLine}\n🧾 Invoice No.: ${invoiceNumber} (test receipt attached)${emailLine}\n\n`
         + `Please note: this was a ₹1 payment-system test, so the ${serviceName} fee itself is not paid yet. I will remind you here 30 minutes before the slot.`
@@ -1507,28 +1554,30 @@ async function fulfilPaidLink(event) {
     // the API still says "ok" and drops them later. deliverAfterCall checks the window first: inside it sends now;
     // outside it uses the approved template (WA_BOOKING_CONFIRMED_TEMPLATE, if set) or holds the message and sends it
     // the moment the customer writes again. The owner is told whenever it could not go out straight away.
-    const delivered = d => d === true || d === 'sent' || d === 'sent_template';
+    const wentOut = d => d === true || d === 'sent' || d === 'sent_template';
     const receiptSent = await once('receipt', async () => {
       const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
       if (!mediaId) return false;
       return deliverAfterCall(phone, {
         mediaId, filename: invoiceName,
-        body: notes.gateway_test === 'true' ? '₹1 gateway test receipt - not a consultation payment.' : 'Payment receipt and consultation details.',
+        body: notes.gateway_test === 'true' ? '₹1 gateway test receipt - not a consultation payment.' : delivered ? 'Payment receipt.' : 'Payment receipt and consultation details.',
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       });
     });
     const confirmationSent = await once('confirmation', () => deliverAfterCall(phone, {
       body: msg,
-      template: process.env.WA_BOOKING_CONFIRMED_TEMPLATE ? [customerName, serviceName, slotText, meetLink || 'shared before the session'] : null,
+      template: !delivered && process.env.WA_BOOKING_CONFIRMED_TEMPLATE ? [customerName, serviceName, slotText, meetLink || 'shared before the session'] : null,
       templateName: process.env.WA_BOOKING_CONFIRMED_TEMPLATE || '',
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     }));
-    if (!delivered(receiptSent) || !delivered(confirmationSent)) {
+    if (!wentOut(receiptSent) || !wentOut(confirmationSent)) {
       const held = receiptSent === 'awaiting_hi' || confirmationSent === 'awaiting_hi';
-      await once('delivery_alert', () => notifyOwner(`⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${slotText}), but WhatsApp could not deliver the ${!delivered(receiptSent) ? 'receipt' : 'confirmation'} now (their 24-hour window is closed).${held ? ' It will go out automatically the next time they message.' : ''} The email confirmation has gone out. To be safe, message them the Meet link yourself: ${meetLink || 'see Google Calendar'}`, 'Payment confirmation not delivered on WhatsApp').then(() => true));
+      await once('delivery_alert', () => notifyOwner(delivered
+        ? `⚠️ ${customerName} (+${phone}) paid for ${serviceName} (report), but WhatsApp could not deliver the ${!wentOut(receiptSent) ? 'receipt' : 'confirmation'} now (their 24-hour window is closed).${held ? ' It will go out automatically the next time they message.' : ''} Please send the report to ${notes.email || 'their email'} or on WhatsApp once they message.`
+        : `⚠️ ${customerName} (+${phone}) paid for ${serviceName} (${slotText}), but WhatsApp could not deliver the ${!wentOut(receiptSent) ? 'receipt' : 'confirmation'} now (their 24-hour window is closed).${held ? ' It will go out automatically the next time they message.' : ''} The email confirmation has gone out. To be safe, message them the Meet link yourself: ${meetLink || 'see Google Calendar'}`, 'Payment confirmation not delivered on WhatsApp').then(() => true));
     }
     // Personal thank-you voice note from Kamala (best effort; never blocks fulfillment; sent once).
-    if (GEMINI_API_KEY && confirmationSent === 'sent' && !doneSteps.voice_note) {
+    if (!delivered && GEMINI_API_KEY && confirmationSent === 'sent' && !doneSteps.voice_note) {
       await once('voice_note', async () => true);
       voiceNote.sendThankYouVoiceNote({
       genAI, modelName: process.env.GEMINI_MODEL || 'gemini-3.8-flash', apiKey: GEMINI_API_KEY,
@@ -1537,7 +1586,12 @@ async function fulfilPaidLink(event) {
       .then(script => { console.log(`🎙️ Voice note sent to ${phone}`); crm.saveTurn(pool, phone, 'model', `[Voice note] ${script}`).catch(() => {}); })
       .catch(e => console.error('Voice note failed:', e.message));
     }
-    await once('owner_alert', async () => notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
+    if (delivered) await once('owner_alert', async () => notifyOwner(`📄 ${isGatewayTest ? 'TEST report order (₹1, not paid)' : 'New paid report to prepare'}: ${serviceName}\n`
+      + `Customer: ${customerName}\nPhone: +${phone}\nEmail: ${notes.email || 'Not provided'}\nInvoice No.: ${invoiceNumber}\n`
+      + `Gender: ${notes.gender || 'Not provided'}\nDOB: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\n`
+      + `Details/concern: ${notes.summary || 'Not recorded'}\nAmount received: ₹${price.toFixed(2)}\n`
+      + `Customer was told it is being prepared${promise ? ` (${promise})` : ''}. Please send the report on WhatsApp${notes.email ? ' and email' : ''}.`, `Report to prepare: ${serviceName} for ${customerName}`).then(() => true));
+    else await once('owner_alert', async () => notifyOwner(`📅 ${isGatewayTest ? 'TEST booking (₹1, not a real consultation)' : 'You have a consultation'} with ${customerName}\n`
       + `When: ${slotText}\nService: ${serviceName}\nInvoice No.: ${invoiceNumber}\nPhone: +${phone}\n`
       + `Gender: ${notes.gender || 'Not provided'}\nDOB: ${notes.dob || 'Not provided'}\nBirth time: ${notes.tob || 'Not provided'}\nBirth place: ${notes.pob || 'Not provided'}\n`
       + `Concern: ${notes.summary || 'Not recorded'}\n`
@@ -1665,13 +1719,13 @@ app.post('/razorpay-webhook', async (req, res) => {
       let storedLinkRow = null;
       if (pool) {
         const storedLink = await pool.query(`SELECT amount_paise,phone,calendar_event_id,service_name,meet_link,
-          request_invoice_number,appointment_start,email FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id]);
+          request_invoice_number,appointment_start,email,delivery_kind FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id]);
         const stored = storedLink.rows[0];
         storedLinkRow = stored || null;
         if (!stored || Number(stored.amount_paise) !== actualAmountPaise || stored.phone !== notes.phone
           || stored.calendar_event_id !== notes.calendar_event_id
           || stored.service_name !== notes.service_name || !stored.request_invoice_number
-          || Math.abs(new Date(stored.appointment_start).getTime() - new Date(notes.time_slot).getTime()) > 1000) {
+          || (stored.delivery_kind !== 'delivered' && !(Math.abs(new Date(stored.appointment_start).getTime() - new Date(notes.time_slot).getTime()) <= 1000))) {
           return needsManualReview('the stored booking details do not match the Razorpay link');
         }
       }
@@ -2169,7 +2223,7 @@ async function handleInboundMessage(msg) {
           const svc = category.services[parseInt(svcIndexStr)];
           if (svc) {
             const featureList = svc.features ? `• ${svc.features.join('\n• ')}` : '';
-            let reply = `✨ *${svc.t}*\n\n${svc.d}\n\n*Features:*\n${featureList}\n\n💰 *Current Price:* ${svc.p}\n\n📅 *Ready to Book?*\nVisit: https://veshannastro.co.in/${svc.link.replace('https://veshannastro.co.in/', '')}\nOr simply reply here and I will help you book it directly in this chat! 🙏`;
+            let reply = `✨ *${svc.t}*\n\n${svc.d}\n\n*Features:*\n${featureList}\n\n💰 *Current Price:* ${svc.p}\n\n📅 *Ready to Book?*\nVisit: ${/^https?:\/\//i.test(String(svc.link || '')) ? svc.link : `https://veshannastro.co.in/${String(svc.link || '').replace(/^\//, '')}`}\nOr simply reply here and I will help you book it directly in this chat! 🙏`;
             await sendTextMessage(from, reply);
           }
         }
@@ -3221,7 +3275,7 @@ const phoneAgent = voiceAgent.attach(server, {
   maxConcurrentCalls: process.env.VOICE_MAX_CONCURRENT_CALLS,
   maxCallMinutes: process.env.VOICE_MAX_CALL_MINUTES,
   businessWhatsApp: process.env.BUSINESS_WHATSAPP_NUMBER,
-  gatewayTest: GATEWAY_VALIDATION_CHARGE_INR > 0,
+  gatewayTest: GATEWAY_TEST,
   pool,
   crm,
   genAI: GEMINI_API_KEY ? genAI : null,
