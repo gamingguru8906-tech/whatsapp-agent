@@ -44,7 +44,7 @@ function generateInvoice(data) {
       const doc = new PDFDocument({ size: 'A4', margin: 0, compress: true, info: {
         Title: `Payment receipt ${safeText(data.invoiceNumber, 'Receipt')}`,
         Author: 'Veshannastro',
-        Subject: data.isGatewayTest ? 'Gateway validation receipt - not consultation payment' : 'Consultation payment receipt'
+        Subject: data.isGatewayTest ? 'Gateway validation receipt - not consultation payment' : data.delivered ? 'Report payment receipt' : 'Consultation payment receipt'
       } });
       const buffers = [];
       doc.on('data', chunk => buffers.push(chunk));
@@ -70,7 +70,7 @@ function generateInvoice(data) {
       doc.font('Helvetica-Bold').fontSize(22).fillColor(COLORS.navy)
         .text('VESHANNASTRO', 45, 40, { characterSpacing: 1.1, width: 390 });
       doc.font('Helvetica').fontSize(14).fillColor(COLORS.slate)
-        .text('Consultation', 45, 68);
+        .text(data.delivered ? 'Reports' : 'Consultation', 45, 68);
       doc.font('Helvetica-Bold').fontSize(27).fillColor(COLORS.navy)
         .text('PAYMENT RECEIPT', 45, 127, { width: 390 });
       doc.font('Helvetica').fontSize(12).fillColor(COLORS.slate)
@@ -92,7 +92,13 @@ function generateInvoice(data) {
       doc.moveTo(30, 270).lineTo(pageW - 30, 270).lineWidth(1).strokeColor(COLORS.line).stroke();
 
       // Invoice date, service slot, customer information.
-      const rows = [
+      // A report has no session: show when the receipt was made and the mode, never a slot.
+      const rows = data.delivered ? [
+        ['Receipt Date', safeText(data.date)],
+        ['Invoice No.', safeText(data.invoiceNumber, '-')],
+        ['Service', safeText(data.serviceName)],
+        ['Mode', 'Online']
+      ] : [
         ['Receipt Date', safeText(data.date)],
         ['Invoice No.', safeText(data.invoiceNumber, '-')],
         ['Consultation', safeText(data.serviceName)],
@@ -130,7 +136,7 @@ function generateInvoice(data) {
       doc.font('Helvetica').fontSize(12).fillColor(COLORS.navy)
         .text(data.isGatewayTest ? 'Razorpay gateway validation' : safeText(data.serviceName), 53, itemY, { width: 235, ellipsis: true });
       doc.font('Helvetica').fontSize(9).fillColor(COLORS.slate)
-        .text(data.isGatewayTest ? 'Test only - consultation remains unpaid' : 'Consultation payment', 53, itemY + 21, { width: 235, ellipsis: true });
+        .text(data.isGatewayTest ? 'Test only - consultation remains unpaid' : data.delivered ? 'Report payment' : 'Consultation payment', 53, itemY + 21, { width: 235, ellipsis: true });
       doc.font('Helvetica').fontSize(12).fillColor(COLORS.navy);
       doc.text('1', 306, itemY, { width: 40, align: 'right' });
       doc.text(inr(amountPaid), 365, itemY, { width: 75, align: 'right' });
@@ -277,7 +283,8 @@ function drawInvoice(doc, m) {
   const grid = [
     [['Invoice No.', m.invoiceNo]],
     [['Dated', m.date], ['Mode/Terms of Payment', m.paymentTerms]],
-    [['Consultation Mode', m.consultMode], ['Appointment (IST)', m.appointment]],
+    // A report has no appointment: just the mode, across the full row.
+    m.appointment ? [['Mode', m.consultMode], ['Appointment (IST)', m.appointment]] : [['Mode', m.consultMode]],
     [['Reference No.', m.reference], ['Status', m.status]]
   ];
   grid.forEach((row, i) => {
@@ -320,7 +327,7 @@ function drawInvoice(doc, m) {
   const headBottom = Math.max(buyerBottom, termsBottom, gridBottom + 60);
   // grid rules
   for (let i = 1; i <= grid.length; i++) hline(doc, top + i * cellH, MID, R);
-  vline(doc, MID2, top + cellH, gridBottom);
+  grid.forEach((row, i) => { if (row.length > 1) vline(doc, MID2, top + i * cellH, top + (i + 1) * cellH); });
   vline(doc, MID, top, headBottom);
 
   // ---- Item table ----
@@ -340,9 +347,10 @@ function drawInvoice(doc, m) {
   const nameBottom = doc.y;
   doc.font('Helvetica').fontSize(9.5)
     .text('Online', cols[2] + 2, ry, { width: cols[3] - cols[2] - 4, align: 'center' });
-  doc.font('Helvetica-Bold').text('1 Session', cols[3] + 2, ry, { width: cols[4] - cols[3] - 6, align: 'right' });
+  const unit = m.unit || 'Session';
+  doc.font('Helvetica-Bold').text(`1 ${unit}`, cols[3] + 2, ry, { width: cols[4] - cols[3] - 6, align: 'right' });
   doc.font('Helvetica').text(money(it.rate), cols[4] + 2, ry, { width: cols[5] - cols[4] - 6, align: 'right' })
-    .text('Session', cols[5] + 2, ry, { width: cols[6] - cols[5] - 4, align: 'center' });
+    .text(unit, cols[5] + 2, ry, { width: cols[6] - cols[5] - 4, align: 'center' });
   doc.font('Helvetica-Bold').fontSize(10).text(money(it.rate), cols[6] + 2, ry, { width: cols[7] - cols[6] - 6, align: 'right' });
   ry = nameBottom + 1;
   if (it.detail) {
@@ -378,7 +386,7 @@ function drawInvoice(doc, m) {
   doc.font('Helvetica').fontSize(9.5).fillColor(INK)
     .text('Total', cols[1] + 4, bodyBottom + 6, { width: cols[2] - cols[1] - 8, align: 'right' });
   doc.font('Helvetica-Bold').fontSize(9.5)
-    .text('1 Session', cols[3] + 2, bodyBottom + 6, { width: cols[4] - cols[3] - 6, align: 'right' });
+    .text(`1 ${m.unit || 'Session'}`, cols[3] + 2, bodyBottom + 6, { width: cols[4] - cols[3] - 6, align: 'right' });
   doc.font('Helvetica-Bold').fontSize(11)
     .text(`Rs. ${money(m.total)}`, cols[5] + 2, bodyBottom + 5, { width: R - cols[5] - 6, align: 'right' });
   const totalBottom = bodyBottom + 22;
@@ -502,6 +510,7 @@ function generatePaymentRequestInvoice(data) {
         throw new Error('A secure Razorpay payment URL is required for the invoice QR.');
       }
       const test = Boolean(data.isGatewayTest);
+      const delivered = Boolean(data.delivered);
       const payNow = test ? linkAmount : serviceTotal;
       const qr = await QRCode.toBuffer(String(data.paymentUrl), {
         type: 'png', errorCorrectionLevel: 'M', margin: 1, width: 240, color: { dark: '#000000', light: '#FFFFFF' }
@@ -514,12 +523,15 @@ function generatePaymentRequestInvoice(data) {
         date: safeText(data.issueDate, '-'),
         status: 'UNPAID',
         paymentTerms: '100% Advance - Online',
-        consultMode: 'Google Meet',
-        appointment: safeText(data.appointmentDate, 'To be scheduled'),
+        consultMode: 'Online',
+        appointment: delivered ? '' : safeText(data.appointmentDate, 'To be scheduled'),
+        unit: delivered ? 'Report' : 'Session',
         reference: String(data.paymentUrl).replace(/^https:\/\//i, ''),
-        deliveryTerms: 'Online consultation on Google Meet. The appointment is confirmed once the payment is verified; the meeting link is then sent on WhatsApp and e-mail.',
+        deliveryTerms: delivered
+          ? 'Online. The report is prepared once the payment is verified and sent on WhatsApp and e-mail.'
+          : 'Online consultation. The appointment is confirmed once the payment is verified; the meeting link is then sent on WhatsApp and e-mail.',
         buyer: { name: data.customerName, address: data.billingAddress, phone: data.phone ? `+${String(data.phone).replace(/^\+/, '')}` : '', email: data.email },
-        item: { name: safeText(data.serviceName, 'Consultation'), detail: data.appointmentDate ? `Appointment: ${data.appointmentDate}` : '', rate: normalRate },
+        item: { name: safeText(data.serviceName, 'Consultation'), detail: !delivered && data.appointmentDate ? `Appointment: ${data.appointmentDate}` : '', rate: normalRate },
         adjustments: discountRows(normalRate, websiteDiscount, additionalDiscount),
         total: serviceTotal,
         summary: [
