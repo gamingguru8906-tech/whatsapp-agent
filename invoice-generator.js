@@ -167,7 +167,7 @@ function generateInvoice(data) {
         .text('Thank you. Please retain this payment receipt for your records.', 45, 791, { width: pageW - 90, align: 'center' });
       if (data.paymentId) {
         doc.font('Helvetica').fontSize(7).fillColor(COLORS.slate)
-          .text(`Razorpay Payment ID: ${String(data.paymentId)}`, 45, 808, { width: pageW - 90, align: 'center', ellipsis: true });
+          .text(/^UPI-/.test(String(data.paymentId)) ? `Paid by UPI (confirmed by Veshannastro) | Ref: ${String(data.paymentId)}` : `Razorpay Payment ID: ${String(data.paymentId)}`, 45, 808, { width: pageW - 90, align: 'center', ellipsis: true });
       }
 
       doc.end();
@@ -453,6 +453,7 @@ function drawInvoice(doc, m) {
     ['Payment Gateway', 'Razorpay (UPI, Cards)'],
     ['Payment Link', m.payUrl || 'Not applicable']
   ];
+  if (m.upiId) pay.push(['UPI ID', m.upiId]);
   let py = blockTop + 20;
   for (const [k, v] of pay) {
     doc.font('Helvetica').fontSize(8.5).text(k, rx, py, { width: 82 });
@@ -545,6 +546,7 @@ function generatePaymentRequestInvoice(data) {
           ? `Gateway test only: this Razorpay link collects INR ${money(linkAmount)} to validate the live payment gateway. It does not pay for or confirm the consultation. Consultation amount due: ${inr(serviceTotal)}.`
           : 'Payment pending. This invoice is not a payment receipt; the payment receipt is sent automatically once Razorpay confirms your payment.',
         payUrl: String(data.paymentUrl),
+        upiId: data.upiId ? String(data.upiId) : '',
         qr
       });
       doc.end();
