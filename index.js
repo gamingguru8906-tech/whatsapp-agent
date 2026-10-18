@@ -39,6 +39,9 @@ process.on('uncaughtException', err => console.error('Uncaught exception:', err?
 // Set this to 1 only to run a ₹1 payment-gateway test again (labelled as a test everywhere).
 const GATEWAY_VALIDATION_CHARGE_INR = 0;
 const GATEWAY_TEST = GATEWAY_VALIDATION_CHARGE_INR > 0;
+// UPI ID printed on report invoices, next to the Razorpay link. A UPI payment cannot be checked automatically:
+// the customer sends the screenshot, the owner checks the UPI app and confirms it with "/paid <number>".
+const UPI_ID = String(process.env.UPI_ID || 's8827684275@axl').trim();
 
 const app = express();
 app.use(express.json({
@@ -125,6 +128,7 @@ async function migrateMainTables() {
     ALTER TABLE users ADD COLUMN IF NOT EXISTS customer_gstin TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS remedies_prescribed TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS marketing_opt_out BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS owner_request_at TIMESTAMPTZ;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS marketing_opt_in BOOLEAN NOT NULL DEFAULT false;
     CREATE TABLE IF NOT EXISTS wa_payment_links (
       payment_link_id TEXT PRIMARY KEY,
@@ -199,6 +203,9 @@ async function migrateMainTables() {
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS nudged_at TIMESTAMPTZ;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS last_polled_at TIMESTAMPTZ;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS delivery_kind TEXT;
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS billing_phone TEXT;
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS upi_claimed_at TIMESTAMPTZ;
+    ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS paid_by TEXT;
     CREATE TABLE IF NOT EXISTS wa_inbound (
       msg_id TEXT PRIMARY KEY,
       phone TEXT NOT NULL,
@@ -334,6 +341,7 @@ const tools = [{
           service_name: { type: SchemaType.STRING, description: "Name of the service to book" },
           discount_offer: { type: SchemaType.STRING, description: "Use 'standard' normally, 'hardship' for repeated affordability concerns, or 'followup_10' only after the system records YES to its 48-hour offer. The server decides eligibility and amount." },
           customer_pain_points_summary: { type: SchemaType.STRING, description: "A 2-3 sentence summary of the user's emotional state and core problem. For relationship/divorce reports also include the partner's name and birth details the customer gave." },
+          billing_phone: { type: SchemaType.STRING, description: "ONLY if the customer asks for a different phone number on the invoice/bill than the WhatsApp number they are chatting from: that number, as they gave it. Leave empty otherwise." },
           preferred_time_slot: { type: SchemaType.STRING, description: "LIVE SESSION services only: the exact date and time explicitly agreed with the customer, formatted ISO-8601 with +05:30 offset (e.g. 2026-09-26T19:30:00+05:30). Never invent this. Leave EMPTY for DELIVERED REPORT services." }
         },
         required: ["customer_name", "email", "billing_address", "service_name"]
@@ -341,7 +349,7 @@ const tools = [{
     },
     {
       name: "request_human_handoff",
-      description: "Triggers an alert to Shashank to take over the chat. Use this if the user asks to talk to the owner, gets extremely angry, suicidal, or asks complex spiritual questions.",
+      description: "Hands the chat to Shashank and stops your replies. Use it ONLY when someone talks about self-harm or ending their life, is extremely angry or abusive, or has a payment, receipt or delivery problem you cannot solve. NOT for someone who simply wants to talk to Shashank or the astrologer: use 'note_owner_request' for that and keep helping them yourself.",
       parameters: {
         type: SchemaType.OBJECT,
         properties: {
@@ -351,8 +359,19 @@ const tools = [{
       }
     },
     {
+      name: "note_owner_request",
+      description: "Use when the customer asks to talk to Shashank, the owner or the astrologer personally (chat or call). It quietly lets Shashank know, with no pressure on him; YOU keep the conversation going. After it, tell them warmly that Shashank ji will connect with them when he is free from his consultations, and that meanwhile they can share their concern with you here.",
+      parameters: {
+        type: SchemaType.OBJECT,
+        properties: {
+          reason: { type: SchemaType.STRING, description: "What they want to talk to Shashank about, in one line (or 'not said yet')" }
+        },
+        required: ["reason"]
+      }
+    },
+    {
       name: "verify_payment",
-      description: "Check with Razorpay whether the customer has paid. Call it ONLY when the customer clearly says they have paid (e.g. 'I have paid', 'payment done', 'payment kar diya'), or replies a bare 'done'/'paid' right after your last message sent them a payment link. Never call it for questions like 'done?', for 'ok', or when your last message was about something else.",
+      description: "Check with Razorpay whether the customer has paid. Call it ONLY when the customer clearly says they have paid (e.g. 'I have paid', 'payment done', 'payment kar diya', 'UPI se kar diya'), sends a payment screenshot, or replies a bare 'done'/'paid' right after your last message sent them a payment link. Never call it for questions like 'done?', for 'ok', or when your last message was about something else.",
       parameters: {
         type: SchemaType.OBJECT,
         properties: {},
@@ -447,7 +466,7 @@ GATE 1 — NEED (clarity only):
 - If what they want is something we cannot honestly give (a guaranteed outcome, a medical, legal or financial decision, harming or controlling someone else), gently re-align their expectation to what a consultation actually gives (clarity, timing, direction, remedies). If they still want a guarantee, do not pitch: kindly say this may not be the right fit right now.
 GATE 2 — DECISION AND TIMELINE:
 - Find out if anyone else is part of this decision (spouse, parents, business partner). For marriage and family matters, suggest that the person who decides joins the session or is in the loop; never push them to hide it from family.
-- Find out WHEN they want clarity. Someone who wants it this week is a "now" person: keep moving towards a slot. Someone who has a real reason to wait (exams, travel, a date already fixed) is a "later" person: stay warm, do not chase, and tell them they can message here whenever they are ready.
+- Find out WHEN they want clarity. Someone who wants it this week is a "now" person: keep moving towards the booking (a slot for a live session, the order for a report). Someone who has a real reason to wait (exams, travel, a date already fixed) is a "later" person: stay warm, do not chase, and tell them they can message here whenever they are ready.
 - If "baad mein" has no real reason, you may ask once, gently: "Bilkul. Bas ek cheez — tab tak kya badlega jo abhi nahi ho sakta?" Accept whatever they answer. Never ask twice.
 GATE 3 — BUDGET AND FIT:
 - If they ask the price at any point, ALWAYS tell them the exact published price straight away, warmly, then continue with your next question. Never dodge or delay a direct price question.
@@ -464,7 +483,7 @@ STAGE 4 — THE PITCH (only after the gates; keep it short, spread over a few me
 - Then stop and let them respond. Do not keep talking or adding more. Their next message is usually a buying question ("kab ho sakta hai?", "kaise book karein?").
 
 STAGE 5 — ASKING FOR THE BOOKING:
-- If they ask a buying question, move straight to the slot and the details (see DRIP-FEED and TIME SLOT below).
+- If they ask a buying question, move straight to the details (see DRIP-FEED below), plus the slot for a LIVE SESSION only (see TIME SLOT below). A DELIVERED REPORT never needs a slot.
 - If they go quiet or seem unsure after the pitch, ask the 1-to-10 question (once): "Ek honest question — 1 se 10 mein, 10 matlab 'abhi book karna hai' aur 1 matlab 'bilkul interest nahi', aap kahan ho?"
   - Then ask what they LIKE about it (why not lower), so they say the value in their own words.
   - Then ask: "10 banne ke liye kya chahiye?" If it is something small (a different time, the other service, a family member joining), solve it and book. If it is something big, go back to Gate 1 and understand it again; do not push.
@@ -486,11 +505,21 @@ THE DRIP-FEED (CRITICAL):
 - First, just ask: "Great! First, I'll need just your full Name and Date of Birth to check."
 - Wait for them to answer. 
 - Do not create a reading from a birth date alone. If an actual chart or image is unclear, say so and request the needed birth details or human review.
-- Then ask only for what the chosen service needs, exactly as listed under "Details needed" for that service in the services data, one or two details per message, plus their Email ID (for the receipt and Meet link). Numerology, name correction and number services need ONLY name and date of birth: never ask their time or place of birth. Time of birth, place of birth and gender are only for astrology/kundli services. Palmistry needs clear photos of both palms.
+- Then ask only for what the chosen service needs, exactly as listed under "Details needed" for that service in the services data, one or two details per message, plus their Email ID (for the receipt, and the Meet link for a live session). Numerology, name correction and number services need ONLY name and date of birth: never ask their time or place of birth. Time of birth, place of birth and gender are only for astrology/kundli services. Palmistry needs clear photos of both palms.
 
 IF THEY SEND AN IMAGE:
 - If they send a kundli, birth chart, horoscope, or palm photo: describe only visible, legible information and distinguish observation from interpretation. Never invent placements or claim certainty.
 - **THE SANDWICH TEST (CRITICAL):** If they send an image of something completely irrelevant (e.g., a sandwich, food, toilet paper, a meme, a random object), DO NOT analyze it astrologically. Politely tell them: "I'm sorry, I can only read Kundlis, birth charts, or palms. I cannot perform a reading on this image."
+
+BOOKING A REPORT (Format: DELIVERED REPORT, e.g. Personal Year Forecast, Name Numerology Report, Mobile Number Analysis):
+- A report has NO time slot, NO session and NO Meet link. Never ask "kab ka time", never offer timings, never mention the booking window for a report.
+- Steps: (1) confirm which report (exact name from the services data) and its price; (2) collect only what that report's "Details needed" lists, one or two per message; (3) email ID; (4) billing address; (5) call 'create_booking_payment' with preferred_time_slot EMPTY. The server sends the invoice with the Razorpay link and the UPI ID.
+- After payment the server confirms in the chat and the team prepares the report and sends it here and by email. Do not promise a delivery time beyond what the services data states.
+- If they cannot decide between a report and a live consultation, recommend one based on their need (a report for a written analysis, a live session for discussing questions).
+
+BILLING DETAILS AND CORRECTIONS:
+- The invoice shows the WhatsApp number they are chatting from. If they want a different phone number on the invoice, pass it as billing_phone (never change their WhatsApp number).
+- If, after the invoice was sent, they ask to change the phone number, name, email or address on it: confirm the corrected detail in one short line and call 'create_booking_payment' again with ALL the same details plus the correction (same service, and for a live session the same agreed slot). The new invoice and link replace the old one automatically. Do not ask everything again.
 
 NEGOTIATE THE TIME SLOT & SCARCITY (LIVE SESSIONS ONLY; CRITICAL FOR TRUST):
 - Time slots are ONLY for services whose Format is LIVE SESSION. For a DELIVERED REPORT never ask for, offer or mention a time slot: once the details are in, create the payment link.
@@ -519,7 +548,8 @@ NEVER INVENT ACTIONS OR DELIVERY STATUS (CRITICAL):
 FAKE PAYMENT VERIFICATION (CRITICAL SECURITY):
 - If the user clearly says they have paid ("I have paid", "Payment done", "payment kar diya"), or answers a bare "done"/"paid" right after YOUR LAST MESSAGE sent them the payment link, IMMEDIATELY call the 'verify_payment' tool to check their payment status.
 - Never bring up payment on your own. If no payment link was sent in your last message and the person does not mention paying, the message is about something else.
-- If the tool says the payment is NOT paid, reply politely: "Thank you! The bank gateway sometimes takes a few moments. It hasn't reflected on my end yet, but as soon as it clears, I will instantly send your payment receipt and Meet details right here!"
+- If they send a payment screenshot (UPI or Razorpay), call 'verify_payment' too. A UPI payment is confirmed by the team after checking it; the tool's reply tells you what to say.
+- If the tool says the payment is NOT paid, reply politely in the spirit of the tool's reply. Never claim it is paid.
 - NEVER manually say the payment is complete unless the 'verify_payment' tool explicitly confirms it is 'paid'.
 
 IF THEY HESITATE OR OBJECT ("too expensive", "sochna padega", "baad mein"):
@@ -528,7 +558,11 @@ IF THEY HESITATE OR OBJECT ("too expensive", "sochna padega", "baad mein"):
 - Price: remind them, in one line, of the value tied to their own problem, and if it is truly unaffordable, offer the lower-priced listed option. Never argue, never pressure, never offer a discount on your own.
 - If the objection shows the need was never clear, go back to Gate 1. If they still say no, respect it warmly and tell them they can message here anytime.
 
-IF THEY'RE EXTREMELY ANGRY OR ABUSIVE, INSIST ON SPEAKING TO THE OWNER, OR MENTION SELF-HARM:
+IF THEY WANT TO TALK TO SHASHANK / THE OWNER / THE ASTROLOGER:
+- Call 'note_owner_request' (never 'request_human_handoff' for this). Then keep the chat alive yourself: "Shashank ji abhi consultations mein hain; jaise hi free honge, woh aapse connect karenge. Tab tak aap mujhe apni baat bata dijiye, main yahin aapki help karti hoon." Then ask one gentle question about their concern and continue normally.
+- Never promise a time for his call or reply, never say he is "available now", and do not keep repeating that he will call. Many people ask this only to check whether a real person is behind the chat: just keep helping them warmly.
+
+IF THEY'RE EXTREMELY ANGRY OR ABUSIVE, OR MENTION SELF-HARM:
 - Call 'request_human_handoff'. For ordinary sadness, worry or frustration, do NOT hand off: listen and comfort them yourself.
 - If they talk about ending their life or hurting themselves, do not sell anything. Reply with deep care, tell them they are not alone, and gently share Tele-MANAS: 14416 (free, 24x7, India) and ask them to reach someone they trust right now.
 
@@ -595,6 +629,24 @@ function findPublishedService(requestedName) {
     }
   }
   throw customerFixable('That service name does not match the website list. Offer the closest services from the LIVE SERVICES DATA by their exact names and ask which one they want.');
+}
+
+// The phone number printed on the invoice: their WhatsApp number unless they asked for another one.
+function billingPhoneFor(requested, whatsappPhone) {
+  const raw = String(requested || '').trim();
+  if (!raw) return whatsappPhone;
+  let digits = raw.replace(/\D/g, '');
+  if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1);
+  if (digits.length === 10) digits = '91' + digits;
+  if (digits.length < 11 || digits.length > 15) {
+    throw customerFixable('The billing phone number they gave does not look complete. Ask them to send the full 10-digit mobile number.');
+  }
+  return digits;
+}
+// ₹499 / ₹2,249 / ₹449.10 the way people write it.
+function rupeesText(amount) {
+  const n = Number(amount);
+  return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 });
 }
 
 // A live session (video call) needs a time slot; everything else (PDF reports, recorded voice answers) is
@@ -829,6 +881,7 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
     // Never carry birth time/place into a service that does not use them (e.g. numerology).
     if (!publishedService.needs.fields.includes('tob')) { args = { ...args, tob: '', pob: '' }; }
     const live = publishedService.live;
+    const billingPhone = billingPhoneFor(args.billing_phone, phone);
     if (live && !String(args.preferred_time_slot || '').trim()) {
       throw customerFixable(`${publishedService.t} is a live session: agree an exact time slot with the customer first.`);
     }
@@ -920,12 +973,13 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
       issueDate,
       customerName: args.customer_name,
       email: args.email,
-      phone: phone,
+      phone: billingPhone,
       billingAddress: args.billing_address,
       customerGstin: args.customer_gstin || '',
       serviceName: publishedService.t,
       appointmentDate,
       delivered: !live,
+      upiId: live || GATEWAY_TEST ? '' : UPI_ID,
       normalRate: publishedService.listPrice,
       websiteDiscount: publishedService.websiteDiscount,
       additionalDiscount,
@@ -962,6 +1016,8 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
         Math.round(publishedService.websiteDiscount * 100), Math.round(additionalDiscount * 100),
         Math.round(serviceTotal * 100), invoiceNumber, live ? 'live' : 'delivered']
     );
+    if (billingPhone !== phone) await pool.query('UPDATE wa_payment_links SET billing_phone=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, billingPhone])
+      .catch(e => console.error('Saving the billing phone failed:', e.message));
     if (live) await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, calendarHold.meetLink || null])
       .catch(e => console.error('Saving the Meet link failed:', e.message));
     const mediaId = await uploadWhatsAppMedia(invoiceBuffer, invoiceName, 'application/pdf');
@@ -970,7 +1026,11 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
       ? `Thank you, ${args.customer_name}. Your payment request for ${publishedService.t} is attached.${live ? ` Appointment requested: ${appointmentDate}.` : ''}\n\nThis link is a ₹1 live gateway test only. It does not pay for or confirm your order. Total after the published and approved discounts: ₹${serviceTotal.toFixed(2)}.\n\nPay securely here: ${link}\n\nAs soon as you pay, your confirmation and receipt will come here automatically. No screenshot needed.`
       : live
         ? `Thank you, ${args.customer_name}. Your invoice for ${publishedService.t} is attached.\nAppointment: ${appointmentDate}\nAmount: ₹${finalAmount.toFixed(2)}\n\nPay securely here: ${link}\n\nAs soon as you pay, your confirmation, Google Meet link and receipt will come here automatically. No screenshot needed.`
-        : `Thank you, ${args.customer_name}. Your invoice for ${publishedService.t} is attached.\nAmount: ₹${finalAmount.toFixed(2)}\n\nPay securely here: ${link}\n\nAs soon as you pay, your receipt and confirmation will come here automatically, and your report will be prepared and sent to you. No screenshot needed.`;
+        // Reports: the owner's own wording, with the UPI ID beside the Razorpay link.
+        : `Please find your invoice attached above for the ${publishedService.t} (${rupeesText(finalAmount)}).\n`
+          + `You can complete the payment here:\nUPI ID: ${UPI_ID}\n(or) Payment link: ${link}\n\n`
+          + `Once done, your receipt and confirmation will come here automatically, and your report will be sent to you.\n`
+          + `If you pay by UPI, please send the payment screenshot here.`;
     const delivery = await deliver({ mediaId, invoiceName, caption, link, customerName: args.customer_name, serviceName: publishedService.t, appointmentDate, slot });
     const refId = createdPaymentLink.id;
     delivered = { delivery, link, paymentLinkId: refId, serviceName: publishedService.t, appointmentDate, serviceTotal };
@@ -982,7 +1042,7 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
       target: 'payment_request', payment_link_id: createdPaymentLink.id,
       invoice_number: invoiceNumber, invoiceNumber,
       name: args.customer_name, phone: phone, email: args.email,
-      billingAddress: args.billing_address, customerGstin: args.customer_gstin || '',
+      billingAddress: args.billing_address, customerGstin: args.customer_gstin || '', billingPhone,
       gender: args.gender || '', dob: args.dob || '', birthTime: args.tob || '', birthPlace: args.pob || '',
       service: publishedService.t, sessionDate: live ? slot.start.toISOString() : '',
       normalRate: publishedService.listPrice, websiteDiscount: publishedService.websiteDiscount,
@@ -1177,7 +1237,7 @@ async function findActivePaymentLinkId(phone, inboundText = '') {
 
 // One answer for "I have paid": check Razorpay, fulfil if paid, and say the right thing, including
 // when the payment was already confirmed earlier (no false "no link found" alerts to the owner).
-async function checkPaymentForCustomer(from, claimText) {
+async function checkPaymentForCustomer(from, claimText, { screenshot = false } = {}) {
   const recentlyConfirmed = async () => {
     if (!pool) return null;
     const res = await pool.query(`SELECT l.appointment_start FROM wa_payment_links l
@@ -1200,6 +1260,22 @@ async function checkPaymentForCustomer(from, claimText) {
   try {
     const verification = await fetchAndFulfillVerifiedPayment(plId);
     if (!verification.paid) {
+      // Reports can also be paid to the UPI ID on the invoice. That cannot be checked here: the owner checks the UPI app
+      // and confirms with /paid (told once per invoice), and the customer is told exactly that.
+      const linkRow = pool ? (await pool.query(`SELECT delivery_kind, amount_paise, service_name, request_invoice_number, upi_claimed_at
+        FROM wa_payment_links WHERE payment_link_id=$1`, [plId]).catch(() => ({ rows: [] }))).rows[0] : null;
+      if (linkRow?.delivery_kind === 'delivered' && !GATEWAY_TEST) {
+        const saysUpi = screenshot || /\b(?:upi|gpay|g pay|google ?pay|phone ?pe|paytm|bhim|screenshot|ss)\b/i.test(String(claimText || ''));
+        if (!saysUpi) {
+          return { status: 'unpaid', reply: "Maine abhi check kiya, Razorpay link par payment abhi reflect nahi hua hai. Agar aapne UPI ID par pay kiya hai, toh bas payment ka screenshot yahin bhej dijiye; team verify karke confirm kar degi." };
+        }
+        const firstClaim = (await pool.query(`UPDATE wa_payment_links SET upi_claimed_at=NOW() WHERE payment_link_id=$1 AND upi_claimed_at IS NULL RETURNING payment_link_id`, [plId])
+          .catch(() => ({ rows: [] }))).rows.length > 0;
+        if (firstClaim) {
+          await notifyOwner(`💳 UPI payment to check: +${from} says they paid ${rupeesText(Number(linkRow.amount_paise) / 100)} by UPI for ${linkRow.service_name} (invoice ${linkRow.request_invoice_number}).${screenshot ? ' They sent a screenshot in the chat.' : ''}\nCheck your UPI app (${UPI_ID}). If the money has come, reply:\n/paid ${from}\nThat sends their receipt and confirmation and closes the Razorpay link.`, 'UPI payment to check').catch(() => {});
+        }
+        return { status: 'upi_pending', reply: "Thank you ji! Aapka UPI payment team verify kar rahi hai. Confirm hote hi aapki receipt aur confirmation yahin aa jayegi, aur phir aapki report taiyaar karke bheji jayegi." };
+      }
       return { status: 'unpaid', reply: "Maine abhi check kiya, payment abhi reflect nahi hua hai. Kabhi kabhi bank gateway thoda time leta hai. Razorpay confirm karte hi receipt aur confirmation yahin apne aap aa jayenge." };
     }
     if (!verification.fulfilled) {
@@ -1226,22 +1302,57 @@ async function fetchAndFulfillVerifiedPayment(paymentLinkId) {
   return { ...result, fulfilled };
 }
 
+// Runs a paid link through the normal webhook path (same checks, same once-only fulfilment), and waits for it.
+async function postInternalPaidEvent(link, payment) {
+  const PORT = process.env.PORT || 3000;
+  const bodyString = JSON.stringify({ event: 'payment_link.paid', payload: { payment_link: { entity: link }, payment: { entity: payment } } });
+  const signature = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(bodyString).digest('hex');
+  await axios.post(`http://127.0.0.1:${PORT}/razorpay-webhook`, bodyString, {
+    headers: { 'Content-Type': 'application/json', 'x-razorpay-signature': signature, 'x-kamala-internal': '1' }, timeout: 300000
+  });
+}
+
 async function verifyAndFulfillPaymentLinkViaWebhook(paymentLinkId) {
   return verifyAndFulfillPaymentLink(razorpayClient, paymentLinkId, async paidLink => {
-    const PORT = process.env.PORT || 3000;
-    const payloadData = {
-      event: 'payment_link.paid',
-      payload: {
-        payment_link: { entity: paidLink },
-        payment: { entity: { id: paidLink.payments?.[0]?.payment_id, amount_paid: paidLink.amount_paid } }
-      }
-    };
-    const bodyString = JSON.stringify(payloadData);
-    const signature = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(bodyString).digest('hex');
-    await axios.post(`http://127.0.0.1:${PORT}/razorpay-webhook`, bodyString, {
-      headers: { 'Content-Type': 'application/json', 'x-razorpay-signature': signature, 'x-kamala-internal': '1' }, timeout: 300000
-    });
+    await postInternalPaidEvent(paidLink, { id: paidLink.payments?.[0]?.payment_id, amount_paid: paidLink.amount_paid });
   });
+}
+
+// "/paid <number>": the owner saw a report's UPI payment in the UPI app. Closes the Razorpay link (so it cannot be
+// paid twice) and sends the same receipt and confirmation as an online payment. Reports only: a live consultation's
+// booking record needs Razorpay's own payment.
+async function confirmUpiPayment(phone) {
+  if (!pool || !razorpayClient || !RAZORPAY_WEBHOOK_SECRET) return 'Payments are not set up on this server.';
+  const row = (await pool.query(`SELECT payment_link_id, delivery_kind, amount_paise, service_name, request_invoice_number
+    FROM wa_payment_links WHERE phone=$1 AND status IN ('request_created','expired') AND created_at > NOW() - INTERVAL '7 days'
+    ORDER BY created_at DESC LIMIT 1`, [phone])).rows[0];
+  if (!row) return `No unpaid invoice from the last 7 days was found for +${phone}.`;
+  if (row.delivery_kind !== 'delivered') {
+    return `Invoice ${row.request_invoice_number} for +${phone} is a live consultation (${row.service_name}). UPI confirmation works for reports only: consultations are confirmed when paid on the Razorpay link.`;
+  }
+  const link = await razorpayClient.paymentLink.fetch(row.payment_link_id);
+  if (String(link.status) === 'paid') {
+    await fetchAndFulfillVerifiedPayment(row.payment_link_id);
+    return `Invoice ${row.request_invoice_number} was already paid online through Razorpay; the confirmation goes out automatically.`;
+  }
+  if (String(link.status) === 'created') {
+    try {
+      await razorpayClient.paymentLink.cancel(row.payment_link_id);
+    } catch (e) {
+      const now = await razorpayClient.paymentLink.fetch(row.payment_link_id).catch(() => null);
+      if (now?.status === 'paid') {
+        await fetchAndFulfillVerifiedPayment(row.payment_link_id);
+        return `Invoice ${row.request_invoice_number} was just paid online through Razorpay; the confirmation goes out automatically.`;
+      }
+      if (now?.status !== 'cancelled') return `Could not close the Razorpay link for invoice ${row.request_invoice_number}, so nothing was confirmed (to avoid a double payment). Please try /paid ${phone} again in a minute.`;
+    }
+  }
+  await pool.query("UPDATE wa_payment_links SET paid_by='upi_manual' WHERE payment_link_id=$1", [row.payment_link_id]);
+  await postInternalPaidEvent(link, { id: `UPI-${Date.now()}`, amount_paid: Number(row.amount_paise) });
+  const done = (await pool.query('SELECT status FROM wa_payment_fulfillments WHERE payment_link_id=$1', [row.payment_link_id])).rows[0]?.status;
+  return done === 'fulfilled'
+    ? `✅ UPI payment confirmed for +${phone}: ${row.service_name}, invoice ${row.request_invoice_number} (${rupeesText(Number(row.amount_paise) / 100)}). Their receipt and confirmation have been sent.`
+    : `UPI payment recorded for +${phone} (invoice ${row.request_invoice_number}); the confirmation is still being sent (status: ${done || 'pending'}). It retries on its own.`;
 }
 
 // Fetch live services from website
@@ -1308,6 +1419,24 @@ async function uploadWhatsAppMedia(buffer, filename, mimeType) {
   }
 }
 
+// Messages that only another chatbot sends ("Apologies, we are unable to understand your response").
+const AUTO_REPLY_RE = /unable to understand your (?:response|reply|message|input)|this is an? (?:automated|auto-?generated) (?:reply|response|message)|\bauto-?reply\b|please do not reply to this|you will no longer receive (?:order|these|any|our)|please (?:select|choose) (?:a |an )?valid option|invalid (?:option|selection|choice)\b|reply with (?:a )?valid (?:number|option)/i;
+const recentInbound = new Map();
+const automatedAlerted = new Map();
+function looksAutomated(phone, text) {
+  const t = String(text || '').trim();
+  if (!t) return false;
+  if (AUTO_REPLY_RE.test(t)) return true;
+  // The same longer message three times in 15 minutes is a machine (a person repeats short things like "hi?").
+  if (t.length < 25) return false;
+  const now = Date.now();
+  const key = t.toLowerCase().replace(/\s+/g, ' ');
+  const list = (recentInbound.get(phone) || []).filter(e => now - e.at < 15 * 60 * 1000);
+  list.push({ key, at: now });
+  recentInbound.set(phone, list.slice(-20));
+  return list.filter(e => e.key === key).length >= 3;
+}
+
 function normalizeWhatsAppNumber(value) {
   let number = String(value || '').replace(/\D/g, '');
   if (number.length === 10) number = `91${number}`;
@@ -1361,7 +1490,7 @@ async function fulfilPaidLink(event) {
   const price = Number(notes.price);
   const payment = event.payload?.payment?.entity;
   const storedLinkRow = (await pool.query(`SELECT amount_paise,phone,calendar_event_id,service_name,meet_link,
-    request_invoice_number,appointment_start,email,delivery_kind FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id])).rows[0] || null;
+    request_invoice_number,appointment_start,email,delivery_kind,billing_phone FROM wa_payment_links WHERE payment_link_id=$1`, [pl.id])).rows[0] || null;
   // A report (or recorded answer) is prepared and delivered: no slot, calendar, Meet link or voice note.
   const delivered = storedLinkRow?.delivery_kind === 'delivered';
   // Each step below runs once per payment, even if Razorpay retries after a partial failure.
@@ -1436,7 +1565,7 @@ async function fulfilPaidLink(event) {
       invoiceNumber,
       customerName: customerName,
       email: notes.email || '',
-      phone: phone,
+      phone: storedLinkRow?.billing_phone || phone,
       serviceName: serviceName,
       amountPaid: price,
       basePrice: Number(notes.service_total || notes.list_price || price),
@@ -1904,6 +2033,18 @@ async function handleInboundMessage(msg) {
       }
     }
 
+    // Another business's chatbot (its auto-replies, or the same long message over and over): never answer it, or the
+    // two bots talk to each other forever and burn Gemini credit. The owner hears once per number per day.
+    if (from !== normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || '') && looksAutomated(from, inboundText)) {
+      console.log(`🤖 Automated message from ${from} not answered: "${inboundText.slice(0, 60)}"`);
+      const day = new Date().toISOString().slice(0, 10);
+      if (automatedAlerted.get(from) !== day) {
+        automatedAlerted.set(from, day);
+        notifyOwner(`🤖 +${from} looks like another business's auto-reply bot ("${inboundText.slice(0, 120)}"). Kamala has stopped answering its automatic messages so the two bots do not loop.`, 'Automated sender ignored').catch(() => {});
+      }
+      return;
+    }
+
     // Bring back the saved conversation after a restart (Render sleeps when idle), before anything reads it.
     let lastTurnAt = 'ongoing';
     if (!sessions[from] || sessions[from].length === 0) {
@@ -2037,6 +2178,22 @@ async function handleInboundMessage(msg) {
           await sendTextMessage(from, `Chat history and saved details cleared for +${target}.`);
           return;
         }
+      }
+
+      if (lowerCmd.startsWith('/pause')) {
+        // The owner takes over a chat himself; Kamala passes their messages to him until /unpause.
+        if (!isOwner) return await sendTextMessage(from, 'That command is available to the business owner only.');
+        if (target === from) return await sendTextMessage(from, 'Use: /pause 9198XXXXXXXX');
+        if (pool) await pool.query(`INSERT INTO users (phone, is_paused, pause_reason) VALUES ($1, true, 'owner')
+          ON CONFLICT (phone) DO UPDATE SET is_paused=true, pause_reason='owner'`, [target]);
+        return await sendTextMessage(from, `Kamala has stopped replying to +${target}; their messages will come to you. Send /unpause ${target} to hand them back.`);
+      }
+
+      if (lowerCmd.startsWith('/paid')) {
+        if (!isOwner) return await sendTextMessage(from, 'That command is available to the business owner only.');
+        if (target === from) return await sendTextMessage(from, 'Use: /paid 9198XXXXXXXX (only after you see their UPI payment in your UPI app)');
+        const result = await confirmUpiPayment(target).catch(e => `Could not confirm the UPI payment for +${target}: ${e.message || e.error?.description}`);
+        return await sendTextMessage(from, result);
       }
 
       if (lowerCmd === '/stats') {
@@ -2425,9 +2582,29 @@ ${numerologyLeads.promptContext(webReading, from, { firstChat: lastTurnAt === nu
           await sendCustomerText(from, text || fallbackText);
         };
 
+        // Someone who only wants to talk to Shashank is not handed off: Kamala keeps chatting and he gets one calm note.
+        // (Also when Gemini picks the handoff tool for it, unless it is a crisis, anger or a payment/delivery problem.)
+        const handoffReason = String(args.reason || '');
+        const isCrisis = /suicid|self.?harm|kill (?:my|him|her)self|end (?:my|this|his|her) life|jeena nahi|marna chaht|mar jaun|khud ko (?:khatam|maar|nuksan)/i.test(`${handoffReason} ${inboundText}`);
+        const ownerRequest = call.name === 'note_owner_request'
+          || (call.name === 'request_human_handoff' && !isCrisis
+            && /owner|shashank|astrologer|talk|speak|baat|call|human|insaan|real person|personally/i.test(handoffReason)
+            && !/angry|abus|gaali|threat|fraud|scam|cheat|refund|complain|not (?:received|arrived)|nahi (?:mila|aaya)|did not (?:receive|get)/i.test(`${handoffReason} ${inboundText}`));
+        if (ownerRequest) {
+          const firstAsk = pool ? (await pool.query(`UPDATE users SET owner_request_at=NOW() WHERE phone=$1
+            AND (owner_request_at IS NULL OR owner_request_at < NOW() - INTERVAL '12 hours') RETURNING phone`, [from])
+            .catch(() => ({ rows: [] }))).rows.length > 0 : true;
+          if (firstAsk) {
+            await notifyOwner(`📝 +${from}${dbUser.name ? ` (${dbUser.name})` : ''} would like to talk to you personally. No rush: Kamala is still chatting with them.\nAbout: ${handoffReason || 'not said yet'}\nTheir message: ${String(inboundText || '').slice(0, 300)}\n\nTo take over the chat yourself: /pause ${from}`, 'Customer would like to talk to you').catch(() => {});
+          }
+          respond({ status: 'owner_informed', note: 'Shashank has been told quietly. You keep helping them: do NOT hand off, do NOT promise a call or a time. Tell them warmly that Shashank ji will connect with them when he is free from his consultations, invite them to share their concern with you meanwhile, and ask one gentle question about it.' });
+          await followUp('Shashank ji abhi consultations mein hain; jaise hi free honge, woh aapse connect karenge. Tab tak aap mujhe apni baat bata dijiye, main yahin aapki help karti hoon. Aap kis baare mein baat karna chahte the?');
+          return;
+        }
+
         if (call.name === "request_human_handoff") {
-          const reason = String(args.reason || '');
-          const crisis = /suicid|self.?harm|kill (?:my|him|her)self|end (?:my|this|his|her) life|jeena nahi|marna chaht|mar jaun|khud ko (?:khatam|maar|nuksan)/i.test(`${reason} ${inboundText}`);
+          const reason = handoffReason;
+          const crisis = isCrisis;
           const modelText = responseMessage.parts.filter(part => typeof part.text === 'string' && !part.thought).map(part => part.text).join(' ').trim();
           respond({ status: "paused_by_human_handoff" });
           await upsertUser(from, dbUser.is_customer, true); // Pause AI replies for this person
@@ -2496,7 +2673,7 @@ ${numerologyLeads.promptContext(webReading, from, { firstChat: lastTurnAt === nu
             await followUp("Sorry ji, main theek se samjhi nahi. Aap kis baare mein pooch rahe the?");
             return;
           }
-          const check = await checkPaymentForCustomer(from, claimText);
+          const check = await checkPaymentForCustomer(from, claimText, { screenshot: msg.type === 'image' || msg.type === 'document' });
           respond({ status: check.status });
           if (check.reply) await sendCustomerText(from, check.reply);
           else sessions[from].push({ role: 'model', parts: [{ text: 'Payment verify ho gaya; receipt aur confirmation bhej diye gaye.' }] });
