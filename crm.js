@@ -77,6 +77,7 @@ async function migrate(pool) {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
     CREATE INDEX IF NOT EXISTS wa_messages_phone_idx ON wa_messages (phone, id DESC);
+    ALTER TABLE wa_messages ADD COLUMN IF NOT EXISTS sender TEXT;
     CREATE TABLE IF NOT EXISTS wa_meta (key TEXT PRIMARY KEY, value TEXT);
   `);
 }
@@ -88,11 +89,19 @@ async function recordInbound(pool, phone) {
   await pool.query('UPDATE users SET last_inbound_at=NOW() WHERE phone=$1', [phone]);
 }
 
-async function saveTurn(pool, phone, role, text) {
+// Called after every saved message (the owner dashboard streams them live). Set by index.js.
+const hooks = { onSaved: null };
+async function saveTurn(pool, phone, role, text, sender = null) {
   const clean = String(text || '').trim();
   if (!pool || !phone || !clean) return;
-  await pool.query('INSERT INTO wa_messages (phone, role, text) VALUES ($1,$2,$3)',
-    [String(phone), role === 'user' ? 'user' : 'model', clean.slice(0, 4000)]);
+  const r = await pool.query('INSERT INTO wa_messages (phone, role, text, sender) VALUES ($1,$2,$3,$4) RETURNING id, created_at',
+    [String(phone), role === 'user' ? 'user' : 'model', clean.slice(0, 4000), sender]);
+  if (hooks.onSaved && r.rows[0]) {
+    try {
+      hooks.onSaved({ id: r.rows[0].id, phone: String(phone), role: role === 'user' ? 'user' : 'model',
+        sender: sender || (role === 'user' ? 'customer' : 'kamala'), text: clean.slice(0, 4000), created_at: r.rows[0].created_at });
+    } catch (e) { /* a dashboard problem never breaks the chat */ }
+  }
 }
 
 // Removes copy-paste repetition from a reply: the whole message repeated back to back
@@ -581,6 +590,7 @@ async function runDueJobs(deps) {
 }
 
 module.exports = {
+  hooks,
   PAID_STATUSES,
   isInvoiceNumber,
   invoicePrefix,
