@@ -3540,6 +3540,9 @@ dashboard.mount(app, {
   sheetSyncStatus
 });
 
+// The dashboard page itself (the same files can also be hosted on Cloudflare Pages).
+app.use('/dashboard', express.static(path.join(__dirname, 'dashboard-ui'), { index: 'index.html', fallthrough: true }));
+
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Render stops the old server on every deploy and restart (SIGTERM, then a hard kill about 30 seconds later).
