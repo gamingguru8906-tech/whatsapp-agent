@@ -24,6 +24,7 @@ const FormData = require('form-data');
 const { generateInvoice, generatePaymentRequestInvoice } = require('./invoice-generator');
 const { isPaymentClaim, secretsMatch, verifyCapturedPayment, verifyAndFulfillPaymentLink } = require('./payment-verification');
 const crm = require('./crm');
+const dashboard = require('./dashboard');
 const voiceNote = require('./voice-note');
 const voiceAgent = require('./voice-agent');
 const growth = require('./growth');
@@ -231,6 +232,7 @@ const dbReady = pool ? (async () => {
       await voiceAgent.migrate(pool);
       await growth.migrate(pool);
       await numerologyLeads.migrate(pool);
+      await dashboard.migrate(pool);
       dbIsReady = true;
       console.log('✅ PostgreSQL connected & table ready.');
       return true;
@@ -1016,6 +1018,10 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
         Math.round(publishedService.websiteDiscount * 100), Math.round(additionalDiscount * 100),
         Math.round(serviceTotal * 100), invoiceNumber, live ? 'live' : 'delivered']
     );
+    await pool.query('UPDATE wa_payment_links SET payment_url=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, link])
+      .catch(e => console.error('Saving the payment URL failed:', e.message));
+    dashboard.events.emit('event', { type: 'invoice', phone, invoice_number: invoiceNumber, service: publishedService.t,
+      amount_paise: amountPaise, status: 'request_created', payment_link_id: createdPaymentLink.id });
     if (billingPhone !== phone) await pool.query('UPDATE wa_payment_links SET billing_phone=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, billingPhone])
       .catch(e => console.error('Saving the billing phone failed:', e.message));
     if (live) await pool.query('UPDATE wa_payment_links SET meet_link=$2 WHERE payment_link_id=$1', [createdPaymentLink.id, calendarHold.meetLink || null])
@@ -1321,11 +1327,12 @@ async function verifyAndFulfillPaymentLinkViaWebhook(paymentLinkId) {
 // "/paid <number>": the owner saw a report's UPI payment in the UPI app. Closes the Razorpay link (so it cannot be
 // paid twice) and sends the same receipt and confirmation as an online payment. Reports only: a live consultation's
 // booking record needs Razorpay's own payment.
-async function confirmUpiPayment(phone) {
+async function confirmUpiPayment(phone, paymentLinkId = null) {
   if (!pool || !razorpayClient || !RAZORPAY_WEBHOOK_SECRET) return 'Payments are not set up on this server.';
   const row = (await pool.query(`SELECT payment_link_id, delivery_kind, amount_paise, service_name, request_invoice_number
     FROM wa_payment_links WHERE phone=$1 AND status IN ('request_created','expired') AND created_at > NOW() - INTERVAL '7 days'
-    ORDER BY created_at DESC LIMIT 1`, [phone])).rows[0];
+      AND ($2::text IS NULL OR payment_link_id=$2)
+    ORDER BY created_at DESC LIMIT 1`, [phone, paymentLinkId])).rows[0];
   if (!row) return `No unpaid invoice from the last 7 days was found for +${phone}.`;
   if (row.delivery_kind !== 'delivered') {
     return `Invoice ${row.request_invoice_number} for +${phone} is a live consultation (${row.service_name}). UPI confirmation works for reports only: consultations are confirmed when paid on the Razorpay link.`;
@@ -1862,6 +1869,8 @@ app.post('/razorpay-webhook', async (req, res) => {
       // Mark it paid now, before the slow steps: reminders, check-ins and the "please pay" nudge all key off this.
       await pool.query(`UPDATE wa_payment_links SET status=$2,razorpay_payment_id=COALESCE($3,razorpay_payment_id),paid_at=COALESCE(paid_at,NOW()),updated_at=NOW()
         WHERE payment_link_id=$1`, [pl.id, notes.gateway_test === 'true' ? 'gateway_test_paid' : 'paid', payment?.id || null]);
+      dashboard.events.emit('event', { type: 'payment', phone: notes.phone, payment_link_id: pl.id, service: notes.service_name,
+        amount_paise: actualAmountPaise, status: notes.gateway_test === 'true' ? 'gateway_test_paid' : 'paid' });
       // Keep the event so a stuck or failed fulfilment can be finished later without Razorpay.
       await pool.query('UPDATE wa_payment_fulfillments SET payload=$2::jsonb WHERE payment_link_id=$1', [pl.id, JSON.stringify(event)]);
       // Answer Razorpay at once (it gives up after a few seconds) and do the slow work in the background.
@@ -2302,9 +2311,6 @@ async function handleInboundMessage(msg) {
       const check = await checkPaymentForCustomer(from, inboundText);
       if (check.reply) await sendCustomerText(from, check.reply);
       else sessions[from].push({ role: 'model', parts: [{ text: 'Payment verify ho gaya; receipt aur confirmation bhej diye gaye.' }] });
-      if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) postAppsScript({
-        target: 'chat', phone: from, sender: 'User', message: inboundText
-      }).catch(() => {});
       return;
     }
 
@@ -2318,9 +2324,6 @@ async function handleInboundMessage(msg) {
       learnProfileDetails(from, text, latestAssistantText);
       readThePerson(from);
       pushNextWake().catch(() => {});
-      if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
-        postAppsScript({ target: 'chat', phone: from, sender: 'User', message: text }).catch(e => {});
-      }
     } else if (msg.type === 'audio') {
       const mediaId = msg.audio.id;
       const mediaInfo = await downloadWhatsAppMedia(mediaId);
@@ -2690,9 +2693,6 @@ ${numerologyLeads.promptContext(webReading, from, { firstChat: lastTurnAt === nu
         const cleanText = responseText.replace(/\[SEND_MENU\]/g, '').trim();
         if (cleanText) {
           await sendCustomerText(from, cleanText);
-          if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
-            postAppsScript({ target: 'chat', phone: from, sender: 'AI', message: cleanText }).catch(e => {});
-          }
         }
         if (responseText.includes('[SEND_MENU]')) {
           await sendInteractiveMenu(from);
@@ -2991,6 +2991,10 @@ async function sendCustomerText(to, rawText) {
 
 // WhatsApp to the owner; falls back to email when WhatsApp refuses (e.g. owner's 24h window closed).
 async function notifyOwner(text, subject = 'Veshannastro alert') {
+  // Every alert is kept for the owner dashboard. Routine ones (someone wants to talk, a paused chat wrote, hot lead,
+  // auto-reply bot) stay there only, unless the owner switched the dashboard to "all alerts on WhatsApp".
+  const { sendWhatsApp } = await dashboard.recordAlert(pool, subject, text).catch(() => ({ sendWhatsApp: true }));
+  if (!sendWhatsApp) return true;
   const ok = ADMIN_PHONE_NUMBER ? await sendTextMessage(ADMIN_PHONE_NUMBER, text) : false;
   if (!ok && GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_SECRET) {
     await postAppsScript({ target: 'owner_alert', subject, message: text }, { timeoutMs: 20000, maxAttempts: 2 })
@@ -3240,8 +3244,104 @@ async function runOwnJobs() {
   }
   // These run on their own (a payment check can wait on Google and Razorpay) and never overlap themselves.
   pollUnpaidPaymentLinks().catch(e => console.error('Payment polling failed:', e.message));
+  syncSheet().catch(e => console.error('Sheet sync failed:', e.message));
   maybeSendDiscountOffers().catch(e => console.error('Discount offers failed:', e.message));
   maybeRunDailyDrip().catch(e => console.error('❌ Drip campaign error:', e.message));
+}
+
+// ---------- Google Sheet copy of every chat and person ----------
+// Every saved message (customer, Kamala, owner) goes to the "WhatsApp Chat History" tab, in order, a few per minute
+// while the server is awake; a failure simply retries next minute. Messages from before this sync started are copied
+// too, marked "Earlier message". Every person is also pushed once to "WA All Leads" and "Customer Profiles"
+// (both upsert by phone, so nothing is duplicated); new people keep arriving there live as before.
+let syncingSheet = false;
+async function syncSheet() {
+  if (!pool || !GOOGLE_APPS_SCRIPT_URL || !GOOGLE_APPS_SCRIPT_SECRET || syncingSheet) return;
+  syncingSheet = true;
+  const admin = normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || '');
+  const meta = async key => (await pool.query('SELECT value FROM wa_meta WHERE key=$1', [key])).rows[0]?.value;
+  const setMeta = (key, value) => pool.query('INSERT INTO wa_meta (key,value) VALUES ($1,$2) ON CONFLICT (key) DO UPDATE SET value=$2', [key, String(value)]);
+  try {
+    // Messages saved before the sync existed (some were already copied one by one) are marked as earlier copies.
+    let liveFrom = await meta('sheet_chat_live_from');
+    if (liveFrom === undefined) {
+      liveFrom = String((await pool.query('SELECT COALESCE(MAX(id),0) AS m FROM wa_messages')).rows[0].m);
+      await setMeta('sheet_chat_live_from', liveFrom);
+    }
+    let cursor = Number(await meta('sheet_chat_cursor') || 0);
+    const batch = (await pool.query(`SELECT id, phone, role, sender, text, created_at FROM wa_messages
+      WHERE id > $1 AND phone <> $2 ORDER BY id LIMIT 20`, [cursor, admin])).rows;
+    for (const m of batch) {
+      const who = m.sender === 'owner' ? 'Owner' : m.role === 'user' ? 'User' : 'AI';
+      await postAppsScript({ target: 'chat', phone: m.phone, sender: who, message: m.text,
+        timestamp: new Date(m.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        notes: Number(m.id) <= Number(liveFrom) ? 'Earlier message (copied from Kamala database)' : '' }, { timeoutMs: 30000, maxAttempts: 1 });
+      cursor = m.id;
+      await setMeta('sheet_chat_cursor', cursor);
+    }
+    // People: one pass over everyone (profile + lead row), resumable.
+    if ((await meta('sheet_people_done')) !== '1') {
+      const after = (await meta('sheet_people_cursor')) || '';
+      const people = (await pool.query(`SELECT * FROM users WHERE phone > $1 AND phone <> $2 ORDER BY phone LIMIT 10`, [after, admin])).rows;
+      for (const u of people) {
+        await postAppsScript(crm.profilePayload(u, { lastContact: u.last_contact ? crm.istDateTime(u.last_contact) : '' }), { timeoutMs: 30000, maxAttempts: 1 });
+        await postAppsScript({ target: 'lead_update', phone: u.phone, message_count: u.message_count || 1, is_customer: !!u.is_customer,
+          timestamp: u.last_contact ? new Date(u.last_contact).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : undefined }, { timeoutMs: 20000, maxAttempts: 1 });
+        await setMeta('sheet_people_cursor', u.phone);
+      }
+      if (people.length < 10) await setMeta('sheet_people_done', '1');
+    }
+  } finally {
+    syncingSheet = false;
+  }
+}
+
+async function sheetSyncStatus() {
+  if (!pool) return null;
+  const r = (await pool.query(`SELECT
+      (SELECT COALESCE((SELECT value FROM wa_meta WHERE key='sheet_chat_cursor'),'0'))::bigint AS chat_cursor,
+      (SELECT COUNT(*) FROM wa_messages WHERE phone <> $1)::int AS messages,
+      (SELECT COUNT(*) FROM wa_messages WHERE phone <> $1 AND id <= COALESCE((SELECT value FROM wa_meta WHERE key='sheet_chat_cursor'),'0')::bigint)::int AS messages_copied,
+      (SELECT value FROM wa_meta WHERE key='sheet_people_done') AS people_done,
+      (SELECT COUNT(*) FROM users WHERE phone <> $1)::int AS people,
+      (SELECT COUNT(*) FROM users WHERE phone <> $1 AND phone <= COALESCE((SELECT value FROM wa_meta WHERE key='sheet_people_cursor'),''))::int AS people_copied`,
+  [normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || '')])).rows[0];
+  return { messages: r.messages, messagesCopied: r.messages_copied, people: r.people,
+    peopleCopied: r.people_done === '1' ? r.people : r.people_copied, complete: r.people_done === '1' && r.messages_copied >= r.messages };
+}
+
+// The invoice or receipt PDF for one link, rebuilt from what was saved (same layout the customer received).
+async function rebuildInvoicePdf(row, kind) {
+  const timeZone = 'Asia/Kolkata';
+  const live = row.delivery_kind !== 'delivered';
+  const total = Number(row.service_total_paise ?? row.amount_paise) / 100;
+  const normal = Number(row.normal_rate_paise ?? row.service_total_paise ?? row.amount_paise) / 100;
+  const webOff = Number(row.website_discount_paise || 0) / 100;
+  const extraOff = Math.max(0, Math.round((normal - webOff - total) * 100) / 100);
+  const isTest = String(row.status || '').startsWith('gateway_test') || Number(row.amount_paise) < Number(row.service_total_paise ?? row.amount_paise);
+  const slotText = live && row.appointment_start
+    ? new Date(row.appointment_start).toLocaleString('en-IN', { timeZone, dateStyle: 'medium', timeStyle: 'short' }) + ' IST' : '';
+  if (kind === 'receipt') {
+    if (!row.paid_at) throw new Error('This invoice is not paid, so there is no receipt.');
+    const paid = new Date(row.paid_at);
+    return generateInvoice({
+      invoiceNumber: row.request_invoice_number, customerName: row.customer_name || 'Customer', email: row.email || '',
+      phone: row.billing_phone || row.phone, serviceName: row.service_name, amountPaid: Number(row.amount_paise) / 100, basePrice: total,
+      isGatewayTest: isTest, delivered: !live, appointmentDate: slotText, paymentId: row.razorpay_payment_id || '', meetLink: live ? (row.meet_link || '') : '',
+      date: live ? paid.toLocaleDateString('en-IN', { timeZone }) : paid.toLocaleString('en-IN', { timeZone, dateStyle: 'medium', timeStyle: 'short' }) + ' IST'
+    });
+  }
+  let url = row.payment_url;
+  if (!url && razorpayClient) url = (await razorpayClient.paymentLink.fetch(row.payment_link_id).catch(() => null))?.short_url;
+  const created = new Date(row.created_at);
+  return generatePaymentRequestInvoice({
+    invoiceNumber: row.request_invoice_number,
+    issueDate: live ? created.toLocaleDateString('en-IN', { timeZone, dateStyle: 'medium' }) : created.toLocaleString('en-IN', { timeZone, dateStyle: 'medium', timeStyle: 'short' }) + ' IST',
+    customerName: row.customer_name, email: row.email, phone: row.billing_phone || row.phone, billingAddress: row.billing_address,
+    customerGstin: row.customer_gstin || '', serviceName: row.service_name, appointmentDate: slotText, delivered: !live,
+    upiId: !live && !isTest ? UPI_ID : '', normalRate: normal, websiteDiscount: webOff, additionalDiscount: extraOff, serviceTotal: total,
+    linkAmount: Number(row.amount_paise) / 100, isGatewayTest: isTest, paymentUrl: url || 'https://razorpay.com/'
+  });
 }
 
 // Slots whose cancel failed earlier (Google busy) are freed here, with growing gaps; the owner hears after 6 tries.
@@ -3414,6 +3514,32 @@ async function sendCallServiceLink({ phone, serviceName }) {
 }
 
 const PORT = process.env.PORT || 3000;
+// ---------- Owner dashboard (API under /dash/api) ----------
+crm.hooks.onSaved = row => {
+  if (row.phone !== normalizeWhatsAppNumber(ADMIN_PHONE_NUMBER || '')) dashboard.events.emit('event', { type: 'message', message: row });
+};
+dashboard.mount(app, {
+  get pool() { return pool; },
+  adminPhone: ADMIN_PHONE_NUMBER,
+  normalize: normalizeWhatsAppNumber,
+  sendTextMessage,
+  saveTurn: (phone, role, text, sender) => crm.saveTurn(pool, phone, role, text, sender).then(() => {
+    // Kamala's memory of this chat includes what the owner said, so she does not contradict him later.
+    if (sessions[phone]) sessions[phone].push({ role: 'model', parts: [{ text }] });
+  }),
+  setPaused: async (phone, paused) => {
+    await pool.query(`INSERT INTO users (phone, is_paused, pause_reason) VALUES ($1, $2, $3)
+      ON CONFLICT (phone) DO UPDATE SET is_paused=$2,
+        pause_reason=CASE WHEN $2 THEN (CASE WHEN users.is_paused THEN COALESCE(users.pause_reason, $3) ELSE $3 END) ELSE NULL END,
+        crisis_reply_at=CASE WHEN $2 THEN users.crisis_reply_at ELSE NULL END`,
+    [phone, paused, paused ? 'owner' : null]);
+  },
+  notify: notifyOwner,
+  confirmUpiPayment,
+  rebuildInvoicePdf,
+  sheetSyncStatus
+});
+
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Render stops the old server on every deploy and restart (SIGTERM, then a hard kill about 30 seconds later).
