@@ -2909,7 +2909,13 @@ async function markAsRead(messageId) {
   }
 }
 
-app.get('/', (req, res) => res.send(`Veshannastro WhatsApp Booking Engine is running 🚀 (Live Sync Mode: ${liveData.length} categories loaded)`));
+app.get('/', (req, res) => {
+  // The dashboard's own domain (DASHBOARD_ORIGINS, e.g. 1980.veshannastro.co.in) opens the dashboard.
+  const dashHosts = String(process.env.DASHBOARD_ORIGINS || '').split(',')
+    .map(s => s.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '').toLowerCase()).filter(Boolean);
+  if (dashHosts.includes(String(req.hostname || '').toLowerCase())) return res.redirect(302, '/dashboard/');
+  res.send(`Veshannastro WhatsApp Booking Engine is running 🚀 (Live Sync Mode: ${liveData.length} categories loaded)`);
+});
 
 // Health Check Endpoint for Uptime Monitoring
 app.get('/health', async (req, res) => {
