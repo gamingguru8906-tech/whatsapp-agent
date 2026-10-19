@@ -48,6 +48,8 @@ async function migrate(pool) {
     CREATE INDEX IF NOT EXISTS wa_payment_links_created_idx ON wa_payment_links (created_at DESC);
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS payment_url TEXT;
     ALTER TABLE wa_payment_links ADD COLUMN IF NOT EXISTS report_delivered_at TIMESTAMPTZ;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS owner_notes TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS tags TEXT;
   `);
 }
 
@@ -191,7 +193,8 @@ function mount(app, deps) {
     json(res, 200, { ok: true });
   });
 
-  app.get('/dash/api/me', guard, async (req, res) => json(res, 200, { ok: true, owner: `+${admin}`, alertMode: await alertMode(deps.pool) }));
+  app.get('/dash/api/me', guard, async (req, res) => json(res, 200, { ok: true, owner: `+${admin}`, alertMode: await alertMode(deps.pool),
+    dailyGoalRupees: (Number(await getSetting(deps.pool, 'dash_daily_goal_paise', '0')) || 0) / 100 }));
 
   // ---------- analytics ----------
   const RANGES = { today: 1, '7d': 7, '30d': 30, '90d': 90 };
@@ -261,7 +264,9 @@ function mount(app, deps) {
       const q = String(req.query.q || '').trim().slice(0, 80);
       const params = [admin, limit, offset];
       let search = 'TRUE';
-      if (q) { params.push(`%${q.replace(/[%_\\]/g, m => '\\' + m)}%`); search = `(u.name ILIKE $4 OR u.phone LIKE $4 OR u.email ILIKE $4)`; }
+      if (q) { params.push(`%${q.replace(/[%_\\]/g, m => '\\' + m)}%`); search = `(u.name ILIKE $${params.length} OR u.phone LIKE $${params.length} OR u.email ILIKE $${params.length})`; }
+      const tag = String(req.query.tag || '').trim().toLowerCase().slice(0, 40);
+      if (tag) { params.push(tag); search += ` AND $${params.length} = ANY (string_to_array(lower(COALESCE(u.tags,'')), ','))`; }
       const rows = (await deps.pool.query(`
         WITH p AS (SELECT phone, COUNT(*)::int AS invoices,
             COUNT(*) FILTER (WHERE status='paid')::int AS paid_count,
@@ -270,7 +275,7 @@ function mount(app, deps) {
             COUNT(*) FILTER (WHERE upi_claimed_at IS NOT NULL AND status IN ('request_created','expired'))::int AS upi_pending,
             MAX(created_at) AS last_invoice_at
           FROM wa_payment_links GROUP BY phone)
-        SELECT u.phone, u.name, u.email, u.status, u.lead_stage, u.lead_score, u.is_paused, u.pause_reason,
+        SELECT u.phone, u.name, u.email, u.status, u.lead_stage, u.lead_score, u.is_paused, u.pause_reason, u.tags,
           u.first_contact, u.last_inbound_at, u.first_source, u.pain_point,
           lm.text AS last_text, lm.role AS last_role, lm.sender AS last_sender, lm.created_at AS last_at,
           COALESCE(p.invoices,0) AS invoices, COALESCE(p.paid_count,0) AS paid_count, COALESCE(p.paid_paise,0) AS paid_paise,
@@ -294,7 +299,7 @@ function mount(app, deps) {
       const phone = normalize(req.params.phone);
       const u = (await deps.pool.query(`SELECT phone, name, email, dob, tob, pob, gender, billing_address, status, lead_stage, lead_score,
           is_paused, pause_reason, first_contact, last_inbound_at, last_contact, first_source, pain_point, message_count,
-          marketing_opt_in, marketing_opt_out, (last_inbound_at > NOW() - INTERVAL '24 hours') AS window_open
+          marketing_opt_in, marketing_opt_out, owner_notes, tags, (last_inbound_at > NOW() - INTERVAL '24 hours') AS window_open
         FROM users WHERE phone=$1`, [phone])).rows[0];
       if (!u) return json(res, 404, { ok: false, error: 'No such person' });
       const invoices = (await deps.pool.query(`SELECT l.payment_link_id, l.request_invoice_number AS invoice_number, l.service_name, l.amount_paise,
@@ -365,7 +370,8 @@ function mount(app, deps) {
     closed: "l.status NOT IN ('paid','request_created') AND l.status NOT LIKE 'gateway_test%'",
     upi_to_check: "l.upi_claimed_at IS NOT NULL AND l.status IN ('request_created','expired')",
     test: "l.status LIKE 'gateway_test%'",
-    report_to_deliver: "l.status = 'paid' AND l.delivery_kind = 'delivered' AND l.report_delivered_at IS NULL"
+    report_to_deliver: "l.status = 'paid' AND l.delivery_kind = 'delivered' AND l.report_delivered_at IS NULL",
+    lost: "l.status IN ('expired','gateway_test_expired','delivery_failed','discount10_offered') OR (l.status = 'request_created' AND l.created_at < NOW() - INTERVAL '12 hours')"
   };
   app.get('/dash/api/invoices', guard, async (req, res) => {
     try {
@@ -436,6 +442,127 @@ function mount(app, deps) {
     try { json(res, 200, { ok: true, ...(await deps.sheetSyncStatus()) }); } catch (e) { json(res, 500, { ok: false, error: e.message }); }
   });
 
+  // ---------- notes and tags (owner's own, never shown to the customer) ----------
+  app.post('/dash/api/people/:phone/notes', guard, async (req, res) => {
+    try {
+      const phone = normalize(req.params.phone);
+      const notes = String(req.body?.notes ?? '').slice(0, 4000);
+      const tags = [...new Set((Array.isArray(req.body?.tags) ? req.body.tags : String(req.body?.tags || '').split(','))
+        .map(t => String(t).trim().toLowerCase().replace(/[^a-z0-9 _-]/g, '').slice(0, 30)).filter(Boolean))].slice(0, 12);
+      const r = await deps.pool.query('UPDATE users SET owner_notes=$2, tags=$3 WHERE phone=$1 RETURNING owner_notes, tags',
+        [phone, notes, tags.join(',')]);
+      if (!r.rows[0]) return json(res, 404, { ok: false, error: 'No such person' });
+      json(res, 200, { ok: true, ...r.rows[0] });
+    } catch (e) {
+      json(res, 500, { ok: false, error: e.message });
+    }
+  });
+
+  app.get('/dash/api/tags', guard, async (req, res) => {
+    try {
+      const rows = (await deps.pool.query(`SELECT t AS tag, COUNT(*)::int AS people FROM users,
+        LATERAL unnest(string_to_array(COALESCE(tags,''), ',')) t WHERE t <> '' AND phone <> $1 GROUP BY t ORDER BY 2 DESC, 1`, [admin])).rows;
+      json(res, 200, { ok: true, tags: rows });
+    } catch (e) {
+      json(res, 500, { ok: false, error: e.message });
+    }
+  });
+
+  // ---------- insights: money lost, drop-off, sources, response quality, best hours, repeat buyers,
+  // report delivery time, daily goal and the morning briefing ----------
+  app.get('/dash/api/insights', guard, async (req, res) => {
+    try {
+      const db = deps.pool;
+      const days = RANGES[req.query.range] || 30;
+      const since = (await db.query(`SELECT ((NOW() AT TIME ZONE ${IST})::date - ($1::int - 1)) AT TIME ZONE ${IST} AS s`, [days])).rows[0].s;
+      const LOST = INVOICE_FILTERS.lost;
+      // 1. Money lost: invoices that ran out or sat unpaid over 12 hours, and nobody paid later for the same service.
+      const lostRows = (await db.query(`SELECT l.payment_link_id, l.request_invoice_number AS invoice_number, l.phone,
+          COALESCE(NULLIF(l.customer_name,''), u.name) AS name, l.service_name, l.amount_paise, l.status, l.created_at,
+          (u.last_inbound_at > NOW() - INTERVAL '24 hours') AS window_open
+        FROM wa_payment_links l LEFT JOIN users u ON u.phone = l.phone
+        WHERE (${LOST}) AND l.created_at >= $1
+          AND NOT EXISTS (SELECT 1 FROM wa_payment_links p WHERE p.phone = l.phone AND p.status = 'paid'
+            AND p.service_name = l.service_name AND p.created_at >= l.created_at)
+        ORDER BY l.created_at DESC LIMIT 100`, [since])).rows;
+      const lost = { count: lostRows.length, paise: lostRows.reduce((a, r) => a + Number(r.amount_paise || 0), 0), invoices: lostRows.slice(0, 30) };
+      // 2. Where people drop off (people who chatted in the period).
+      const funnel = (await db.query(`WITH c AS (SELECT DISTINCT phone FROM wa_messages WHERE role='user' AND phone <> $2 AND created_at >= $1)
+        SELECT COUNT(*)::int AS chatted,
+          COUNT(*) FILTER (WHERE COALESCE(u.core_concern, u.problem_category, u.pain_point) IS NOT NULL)::int AS shared_problem,
+          COUNT(*) FILTER (WHERE u.asked_price_at IS NOT NULL)::int AS asked_price,
+          COUNT(*) FILTER (WHERE u.dob IS NOT NULL AND u.dob <> '')::int AS gave_details,
+          COUNT(*) FILTER (WHERE EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=c.phone))::int AS got_invoice,
+          COUNT(*) FILTER (WHERE EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=c.phone AND l.status='paid'))::int AS paid
+        FROM c JOIN users u ON u.phone = c.phone`, [since, admin])).rows[0];
+      // 3. Lead sources that bring paying people, not just chats.
+      const sources = (await db.query(`SELECT COALESCE(NULLIF(u.first_source,''),'Unknown') AS source, COUNT(*)::int AS people,
+          COUNT(*) FILTER (WHERE EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=u.phone))::int AS invoiced,
+          COUNT(*) FILTER (WHERE EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=u.phone AND l.status='paid'))::int AS paid,
+          COALESCE(SUM((SELECT SUM(l.amount_paise) FROM wa_payment_links l WHERE l.phone=u.phone AND l.status='paid')),0)::bigint AS revenue_paise
+        FROM users u WHERE u.phone <> $2 AND u.first_contact >= $1 GROUP BY 1 ORDER BY revenue_paise DESC, people DESC`, [since, admin])).rows;
+      // 4. Response quality: Kamala asked and the customer went quiet (over 24h); the customer wrote last and got no reply (over 10 min).
+      const last = (await db.query(`SELECT DISTINCT ON (m.phone) m.phone, m.role, m.text, m.created_at, u.name, u.is_paused
+        FROM wa_messages m JOIN users u ON u.phone = m.phone
+        WHERE m.phone <> $2 AND m.created_at >= $1 ORDER BY m.phone, m.id DESC`, [since, admin])).rows;
+      const now = Date.now();
+      const wentQuiet = last.filter(r => r.role === 'model' && /\?/.test(r.text) && now - new Date(r.created_at) > 86400000);
+      const unreplied = last.filter(r => r.role === 'user' && now - new Date(r.created_at) > 600000);
+      const pick = r => ({ phone: r.phone, name: r.name, text: String(r.text).slice(0, 160), at: r.created_at, paused: r.is_paused });
+      const response = { chats: last.length, went_quiet: wentQuiet.length, unreplied: unreplied.length,
+        went_quiet_list: wentQuiet.slice(0, 20).map(pick), unreplied_list: unreplied.slice(0, 20).map(pick) };
+      // 5. Best hours (IST) for customer messages and payments.
+      const hourRows = (await db.query(`SELECT 'msg' AS k, EXTRACT(HOUR FROM created_at AT TIME ZONE ${IST})::int AS h, COUNT(*)::int AS n
+          FROM wa_messages WHERE role='user' AND phone <> $2 AND created_at >= $1 GROUP BY 2
+        UNION ALL SELECT 'pay', EXTRACT(HOUR FROM paid_at AT TIME ZONE ${IST})::int, COUNT(*)::int
+          FROM wa_payment_links WHERE status='paid' AND paid_at >= $1 GROUP BY 2`, [since, admin])).rows;
+      const hours = { messages: Array(24).fill(0), payments: Array(24).fill(0) };
+      for (const r of hourRows) (r.k === 'msg' ? hours.messages : hours.payments)[r.h] = r.n;
+      // 6. Repeat customers, and report buyers who never booked a live consultation (upsell list).
+      const repeat = (await db.query(`SELECT l.phone, MAX(COALESCE(NULLIF(l.customer_name,''), u.name)) AS name, COUNT(*)::int AS purchases,
+          SUM(l.amount_paise)::bigint AS paid_paise, MAX(l.paid_at) AS last_paid_at
+        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone WHERE l.status='paid' AND l.phone <> $1
+        GROUP BY l.phone HAVING COUNT(*) >= 2 ORDER BY paid_paise DESC LIMIT 30`, [admin])).rows;
+      const reportOnly = (await db.query(`SELECT l.phone, MAX(COALESCE(NULLIF(l.customer_name,''), u.name)) AS name,
+          string_agg(DISTINCT l.service_name, ', ') AS reports, MAX(l.paid_at) AS last_paid_at,
+          BOOL_OR(u.last_inbound_at > NOW() - INTERVAL '24 hours') AS window_open
+        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
+        WHERE l.status='paid' AND l.delivery_kind='delivered' AND l.phone <> $1
+          AND NOT EXISTS (SELECT 1 FROM wa_payment_links x WHERE x.phone=l.phone AND x.status='paid' AND COALESCE(x.delivery_kind,'live') <> 'delivered')
+        GROUP BY l.phone ORDER BY MAX(l.paid_at) DESC LIMIT 30`, [admin])).rows;
+      // 7. Report delivery time.
+      const delivery = (await db.query(`SELECT
+          ROUND(AVG(EXTRACT(EPOCH FROM (report_delivered_at - paid_at)) / 3600)::numeric, 1)::float AS avg_hours,
+          COUNT(*) FILTER (WHERE report_delivered_at IS NOT NULL)::int AS delivered,
+          COUNT(*) FILTER (WHERE report_delivered_at IS NULL)::int AS pending,
+          ROUND(MAX(EXTRACT(EPOCH FROM (NOW() - paid_at)) / 3600) FILTER (WHERE report_delivered_at IS NULL)::numeric, 1)::float AS oldest_pending_hours
+        FROM wa_payment_links WHERE status='paid' AND delivery_kind='delivered' AND paid_at >= $1`, [since])).rows[0];
+      // 8. Daily goal.
+      const goalPaise = Number(await getSetting(db, 'dash_daily_goal_paise', '0')) || 0;
+      const todayPaise = Number((await db.query(`SELECT COALESCE(SUM(amount_paise),0) AS p FROM wa_payment_links
+        WHERE status='paid' AND (paid_at AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date`)).rows[0].p);
+      // 9. Morning briefing: what needs you today.
+      const consults = (await db.query(`SELECT l.phone, COALESCE(NULLIF(l.customer_name,''), u.name) AS name, l.service_name, l.appointment_start, l.meet_link
+        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
+        WHERE l.status IN ('paid','gateway_test_paid') AND (l.appointment_start AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date
+        ORDER BY l.appointment_start`)).rows;
+      const hot = (await db.query(`SELECT phone, name, lead_score, lead_stage FROM users
+        WHERE phone <> $1 AND lead_score >= 60 AND COALESCE(is_customer,false) = false AND last_inbound_at > NOW() - INTERVAL '3 days'
+        ORDER BY lead_score DESC LIMIT 10`, [admin])).rows;
+      const counts = (await db.query(`SELECT
+          (SELECT COUNT(*) FROM wa_payment_links WHERE status='paid' AND delivery_kind='delivered' AND report_delivered_at IS NULL)::int AS reports_to_deliver,
+          (SELECT COUNT(*) FROM wa_payment_links WHERE upi_claimed_at IS NOT NULL AND status IN ('request_created','expired'))::int AS upi_to_check,
+          (SELECT COUNT(*) FROM wa_payment_links WHERE (created_at AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date - 1 AND status <> 'paid' AND status NOT LIKE 'gateway_test%')::int AS unpaid_yesterday,
+          (SELECT COUNT(*) FROM users WHERE phone <> $1 AND is_paused = true)::int AS paused_chats`, [admin])).rows[0];
+      json(res, 200, { ok: true, range: req.query.range || '30d', since, lost, funnel, sources, response, hours,
+        repeat: { customers: repeat, report_only: reportOnly }, delivery,
+        goal: { target_paise: goalPaise, today_paise: todayPaise },
+        morning: { consults_today: consults, hot_leads: hot, ...counts } });
+    } catch (e) {
+      json(res, 500, { ok: false, error: e.message });
+    }
+  });
+
   // ---------- alerts and settings ----------
   app.get('/dash/api/alerts', guard, async (req, res) => {
     try {
@@ -449,10 +576,21 @@ function mount(app, deps) {
 
   app.post('/dash/api/settings', guard, async (req, res) => {
     try {
-      const mode = req.body?.alertMode;
-      if (mode !== 'all' && mode !== 'important') return json(res, 400, { ok: false, error: "alertMode must be 'all' or 'important'" });
-      await setSetting(deps.pool, 'dash_alert_mode', mode);
-      json(res, 200, { ok: true, alertMode: mode });
+      const out = {};
+      if (req.body?.alertMode !== undefined) {
+        const mode = req.body.alertMode;
+        if (mode !== 'all' && mode !== 'important') return json(res, 400, { ok: false, error: "alertMode must be 'all' or 'important'" });
+        await setSetting(deps.pool, 'dash_alert_mode', mode);
+        out.alertMode = mode;
+      }
+      if (req.body?.dailyGoalRupees !== undefined) {
+        const rupees = Number(req.body.dailyGoalRupees);
+        if (!Number.isFinite(rupees) || rupees < 0 || rupees > 10000000) return json(res, 400, { ok: false, error: 'Daily goal must be a number of rupees' });
+        await setSetting(deps.pool, 'dash_daily_goal_paise', String(Math.round(rupees * 100)));
+        out.dailyGoalRupees = rupees;
+      }
+      if (!Object.keys(out).length) return json(res, 400, { ok: false, error: 'Nothing to change' });
+      json(res, 200, { ok: true, ...out });
     } catch (e) {
       json(res, 500, { ok: false, error: e.message });
     }
