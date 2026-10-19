@@ -107,13 +107,15 @@ function mount(app, deps) {
   // https://dash.veshannastro.co.in,https://kamala-dashboard.pages.dev). Unset: any site (the token is still required).
   app.use('/dash/api', (req, res, next) => {
     const origin = req.headers.origin;
-    const allowed = String(process.env.DASHBOARD_ORIGINS || '').split(',').map(s => s.trim().replace(/\/$/, '')).filter(Boolean);
-    if (origin && (!allowed.length || allowed.includes(origin))) {
+    const allowed = String(process.env.DASHBOARD_ORIGINS || '').split(',').map(s => s.trim().replace(/\/+$/, '')).filter(Boolean)
+      .map(s => (/^https?:\/\//i.test(s) ? s : 'https://' + s).toLowerCase()); // "1980.example.in" means https://1980.example.in
+    const ok = origin && (!allowed.length || allowed.includes(String(origin).toLowerCase()));
+    if (ok) {
       res.set({ 'Access-Control-Allow-Origin': origin, Vary: 'Origin',
         'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Max-Age': '600' });
     }
-    if (req.method === 'OPTIONS') return res.sendStatus(origin && (!allowed.length || allowed.includes(origin)) ? 204 : 403);
+    if (req.method === 'OPTIONS') return res.sendStatus(ok ? 204 : 403);
     next();
   });
 
