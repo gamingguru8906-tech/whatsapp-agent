@@ -102,6 +102,7 @@ function mount(app, deps) {
   const password = () => String(process.env.DASHBOARD_PASSWORD || '');
   let secret = null;
   const failures = { list: [], lockedUntil: 0 };
+  let revoked = { at: 0, value: 0 }; // cached for 30 seconds; sign-out-everywhere updates it at once
 
   // Which websites may call this API from a browser. DASHBOARD_ORIGINS: comma-separated (e.g.
   // https://dash.veshannastro.co.in,https://kamala-dashboard.pages.dev). Unset: any site (the token is still required).
@@ -145,7 +146,8 @@ function mount(app, deps) {
     if (parts.length !== 3 || !password()) return false;
     const [expires, nonce, mac] = parts;
     if (!/^\d+$/.test(expires) || Number(expires) < Date.now()) return false;
-    const revokedBefore = Number(await getSetting(deps.pool, 'dash_sessions_valid_after', '0'));
+    if (!revoked.at || Date.now() - revoked.at > 30000) revoked = { at: Date.now(), value: Number(await getSetting(deps.pool, 'dash_sessions_valid_after', '0')) };
+    const revokedBefore = revoked.value;
     if (Number(expires) - SESSION_DAYS * 86400000 < revokedBefore) return false;
     return safeEqual(mac, await sign(`${expires}.${nonce}`));
   }
@@ -191,12 +193,16 @@ function mount(app, deps) {
 
   // Signs out every device (e.g. a lost phone).
   app.post('/dash/api/logout-everywhere', guard, async (req, res) => {
-    await setSetting(deps.pool, 'dash_sessions_valid_after', String(Date.now()));
+    const now = Date.now();
+    await setSetting(deps.pool, 'dash_sessions_valid_after', String(now));
+    revoked = { at: now, value: now };
     json(res, 200, { ok: true });
   });
 
-  app.get('/dash/api/me', guard, async (req, res) => json(res, 200, { ok: true, owner: `+${admin}`, alertMode: await alertMode(deps.pool),
-    dailyGoalRupees: (Number(await getSetting(deps.pool, 'dash_daily_goal_paise', '0')) || 0) / 100 }));
+  app.get('/dash/api/me', guard, async (req, res) => {
+    const [mode, goal] = await Promise.all([alertMode(deps.pool), getSetting(deps.pool, 'dash_daily_goal_paise', '0')]);
+    json(res, 200, { ok: true, owner: `+${admin}`, alertMode: mode, dailyGoalRupees: (Number(goal) || 0) / 100 });
+  });
 
   // ---------- analytics ----------
   const RANGES = { today: 1, '7d': 7, '30d': 30, '90d': 90 };
@@ -205,7 +211,9 @@ function mount(app, deps) {
       const days = RANGES[req.query.range] || 30;
       // Start of the range: midnight IST, (days-1) days ago.
       const since = (await deps.pool.query(`SELECT ((NOW() AT TIME ZONE ${IST})::date - ($1::int - 1)) AT TIME ZONE ${IST} AS s`, [days])).rows[0].s;
-      const totals = (await deps.pool.query(`SELECT
+
+      // All queries start together (each one is a trip to the database).
+      const q1$ = deps.pool.query(`SELECT
           (SELECT COUNT(*) FROM users WHERE phone <> $2)::int AS people_total,
           (SELECT COUNT(*) FROM users WHERE phone <> $2 AND first_contact >= $1)::int AS people_new,
           (SELECT COUNT(DISTINCT phone) FROM wa_messages WHERE role='user' AND phone <> $2 AND created_at >= $1)::int AS people_chatting,
@@ -226,8 +234,8 @@ function mount(app, deps) {
           (SELECT COUNT(DISTINCT phone) FROM wa_payment_links WHERE status='paid' AND paid_at >= $1)::int AS people_paid,
           (SELECT COUNT(*) FROM (SELECT DISTINCT m.phone FROM wa_messages m WHERE m.role='user' AND m.phone <> $2 AND m.created_at >= $1
               AND NOT EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=m.phone AND l.status='paid')) x)::int AS chatting_not_paid
-        `, [since, admin])).rows[0];
-      const daily = (await deps.pool.query(`WITH d AS (
+        `, [since, admin]);
+      const q2$ = deps.pool.query(`WITH d AS (
           SELECT generate_series((NOW() AT TIME ZONE ${IST})::date - ($1::int - 1), (NOW() AT TIME ZONE ${IST})::date, '1 day')::date AS day)
         SELECT to_char(d.day,'YYYY-MM-DD') AS day,
           (SELECT COUNT(*) FROM users u WHERE u.phone <> $2 AND (u.first_contact AT TIME ZONE ${IST})::date = d.day)::int AS new_people,
@@ -235,14 +243,19 @@ function mount(app, deps) {
           (SELECT COUNT(*) FROM wa_payment_links l WHERE (l.created_at AT TIME ZONE ${IST})::date = d.day)::int AS invoices,
           (SELECT COUNT(*) FROM wa_payment_links l WHERE l.status='paid' AND (l.paid_at AT TIME ZONE ${IST})::date = d.day)::int AS payments,
           (SELECT COALESCE(SUM(l.amount_paise),0) FROM wa_payment_links l WHERE l.status='paid' AND (l.paid_at AT TIME ZONE ${IST})::date = d.day)::bigint AS revenue_paise
-        FROM d ORDER BY d.day`, [Math.min(days, 90), admin])).rows;
-      const services = (await deps.pool.query(`SELECT service_name AS service,
+        FROM d ORDER BY d.day`, [Math.min(days, 90), admin]);
+      const q3$ = deps.pool.query(`SELECT service_name AS service,
           COUNT(*)::int AS invoices,
           COUNT(*) FILTER (WHERE status='paid')::int AS paid,
           COALESCE(SUM(amount_paise) FILTER (WHERE status='paid'),0)::bigint AS revenue_paise
-        FROM wa_payment_links WHERE created_at >= $1 GROUP BY service_name ORDER BY revenue_paise DESC, invoices DESC`, [since])).rows;
-      const stages = (await deps.pool.query(`SELECT COALESCE(lead_stage,'New') AS stage, COUNT(*)::int AS people
-        FROM users WHERE phone <> $1 GROUP BY 1 ORDER BY 2 DESC`, [admin])).rows;
+        FROM wa_payment_links WHERE created_at >= $1 GROUP BY service_name ORDER BY revenue_paise DESC, invoices DESC`, [since]);
+      const q4$ = deps.pool.query(`SELECT COALESCE(lead_stage,'New') AS stage, COUNT(*)::int AS people
+        FROM users WHERE phone <> $1 GROUP BY 1 ORDER BY 2 DESC`, [admin]);
+      q1$.catch(() => {}); q2$.catch(() => {}); q3$.catch(() => {}); q4$.catch(() => {});
+      const totals = (await q1$).rows[0];
+      const daily = (await q2$).rows;
+      const services = (await q3$).rows;
+      const stages = (await q4$).rows;
       json(res, 200, { ok: true, range: req.query.range || '30d', since, totals, daily, services, stages });
     } catch (e) {
       json(res, 500, { ok: false, error: e.message });
@@ -478,35 +491,78 @@ function mount(app, deps) {
       const days = RANGES[req.query.range] || 30;
       const since = (await db.query(`SELECT ((NOW() AT TIME ZONE ${IST})::date - ($1::int - 1)) AT TIME ZONE ${IST} AS s`, [days])).rows[0].s;
       const LOST = INVOICE_FILTERS.lost;
-      // 1. Money lost: invoices that ran out or sat unpaid over 12 hours, and nobody paid later for the same service.
-      const lostRows = (await db.query(`SELECT l.payment_link_id, l.request_invoice_number AS invoice_number, l.phone,
+
+      // All queries start together (each one is a trip to the database).
+      const q1$ = db.query(`SELECT l.payment_link_id, l.request_invoice_number AS invoice_number, l.phone,
           COALESCE(NULLIF(l.customer_name,''), u.name) AS name, l.service_name, l.amount_paise, l.status, l.created_at,
           (u.last_inbound_at > NOW() - INTERVAL '24 hours') AS window_open
         FROM wa_payment_links l LEFT JOIN users u ON u.phone = l.phone
         WHERE (${LOST}) AND l.created_at >= $1
           AND NOT EXISTS (SELECT 1 FROM wa_payment_links p WHERE p.phone = l.phone AND p.status = 'paid'
             AND p.service_name = l.service_name AND p.created_at >= l.created_at)
-        ORDER BY l.created_at DESC LIMIT 100`, [since])).rows;
-      const lost = { count: lostRows.length, paise: lostRows.reduce((a, r) => a + Number(r.amount_paise || 0), 0), invoices: lostRows.slice(0, 30) };
-      // 2. Where people drop off (people who chatted in the period).
-      const funnel = (await db.query(`WITH c AS (SELECT DISTINCT phone FROM wa_messages WHERE role='user' AND phone <> $2 AND created_at >= $1)
+        ORDER BY l.created_at DESC LIMIT 100`, [since]);
+      const q2$ = db.query(`WITH c AS (SELECT DISTINCT phone FROM wa_messages WHERE role='user' AND phone <> $2 AND created_at >= $1)
         SELECT COUNT(*)::int AS chatted,
           COUNT(*) FILTER (WHERE COALESCE(u.core_concern, u.problem_category, u.pain_point) IS NOT NULL)::int AS shared_problem,
           COUNT(*) FILTER (WHERE u.asked_price_at IS NOT NULL)::int AS asked_price,
           COUNT(*) FILTER (WHERE u.dob IS NOT NULL AND u.dob <> '')::int AS gave_details,
           COUNT(*) FILTER (WHERE EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=c.phone))::int AS got_invoice,
           COUNT(*) FILTER (WHERE EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=c.phone AND l.status='paid'))::int AS paid
-        FROM c JOIN users u ON u.phone = c.phone`, [since, admin])).rows[0];
-      // 3. Lead sources that bring paying people, not just chats.
-      const sources = (await db.query(`SELECT COALESCE(NULLIF(u.first_source,''),'Unknown') AS source, COUNT(*)::int AS people,
+        FROM c JOIN users u ON u.phone = c.phone`, [since, admin]);
+      const q3$ = db.query(`SELECT COALESCE(NULLIF(u.first_source,''),'Unknown') AS source, COUNT(*)::int AS people,
           COUNT(*) FILTER (WHERE EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=u.phone))::int AS invoiced,
           COUNT(*) FILTER (WHERE EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=u.phone AND l.status='paid'))::int AS paid,
           COALESCE(SUM((SELECT SUM(l.amount_paise) FROM wa_payment_links l WHERE l.phone=u.phone AND l.status='paid')),0)::bigint AS revenue_paise
-        FROM users u WHERE u.phone <> $2 AND u.first_contact >= $1 GROUP BY 1 ORDER BY revenue_paise DESC, people DESC`, [since, admin])).rows;
-      // 4. Response quality: Kamala asked and the customer went quiet (over 24h); the customer wrote last and got no reply (over 10 min).
-      const last = (await db.query(`SELECT DISTINCT ON (m.phone) m.phone, m.role, m.text, m.created_at, u.name, u.is_paused
+        FROM users u WHERE u.phone <> $2 AND u.first_contact >= $1 GROUP BY 1 ORDER BY revenue_paise DESC, people DESC`, [since, admin]);
+      const q4$ = db.query(`SELECT DISTINCT ON (m.phone) m.phone, m.role, m.text, m.created_at, u.name, u.is_paused
         FROM wa_messages m JOIN users u ON u.phone = m.phone
-        WHERE m.phone <> $2 AND m.created_at >= $1 ORDER BY m.phone, m.id DESC`, [since, admin])).rows;
+        WHERE m.phone <> $2 AND m.created_at >= $1 ORDER BY m.phone, m.id DESC`, [since, admin]);
+      const q5$ = db.query(`SELECT 'msg' AS k, EXTRACT(HOUR FROM created_at AT TIME ZONE ${IST})::int AS h, COUNT(*)::int AS n
+          FROM wa_messages WHERE role='user' AND phone <> $2 AND created_at >= $1 GROUP BY 2
+        UNION ALL SELECT 'pay', EXTRACT(HOUR FROM paid_at AT TIME ZONE ${IST})::int, COUNT(*)::int
+          FROM wa_payment_links WHERE status='paid' AND paid_at >= $1 GROUP BY 2`, [since, admin]);
+      const q6$ = db.query(`SELECT l.phone, MAX(COALESCE(NULLIF(l.customer_name,''), u.name)) AS name, COUNT(*)::int AS purchases,
+          SUM(l.amount_paise)::bigint AS paid_paise, MAX(l.paid_at) AS last_paid_at
+        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone WHERE l.status='paid' AND l.phone <> $1
+        GROUP BY l.phone HAVING COUNT(*) >= 2 ORDER BY paid_paise DESC LIMIT 30`, [admin]);
+      const q7$ = db.query(`SELECT l.phone, MAX(COALESCE(NULLIF(l.customer_name,''), u.name)) AS name,
+          string_agg(DISTINCT l.service_name, ', ') AS reports, MAX(l.paid_at) AS last_paid_at,
+          BOOL_OR(u.last_inbound_at > NOW() - INTERVAL '24 hours') AS window_open
+        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
+        WHERE l.status='paid' AND l.delivery_kind='delivered' AND l.phone <> $1
+          AND NOT EXISTS (SELECT 1 FROM wa_payment_links x WHERE x.phone=l.phone AND x.status='paid' AND COALESCE(x.delivery_kind,'live') <> 'delivered')
+        GROUP BY l.phone ORDER BY MAX(l.paid_at) DESC LIMIT 30`, [admin]);
+      const q8$ = db.query(`SELECT
+          ROUND(AVG(EXTRACT(EPOCH FROM (report_delivered_at - paid_at)) / 3600)::numeric, 1)::float AS avg_hours,
+          COUNT(*) FILTER (WHERE report_delivered_at IS NOT NULL)::int AS delivered,
+          COUNT(*) FILTER (WHERE report_delivered_at IS NULL)::int AS pending,
+          ROUND(MAX(EXTRACT(EPOCH FROM (NOW() - paid_at)) / 3600) FILTER (WHERE report_delivered_at IS NULL)::numeric, 1)::float AS oldest_pending_hours
+        FROM wa_payment_links WHERE status='paid' AND delivery_kind='delivered' AND paid_at >= $1`, [since]);
+      const q9$ = getSetting(db, 'dash_daily_goal_paise', '0');
+      const q10$ = db.query(`SELECT COALESCE(SUM(amount_paise),0) AS p FROM wa_payment_links
+        WHERE status='paid' AND (paid_at AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date`);
+      const q11$ = db.query(`SELECT l.phone, COALESCE(NULLIF(l.customer_name,''), u.name) AS name, l.service_name, l.appointment_start, l.meet_link
+        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
+        WHERE l.status IN ('paid','gateway_test_paid') AND (l.appointment_start AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date
+        ORDER BY l.appointment_start`);
+      const q12$ = db.query(`SELECT phone, name, lead_score, lead_stage FROM users
+        WHERE phone <> $1 AND lead_score >= 60 AND COALESCE(is_customer,false) = false AND last_inbound_at > NOW() - INTERVAL '3 days'
+        ORDER BY lead_score DESC LIMIT 10`, [admin]);
+      const q13$ = db.query(`SELECT
+          (SELECT COUNT(*) FROM wa_payment_links WHERE status='paid' AND delivery_kind='delivered' AND report_delivered_at IS NULL)::int AS reports_to_deliver,
+          (SELECT COUNT(*) FROM wa_payment_links WHERE upi_claimed_at IS NOT NULL AND status IN ('request_created','expired'))::int AS upi_to_check,
+          (SELECT COUNT(*) FROM wa_payment_links WHERE (created_at AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date - 1 AND status <> 'paid' AND status NOT LIKE 'gateway_test%')::int AS unpaid_yesterday,
+          (SELECT COUNT(*) FROM users WHERE phone <> $1 AND is_paused = true)::int AS paused_chats`, [admin]);
+      q1$.catch(() => {}); q2$.catch(() => {}); q3$.catch(() => {}); q4$.catch(() => {}); q5$.catch(() => {}); q6$.catch(() => {}); q7$.catch(() => {}); q8$.catch(() => {}); q9$.catch(() => {}); q10$.catch(() => {}); q11$.catch(() => {}); q12$.catch(() => {}); q13$.catch(() => {});
+      // 1. Money lost: invoices that ran out or sat unpaid over 12 hours, and nobody paid later for the same service.
+      const lostRows = (await q1$).rows;
+      const lost = { count: lostRows.length, paise: lostRows.reduce((a, r) => a + Number(r.amount_paise || 0), 0), invoices: lostRows.slice(0, 30) };
+      // 2. Where people drop off (people who chatted in the period).
+      const funnel = (await q2$).rows[0];
+      // 3. Lead sources that bring paying people, not just chats.
+      const sources = (await q3$).rows;
+      // 4. Response quality: Kamala asked and the customer went quiet (over 24h); the customer wrote last and got no reply (over 10 min).
+      const last = (await q4$).rows;
       const now = Date.now();
       const wentQuiet = last.filter(r => r.role === 'model' && /\?/.test(r.text) && now - new Date(r.created_at) > 86400000);
       const unreplied = last.filter(r => r.role === 'user' && now - new Date(r.created_at) > 600000);
@@ -514,48 +570,21 @@ function mount(app, deps) {
       const response = { chats: last.length, went_quiet: wentQuiet.length, unreplied: unreplied.length,
         went_quiet_list: wentQuiet.slice(0, 20).map(pick), unreplied_list: unreplied.slice(0, 20).map(pick) };
       // 5. Best hours (IST) for customer messages and payments.
-      const hourRows = (await db.query(`SELECT 'msg' AS k, EXTRACT(HOUR FROM created_at AT TIME ZONE ${IST})::int AS h, COUNT(*)::int AS n
-          FROM wa_messages WHERE role='user' AND phone <> $2 AND created_at >= $1 GROUP BY 2
-        UNION ALL SELECT 'pay', EXTRACT(HOUR FROM paid_at AT TIME ZONE ${IST})::int, COUNT(*)::int
-          FROM wa_payment_links WHERE status='paid' AND paid_at >= $1 GROUP BY 2`, [since, admin])).rows;
+      const hourRows = (await q5$).rows;
       const hours = { messages: Array(24).fill(0), payments: Array(24).fill(0) };
       for (const r of hourRows) (r.k === 'msg' ? hours.messages : hours.payments)[r.h] = r.n;
       // 6. Repeat customers, and report buyers who never booked a live consultation (upsell list).
-      const repeat = (await db.query(`SELECT l.phone, MAX(COALESCE(NULLIF(l.customer_name,''), u.name)) AS name, COUNT(*)::int AS purchases,
-          SUM(l.amount_paise)::bigint AS paid_paise, MAX(l.paid_at) AS last_paid_at
-        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone WHERE l.status='paid' AND l.phone <> $1
-        GROUP BY l.phone HAVING COUNT(*) >= 2 ORDER BY paid_paise DESC LIMIT 30`, [admin])).rows;
-      const reportOnly = (await db.query(`SELECT l.phone, MAX(COALESCE(NULLIF(l.customer_name,''), u.name)) AS name,
-          string_agg(DISTINCT l.service_name, ', ') AS reports, MAX(l.paid_at) AS last_paid_at,
-          BOOL_OR(u.last_inbound_at > NOW() - INTERVAL '24 hours') AS window_open
-        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
-        WHERE l.status='paid' AND l.delivery_kind='delivered' AND l.phone <> $1
-          AND NOT EXISTS (SELECT 1 FROM wa_payment_links x WHERE x.phone=l.phone AND x.status='paid' AND COALESCE(x.delivery_kind,'live') <> 'delivered')
-        GROUP BY l.phone ORDER BY MAX(l.paid_at) DESC LIMIT 30`, [admin])).rows;
+      const repeat = (await q6$).rows;
+      const reportOnly = (await q7$).rows;
       // 7. Report delivery time.
-      const delivery = (await db.query(`SELECT
-          ROUND(AVG(EXTRACT(EPOCH FROM (report_delivered_at - paid_at)) / 3600)::numeric, 1)::float AS avg_hours,
-          COUNT(*) FILTER (WHERE report_delivered_at IS NOT NULL)::int AS delivered,
-          COUNT(*) FILTER (WHERE report_delivered_at IS NULL)::int AS pending,
-          ROUND(MAX(EXTRACT(EPOCH FROM (NOW() - paid_at)) / 3600) FILTER (WHERE report_delivered_at IS NULL)::numeric, 1)::float AS oldest_pending_hours
-        FROM wa_payment_links WHERE status='paid' AND delivery_kind='delivered' AND paid_at >= $1`, [since])).rows[0];
+      const delivery = (await q8$).rows[0];
       // 8. Daily goal.
-      const goalPaise = Number(await getSetting(db, 'dash_daily_goal_paise', '0')) || 0;
-      const todayPaise = Number((await db.query(`SELECT COALESCE(SUM(amount_paise),0) AS p FROM wa_payment_links
-        WHERE status='paid' AND (paid_at AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date`)).rows[0].p);
+      const goalPaise = Number(await q9$) || 0;
+      const todayPaise = Number((await q10$).rows[0].p);
       // 9. Morning briefing: what needs you today.
-      const consults = (await db.query(`SELECT l.phone, COALESCE(NULLIF(l.customer_name,''), u.name) AS name, l.service_name, l.appointment_start, l.meet_link
-        FROM wa_payment_links l LEFT JOIN users u ON u.phone=l.phone
-        WHERE l.status IN ('paid','gateway_test_paid') AND (l.appointment_start AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date
-        ORDER BY l.appointment_start`)).rows;
-      const hot = (await db.query(`SELECT phone, name, lead_score, lead_stage FROM users
-        WHERE phone <> $1 AND lead_score >= 60 AND COALESCE(is_customer,false) = false AND last_inbound_at > NOW() - INTERVAL '3 days'
-        ORDER BY lead_score DESC LIMIT 10`, [admin])).rows;
-      const counts = (await db.query(`SELECT
-          (SELECT COUNT(*) FROM wa_payment_links WHERE status='paid' AND delivery_kind='delivered' AND report_delivered_at IS NULL)::int AS reports_to_deliver,
-          (SELECT COUNT(*) FROM wa_payment_links WHERE upi_claimed_at IS NOT NULL AND status IN ('request_created','expired'))::int AS upi_to_check,
-          (SELECT COUNT(*) FROM wa_payment_links WHERE (created_at AT TIME ZONE ${IST})::date = (NOW() AT TIME ZONE ${IST})::date - 1 AND status <> 'paid' AND status NOT LIKE 'gateway_test%')::int AS unpaid_yesterday,
-          (SELECT COUNT(*) FROM users WHERE phone <> $1 AND is_paused = true)::int AS paused_chats`, [admin])).rows[0];
+      const consults = (await q11$).rows;
+      const hot = (await q12$).rows;
+      const counts = (await q13$).rows[0];
       json(res, 200, { ok: true, range: req.query.range || '30d', since, lost, funnel, sources, response, hours,
         repeat: { customers: repeat, report_only: reportOnly }, delivery,
         goal: { target_paise: goalPaise, today_paise: todayPaise },
