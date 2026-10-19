@@ -2910,10 +2910,9 @@ async function markAsRead(messageId) {
 }
 
 app.get('/', (req, res) => {
-  // The dashboard's own domain (DASHBOARD_ORIGINS, e.g. 1980.veshannastro.co.in) opens the dashboard.
-  const dashHosts = String(process.env.DASHBOARD_ORIGINS || '').split(',')
-    .map(s => s.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '').toLowerCase()).filter(Boolean);
-  if (dashHosts.includes(String(req.hostname || '').toLowerCase())) return res.redirect(302, '/dashboard/');
+  // Any address other than the Render one (e.g. 1980.veshannastro.co.in) is the dashboard's domain.
+  const host = String(req.headers.host || '').trim().replace(/:\d+$/, '').toLowerCase();
+  if (host && !/\.onrender\.com$|^localhost$|^127\.0\.0\.1$|^\[::1\]$/.test(host)) return res.redirect(302, '/dashboard/');
   res.send(`Veshannastro WhatsApp Booking Engine is running 🚀 (Live Sync Mode: ${liveData.length} categories loaded)`);
 });
 
