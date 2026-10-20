@@ -141,10 +141,13 @@
 
   function route() {
     const { view, arg, params } = parseHash();
-    const views = { overview: viewOverview, inbox: viewInbox, invoices: viewInvoices, insights: viewInsights, alerts: viewAlerts, settings: viewSettings };
+    const views = { overview: viewOverview, inbox: viewInbox, invoices: viewInvoices, reports: viewReports, insights: viewInsights, alerts: viewAlerts, settings: viewSettings };
     const fn = views[view] || viewOverview;
     const name = views[view] ? view : 'overview';
     $$('.nav a').forEach(a => a.classList.toggle('active', a.dataset.view === name));
+    // Reports lives in its own pane so the report page keeps its state (a report being built) across tabs.
+    $('#reportsPane').hidden = name !== 'reports';
+    $('#main').hidden = name === 'reports';
     if (name !== 'inbox' || state.view !== 'inbox') destroyCharts();
     const sameInbox = name === 'inbox' && state.view === 'inbox';
     state.view = name;
@@ -921,6 +924,18 @@
 
   // ---------- Invoices ----------
   const INVOICE_FILTERS = [['all', 'All'], ['unpaid', 'Unpaid'], ['paid', 'Paid'], ['upi_to_check', 'UPI to check'], ['report_to_deliver', 'Reports to deliver'], ['lost', 'Lost'], ['closed', 'Closed'], ['test', 'Test']];
+
+  // ---------- reports: the report backend's "Make a report" page, inside the dashboard ----------
+  const REPORTS_URL = window.KAMALA_REPORTS_URL || 'https://report-generator-vjwc.onrender.com/admin/make';
+  function viewReports() {
+    const pane = $('#reportsPane');
+    if (pane.dataset.ready) return;
+    pane.dataset.ready = '1';
+    pane.innerHTML = `
+      <div class="head"><div><h1>Reports</h1><div class="sub">Make a report for a WhatsApp order and send it to the customer. The first open after a quiet spell takes up to a minute while the report server wakes.</div></div>
+        <a class="btn" href="${esc(REPORTS_URL)}" target="_blank" rel="noopener">Open in a new tab</a></div>
+      <iframe class="reports-frame" src="${esc(REPORTS_URL)}?embed=1" title="Make a report" allow="web-share; clipboard-write"></iframe>`;
+  }
 
   async function viewInvoices(_a, params) {
     const st = state.invoices;

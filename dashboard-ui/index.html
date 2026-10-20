@@ -28,12 +28,14 @@
     <a href="#/overview" data-view="overview"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4zm0 7h6v-5H4zm10 0h6v-9h-6zm0-16v5h6V4z"/></svg><span>Overview</span></a>
     <a href="#/inbox" data-view="inbox"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3z"/></svg><span>Chats</span><b class="dot" id="inboxDot" hidden></b></a>
     <a href="#/invoices" data-view="invoices"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6zM14 3v5h5M9 13h8M9 17h8"/></svg><span>Invoices</span></a>
+    <a href="#/reports" data-view="reports"><svg viewBox="0 0 24 24"><path d="M7 2h7l5 5v15H7zM13 3v5h5M10 13h6M10 17h4"/></svg><span>Reports</span></a>
     <a href="#/insights" data-view="insights"><svg viewBox="0 0 24 24"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg><span>Insights</span></a>
     <a href="#/alerts" data-view="alerts"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20h4"/></svg><span>Alerts</span><b class="dot" id="alertDot" hidden></b></a>
     <a href="#/settings" data-view="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/></svg><span>Settings</span></a>
     <div class="live" id="live" title="Live updates"><i></i><span>Live</span></div>
   </nav>
   <main id="main" class="main"></main>
+  <section id="reportsPane" class="main reports-pane" hidden></section>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
