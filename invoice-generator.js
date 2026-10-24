@@ -82,10 +82,18 @@ function generateInvoice(data) {
       doc.font('Helvetica').fontSize(12).fillColor(COLORS.slate)
         .text(`#${safeText(data.invoiceNumber, 'PENDING')}`, 45, 160, { width: 390 });
 
-      // Lavender brand tile with a simple VN monogram, like the sample's square mark.
-      doc.roundedRect(496, 120, 54, 54, 11).fill(COLORS.lavender);
-      doc.font('Helvetica-Bold').fontSize(15).fillColor(COLORS.white)
-        .text('VN', 496, 139, { width: 54, align: 'center' });
+      // The Veshannastro logo as the square brand mark (a lavender VN tile if the file is missing).
+      const logoPath = path.join(__dirname, 'assets', 'logo.png');
+      if (fs.existsSync(logoPath)) {
+        doc.save();
+        doc.roundedRect(496, 120, 54, 54, 11).clip();
+        doc.image(logoPath, 496, 120, { width: 54, height: 54 });
+        doc.restore();
+      } else {
+        doc.roundedRect(496, 120, 54, 54, 11).fill(COLORS.lavender);
+        doc.font('Helvetica-Bold').fontSize(15).fillColor(COLORS.white)
+          .text('VN', 496, 139, { width: 54, align: 'center' });
+      }
 
       doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate)
         .text('AMOUNT RECEIVED', left, 208);
@@ -195,8 +203,8 @@ const SELLER = {
     'Raipur, Chhattisgarh 492001'
   ],
   state: 'Chhattisgarh, Code : 22',
-  email: 'veshannastro7@gmail.com',
-  phone: '+91 76469 52745',
+  email: 'assist@veshannastro.co.in',
+  phone: '+91 76469 52745, +91 88276 84725',
   web: 'veshannastro.co.in'
 };
 
@@ -316,7 +324,8 @@ function drawInvoice(doc, m) {
   for (const line of SELLER.lines) doc.text(line, L + 4, doc.y, { width: lw });
   doc.text(`State Name : ${SELLER.state}`, L + 4, doc.y, { width: lw })
     .text(`E-Mail : ${SELLER.email}`, L + 4, doc.y, { width: lw })
-    .text(`Phone : ${SELLER.phone}  |  ${SELLER.web}`, L + 4, doc.y, { width: lw });
+    .text(`Phone : ${SELLER.phone}`, L + 4, doc.y, { width: lw })
+    .text(`Web : ${SELLER.web}`, L + 4, doc.y, { width: lw });
   const sellerBottom = doc.y + 4;
   hline(doc, sellerBottom, L, MID);
 
