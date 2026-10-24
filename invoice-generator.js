@@ -18,10 +18,15 @@ const COLORS = {
   soft: '#F7F8FC'
 };
 
-function inr(value) {
+/** "INR 1,263.00", or "USD 30.00" for a dollar order. */
+function amountText(value, currency = 'INR') {
   const amount = Number(value);
   if (!Number.isFinite(amount) || amount < 0) throw new Error('Invoice amounts must be finite, non-negative numbers.');
-  return `INR ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const code = /^[A-Z]{3}$/.test(String(currency || '')) ? currency : 'INR';
+  return `${code} ${amount.toLocaleString(code === 'INR' ? 'en-IN' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+function inr(value) {
+  return amountText(value, 'INR');
 }
 
 function safeText(value, fallback = 'Not provided') {
@@ -37,6 +42,7 @@ function generateInvoice(data) {
         throw new Error('Invoice requires a verified positive numeric amount.');
       }
       const basePrice = Number(data.basePrice ?? amountPaid);
+      const money = v => amountText(v, data.currency || 'INR');
       if (!Number.isFinite(basePrice) || basePrice < 0) {
         throw new Error('Invoice requires a valid published service price.');
       }
@@ -84,7 +90,7 @@ function generateInvoice(data) {
       doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate)
         .text('AMOUNT RECEIVED', left, 208);
       doc.font('Helvetica').fontSize(19).fillColor(COLORS.navy)
-        .text(inr(amountPaid), left, 229);
+        .text(money(amountPaid), left, 229);
       doc.roundedRect(415, 205, 135, 28, 5).fill(COLORS.lavenderLight);
       doc.font('Helvetica-Bold').fontSize(9).fillColor(COLORS.navy)
         .text(data.isGatewayTest ? 'GATEWAY TEST' : 'PAYMENT RECEIVED', 421, 214, { width: 123, align: 'center' });
@@ -139,27 +145,27 @@ function generateInvoice(data) {
         .text(data.isGatewayTest ? 'Test only - consultation remains unpaid' : data.delivered ? 'Report payment' : 'Consultation payment', 53, itemY + 21, { width: 235, ellipsis: true });
       doc.font('Helvetica').fontSize(12).fillColor(COLORS.navy);
       doc.text('1', 306, itemY, { width: 40, align: 'right' });
-      doc.text(inr(amountPaid), 365, itemY, { width: 75, align: 'right' });
-      doc.text(inr(amountPaid), 455, itemY, { width: 85, align: 'right' });
+      doc.text(money(amountPaid), 365, itemY, { width: 75, align: 'right' });
+      doc.text(money(amountPaid), 455, itemY, { width: 85, align: 'right' });
 
       doc.moveTo(30, 533).lineTo(pageW - 30, 533).lineWidth(1).strokeColor(COLORS.line).stroke();
       doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate).text('Sub Total', 350, 555, { width: 90, align: 'right' });
-      doc.font('Helvetica').fontSize(11).fillColor(COLORS.navy).text(inr(amountPaid), 455, 555, { width: 85, align: 'right' });
+      doc.font('Helvetica').fontSize(11).fillColor(COLORS.navy).text(money(amountPaid), 455, 555, { width: 85, align: 'right' });
       doc.font('Helvetica').fontSize(11).fillColor(COLORS.slate).text('Total Received', 350, 586, { width: 90, align: 'right' });
-      doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.navy).text(inr(amountPaid), 455, 585, { width: 85, align: 'right' });
+      doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.navy).text(money(amountPaid), 455, 585, { width: 85, align: 'right' });
 
       doc.roundedRect(330, 620, 220, 47, 8).fill(COLORS.soft);
       doc.font('Helvetica').fontSize(10).fillColor(COLORS.slate)
         .text(data.isGatewayTest ? 'Consultation fee still due' : 'Balance', 345, 638, { width: 113 });
       doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.navy)
-        .text(inr(data.isGatewayTest ? basePrice : Math.max(0, basePrice - amountPaid)), 455, 636, { width: 85, align: 'right' });
+        .text(money(data.isGatewayTest ? basePrice : Math.max(0, basePrice - amountPaid)), 455, 636, { width: 85, align: 'right' });
 
       if (data.isGatewayTest) {
         doc.roundedRect(45, 695, pageW - 90, 57, 7).fill(COLORS.warning);
         doc.font('Helvetica-Bold').fontSize(9).fillColor(COLORS.warningInk)
           .text('TEST PAYMENT ONLY - NOT A CONSULTATION INVOICE', 58, 707, { width: pageW - 116 });
         doc.font('Helvetica').fontSize(8).fillColor(COLORS.warningInk)
-          .text(`INR ${amountPaid.toFixed(2)} validates the payment gateway only. It does not pay for or confirm a consultation. Published consultation price: ${inr(basePrice)}.`, 58, 725, { width: pageW - 116, height: 23 });
+          .text(`INR ${amountPaid.toFixed(2)} validates the payment gateway only. It does not pay for or confirm a consultation. Published consultation price: ${money(basePrice)}.`, 58, 725, { width: pageW - 116, height: 23 });
       }
 
       doc.moveTo(30, 775).lineTo(pageW - 30, 775).lineWidth(1).strokeColor(COLORS.line).stroke();
