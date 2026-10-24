@@ -158,7 +158,7 @@ function istDateTime(value) {
 }
 
 /** Everything we know about the person, for the system prompt. */
-function profileContext(user, bookings = [], lastTurnAt = null) {
+function profileContext(user, bookings = [], lastTurnAt = null, websiteLine = '') {
   const u = user || {};
   const v = x => (String(x || '').trim() || 'Not known yet');
   const lines = [
@@ -179,13 +179,14 @@ function profileContext(user, bookings = [], lastTurnAt = null) {
   } else {
     lines.push('- Past bookings: None');
   }
+  if (websiteLine) lines.push(`- On the website: ${websiteLine}`);
   const known = ['name', 'gender', 'dob', 'tob', 'pob', 'email'].filter(k => String(u[k] || '').trim());
   return `--- WHAT YOU ALREADY KNOW ABOUT THIS PERSON (saved from earlier chats) ---
 ${lines.join('\n')}
 MEMORY RULES (PRIVATE — use silently, never recite):
 - Everything above is for YOUR understanding only. Never read out, list or repeat the person's stored details (birth date/time/place, email, address, invoice numbers, past chats) unless they themselves ask for them.
 - RETURNING PERSON: if a name is known and this is the start of a new conversation (previous conversation is not "Ongoing chat"), your FIRST reply must greet them warmly by first name, like an old friend who is happy to hear from them again, and gently ask whether their earlier concern has improved — mention the topic softly in one or two words (e.g. "career wali pareshani", "shaadi ki baat"), never details. Example: "Arre Priya ji, kitne time baad! How have you been? Last time aap career ko lekar thoda worried thin — ab kaisa chal raha hai?" If no concern is recorded, just ask how they have been.
-- NEVER ask again for any detail listed above as known (${known.length ? known.join(', ') : 'none yet'}). Simply use it. Ask only for details that are still "Not known yet".`;
+${websiteLine && lastTurnAt !== 'ongoing' && !lastTurnAt ? `- WEBSITE VISITOR, FIRST CHAT: they have not chatted before, they filled the 2027 report form on the website. Greet them by first name, say you have their details from the 2027 report form, and help them with what they ask (finishing the order, a question about the report). Do NOT say "kitne time baad" or ask about an earlier concern.\n` : ''}- NEVER ask again for any detail listed above as known (${known.length ? known.join(', ') : 'none yet'}). Simply use it. Ask only for details that are still "Not known yet".`;
 }
 
 // ---------- Detail extraction ----------

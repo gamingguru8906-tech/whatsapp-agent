@@ -1953,6 +1953,22 @@ app.post('/web-order', async (req, res) => {
   }
 });
 
+// The website hands over the order form the moment someone continues to review it (after ticking the terms and
+// privacy box), signed with WEB_ORDER_SECRET. Kamala keeps the details against their WhatsApp number.
+app.post('/web-lead', async (req, res) => {
+  if (!WEB_ORDER_SECRET) return res.status(503).json({ ok: false, error: 'WEB_ORDER_SECRET is not set' });
+  if (!webOrdersLib.signatureValid(WEB_ORDER_SECRET, req.rawBody, req.headers['x-veshannastro-signature'])) return res.status(401).json({ ok: false });
+  try {
+    await dbReady;
+    const r = await webOrders.saveLead(req.body);
+    if (r.status === 'saved') console.log(`🌐 Website form: +${String(req.body?.phone || '').slice(0, 15)} (${req.body?.stage || 'form'})`);
+    res.status(r.status === 'saved' ? 200 : 400).json({ ok: r.status === 'saved' });
+  } catch (e) {
+    console.error('Website form save failed:', e.message);
+    res.status(500).json({ ok: false });
+  }
+});
+
 app.post('/webhook', async (req, res) => {
   if (!META_APP_SECRET) return res.status(503).send('Meta App Secret is not configured');
   const signature = String(req.headers['x-hub-signature-256'] || '');
@@ -2478,7 +2494,7 @@ async function handleInboundMessage(msg) {
 - Client Status: ${dbUser.is_customer ? 'Returning Paid Client (Acknowledge with warmth and recognition)' : 'Seeker (not yet a paid client)'}
 - Total Messages Exchanged: ${dbUser.message_count || 1}
 
-${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []), lastTurnAt)}
+${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []), lastTurnAt, webOrdersLib.leadLine(await webOrders.leadFor(from)))}
 
 ${crm.readingContext(dbUser)}
 

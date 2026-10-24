@@ -69,6 +69,40 @@ function inspect(order, payment) {
   };
 }
 
+const LEAD_STAGES = ['form', 'whatsapp', 'checkout'];
+const cleanText = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
+
+/** The website's lead, checked again here: a usable WhatsApp number and name are required, the rest is optional. */
+function readLead(input) {
+  const i = input || {};
+  const phone = String(i.phone || '').replace(/\D/g, '');
+  const name = cleanText(i.name, 80);
+  if (!/^\d{11,15}$/.test(phone) || !/^[\p{L}\p{M}][\p{L}\p{M} .'-]{1,79}$/u.test(name)) return null;
+  const email = cleanText(i.email, 120).toLowerCase();
+  return {
+    phone, name,
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? email : '',
+    dob: /^\d{4}-\d{2}-\d{2}$/.test(String(i.dob || '')) ? dobText(i.dob) : '',
+    tob: /^(1[0-2]|[1-9]):[0-5]\d (AM|PM)$/.test(String(i.tob || '')) ? String(i.tob) : '',
+    pob: cleanText(i.pob, 100),
+    report: cleanText(i.report, 20), reportName: cleanText(i.report_name, 60), price: cleanText(i.price, 20),
+    referral: cleanText(i.referral, 40),
+    stage: LEAD_STAGES.includes(i.stage) ? i.stage : 'form'
+  };
+}
+
+/** One line for Kamala's notes about this person: what they did on the website. */
+function leadLine(lead) {
+  if (!lead) return '';
+  const when = new Date(lead.last_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) + ' IST';
+  const what = `${lead.report_name || '2027 report'}${lead.price ? ` (${lead.price})` : ''}`;
+  const stage = lead.stage === 'paid' ? 'paid for it on the website'
+    : lead.stage === 'checkout' ? 'opened the payment window but did not finish paying'
+    : lead.stage === 'whatsapp' ? 'chose to send the order on WhatsApp'
+    : 'filled the order form but has not paid yet';
+  return `Filled the 2027 Personal Year Report order form on veshannastro.co.in for the ${what} on ${when}, and ${stage}. Their name and birth details above came from that form.`;
+}
+
 function confirmationText(d, invoiceNumber, delivery) {
   return `✅ Payment received, ${d.firstName} ji! Razorpay has verified ${priceText(d.amount, d.currency)} for your ${d.reportName} 2027 report.\n\n`
     + `🧾 Invoice No.: ${invoiceNumber} (receipt attached)\n`
@@ -112,6 +146,15 @@ function create(deps) {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
       CREATE INDEX IF NOT EXISTS web_orders_status_idx ON web_orders (status, updated_at);
+      CREATE TABLE IF NOT EXISTS web_leads (
+        phone TEXT PRIMARY KEY,
+        name TEXT, email TEXT, dob TEXT, tob TEXT, pob TEXT,
+        report TEXT, report_name TEXT, price TEXT, referral TEXT,
+        stage TEXT NOT NULL DEFAULT 'form',
+        times INTEGER NOT NULL DEFAULT 1,
+        first_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        last_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
     `);
   }
 
@@ -226,6 +269,10 @@ function create(deps) {
           dob=COALESCE(NULLIF(users.dob,''), EXCLUDED.dob), tob=COALESCE(NULLIF(users.tob,''), EXCLUDED.tob),
           pob=COALESCE(NULLIF(users.pob,''), EXCLUDED.pob)`,
       [d.phone, d.name, d.email, d.dobText, d.tob, d.pob]);
+      await pool.query(`INSERT INTO web_leads (phone, name, email, dob, tob, pob, report, report_name, price, referral, stage)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'paid')
+        ON CONFLICT (phone) DO UPDATE SET stage='paid', report=EXCLUDED.report, report_name=EXCLUDED.report_name, price=EXCLUDED.price, last_at=NOW()`,
+      [d.phone, d.name, d.email, d.dobText, d.tob, d.pob, d.report, d.reportName, priceText(d.amount, d.currency), d.referral || null]);
       return true;
     });
 
@@ -360,7 +407,40 @@ function create(deps) {
     return started;
   }
 
-  return { migrate, handle, run, recover, sweep };
+  // Someone filled the 2027 order form on the website (and ticked the terms and privacy box). Kamala keeps their
+  // details against their WhatsApp number, so when they message she already knows them and never asks again.
+  // Details she already has (from chats or an earlier order) are never overwritten.
+  async function saveLead(input) {
+    const pool = db();
+    if (!pool) throw new Error('No database');
+    const l = readLead(input);
+    if (!l) return { status: 'invalid' };
+    await pool.query(`INSERT INTO users (phone, name, email, dob, tob, pob, first_source, first_contact, last_contact)
+      VALUES ($1,$2,$3,$4,$5,$6,'website',NOW(),NOW())
+      ON CONFLICT (phone) DO UPDATE SET
+        name=COALESCE(NULLIF(users.name,''), EXCLUDED.name), email=COALESCE(NULLIF(users.email,''), EXCLUDED.email),
+        dob=COALESCE(NULLIF(users.dob,''), EXCLUDED.dob), tob=COALESCE(NULLIF(users.tob,''), NULLIF(EXCLUDED.tob,'')),
+        pob=COALESCE(NULLIF(users.pob,''), EXCLUDED.pob), first_source=COALESCE(users.first_source, 'website')`,
+    [l.phone, l.name, l.email, l.dob, l.tob, l.pob]);
+    const r = await pool.query(`INSERT INTO web_leads (phone, name, email, dob, tob, pob, report, report_name, price, referral, stage)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+      ON CONFLICT (phone) DO UPDATE SET name=EXCLUDED.name, email=EXCLUDED.email, dob=EXCLUDED.dob, tob=COALESCE(NULLIF(EXCLUDED.tob,''), web_leads.tob),
+        pob=EXCLUDED.pob, report=EXCLUDED.report, report_name=EXCLUDED.report_name, price=EXCLUDED.price,
+        referral=COALESCE(NULLIF(EXCLUDED.referral,''), web_leads.referral),
+        stage=CASE WHEN web_leads.stage='paid' THEN 'paid' ELSE EXCLUDED.stage END,
+        times=web_leads.times + 1, last_at=NOW()
+      RETURNING times`,
+    [l.phone, l.name, l.email, l.dob, l.tob, l.pob, l.report, l.reportName, l.price, l.referral, l.stage]);
+    return { status: 'saved', times: r.rows[0] ? r.rows[0].times : 1 };
+  }
+
+  async function leadFor(phone) {
+    const pool = db();
+    if (!pool) return null;
+    return (await pool.query('SELECT * FROM web_leads WHERE phone=$1', [String(phone || '')]).catch(() => ({ rows: [] }))).rows[0] || null;
+  }
+
+  return { migrate, handle, run, recover, sweep, saveLead, leadFor };
 }
 
-module.exports = { create, inspect, signatureValid, priceText, dobText, confirmationText, ownerText, isOurs, RECEIPT_PREFIX };
+module.exports = { create, inspect, signatureValid, priceText, dobText, confirmationText, ownerText, isOurs, readLead, leadLine, RECEIPT_PREFIX };
