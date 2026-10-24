@@ -103,6 +103,38 @@ function leadLine(lead) {
   return `Filled the 2027 Personal Year Report order form on veshannastro.co.in for the ${what} on ${when}, and ${stage}. Their name and birth details above came from that form.`;
 }
 
+const titleFromPath = p => {
+  const slug = String(p || '').replace(/^\/blog\//, '').replace(/\.html$/, '').replace(/\/$/, '');
+  return slug ? slug.split('-').map(w => (/^\d+$/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1))).join(' ') : '';
+};
+
+/** What someone did on the website, most recent first, in one sentence for Kamala's notes. */
+function activityLine(events) {
+  const ev = Array.isArray(events) ? events : [];
+  if (!ev.length) return '';
+  const visits = ev.filter(e => e.kind === 'visit');
+  const days = new Set(visits.map(e => new Date(e.at).toISOString().slice(0, 10)));
+  const last = ev.reduce((m, e) => (new Date(e.at) > m ? new Date(e.at) : m), new Date(0));
+  const read = [];
+  for (const e of visits) {
+    if (!/^\/blog\/./.test(e.path || '')) continue;
+    const t = String((e.detail && e.detail.title) || titleFromPath(e.path)).slice(0, 80);
+    if (t && !read.includes(t)) read.push(t);
+  }
+  const pys = [...new Set(ev.filter(e => e.kind === 'personal_year_calculated' && e.detail && e.detail.personal_year).map(e => e.detail.personal_year))];
+  const chose = ev.find(e => e.kind === 'select_item' && e.detail && e.detail.item_name);
+  const has = k => ev.some(e => e.kind === k);
+  const bits = [`${visits.length || 1} visit${visits.length === 1 ? '' : 's'}${days.size > 1 ? ` over ${days.size} days` : ''} (last ${last.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })} IST)`];
+  if (read.length) bits.push(`read ${read.slice(0, 4).join(', ')}`);
+  if (pys.length) bits.push(`used the Personal Year calculator (Personal Year ${pys.slice(0, 3).join(', ')})`);
+  if (chose) bits.push(`last looked at the ${chose.detail.item_name}`);
+  if (has('whatsapp_click')) bits.push('tapped a WhatsApp button');
+  if (has('purchase')) bits.push('paid online');
+  else if (has('payment_failed')) bits.push('a payment attempt failed');
+  else if (has('add_payment_info')) bits.push('opened the payment window without paying');
+  return `Website activity: ${bits.join('; ')}.`;
+}
+
 function confirmationText(d, invoiceNumber, delivery) {
   return `✅ Payment received, ${d.firstName} ji! Razorpay has verified ${priceText(d.amount, d.currency)} for your ${d.reportName} 2027 report.\n\n`
     + `🧾 Invoice No.: ${invoiceNumber} (receipt attached)\n`
@@ -155,6 +187,24 @@ function create(deps) {
         first_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         last_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
+      -- What people do on the website (written by the website's own functions, veshannastro6/api/r27/_db.js).
+      CREATE TABLE IF NOT EXISTS web_visitors (
+        visitor TEXT PRIMARY KEY,
+        phone TEXT,
+        first_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        last_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS web_events (
+        id BIGSERIAL PRIMARY KEY,
+        visitor TEXT,
+        phone TEXT,
+        kind TEXT NOT NULL,
+        detail JSONB NOT NULL DEFAULT '{}'::jsonb,
+        path TEXT,
+        at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS web_events_phone_idx ON web_events (phone, at DESC);
+      CREATE INDEX IF NOT EXISTS web_events_visitor_idx ON web_events (visitor, at DESC);
     `);
   }
 
@@ -440,7 +490,17 @@ function create(deps) {
     return (await pool.query('SELECT * FROM web_leads WHERE phone=$1', [String(phone || '')]).catch(() => ({ rows: [] }))).rows[0] || null;
   }
 
-  return { migrate, handle, run, recover, sweep, saveLead, leadFor };
+  // The website and the chat in one line for Kamala's notes: the order form, then what they did on the site.
+  async function websiteLineFor(phone) {
+    const pool = db();
+    if (!pool || !phone) return '';
+    const lead = await leadFor(phone);
+    const events = (await pool.query('SELECT kind, detail, path, at FROM web_events WHERE phone=$1 ORDER BY at DESC LIMIT 300', [String(phone)])
+      .catch(() => ({ rows: [] }))).rows;
+    return [leadLine(lead), activityLine(events)].filter(Boolean).join(' ');
+  }
+
+  return { migrate, handle, run, recover, sweep, saveLead, leadFor, websiteLineFor };
 }
 
-module.exports = { create, inspect, signatureValid, priceText, dobText, confirmationText, ownerText, isOurs, readLead, leadLine, RECEIPT_PREFIX };
+module.exports = { create, inspect, signatureValid, priceText, dobText, confirmationText, ownerText, isOurs, readLead, leadLine, activityLine, RECEIPT_PREFIX };

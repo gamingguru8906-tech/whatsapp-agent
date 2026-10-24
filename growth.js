@@ -409,8 +409,27 @@ async function buildAnalytics(pool) {
       AND NOT EXISTS (SELECT 1 FROM wa_payment_links l WHERE l.phone=u.phone AND l.status = ANY($1))
     ORDER BY u.lead_score DESC, u.last_inbound_at DESC NULLS LAST LIMIT 100`, [PAID]);
 
+  // Report feedback (report-delivery.js) and the website's 2027 order form (web-orders.js). A missing table on a fresh
+  // database is just an empty tab.
+  const feedback = await q(`SELECT to_char(d.sent_at AT TIME ZONE ${IST}, 'YYYY-MM-DD HH24:MI') AS sent, d.name, d.phone, d.title,
+      d.rating, d.first_action, d.feedback_status, to_char(COALESCE(d.first_action_at, d.rating_at) AT TIME ZONE ${IST}, 'YYYY-MM-DD HH24:MI') AS answered
+    FROM report_deliveries d WHERE d.sent_at IS NOT NULL ORDER BY d.sent_at DESC LIMIT 500`).catch(() => []);
+  const webLeads = await q(`SELECT to_char(l.last_at AT TIME ZONE ${IST}, 'YYYY-MM-DD HH24:MI') AS last_seen, l.name, l.phone, l.report_name, l.price,
+      l.stage, l.times, l.pob, l.referral, to_char(l.first_at AT TIME ZONE ${IST}, 'YYYY-MM-DD HH24:MI') AS first_seen
+    FROM web_leads l ORDER BY l.last_at DESC LIMIT 1000`).catch(() => []);
+
   const n = v => Number(v || 0);
   return {
+    'Report Feedback': {
+      header: ['Report sent', 'Name', 'Phone', 'Report', 'Clarity (1-5)', 'What they did first', 'Status', 'Answered'],
+      rows: feedback.map(r => [r.sent || '', r.name || '', `'+${r.phone}`, r.title || '', r.rating == null ? '' : n(r.rating), r.first_action || '',
+        r.feedback_status || '', r.answered || ''])
+    },
+    'Website Leads': {
+      header: ['Last seen', 'Name', 'Phone', 'Report', 'Price', 'How far they got', 'Times', 'Birth place', 'Referral', 'First seen'],
+      rows: webLeads.map(r => [r.last_seen || '', r.name || '', `'+${r.phone}`, r.report_name || '', r.price || '', r.stage || '', n(r.times),
+        r.pob || '', r.referral || '', r.first_seen || ''])
+    },
     Daily: {
       header: ['Date', 'New leads', 'People chatting', 'Payment links sent', 'Paid bookings', 'Test (₹1) bookings', 'Revenue (₹)', 'New opt-ins'],
       rows: daily.map(r => [r.day, n(r.new_leads), n(r.chats), n(r.links_sent), n(r.paid), n(r.test_paid), inr(r.revenue_paise), n(r.opt_ins)])
