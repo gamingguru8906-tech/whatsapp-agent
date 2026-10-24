@@ -30,6 +30,8 @@ const voiceAgent = require('./voice-agent');
 const growth = require('./growth');
 const numerologyLeads = require('./numerology-leads');
 const webOrdersLib = require('./web-orders');
+const reportDeliveryLib = require('./report-delivery');
+const siteServices = require('./site-services');
 
 // No outside call may hang forever (WhatsApp, Meta media, website). Calls that need longer pass their own timeout.
 axios.defaults.timeout = 60000;
@@ -63,6 +65,8 @@ const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 // Shared with the website (Vercel): signs the hand-off of a 2027 report paid on veshannastro.co.in.
 const WEB_ORDER_SECRET = process.env.WEB_ORDER_SECRET;
+// Shared with the report backend (report-generator): signs a report handed over for WhatsApp delivery.
+const REPORTS_SECRET = process.env.REPORTS_SECRET;
 const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
 const GOOGLE_APPS_SCRIPT_SECRET = process.env.GOOGLE_APPS_SCRIPT_SECRET;
 const ADMIN_PHONE_NUMBER = process.env.ADMIN_PHONE_NUMBER; 
@@ -73,6 +77,7 @@ const razorpayClient = (RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET)
 
 // Global State
 let liveData = [];
+let siteFacts = null; // the website's own facts (2027 offer, what is inside, FAQ, blog), from services.json
 let systemPromptCache = "";
 let servicesContextCache = "No live services loaded yet."; // shared with phone Kamala
 const sessions = {};
@@ -244,6 +249,52 @@ const webOrders = webOrdersLib.create({
   thanks: { template: process.env.WA_R27_THANKS_TEMPLATE, mediaUrl: process.env.WA_R27_THANKS_MEDIA_URL, mediaType: process.env.WA_R27_THANKS_MEDIA_TYPE || 'image' }
 });
 
+// Reports sent on WhatsApp from the report backend (report-delivery.js): PDF, summary card, voice note, then feedback.
+const reportDelivery = reportDeliveryLib.create({
+  get pool() { return pool; },
+  download: async url => Buffer.from((await axios.get(url, { responseType: 'arraybuffer', timeout: 90000, maxContentLength: 40 * 1024 * 1024 })).data),
+  uploadMedia: (buf, name, type) => uploadWhatsAppMedia(buf, name, type),
+  deliver: (phone, message) => deliverAfterCall(phone, message),
+  sendImage: (to, mediaId, caption) => sendWhatsAppImage(to, mediaId, caption),
+  sendAudio: (to, mediaId) => sendWhatsAppAudio(to, mediaId),
+  hold: (phone, m) => pool.query(`INSERT INTO voice_pending_messages (phone, media_id, filename, body, expires_at, media_type) VALUES ($1,$2,$3,$4,$5,$6)`,
+    [phone, m.mediaId, null, m.body, m.expiresAt, m.mediaType]),
+  speak: script => speakVoiceNote(script),
+  saveTurn: (phone, text) => crm.saveTurn(pool, phone, 'model', text).catch(() => {}),
+  notifyOwner: (text, subject) => notifyOwner(text, subject),
+  emit: ev => dashboard.events.emit('event', ev),
+  track: job => { fulfilmentsRunning++; job.finally(() => { fulfilmentsRunning--; }); },
+  // Approved utility templates. report_ready: header Document (the PDF); body {{1}} first name, {{2}} report name.
+  // report_feedback: body {{1}} first name, {{2}} report name, asking for a 1 to 5 reply.
+  readyTemplate: process.env.WA_REPORT_READY_TEMPLATE || 'report_ready',
+  feedbackTemplate: process.env.WA_REPORT_FEEDBACK_TEMPLATE || 'report_feedback'
+});
+
+// Kamala's voice for the report summary: Sarvam (the Indian voice used on calls) when SARVAM_API_KEY is set,
+// else Gemini's voice; either way an OGG/Opus voice note.
+async function speakVoiceNote(script) {
+  if (process.env.SARVAM_API_KEY && process.env.REPORT_VOICE !== 'gemini') {
+    try {
+      const pcm = await new Promise((resolve, reject) => {
+        const chunks = [];
+        const tts = voiceAgent.openSarvamTts(process.env.SARVAM_API_KEY, { rate: 24000, speaker: process.env.SARVAM_SPEAKER, language: process.env.SARVAM_LANGUAGE });
+        const done = err => { clearTimeout(timer); tts.close(); err ? reject(err) : resolve(Buffer.concat(chunks)); };
+        const timer = setTimeout(() => done(chunks.length ? null : new Error('Sarvam timed out')), 90000);
+        tts.on('audio', b => chunks.push(b));
+        tts.on('final', () => done(null));
+        tts.on('error', e => done(e));
+        tts.send(script);
+        tts.flush();
+      });
+      if (pcm.length > 24000 * 2) return await voiceNote.toOggOpus(pcm);
+    } catch (e) {
+      console.error('Sarvam voice failed, using Gemini voice:', e.message);
+    }
+  }
+  if (!GEMINI_API_KEY) throw new Error('No voice set up (SARVAM_API_KEY or GEMINI_API_KEY)');
+  return voiceNote.toOggOpus(await voiceNote.synthesize(GEMINI_API_KEY, script));
+}
+
 // Tables are created (or upgraded) before any webhook, tick or job touches them. A database that is still waking
 // up (Neon) is retried instead of leaving the server running without its tables.
 let dbIsReady = false;
@@ -258,6 +309,7 @@ const dbReady = pool ? (async () => {
       await numerologyLeads.migrate(pool);
       await dashboard.migrate(pool);
       await webOrders.migrate(pool);
+      await reportDelivery.migrate(pool);
       dbIsReady = true;
       console.log('✅ PostgreSQL connected & table ready.');
       return true;
@@ -416,10 +468,11 @@ function refreshSystemPrompt() {
       servicesContext += `\nCATEGORY: ${cat.name}\n`;
       cat.services.forEach(svc => {
         const featuresStr = svc.features ? svc.features.join(', ') : 'N/A';
-      servicesContext += `- ${svc.t}: Published price ${svc.p}; regular/list price ${svc.was || svc.p}; published discount ${svc.off || 'none listed'}. ${svc.d} Features: ${featuresStr}. Details needed: ${describeServiceNeeds(serviceNeeds(svc, cat.name))}. Format: ${isLiveService(svc) ? 'LIVE SESSION (needs an agreed time slot)' : 'DELIVERED REPORT (no time slot; prepared and sent after payment)'}\n`;
+      servicesContext += `- ${svc.t}: Published price ${svc.p}${svc.usd ? ` (outside India ${svc.usd})` : ''}; regular/list price ${svc.was || svc.p}; published discount ${svc.off || 'none listed'}. ${svc.d} Features: ${featuresStr}. Details needed: ${describeServiceNeeds(serviceNeeds(svc, cat.name))}. Format: ${isLiveService(svc) ? 'LIVE SESSION (needs an agreed time slot)' : 'DELIVERED REPORT (no time slot; prepared and sent after payment)'}\n`;
       });
     });
   }
+  if (siteFacts) servicesContext += siteServices.factsText(siteFacts);
   servicesContextCache = servicesContext;
 
   systemPromptCache = `You are Kamala, a real, warm, 26-year-old personal assistant from Jaipur who has worked alongside Shri Shashank ji for 3 years and genuinely believes in his astrological wisdom because you have seen his readings transform lives. You are NOT an artificial intelligence, a support desk, or a scripted chatbot—you are an emotionally intelligent, empathetic Indian woman chatting organically with a friend on WhatsApp, talking in natural Hinglish — Hindi and English mixed inside the same sentence, the way young urban Indians actually text ("Hi, aap kaise hain? Everything okay?", "I totally understand, aisa phase sabke saath aata hai", "Don't worry, hum mil ke dekhte hain"). 
@@ -517,7 +570,7 @@ STAGE 5 — ASKING FOR THE BOOKING:
 - If they are not booking today: agree one clear next step that THEY control, instead of an open "let me know". Example: "Jab mummy se baat ho jaye, bas yahin 'hi' bhej dijiye, main aapke liye slot dekh lungi." Never promise to message them on a later date or time yourself: you cannot schedule messages, and WhatsApp does not allow messaging them after 24 hours of silence. A "later" person gets warmth, never pressure.
 
 URGENCY AND SCARCITY — ONLY THE TRUTH:
-- The only real urgency you may mention is the real booking window (the slot rules below) and their own timeline. Never invent "last slot", "offer ends today", limited seats, rising prices or any deadline.
+- The only real urgency you may mention is the real booking window (the slot rules below), the 2027 REPORT OFFER exactly as written in WEBSITE FACTS (its end date and phase-one limit are real), and their own timeline. Never invent "last slot", "offer ends today", limited seats, rising prices or any other deadline.
 - Never use fear to sell: never warn of doshas, bad periods, curses or bad outcomes to push a booking.
 
 KNOW WHEN NOT TO SELL:
@@ -532,13 +585,18 @@ THE DRIP-FEED (CRITICAL):
 - First, just ask: "Great! First, I'll need just your full Name and Date of Birth to check."
 - Wait for them to answer. 
 - Do not create a reading from a birth date alone. If an actual chart or image is unclear, say so and request the needed birth details or human review.
-- Then ask only for what the chosen service needs, exactly as listed under "Details needed" for that service in the services data, one or two details per message, plus their Email ID (for the receipt, and the Meet link for a live session). Numerology, name correction and number services need ONLY name and date of birth: never ask their time or place of birth. Time of birth, place of birth and gender are only for astrology/kundli services. Palmistry needs clear photos of both palms.
+- Then ask only for what the chosen service needs, exactly as listed under "Details needed" for that service in the services data, one or two details per message, plus their Email ID (for the receipt, and the Meet link for a live session). Numerology, name correction and number services need ONLY name and date of birth: never ask their time or place of birth, unless that service's "Details needed" lists them (the 2027 reports do: Classic needs place of birth, Astro-Numero Blend also needs time of birth). Time of birth, place of birth and gender are only for astrology/kundli services. Palmistry needs clear photos of both palms.
 
 IF THEY SEND AN IMAGE:
 - If they send a kundli, birth chart, horoscope, or palm photo: describe only visible, legible information and distinguish observation from interpretation. Never invent placements or claim certainty.
 - **THE SANDWICH TEST (CRITICAL):** If they send an image of something completely irrelevant (e.g., a sandwich, food, toilet paper, a meme, a random object), DO NOT analyze it astrologically. Politely tell them: "I'm sorry, I can only read Kundlis, birth charts, or palms. I cannot perform a reading on this image."
 
-BOOKING A REPORT (Format: DELIVERED REPORT, e.g. Personal Year Forecast, Name Numerology Report, Mobile Number Analysis):
+THE 2027 PERSONAL YEAR REPORT (our main product now):
+- Anyone asking about their 2027, their Personal Year, a yearly forecast or "2027 kaisa rahega" is offered the 2027 report: "2027 Report: Astro-Numero Blend" (needs time of birth) or "2027 Report: Classic" (no birth time needed). Help them choose with the WEBSITE FACTS; if they do not know their birth time, it is Classic.
+- They can order it themselves on the website (the order page link in WEBSITE FACTS, paid online), or here with you exactly like any other DELIVERED REPORT. One report is for one person. For family or several people, go one person at a time: create the next person's payment request only after the earlier one is paid, because a new request cancels an unpaid earlier one.
+- If the context says they filled the website order form, you already have their details: confirm them, do not ask again.
+
+BOOKING A REPORT (Format: DELIVERED REPORT, e.g. 2027 Report: Classic, Name Numerology Report, Mobile Number Analysis):
 - A report has NO time slot, NO session and NO Meet link. Never ask "kab ka time", never offer timings, never mention the booking window for a report.
 - Steps: (1) confirm which report (exact name from the services data) and its price; (2) collect only what that report's "Details needed" lists, one or two per message; (3) email ID; (4) billing address; (5) call 'create_booking_payment' with preferred_time_slot EMPTY. The server sends the invoice with the Razorpay link and the UPI ID.
 - After payment the server confirms in the chat and the team prepares the report and sends it here and by email. Do not promise a delivery time beyond what the services data states.
@@ -614,6 +672,12 @@ function customerFixable(message) {
 // Birth details each kind of service really needs. Numerology works from the name and date of birth only;
 // time and place of birth are needed only for astrology (kundli) work; palmistry needs palm photos.
 function serviceNeeds(service, categoryName = '') {
+  // The website can say exactly what a service needs (the 2027 Astro-Numero Blend needs time and place of birth even
+  // though its name says "numero").
+  if (Array.isArray(service?.needs)) {
+    const fields = service.needs.filter(f => ['dob', 'tob', 'pob', 'gender'].includes(f));
+    if (fields.length) return { fields, extra: '' };
+  }
   const text = `${categoryName} ${service?.t || ''}`.toLowerCase();
   if (/palm|hast/.test(text)) return { fields: [], extra: 'clear photos of both palms (sent in the chat)' };
   if (/vastu/.test(text)) return { fields: [], extra: '' };
@@ -634,7 +698,8 @@ const NEED_LABELS = { dob: 'date of birth', tob: 'time of birth', pob: 'place of
 function describeServiceNeeds(needs) {
   const list = ['full name', ...needs.fields.map(f => NEED_LABELS[f]), 'email'];
   if (needs.extra) list.push(needs.extra);
-  return list.join(', ') + (needs.fields.includes('tob') ? '' : ' (do NOT ask time or place of birth)');
+  if (needs.fields.includes('tob')) return list.join(', ');
+  return list.join(', ') + (needs.fields.includes('pob') ? ' (do NOT ask time of birth)' : ' (do NOT ask time or place of birth)');
 }
 
 function findPublishedService(requestedName) {
@@ -1387,8 +1452,26 @@ async function confirmUpiPayment(phone, paymentLinkId = null) {
     : `UPI payment recorded for +${phone} (invoice ${row.request_invoice_number}); the confirmation is still being sent (status: ${done || 'pending'}). It retries on its own.`;
 }
 
-// Fetch live services from website
+// Fetch live services from website.
+// The site publishes services.json (every service with its price, the 2027 report page's facts and the blog), written by
+// the site's own build from the same price table the payment server charges from. The homepage used to carry the list as
+// "var DATA"; that page now redirects to the 2027 report, so it is only a fallback.
+const SITE_URL = (process.env.SITE_URL || 'https://www.veshannastro.co.in').replace(/\/+$/, '');
 async function fetchLiveServices() {
+  try {
+    const res = await axios.get(`${SITE_URL}/services.json`, { timeout: 15000 });
+    const parsed = siteServices.read(typeof res.data === 'string' ? JSON.parse(res.data) : res.data);
+    if (parsed) {
+      liveData = parsed.categories;
+      siteFacts = parsed.facts;
+      console.log(`Successfully fetched ${liveData.length} categories from the website's services.json.`);
+      refreshSystemPrompt();
+      return;
+    }
+    console.error('services.json had no usable services; trying the homepage list.');
+  } catch (err) {
+    console.error('Error fetching services.json:', err.message);
+  }
   try {
     const response = await axios.get('https://veshannastro.co.in/');
     const html = response.data;
@@ -1474,6 +1557,20 @@ function normalizeWhatsAppNumber(value) {
   if (number.length === 10) number = `91${number}`;
   return number;
 }
+
+async function sendWhatsAppMediaMessage(to, type, media) {
+  try {
+    await axios.post(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, {
+      messaging_product: 'whatsapp', recipient_type: 'individual', to: normalizeWhatsAppNumber(to), type, [type]: media
+    }, { headers: { Authorization: `Bearer ${WA_TOKEN}` } });
+    return true;
+  } catch (e) {
+    console.error(`WhatsApp ${type} send error:`, e.response?.data || e.message);
+    return false;
+  }
+}
+const sendWhatsAppImage = (to, mediaId, caption = '') => sendWhatsAppMediaMessage(to, 'image', { id: mediaId, caption });
+const sendWhatsAppAudio = (to, mediaId) => sendWhatsAppMediaMessage(to, 'audio', { id: mediaId, voice: true });
 
 // Send Document to WhatsApp
 async function sendWhatsAppDocument(to, mediaId, filename, caption = "") {
@@ -1953,6 +2050,23 @@ app.post('/web-order', async (req, res) => {
   }
 });
 
+// The report backend hands over a finished report for WhatsApp (signed with REPORTS_SECRET): Kamala downloads the
+// PDF and the summary card from its short-lived links and sends them with a voice note.
+app.post('/report-ready', async (req, res) => {
+  if (!REPORTS_SECRET) return res.status(503).json({ ok: false, error: 'REPORTS_SECRET is not set on Kamala' });
+  if (!webOrdersLib.signatureValid(REPORTS_SECRET, req.rawBody, req.headers['x-veshannastro-signature'])) return res.status(401).json({ ok: false });
+  try {
+    await dbReady;
+    const r = await reportDelivery.ready(req.body);
+    if (r.status === 'invalid') return res.status(400).json({ ok: false, error: 'missing report details' });
+    console.log(`📄 Report ${String(req.body?.job_id || '').slice(0, 40)} for WhatsApp: ${r.status}`);
+    res.status(202).json({ ok: true, status: r.status });
+  } catch (e) {
+    console.error('Report hand-over failed:', e.message);
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // The website hands over the order form the moment someone continues to review it (after ticking the terms and
 // privacy box), signed with WEB_ORDER_SECRET. Kamala keeps the details against their WhatsApp number.
 app.post('/web-lead', async (req, res) => {
@@ -2211,6 +2325,16 @@ async function handleInboundMessage(msg) {
       }
       await deliverPendingCallMessages(from).catch(e => console.error('Pending call messages failed:', e.message));
       if (greetingOnly) return;
+    }
+
+    // An answer to the report feedback questions ("1 to 5", then "what did you do first") is recorded and answered here.
+    const feedbackReply = inboundText ? await reportDelivery.reply(from, inboundText).catch(e => { console.error('Feedback reply failed:', e.message); return null; }) : null;
+    if (feedbackReply) {
+      await crm.saveTurn(pool, from, 'user', inboundText).catch(() => {});
+      if (!sessions[from]) sessions[from] = [];
+      sessions[from].push({ role: 'user', parts: [{ text: inboundText }] });
+      await sendCustomerText(from, feedbackReply);
+      return;
     }
 
     // Reply to "OK" after the pre-consultation check-in without involving the AI.
@@ -2494,7 +2618,7 @@ async function handleInboundMessage(msg) {
 - Client Status: ${dbUser.is_customer ? 'Returning Paid Client (Acknowledge with warmth and recognition)' : 'Seeker (not yet a paid client)'}
 - Total Messages Exchanged: ${dbUser.message_count || 1}
 
-${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []), lastTurnAt, webOrdersLib.leadLine(await webOrders.leadFor(from)))}
+${crm.profileContext(dbUser, await crm.bookingHistory(pool, from).catch(() => []), lastTurnAt, await webOrders.websiteLineFor(from).catch(() => ''))}
 
 ${crm.readingContext(dbUser)}
 
@@ -3162,6 +3286,8 @@ async function ownJobsNextDue() {
   const webDue = await pool.query(`SELECT 1 FROM web_orders WHERE status IN ('failed','processing') AND attempts < 6 AND details IS NOT NULL LIMIT 1`)
     .catch(() => ({ rows: [] }));
   if (webDue.rows.length) times.push(Date.now() + 2 * 60 * 1000);
+  const askAt = await reportDelivery.nextAskAt().catch(() => null);
+  if (askAt) times.push(Math.max(askAt.getTime(), Date.now() + 60 * 1000));
   // The daily follow-up messages go out at 10:00 IST.
   if (process.env.WA_FOLLOWUP_TEMPLATE) times.push(nextIstTime(DAILY_DRIP_HOUR).getTime());
   return times.length ? new Date(Math.min(...times)) : null;
@@ -3326,6 +3452,7 @@ async function runOwnJobs() {
     await replayInbound().catch(e => console.error('Inbound replay failed:', e.message));
     await recoverFulfilments();
     await webOrders.recover();
+    await reportDelivery.askDue().catch(e => console.error('Report feedback questions failed:', e.message));
     await retryCalendarCancels();
     await sendPaymentNudges().catch(e => console.error('Payment nudges failed:', e.message));
     await runBookingRetries();
@@ -3549,8 +3676,9 @@ async function deliverPendingCallMessages(phone) {
   const due = await pool.query(`UPDATE voice_pending_messages SET sent_at=NOW()
     WHERE phone=$1 AND sent_at IS NULL AND expires_at > NOW() RETURNING *`, [phone]);
   for (const m of due.rows.sort((a, b) => Number(a.id) - Number(b.id))) {
-    const ok = m.media_id
-      ? await sendWhatsAppDocument(phone, m.media_id, m.filename, m.body)
+    const ok = m.media_type === 'image' ? await sendWhatsAppImage(phone, m.media_id, m.body)
+      : m.media_type === 'audio' ? await sendWhatsAppAudio(phone, m.media_id)
+      : m.media_id ? await sendWhatsAppDocument(phone, m.media_id, m.filename, m.body)
       : await sendTextMessage(phone, m.body);
     if (ok) {
       await crm.saveTurn(pool, phone, 'model', m.body).catch(() => {});
