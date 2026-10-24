@@ -69,7 +69,7 @@ function inspect(order, payment) {
   };
 }
 
-const LEAD_STAGES = ['form', 'whatsapp', 'checkout'];
+const LEAD_STAGES = ['form', 'whatsapp', 'checkout'];  // 'typing' (form-drafts.js) and 'paid' are set by Kamala herself
 const cleanText = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
 
 /** The website's lead, checked again here: a usable WhatsApp number and name are required, the rest is optional. */
@@ -94,6 +94,10 @@ function readLead(input) {
 /** One line for Kamala's notes about this person: what they did on the website. */
 function leadLine(lead) {
   if (!lead) return '';
+  if (lead.stage === 'typing') {
+    const at = new Date(lead.last_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) + ' IST';
+    return `Started typing the 2027 Personal Year Report order form on veshannastro.co.in${lead.report_name ? ` (${lead.report_name})` : ''} on ${at} but did not send it. The details above came from what they typed.`;
+  }
   const when = new Date(lead.last_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) + ' IST';
   const what = `${lead.report_name || '2027 report'}${lead.price ? ` (${lead.price})` : ''}`;
   const stage = lead.stage === 'paid' ? 'paid for it on the website'
@@ -138,7 +142,7 @@ function activityLine(events) {
 function confirmationText(d, invoiceNumber, delivery) {
   return `✅ Payment received, ${d.firstName} ji! Razorpay has verified ${priceText(d.amount, d.currency)} for your ${d.reportName} 2027 report.\n\n`
     + `🧾 Invoice No.: ${invoiceNumber} (receipt attached)\n`
-    + `📄 Your report is being prepared and will reach you here${d.email ? ` and on ${d.email}` : ''} within ${delivery}.\n\n`
+    + `📄 Your report is being prepared and will reach you here on WhatsApp within ${delivery}.\n\n`
     + 'Thank you for trusting Veshannastro 🙏';
 }
 
