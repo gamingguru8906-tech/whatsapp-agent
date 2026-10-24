@@ -32,6 +32,7 @@ const numerologyLeads = require('./numerology-leads');
 const webOrdersLib = require('./web-orders');
 const reportDeliveryLib = require('./report-delivery');
 const siteServices = require('./site-services');
+const formDraftsLib = require('./form-drafts');
 
 // No outside call may hang forever (WhatsApp, Meta media, website). Calls that need longer pass their own timeout.
 axios.defaults.timeout = 60000;
@@ -270,6 +271,21 @@ const reportDelivery = reportDeliveryLib.create({
   feedbackTemplate: process.env.WA_REPORT_FEEDBACK_TEMPLATE || 'report_feedback'
 });
 
+// The 2027 order form saved while people type (form-drafts.js): the Sheet's "Website Forms" tab, and one WhatsApp
+// message 25 minutes after a number is typed, unless they paid or are already chatting.
+const formDrafts = formDraftsLib.create({
+  get pool() { return pool; },
+  postAppsScript: payload => postAppsScript(payload, { timeoutMs: 30000, maxAttempts: 2 }),
+  sendText: (to, text) => sendCustomerText(to, text),
+  sendTemplate: (to, name, params) => sendWhatsAppTemplate(to, name, params),
+  saveTurn: (phone, text) => crm.saveTurn(pool, phone, 'model', text).catch(() => {}),
+  notifyOwner: (text, subject) => notifyOwner(text, subject),
+  // Approved templates (Marketing). Named: {{1}} first name, {{2}} report, e.g. "2027 Astro-Numero Blend report".
+  // General: no variables.
+  namedTemplate: process.env.WA_FORM_FOLLOWUP_NAMED_TEMPLATE || 'form_followup_named',
+  genericTemplate: process.env.WA_FORM_FOLLOWUP_TEMPLATE || 'form_followup'
+});
+
 // Kamala's voice for the report summary: Sarvam (the Indian voice used on calls) when SARVAM_API_KEY is set,
 // else Gemini's voice; either way an OGG/Opus voice note.
 async function speakVoiceNote(script) {
@@ -310,6 +326,7 @@ const dbReady = pool ? (async () => {
       await dashboard.migrate(pool);
       await webOrders.migrate(pool);
       await reportDelivery.migrate(pool);
+      await formDrafts.migrate(pool);
       dbIsReady = true;
       console.log('✅ PostgreSQL connected & table ready.');
       return true;
@@ -599,7 +616,7 @@ THE 2027 PERSONAL YEAR REPORT (our main product now):
 BOOKING A REPORT (Format: DELIVERED REPORT, e.g. 2027 Report: Classic, Name Numerology Report, Mobile Number Analysis):
 - A report has NO time slot, NO session and NO Meet link. Never ask "kab ka time", never offer timings, never mention the booking window for a report.
 - Steps: (1) confirm which report (exact name from the services data) and its price; (2) collect only what that report's "Details needed" lists, one or two per message; (3) email ID; (4) billing address; (5) call 'create_booking_payment' with preferred_time_slot EMPTY. The server sends the invoice with the Razorpay link and the UPI ID.
-- After payment the server confirms in the chat and the team prepares the report and sends it here and by email. Do not promise a delivery time beyond what the services data states.
+- After payment the server confirms in the chat and the team prepares the report and sends it here on WhatsApp. Reports are not sent by email. Do not promise a delivery time beyond what the services data states.
 - If they cannot decide between a report and a live consultation, recommend one based on their need (a report for a written analysis, a live session for discussing questions).
 
 BILLING DETAILS AND CORRECTIONS:
@@ -1796,7 +1813,7 @@ async function fulfilPaidLink(event) {
     const msg = delivered
       ? `✅ Payment received, ${customerName} ji! Razorpay has verified ₹${price.toFixed(2)} for ${serviceName}.${isGatewayTest ? ' (₹1 payment-system test: the report fee itself is not paid yet.)' : ''}\n\n`
         + `🧾 Invoice No.: ${invoiceNumber} (receipt attached)\n`
-        + `📄 Your ${serviceName} is now being prepared and will be sent to you here${notes.email ? ` and on ${notes.email}` : ''}.${promise ? ` (${promise})` : ''}\n\n`
+        + `📄 Your ${serviceName} is now being prepared and will be sent to you here on WhatsApp.${promise ? ` (${promise})` : ''}\n\n`
         + `Thank you for trusting Veshannastro 🙏`
       : notes.gateway_test === 'true'
       ? `✅ Payment received, ${customerName} ji! Razorpay has verified your ₹${price.toFixed(2)} test payment.\n\n`
@@ -2079,6 +2096,24 @@ app.post('/web-lead', async (req, res) => {
     res.status(r.status === 'saved' ? 200 : 400).json({ ok: r.status === 'saved' });
   } catch (e) {
     console.error('Website form save failed:', e.message);
+    res.status(500).json({ ok: false });
+  }
+});
+
+// The 2027 order form as it is being typed (the website sends it every few seconds, signed like /web-lead).
+app.post('/web-draft', async (req, res) => {
+  if (!WEB_ORDER_SECRET) return res.status(503).json({ ok: false, error: 'WEB_ORDER_SECRET is not set' });
+  if (!webOrdersLib.signatureValid(WEB_ORDER_SECRET, req.rawBody, req.headers['x-veshannastro-signature'])) return res.status(401).json({ ok: false });
+  try {
+    await dbReady;
+    const r = await formDrafts.save(req.body);
+    if (r.status !== 'saved') return res.status(400).json({ ok: false });
+    formDrafts.syncSoon();
+    // A new number sets a follow-up: make sure a sleeping server is woken for it.
+    if (r.phone && !r.row.followup_status) pushNextWake().catch(e => console.error('Wake scheduling failed:', e.message));
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('Website form draft save failed:', e.message);
     res.status(500).json({ ok: false });
   }
 });
@@ -3288,6 +3323,8 @@ async function ownJobsNextDue() {
   if (webDue.rows.length) times.push(Date.now() + 2 * 60 * 1000);
   const askAt = await reportDelivery.nextAskAt().catch(() => null);
   if (askAt) times.push(Math.max(askAt.getTime(), Date.now() + 60 * 1000));
+  const formAt = await formDrafts.nextDueAt().catch(() => null);
+  if (formAt) times.push(Math.max(formAt.getTime(), Date.now() + 60 * 1000));
   // The daily follow-up messages go out at 10:00 IST.
   if (process.env.WA_FOLLOWUP_TEMPLATE) times.push(nextIstTime(DAILY_DRIP_HOUR).getTime());
   return times.length ? new Date(Math.min(...times)) : null;
@@ -3453,6 +3490,7 @@ async function runOwnJobs() {
     await recoverFulfilments();
     await webOrders.recover();
     await reportDelivery.askDue().catch(e => console.error('Report feedback questions failed:', e.message));
+    await formDrafts.runDue().catch(e => console.error('Website form follow-ups failed:', e.message));
     await retryCalendarCancels();
     await sendPaymentNudges().catch(e => console.error('Payment nudges failed:', e.message));
     await runBookingRetries();
@@ -3462,6 +3500,7 @@ async function runOwnJobs() {
   // These run on their own (a payment check can wait on Google and Razorpay) and never overlap themselves.
   pollUnpaidPaymentLinks().catch(e => console.error('Payment polling failed:', e.message));
   webOrders.sweep().catch(e => console.error('Website order sweep failed:', e.message));
+  formDrafts.syncSheet().catch(e => console.error('Website Forms Sheet update failed:', e.message));
   syncSheet().catch(e => console.error('Sheet sync failed:', e.message));
   maybeSendDiscountOffers().catch(e => console.error('Discount offers failed:', e.message));
   maybeRunDailyDrip().catch(e => console.error('❌ Drip campaign error:', e.message));

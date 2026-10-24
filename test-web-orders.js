@@ -70,7 +70,8 @@ test('the customer confirmation names the report, amount, invoice and delivery t
   assert.match(text, /Ananya ji/);
   assert.match(text, /₹1,263 for your Astro-Numero Blend 2027 report/);
   assert.match(text, /VA\/26-27\/10-012/);
-  assert.match(text, /within 24 hours/);
+  assert.match(text, /here on WhatsApp within 24 hours/);
+  assert.doesNotMatch(text, /@/);
   const owner = webOrders.ownerText(d, 'VA/26-27/10-012', 'sent (template)');
   assert.match(owner, /Birth time: 6:54 PM/);
   assert.match(owner, /Phone: \+919876543210/);

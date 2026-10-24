@@ -27,7 +27,8 @@ const LOW_PRIORITY_SUBJECTS = new Set([
   'Automated sender ignored',
   'Hot lead',
   'Report sent',
-  'Report feedback'
+  'Report feedback',
+  'Website form follow-up'
 ]);
 function isLowPriority(subject, text) {
   if (LOW_PRIORITY_SUBJECTS.has(String(subject || ''))) return true;
