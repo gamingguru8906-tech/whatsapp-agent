@@ -29,6 +29,7 @@ const voiceNote = require('./voice-note');
 const voiceAgent = require('./voice-agent');
 const growth = require('./growth');
 const numerologyLeads = require('./numerology-leads');
+const webOrdersLib = require('./web-orders');
 
 // No outside call may hang forever (WhatsApp, Meta media, website). Calls that need longer pass their own timeout.
 axios.defaults.timeout = 60000;
@@ -60,6 +61,8 @@ const GEMINI_API_KEY  = process.env.GEMINI_API_KEY;
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
+// Shared with the website (Vercel): signs the hand-off of a 2027 report paid on veshannastro.co.in.
+const WEB_ORDER_SECRET = process.env.WEB_ORDER_SECRET;
 const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
 const GOOGLE_APPS_SCRIPT_SECRET = process.env.GOOGLE_APPS_SCRIPT_SECRET;
 const ADMIN_PHONE_NUMBER = process.env.ADMIN_PHONE_NUMBER; 
@@ -220,6 +223,27 @@ async function migrateMainTables() {
   `);
 }
 
+// 2027 reports paid on the website (web-orders.js): checked with Razorpay, then fulfilled once, like a paid link.
+const webOrders = webOrdersLib.create({
+  get pool() { return pool; },
+  get razorpay() { return razorpayClient; },
+  allocateInvoiceNumber: () => crm.allocateInvoiceNumber(pool),
+  generateInvoice,
+  uploadMedia: uploadWhatsAppMedia,
+  deliver: (phone, message) => deliverAfterCall(phone, message),
+  sendTemplate: (to, name, params, header) => sendWhatsAppTemplate(to, name, params, header),
+  notifyOwner: (text, subject) => notifyOwner(text, subject),
+  postAppsScript: payload => postAppsScript(payload),
+  emit: ev => dashboard.events.emit('event', ev),
+  reportPurchase: details => growth.reportPurchase(axios, details),
+  track: job => { fulfilmentsRunning++; job.finally(() => { fulfilmentsRunning--; }); },
+  delivery: '24 hours',
+  // Approved utility template: header Document (the receipt); body {{1}} first name, {{2}} amount, {{3}} report, {{4}} invoice no.
+  templateName: process.env.WA_R27_ORDER_TEMPLATE || 'r27_order_confirmed',
+  // Optional thank-you photo or video: its own approved template with an image/video header and {{1}} first name.
+  thanks: { template: process.env.WA_R27_THANKS_TEMPLATE, mediaUrl: process.env.WA_R27_THANKS_MEDIA_URL, mediaType: process.env.WA_R27_THANKS_MEDIA_TYPE || 'image' }
+});
+
 // Tables are created (or upgraded) before any webhook, tick or job touches them. A database that is still waking
 // up (Neon) is retried instead of leaving the server running without its tables.
 let dbIsReady = false;
@@ -233,6 +257,7 @@ const dbReady = pool ? (async () => {
       await growth.migrate(pool);
       await numerologyLeads.migrate(pool);
       await dashboard.migrate(pool);
+      await webOrders.migrate(pool);
       dbIsReady = true;
       console.log('✅ PostgreSQL connected & table ready.');
       return true;
@@ -1879,6 +1904,18 @@ app.post('/razorpay-webhook', async (req, res) => {
       if (req.headers['x-kamala-internal'] === '1') await job;
     } else if (event.event === 'payment_link.expired') {
       await closeExpiredLink(event.payload?.payment_link?.entity);
+    } else if (event.event === 'order.paid') {
+      // A 2027 report paid on the website. Other orders (e.g. behind payment links) are not ours here.
+      const order = event.payload?.order?.entity;
+      if (!webOrdersLib.isOurs(order)) return res.sendStatus(200);
+      try {
+        const r = await webOrders.handle({ orderId: order.id, paymentId: event.payload?.payment?.entity?.id, via: 'webhook' });
+        console.log(`Website order ${order.id} from webhook: ${r.status}`);
+      } catch (e) {
+        // Razorpay retries; the 10-minute sweep and the website hand-off are there too.
+        console.error(`Website order ${order.id} webhook handling failed:`, e.message);
+        return res.status(500).send('Website order not handled yet; retry requested');
+      }
     }
     return res.sendStatus(200);
   } catch(e) {
@@ -1892,6 +1929,27 @@ app.post('/razorpay-webhook', async (req, res) => {
     // Alert once per failure streak, not on every Razorpay retry.
     if (previous !== 'failed') await notifyOwner(`Payment received but automatic fulfillment needs attention. Payment link: ${failedLinkId || 'unknown'}. Error: ${e.message}. It will retry automatically; verify in Razorpay before taking manual action.`, 'Payment fulfilment failed').catch(() => {});
     return res.status(500).send('Payment fulfillment failed; retry requested');
+  }
+});
+
+// The website hands over a 2027 report the moment it is paid (signed with WEB_ORDER_SECRET). Kamala answers at once
+// and checks the order with Razorpay herself before doing anything; the webhook and the sweep cover any miss.
+app.post('/web-order', async (req, res) => {
+  if (!WEB_ORDER_SECRET) return res.status(503).json({ ok: false, error: 'WEB_ORDER_SECRET is not set' });
+  if (!webOrdersLib.signatureValid(WEB_ORDER_SECRET, req.rawBody, req.headers['x-veshannastro-signature'])) {
+    console.warn('Website order hand-off rejected: bad signature (check WEB_ORDER_SECRET is the same in Vercel and Render).');
+    return res.status(401).json({ ok: false });
+  }
+  const orderId = String(req.body?.order_id || '');
+  const paymentId = String(req.body?.payment_id || '') || null;
+  if (!/^order_[A-Za-z0-9]{6,40}$/.test(orderId)) return res.status(400).json({ ok: false, error: 'order_id missing' });
+  res.status(202).json({ ok: true });
+  try {
+    await dbReady;
+    const r = await webOrders.handle({ orderId, paymentId, via: 'website' });
+    console.log(`Website order ${orderId} from the website: ${r.status}`);
+  } catch (e) {
+    console.error(`Website order ${orderId} hand-off failed:`, e.message);
   }
 });
 
@@ -2850,9 +2908,15 @@ async function sendWhatsAppTemplate(to, templateName, bodyParameters = [], heade
       language: { code: process.env.WA_TEMPLATE_LANGUAGE || 'en' }
     };
     const components = [];
-    if (headerDocument?.id) components.push({
+    // Header: a document (id + filename, as before) or an image/video by WhatsApp media id or public https link.
+    const headerType = ['image', 'video'].includes(headerDocument?.type) ? headerDocument.type : 'document';
+    if (headerType === 'document' && headerDocument?.id) components.push({
       type: 'header',
       parameters: [{ type: 'document', document: { id: headerDocument.id, filename: headerDocument.filename } }]
+    });
+    else if (headerType !== 'document' && (headerDocument.id || headerDocument.link)) components.push({
+      type: 'header',
+      parameters: [{ type: headerType, [headerType]: headerDocument.id ? { id: headerDocument.id } : { link: headerDocument.link } }]
     });
     if (bodyParameters.length) components.push({
       type: 'body',
@@ -3078,6 +3142,10 @@ async function ownJobsNextDue() {
         WHERE done_at IS NULL AND attempts < 2 AND received_at > NOW() - INTERVAL '6 hours'
     ) due`).catch(() => ({ rows: [] }));
   const times = r.rows[0]?.t ? [new Date(r.rows[0].t).getTime()] : [];
+  // A website order still to finish wakes the server in two minutes (its own query: a missing table must not stop the rest).
+  const webDue = await pool.query(`SELECT 1 FROM web_orders WHERE status IN ('failed','processing') AND attempts < 6 AND details IS NOT NULL LIMIT 1`)
+    .catch(() => ({ rows: [] }));
+  if (webDue.rows.length) times.push(Date.now() + 2 * 60 * 1000);
   // The daily follow-up messages go out at 10:00 IST.
   if (process.env.WA_FOLLOWUP_TEMPLATE) times.push(nextIstTime(DAILY_DRIP_HOUR).getTime());
   return times.length ? new Date(Math.min(...times)) : null;
@@ -3241,6 +3309,7 @@ async function runOwnJobs() {
   try {
     await replayInbound().catch(e => console.error('Inbound replay failed:', e.message));
     await recoverFulfilments();
+    await webOrders.recover();
     await retryCalendarCancels();
     await sendPaymentNudges().catch(e => console.error('Payment nudges failed:', e.message));
     await runBookingRetries();
@@ -3249,6 +3318,7 @@ async function runOwnJobs() {
   }
   // These run on their own (a payment check can wait on Google and Razorpay) and never overlap themselves.
   pollUnpaidPaymentLinks().catch(e => console.error('Payment polling failed:', e.message));
+  webOrders.sweep().catch(e => console.error('Website order sweep failed:', e.message));
   syncSheet().catch(e => console.error('Sheet sync failed:', e.message));
   maybeSendDiscountOffers().catch(e => console.error('Discount offers failed:', e.message));
   maybeRunDailyDrip().catch(e => console.error('❌ Drip campaign error:', e.message));
