@@ -92,3 +92,31 @@ test('handle() asks Razorpay itself and skips orders already finished', async ()
   assert.deepEqual(await done.handle({ orderId: 'order_AbCdEf123456' }), { status: 'fulfilled' });
   assert.equal(fetched, 0);
 });
+
+test('a website form lead needs a real WhatsApp number and name; the rest is cleaned', () => {
+  const l = webOrders.readLead({ phone: '+91 98765 43210', name: ' Ananya  Iyer ', email: 'A@Example.com', dob: '1995-07-20', tob: '6:54 PM',
+    pob: 'Raipur, Chhattisgarh, India', report: 'blend', report_name: 'Astro-Numero Blend', price: '₹1,263', stage: 'whatsapp' });
+  assert.equal(l.phone, '919876543210');
+  assert.equal(l.name, 'Ananya Iyer');
+  assert.equal(l.email, 'a@example.com');
+  assert.equal(l.dob, '20 July 1995');
+  assert.equal(l.stage, 'whatsapp');
+  assert.equal(webOrders.readLead({ phone: '12345', name: 'Ananya' }), null);
+  assert.equal(webOrders.readLead({ phone: '919876543210', name: '1' }), null);
+  assert.equal(webOrders.readLead({ phone: '919876543210', name: 'Ananya', stage: 'paid' }).stage, 'form'); // only Razorpay marks paid
+  assert.equal(webOrders.readLead({ phone: '919876543210', name: 'Ananya', tob: '25:99' }).tob, '');
+});
+
+test('Kamala is told what the person did on the website and greets a first-time visitor as one', () => {
+  const crm = require('./crm');
+  const line = webOrders.leadLine({ report_name: 'Astro-Numero Blend', price: '₹1,263', stage: 'form', last_at: '2026-10-24T12:11:00Z' });
+  assert.match(line, /order form on veshannastro\.co\.in for the Astro-Numero Blend \(₹1,263\) on 24 Oct 2026/);
+  assert.match(line, /has not paid yet/);
+  const first = crm.profileContext({ name: 'Ananya Iyer', dob: '20 July 1995' }, [], null, line);
+  assert.match(first, /- On the website: Filled the 2027/);
+  assert.match(first, /WEBSITE VISITOR, FIRST CHAT/);
+  const later = crm.profileContext({ name: 'Ananya Iyer' }, [], new Date(), line);
+  assert.doesNotMatch(later, /WEBSITE VISITOR, FIRST CHAT/);
+  assert.doesNotMatch(crm.profileContext({ name: 'Ravi' }, [], null, ''), /On the website/);
+  assert.match(webOrders.leadLine({ report_name: 'Classic', stage: 'paid', last_at: new Date() }), /paid for it on the website/);
+});
