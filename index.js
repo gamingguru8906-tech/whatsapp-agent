@@ -2616,7 +2616,11 @@ async function handleInboundMessage(msg) {
           const svc = category.services[parseInt(svcIndexStr)];
           if (svc) {
             const featureList = svc.features ? `• ${svc.features.join('\n• ')}` : '';
-            let reply = `✨ *${svc.t}*\n\n${svc.d}\n\n*Features:*\n${featureList}\n\n💰 *Current Price:* ${svc.p}\n\n📅 *Ready to Book?*\nVisit: ${/^https?:\/\//i.test(String(svc.link || '')) ? svc.link : `https://veshannastro.co.in/${String(svc.link || '').replace(/^\//, '')}`}\nOr simply reply here and I will help you book it directly in this chat! 🙏`;
+            // A service without a page (link left empty in services.json) is booked here in the chat.
+            const link = String(svc.link || '').trim();
+            const page = !link ? '' : /^https?:\/\//i.test(link) ? link : `https://www.veshannastro.co.in/${link.replace(/^\//, '')}`;
+            let reply = `✨ *${svc.t}*\n\n${svc.d}\n\n*Features:*\n${featureList}\n\n💰 *Current Price:* ${svc.p}\n\n📅 *Ready to Book?*\n`
+              + (page ? `Visit: ${page}\nOr simply reply here and I will help you book it directly in this chat! 🙏` : 'Just reply here and I will help you book it directly in this chat! 🙏');
             await sendTextMessage(from, reply);
           }
         }
