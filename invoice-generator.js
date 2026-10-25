@@ -522,27 +522,29 @@ function generatePaymentRequestInvoice(data) {
       if (Math.abs(normalRate - websiteDiscount - additionalDiscount - serviceTotal) > 0.01) {
         throw new Error('Invoice discount arithmetic does not reconcile to the service total.');
       }
-      if (!data.paymentUrl || !/^https:\/\//i.test(String(data.paymentUrl))) {
+      // Paid already (a website order): no payment link exists, so the Razorpay payment ID stands in its place.
+      const paidRef = data.paidRef ? String(data.paidRef) : '';
+      if (!paidRef && (!data.paymentUrl || !/^https:\/\//i.test(String(data.paymentUrl)))) {
         throw new Error('A secure Razorpay payment URL is required for the invoice QR.');
       }
       const test = Boolean(data.isGatewayTest);
       const delivered = Boolean(data.delivered);
       const payNow = test ? linkAmount : serviceTotal;
-      const qr = await QRCode.toBuffer(String(data.paymentUrl), {
+      const qr = paidRef ? null : await QRCode.toBuffer(String(data.paymentUrl), {
         type: 'png', errorCorrectionLevel: 'M', margin: 1, width: 240, color: { dark: '#000000', light: '#FFFFFF' }
       });
 
-      const doc = newDoc(`Invoice ${safeText(data.invoiceNumber, '')}`, 'Invoice - payment pending', resolve, reject);
+      const doc = newDoc(`Invoice ${safeText(data.invoiceNumber, '')}`, paidRef ? 'Invoice - paid online' : 'Invoice - payment pending', resolve, reject);
       drawInvoice(doc, {
         title: 'INVOICE',
         invoiceNo: safeText(data.invoiceNumber, '-'),
         date: safeText(data.issueDate, '-'),
-        status: 'UNPAID',
-        paymentTerms: '100% Advance - Online',
+        status: paidRef ? 'PAID' : 'UNPAID',
+        paymentTerms: paidRef ? 'Paid in full - Online' : '100% Advance - Online',
         consultMode: 'Online',
         appointment: delivered ? '' : safeText(data.appointmentDate, 'To be scheduled'),
         unit: delivered ? 'Report' : 'Session',
-        reference: String(data.paymentUrl).replace(/^https:\/\//i, ''),
+        reference: paidRef || String(data.paymentUrl).replace(/^https:\/\//i, ''),
         deliveryTerms: delivered
           ? 'Online. The report is prepared once the payment is verified and sent on WhatsApp and e-mail.'
           : 'Online consultation. The appointment is confirmed once the payment is verified; the meeting link is then sent on WhatsApp and e-mail.',
@@ -554,13 +556,15 @@ function generatePaymentRequestInvoice(data) {
           ['Service\nValue', money(normalRate)],
           ['Discount', money(websiteDiscount + additionalDiscount)],
           ['Net\nAmount', money(serviceTotal)],
-          ['Payable\nNow', money(payNow)],
+          paidRef ? ['Paid', money(serviceTotal)] : ['Payable\nNow', money(payNow)],
           ['Balance\nDue', money(test ? serviceTotal : 0)]
         ],
-        notice: test
+        notice: paidRef
+          ? `Paid in full online on veshannastro.co.in${data.paidOn ? ' on ' + safeText(data.paidOn, '') : ''}. Razorpay Payment ID: ${paidRef}.`
+          : test
           ? `Gateway test only: this Razorpay link collects INR ${money(linkAmount)} to validate the live payment gateway. It does not pay for or confirm the consultation. Consultation amount due: ${inr(serviceTotal)}.`
           : 'Payment pending. This invoice is not a payment receipt; the payment receipt is sent automatically once Razorpay confirms your payment.',
-        payUrl: String(data.paymentUrl),
+        payUrl: paidRef ? `Paid on the website, Razorpay ${paidRef}` : String(data.paymentUrl),
         upiId: data.upiId ? String(data.upiId) : '',
         qr
       });
