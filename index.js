@@ -3592,6 +3592,21 @@ async function rebuildInvoicePdf(row, kind) {
       date: live ? paid.toLocaleDateString('en-IN', { timeZone }) : paid.toLocaleString('en-IN', { timeZone, dateStyle: 'medium', timeStyle: 'short' }) + ' IST'
     });
   }
+  // A website order is paid on the page: there is no payment link, so its invoice is marked paid and carries the
+  // Razorpay payment ID where the link would be (looking up a link for it can only fail).
+  const website = row.paid_by === 'website' || /^order_/.test(String(row.payment_link_id || ''));
+  if (website && row.razorpay_payment_id) {
+    const paidAt = row.paid_at ? new Date(row.paid_at) : new Date(row.created_at);
+    return generatePaymentRequestInvoice({
+      invoiceNumber: row.request_invoice_number,
+      issueDate: paidAt.toLocaleString('en-IN', { timeZone, dateStyle: 'medium', timeStyle: 'short' }) + ' IST',
+      customerName: row.customer_name, email: row.email, phone: row.billing_phone || row.phone, billingAddress: row.billing_address,
+      customerGstin: row.customer_gstin || '', serviceName: row.service_name, appointmentDate: '', delivered: true, upiId: '',
+      normalRate: normal, websiteDiscount: webOff, additionalDiscount: extraOff, serviceTotal: total, linkAmount: Number(row.amount_paise) / 100,
+      isGatewayTest: false, paidRef: row.razorpay_payment_id,
+      paidOn: paidAt.toLocaleString('en-IN', { timeZone, dateStyle: 'medium', timeStyle: 'short' }) + ' IST'
+    });
+  }
   let url = row.payment_url;
   if (!url && razorpayClient) url = (await razorpayClient.paymentLink.fetch(row.payment_link_id).catch(() => null))?.short_url;
   const created = new Date(row.created_at);

@@ -52,3 +52,12 @@ test('amounts are written in Indian words like a Tally invoice', () => {
   assert.equal(amountInWords(2249), 'INR Two Thousand Two Hundred Forty Nine Only');
   assert.equal(amountInWords(12500000), 'INR One Crore Twenty Five Lakh Only');
 });
+
+test('a website order invoice is marked paid and carries the Razorpay payment ID instead of a payment link', async () => {
+  const { generatePaymentRequestInvoice } = require('./invoice-generator.js');
+  const pdf = await generatePaymentRequestInvoice({ invoiceNumber: 'VA/26-27/10-010', issueDate: '25 Oct 2026', customerName: 'Test', email: '', phone: '919876543210',
+    serviceName: '2027 Personal Year Report: Classic', delivered: true, normalRate: 1376, websiteDiscount: 413, additionalDiscount: 0, serviceTotal: 963,
+    linkAmount: 963, paidRef: 'pay_TEST123', paidOn: '25 Oct 2026' });
+  assert.ok(Buffer.isBuffer(pdf) && pdf.length > 1000);
+  await assert.rejects(() => generatePaymentRequestInvoice({ invoiceNumber: 'X', normalRate: 1, serviceTotal: 1, linkAmount: 1 }), /payment URL/);
+});
