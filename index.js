@@ -485,7 +485,7 @@ function refreshSystemPrompt() {
       servicesContext += `\nCATEGORY: ${cat.name}\n`;
       cat.services.forEach(svc => {
         const featuresStr = svc.features ? svc.features.join(', ') : 'N/A';
-      servicesContext += `- ${svc.t}: Published price ${svc.p}${svc.usd ? ` (outside India ${svc.usd})` : ''}; regular/list price ${svc.was || svc.p}; published discount ${svc.off || 'none listed'}. ${svc.d} Features: ${featuresStr}. Details needed: ${describeServiceNeeds(serviceNeeds(svc, cat.name))}. Format: ${isLiveService(svc) ? 'LIVE SESSION (needs an agreed time slot)' : 'DELIVERED REPORT (no time slot; prepared and sent after payment)'}\n`;
+      servicesContext += `- ${svc.t}: Published price ${svc.p}${svc.usd ? ` (outside India ${svc.usd})` : ''}; regular/list price ${svc.was || svc.p}; published discount ${svc.off || 'none listed'}. ${svc.d} Features: ${featuresStr}. Details needed: ${describeServiceNeeds(serviceNeeds(svc, cat.name))}. Format: ${isLiveService(svc) ? 'LIVE SESSION (needs an agreed time slot)' : 'DELIVERED REPORT (no time slot; prepared and sent after payment)'}${Array.isArray(svc.options) && svc.options.length ? `. The fee covers exactly ONE of these, chosen by the client: ${svc.options.join('; ')}` : ''}${siteServices.indiaOnly(svc) ? '. FEE VALID FOR CLIENTS IN INDIA ONLY (Indian +91 WhatsApp numbers); flat fee, no discount or voucher' : ''}\n`;
       });
     });
   }
@@ -680,6 +680,9 @@ function firstNameOf(name) {
   return String(name || '').trim().split(/\s+/)[0] || '';
 }
 
+// India-only bookings from numbers outside India already reported to the owner (phone|service), so he is told once.
+const outsideIndiaAlerted = new Set();
+
 function customerFixable(message) {
   const error = new Error(message);
   error.customerFixable = true;
@@ -697,6 +700,7 @@ function serviceNeeds(service, categoryName = '') {
   }
   const text = `${categoryName} ${service?.t || ''}`.toLowerCase();
   if (/palm|hast/.test(text)) return { fields: [], extra: 'clear photos of both palms (sent in the chat)' };
+  if (/muhurat|muhurt/.test(text)) return { fields: ['dob', 'tob', 'pob'], extra: 'the event the muhurat is for and the dates they are considering' };
   if (/vastu/.test(text)) return { fields: [], extra: '' };
   if (/divorce|separation|compatib|relationship|partner|gun milan|matchmak|matching/.test(text)) {
     return { fields: ['dob', 'tob', 'pob', 'gender'], extra: "partner's full name and date, time and place of birth" };
@@ -982,6 +986,16 @@ async function createBookingPaymentRequestNow(phone, args, dbUser, {
     if (!pool) throw new Error('Persistent payment tracking is required before creating a payment link.');
     if (!ADMIN_PHONE_NUMBER) throw new Error('Owner payment notifications are not configured yet, so I cannot safely generate a payment link.');
     const publishedService = findPublishedService(args.service_name);
+    // Fees the website marks "region": "IN" are valid for clients in India only. A number from outside India gets no
+    // INR link for them; the owner is told once and decides what to offer.
+    if (siteServices.indiaOnly(publishedService) && !siteServices.isIndianNumber(phone)) {
+      const key = `${phone}|${publishedService.t}`;
+      if (!outsideIndiaAlerted.has(key)) {
+        outsideIndiaAlerted.add(key);
+        notifyOwner(`🌍 +${phone} (outside India) asked to book ${publishedService.t}. Its ${publishedService.p} fee is for clients in India only, so no payment link was sent. Please reply to them about a consultation from their country.`, 'Booking from outside India').catch(() => {});
+      }
+      throw customerFixable(`${publishedService.t} is priced for clients in India only and this WhatsApp number is not an Indian (+91) number, so no payment link can be sent. Tell them kindly that the listed consultation fees apply in India only and that Shashank will message them personally about a consultation from their country. Do not quote the INR fee as theirs and do not try to book it again.`);
+    }
     const missingForService = publishedService.needs.fields.filter(key => !String(args[key] || '').trim()
       && !(key === 'gender' && source !== 'WhatsApp Direct Booking'));
     if (missingForService.length) {

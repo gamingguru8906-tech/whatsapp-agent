@@ -55,7 +55,33 @@ test('the real services.json from the website repo, when it is next to this one'
   const r = site.read(JSON.parse(fs.readFileSync(file, 'utf8')));
   assert.ok(r && r.categories[0].id === 'r27');
   const names = r.categories.flatMap(c => c.services.map(s => s.t));
-  assert.ok(names.includes('2027 Report: Astro-Numero Blend') && names.includes('2027 Report: Classic'));
+  assert.ok(names.includes('2027 Report: Astro-Numero Blend') && names.includes('2027 Report: Classics'));
   assert.ok(!names.includes('Personal Year Forecast'));
   assert.ok(site.factsText(r.facts).length < 9000);
+});
+
+test('India-only fees: only Indian +91 mobile numbers pass', () => {
+  assert.equal(site.indiaOnly({ region: 'IN' }), true);
+  assert.equal(site.indiaOnly({ region: 'in' }), true);
+  assert.equal(site.indiaOnly({}), false);
+  assert.equal(site.isIndianNumber('919876543210'), true);
+  assert.equal(site.isIndianNumber('+91 98765 43210'), true);
+  assert.equal(site.isIndianNumber('14155552671'), false);
+  assert.equal(site.isIndianNumber('971501234567'), false);
+  assert.equal(site.isIndianNumber('9876543210'), false);
+});
+
+test('the website marks the three consultations India-only, with one flat fee each', () => {
+  const fs = require('fs'), path = require('path');
+  const file = path.join(__dirname, '..', 'veshannastro6', 'services.json');
+  if (!fs.existsSync(file)) return;
+  const r = site.read(JSON.parse(fs.readFileSync(file, 'utf8')));
+  const all = Object.fromEntries(r.categories.flatMap(c => c.services.map(s => [s.t, s])));
+  for (const [name, fee] of [['Online Astrology Consultation', '₹3,699'], ['Online Numerology Consultation', '₹555'], ['Muhurat Selection Consultation', '₹1,269']]) {
+    assert.ok(all[name], name);
+    assert.equal(all[name].p, fee);
+    assert.equal(all[name].was, undefined);
+    assert.ok(site.indiaOnly(all[name]));
+  }
+  assert.equal(all['Online Numerology Consultation'].options.length, 8);
 });

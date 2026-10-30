@@ -40,4 +40,14 @@ function factsText(facts) {
   return `\n--- WEBSITE FACTS (veshannastro.co.in: the 2027 report page and the blog; all true, use them freely) ---\n${parts.join('\n')}\n`;
 }
 
-module.exports = { read, factsText };
+/** True when the website marks a service's fee as valid for clients in India only ("region": "IN"). */
+function indiaOnly(service) {
+  return String(service?.region || '').toUpperCase() === 'IN';
+}
+
+/** A WhatsApp number from India: 91 and a 10-digit mobile number (6-9 first). */
+function isIndianNumber(phone) {
+  return /^91[6-9]\d{9}$/.test(String(phone || '').replace(/\D/g, ''));
+}
+
+module.exports = { read, factsText, indiaOnly, isIndianNumber };
